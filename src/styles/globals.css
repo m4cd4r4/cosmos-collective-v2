@@ -1,0 +1,542 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   COSMOS COLLECTIVE - Global Styles
+   A Multi-Spectrum Astronomical Data Explorer
+   ============================================ */
+
+/* ---------- CSS Custom Properties ---------- */
+:root {
+  /* Color tokens */
+  --cosmos-void: #030014;
+  --cosmos-depth: #0a0a1a;
+  --cosmos-surface: #111127;
+  --cosmos-elevated: #1a1a3e;
+
+  --cosmos-cyan: #06b6d4;
+  --cosmos-gold: #f59e0b;
+  --cosmos-purple: #a855f7;
+  --cosmos-pink: #ec4899;
+
+  /* Spacing scale */
+  --space-unit: 4px;
+
+  /* Animation durations */
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  /* Focus ring */
+  --focus-ring-color: var(--cosmos-cyan);
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+
+  /* Z-index layers */
+  --z-dropdown: 50;
+  --z-modal: 60;
+  --z-toast: 70;
+  --z-tooltip: 80;
+  --z-skip-link: 100;
+}
+
+/* High contrast mode overrides */
+@media (prefers-contrast: more) {
+  :root {
+    --cosmos-void: #000000;
+    --cosmos-surface: #1a1a1a;
+    --cosmos-cyan: #00ffff;
+    --cosmos-gold: #ffff00;
+    --focus-ring-width: 4px;
+  }
+}
+
+/* ---------- Base Styles ---------- */
+@layer base {
+  html {
+    @apply antialiased;
+    scroll-behavior: smooth;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+
+  body {
+    @apply bg-cosmos-void text-gray-100;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    min-height: 100vh;
+    min-height: 100dvh; /* Dynamic viewport height for mobile */
+  }
+
+  /* Selection styling */
+  ::selection {
+    @apply bg-cosmos-cyan/30 text-white;
+  }
+
+  /* Focus visible for keyboard navigation */
+  *:focus-visible {
+    @apply outline-none ring-[3px] ring-cosmos-cyan ring-offset-2 ring-offset-cosmos-void;
+  }
+
+  /* Remove focus ring for mouse users */
+  *:focus:not(:focus-visible) {
+    @apply outline-none ring-0;
+  }
+
+  /* Headings */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display text-balance;
+  }
+
+  h1 { @apply text-4xl md:text-5xl lg:text-6xl font-bold; }
+  h2 { @apply text-3xl md:text-4xl font-bold; }
+  h3 { @apply text-2xl md:text-3xl font-semibold; }
+  h4 { @apply text-xl md:text-2xl font-semibold; }
+  h5 { @apply text-lg md:text-xl font-medium; }
+  h6 { @apply text-base md:text-lg font-medium; }
+
+  /* Links */
+  a {
+    @apply text-cosmos-cyan hover:text-cosmos-cyan-400 transition-colors duration-200;
+  }
+
+  /* Code */
+  code {
+    @apply font-mono text-cosmos-pink bg-cosmos-surface px-1.5 py-0.5 rounded text-sm;
+  }
+
+  pre {
+    @apply font-mono bg-cosmos-surface rounded-lg p-4 overflow-x-auto;
+  }
+
+  /* Form elements */
+  input, textarea, select {
+    @apply bg-cosmos-surface border border-white/10 rounded-lg px-4 py-2;
+    @apply text-gray-100 placeholder:text-gray-500;
+    @apply focus:border-cosmos-cyan focus:ring-2 focus:ring-cosmos-cyan/20;
+    @apply transition-colors duration-200;
+  }
+
+  /* Buttons base */
+  button {
+    @apply cursor-pointer transition-all duration-200;
+    @apply disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  /* Images */
+  img {
+    @apply max-w-full h-auto;
+  }
+
+  /* Remove spinner from number inputs */
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+}
+
+/* ---------- Component Styles ---------- */
+@layer components {
+  /* Skip link for accessibility */
+  .skip-to-content {
+    @apply absolute -top-12 left-4 z-[100];
+    @apply bg-cosmos-cyan text-cosmos-void font-semibold;
+    @apply px-4 py-2 rounded-lg;
+    @apply focus:top-4;
+    @apply transition-all duration-200;
+  }
+
+  /* Glass morphism panels */
+  .glass-panel {
+    @apply bg-gradient-to-br from-white/[0.08] to-white/[0.03];
+    @apply backdrop-blur-xl;
+    @apply border border-white/10;
+    @apply shadow-cosmic;
+  }
+
+  .glass-panel-interactive {
+    @apply glass-panel;
+    @apply hover:border-white/20 hover:from-white/[0.1] hover:to-white/[0.05];
+    @apply transition-all duration-300;
+  }
+
+  /* Card hover effects */
+  .card-hover {
+    @apply transition-all duration-300 ease-out;
+    @apply hover:-translate-y-1 hover:shadow-glow-cyan;
+  }
+
+  /* Gradient text */
+  .text-gradient-stellar {
+    @apply bg-gradient-to-r from-cosmos-cyan via-cosmos-purple to-cosmos-pink;
+    @apply bg-clip-text text-transparent;
+    background-size: 200% auto;
+  }
+
+  .text-gradient-stellar-animated {
+    @apply text-gradient-stellar animate-gradient-shift;
+  }
+
+  /* Status indicators */
+  .status-live {
+    @apply inline-flex items-center gap-1.5;
+  }
+
+  .status-live::before {
+    content: '';
+    @apply w-2 h-2 rounded-full bg-green-500 animate-pulse;
+  }
+
+  /* Loading skeleton */
+  .skeleton {
+    @apply bg-gradient-to-r from-cosmos-surface via-cosmos-elevated to-cosmos-surface;
+    @apply bg-[length:200%_100%] animate-shimmer;
+  }
+
+  /* Spectrum visualization patterns for accessibility */
+  .spectrum-radio {
+    @apply bg-cosmos-spectrum-radio;
+    background-image: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.1) 2px,
+      rgba(0,0,0,0.1) 4px
+    );
+  }
+
+  .spectrum-infrared {
+    @apply bg-cosmos-spectrum-infrared;
+    background-image: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.1) 2px,
+      rgba(0,0,0,0.1) 4px
+    );
+  }
+
+  .spectrum-ultraviolet {
+    @apply bg-cosmos-spectrum-ultraviolet;
+    background-image: radial-gradient(
+      circle,
+      rgba(0,0,0,0.1) 1px,
+      transparent 1px
+    );
+    background-size: 4px 4px;
+  }
+
+  .spectrum-xray {
+    @apply bg-cosmos-spectrum-xray;
+    background-image: linear-gradient(
+      90deg,
+      rgba(0,0,0,0.1) 1px,
+      transparent 1px
+    );
+    background-size: 4px 4px;
+  }
+
+  /* Touch-friendly targets */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Scrollbar styling */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.cosmos.cyan') theme('colors.cosmos.surface');
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    @apply bg-cosmos-surface rounded-full;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-cosmos-cyan/50 rounded-full;
+    @apply hover:bg-cosmos-cyan/70;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* ---------- Utility Classes ---------- */
+@layer utilities {
+  /* Text balance for headings */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Safe area padding for mobile */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Container queries support */
+  .container-type-inline {
+    container-type: inline-size;
+  }
+
+  /* Aspect ratio for astronomical images */
+  .aspect-astronomical {
+    aspect-ratio: 4/3;
+  }
+
+  .aspect-golden {
+    aspect-ratio: 1.618;
+  }
+
+  /* Animation delays */
+  .animation-delay-100 { animation-delay: 100ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-500 { animation-delay: 500ms; }
+  .animation-delay-700 { animation-delay: 700ms; }
+  .animation-delay-1000 { animation-delay: 1000ms; }
+
+  /* Grainy texture overlay */
+  .grain-overlay::after {
+    content: '';
+    @apply absolute inset-0 pointer-events-none opacity-[0.03];
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  }
+
+  /* Visually hidden but accessible */
+  .sr-only {
+    @apply absolute w-px h-px p-0 -m-px overflow-hidden whitespace-nowrap border-0;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  /* Focus only visible to keyboard users */
+  .sr-only-focusable:focus,
+  .sr-only-focusable:focus-within {
+    @apply static w-auto h-auto p-2 m-0 overflow-visible whitespace-normal;
+    clip: auto;
+  }
+}
+
+/* ---------- Star field background ---------- */
+.starfield {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  overflow: hidden;
+}
+
+.starfield::before,
+.starfield::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(2px 2px at 20px 30px, white, transparent),
+    radial-gradient(2px 2px at 40px 70px, rgba(255,255,255,0.8), transparent),
+    radial-gradient(1px 1px at 90px 40px, white, transparent),
+    radial-gradient(2px 2px at 160px 120px, rgba(255,255,255,0.7), transparent),
+    radial-gradient(1px 1px at 230px 180px, white, transparent),
+    radial-gradient(2px 2px at 300px 50px, rgba(255,255,255,0.6), transparent),
+    radial-gradient(1px 1px at 350px 220px, white, transparent),
+    radial-gradient(2px 2px at 420px 90px, rgba(255,255,255,0.8), transparent);
+  background-repeat: repeat;
+  background-size: 500px 500px;
+  animation: starfield-drift 100s linear infinite;
+}
+
+.starfield::after {
+  background-size: 350px 350px;
+  animation-duration: 150s;
+  animation-direction: reverse;
+  opacity: 0.5;
+}
+
+@keyframes starfield-drift {
+  from { transform: translate(0, 0); }
+  to { transform: translate(-500px, -500px); }
+}
+
+/* Disable starfield animation for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .starfield::before,
+  .starfield::after {
+    animation: none;
+  }
+}
+
+/* ---------- Devlog Content Styles ---------- */
+.devlog-content {
+  @apply text-gray-300 leading-relaxed;
+}
+
+.devlog-content h1 {
+  @apply text-3xl font-display font-bold text-white mt-12 mb-6 pb-4 border-b border-white/10;
+}
+
+.devlog-content h2 {
+  @apply text-2xl font-display font-bold text-white mt-10 mb-4;
+}
+
+.devlog-content h3 {
+  @apply text-xl font-display font-semibold text-white mt-8 mb-3;
+}
+
+.devlog-content h4 {
+  @apply text-lg font-semibold text-gray-200 mt-6 mb-2;
+}
+
+.devlog-content p {
+  @apply mb-6;
+}
+
+.devlog-content ul,
+.devlog-content ol {
+  @apply mb-6 pl-6 space-y-2;
+}
+
+.devlog-content ul {
+  @apply list-disc;
+}
+
+.devlog-content ol {
+  @apply list-decimal;
+}
+
+.devlog-content li {
+  @apply text-gray-300;
+}
+
+.devlog-content blockquote {
+  @apply pl-4 border-l-4 border-cosmos-cyan/50 italic text-gray-400 my-6;
+}
+
+.devlog-content a {
+  @apply text-cosmos-cyan hover:text-white underline underline-offset-4 transition-colors;
+}
+
+.devlog-content hr {
+  @apply my-8 border-t border-white/10;
+}
+
+/* Code blocks */
+.devlog-content .code-block {
+  @apply relative my-6 rounded-xl overflow-hidden bg-cosmos-depth border border-white/10;
+}
+
+.devlog-content .code-block .code-lang {
+  @apply absolute top-0 right-0 px-3 py-1 text-xs font-mono text-gray-500 bg-cosmos-surface/80;
+}
+
+.devlog-content .code-block pre {
+  @apply p-6 overflow-x-auto bg-transparent;
+}
+
+.devlog-content .code-block code {
+  @apply text-sm bg-transparent p-0;
+}
+
+.devlog-content .inline-code {
+  @apply px-1.5 py-0.5 rounded bg-cosmos-surface text-cosmos-pink text-sm font-mono;
+}
+
+/* Syntax highlighting */
+.code-keyword {
+  @apply text-cosmos-purple;
+}
+
+.code-string {
+  @apply text-cosmos-gold;
+}
+
+.code-comment {
+  @apply text-gray-500 italic;
+}
+
+.code-number {
+  @apply text-cosmos-cyan;
+}
+
+/* Tables */
+.devlog-content .devlog-table {
+  @apply w-full my-6 border-collapse;
+}
+
+.devlog-content .devlog-table th {
+  @apply text-left px-4 py-3 bg-cosmos-surface text-white font-semibold border-b border-white/10;
+}
+
+.devlog-content .devlog-table td {
+  @apply px-4 py-3 border-b border-white/5 text-gray-300;
+}
+
+.devlog-content .devlog-table tr:hover td {
+  @apply bg-white/5;
+}
+
+/* ---------- Print styles ---------- */
+@media print {
+  body {
+    @apply bg-white text-black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .glass-panel {
+    @apply bg-gray-100 border-gray-300 shadow-none;
+    backdrop-filter: none;
+  }
+
+  a {
+    @apply text-blue-600 underline;
+  }
+
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    @apply text-sm text-gray-600;
+  }
+}

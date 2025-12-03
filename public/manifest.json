@@ -1,0 +1,106 @@
+{
+  "name": "Cosmos Collective",
+  "short_name": "Cosmos",
+  "description": "Multi-spectrum astronomical data explorer. Journey through the cosmos from radio waves to gamma rays.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#030014",
+  "theme_color": "#06b6d4",
+  "orientation": "any",
+  "scope": "/",
+  "id": "cosmos-collective",
+  "categories": ["education", "science", "astronomy"],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/home-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Cosmos Collective Homepage"
+    },
+    {
+      "src": "/screenshots/explore-narrow.png",
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Explore astronomical images"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Explore",
+      "short_name": "Explore",
+      "description": "Browse astronomical observations",
+      "url": "/explore",
+      "icons": [{ "src": "/icons/shortcut-explore.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Sky Map",
+      "short_name": "Sky Map",
+      "description": "Interactive celestial map",
+      "url": "/sky-map",
+      "icons": [{ "src": "/icons/shortcut-skymap.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Citizen Science",
+      "short_name": "Classify",
+      "description": "Help classify astronomical data",
+      "url": "/citizen-science",
+      "icons": [{ "src": "/icons/shortcut-classify.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "lang": "en-AU",
+  "dir": "ltr"
+}

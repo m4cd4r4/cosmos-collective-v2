@@ -1,0 +1,462 @@
+/**
+ * Cosmos Collective - Australian Radio Telescope Integration
+ * Services for ASKAP, MWA, Parkes, and ATCA data access
+ *
+ * This integration demonstrates understanding of CSIRO's radio astronomy infrastructure
+ * and the future Square Kilometre Array (SKA) project.
+ */
+
+import axios from 'axios'
+import type { Observation, ApiResponse, SkyCoordinates } from '@/types'
+
+// ============================================
+// Configuration
+// ============================================
+
+const CASDA_BASE = 'https://casda.csiro.au'
+const CASDA_TAP = `${CASDA_BASE}/votools/tap/sync`
+const CASDA_SIA = `${CASDA_BASE}/votools/sia2/query`
+
+// Australian telescope information
+export const AUSTRALIAN_TELESCOPES = {
+  askap: {
+    name: 'ASKAP',
+    fullName: 'Australian Square Kilometre Array Pathfinder',
+    location: 'Murchison Radio-astronomy Observatory, Western Australia',
+    coordinates: { lat: -26.697, lon: 116.631 },
+    description: 'A precursor to SKA-Low, ASKAP uses phased array feeds for wide-field radio imaging.',
+    wavelengthRange: '70cm - 3cm (700 MHz - 1.8 GHz)',
+    keyProjects: ['WALLABY (HI survey)', 'EMU (Evolutionary Map of the Universe)', 'VAST (Variables and Slow Transients)'],
+    dishes: 36,
+    dishDiameter: 12, // meters
+  },
+  mwa: {
+    name: 'MWA',
+    fullName: 'Murchison Widefield Array',
+    location: 'Murchison Radio-astronomy Observatory, Western Australia',
+    coordinates: { lat: -26.703, lon: 116.671 },
+    description: 'A low-frequency radio telescope, precursor to SKA-Low.',
+    wavelengthRange: '3.5m - 80cm (80 - 300 MHz)',
+    keyProjects: ['EoR (Epoch of Reionization)', 'GLEAM (GaLactic and Extragalactic All-sky MWA survey)'],
+    tiles: 4096,
+  },
+  parkes: {
+    name: 'Parkes',
+    fullName: 'Parkes Radio Telescope (The Dish)',
+    location: 'Parkes, New South Wales',
+    coordinates: { lat: -32.998, lon: 148.263 },
+    description: 'Iconic 64-meter radio telescope, famous for receiving Apollo 11 TV transmissions.',
+    wavelengthRange: '60cm - 1.3cm (0.5 - 24 GHz)',
+    keyProjects: ['Pulsar timing', 'SETI', 'Fast Radio Bursts'],
+    dishDiameter: 64, // meters
+  },
+  atca: {
+    name: 'ATCA',
+    fullName: 'Australia Telescope Compact Array',
+    location: 'Narrabri, New South Wales',
+    coordinates: { lat: -30.313, lon: 149.550 },
+    description: 'Six 22-meter dishes operating as an interferometer.',
+    wavelengthRange: '25cm - 3mm (1.1 - 105 GHz)',
+    keyProjects: ['Galaxy surveys', 'Molecular line studies', 'Transient follow-up'],
+    dishes: 6,
+    dishDiameter: 22,
+  },
+  ska: {
+    name: 'SKA',
+    fullName: 'Square Kilometre Array',
+    location: 'Murchison (SKA-Low) & South Africa (SKA-Mid)',
+    coordinates: { lat: -26.82, lon: 116.76 },
+    description: 'The world\'s largest radio telescope, currently under construction.',
+    wavelengthRange: '4m - 1.5cm (50 MHz - 20 GHz)',
+    keyProjects: ['Dark energy', 'Cosmic magnetism', 'Gravitational waves', 'SETI', 'Pulsars'],
+    expectedFirstLight: '2027',
+  },
+} as const
+
+export type AustralianTelescope = keyof typeof AUSTRALIAN_TELESCOPES
+
+// ============================================
+// Types for CASDA/VOTable responses
+// ============================================
+
+interface CASDACatalogEntry {
+  obs_id: string
+  target_name: string
+  s_ra: number
+  s_dec: number
+  t_min: number
+  t_exptime: number
+  instrument_name: string
+  obs_collection: string
+  access_url?: string
+  thumbnail_url?: string
+  project_code?: string
+  obs_release_date?: string
+}
+
+// ============================================
+// CASDA TAP Query Service
+// ============================================
+
+/**
+ * Execute an ADQL query against CASDA TAP service
+ * ADQL (Astronomical Data Query Language) is SQL-like
+ */
+export async function queryCASDATAP(
+  adqlQuery: string
+): Promise<ApiResponse<Record<string, unknown>[]>> {
+  try {
+    const params = new URLSearchParams({
+      REQUEST: 'doQuery',
+      LANG: 'ADQL',
+      FORMAT: 'json',
+      QUERY: adqlQuery,
+    })
+
+    const response = await axios.post(CASDA_TAP, params, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      timeout: 30000,
+    })
+
+    return {
+      success: true,
+      data: response.data.data || [],
+      meta: {
+        requestId: `casda-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+      },
+    }
+  } catch (error) {
+    console.error('CASDA TAP query error:', error)
+    return {
+      success: false,
+      error: {
+        code: 'CASDA_TAP_ERROR',
+        message: 'Failed to query CASDA TAP service',
+      },
+    }
+  }
+}
+
+/**
+ * Search ASKAP observations by position
+ */
+export async function searchASKAPByPosition(
+  coordinates: SkyCoordinates,
+  radiusDegrees: number = 1.0
+): Promise<ApiResponse<Observation[]>> {
+  const query = `
+    SELECT TOP 100
+      obs_id, target_name, s_ra, s_dec, t_min, t_exptime,
+      instrument_name, obs_collection, access_url, project_code
+    FROM ivoa.ObsCore
+    WHERE obs_collection = 'ASKAP'
+      AND CONTAINS(POINT('ICRS', s_ra, s_dec),
+                   CIRCLE('ICRS', ${coordinates.ra}, ${coordinates.dec}, ${radiusDegrees})) = 1
+    ORDER BY t_min DESC
+  `
+
+  const result = await queryCASDATAP(query)
+
+  if (!result.success) {
+    return result as ApiResponse<Observation[]>
+  }
+
+  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as CASDACatalogEntry))
+
+  return {
+    success: true,
+    data: observations,
+  }
+}
+
+/**
+ * Search ASKAP observations by project
+ */
+export async function searchASKAPByProject(
+  projectCode: string
+): Promise<ApiResponse<Observation[]>> {
+  const query = `
+    SELECT TOP 100
+      obs_id, target_name, s_ra, s_dec, t_min, t_exptime,
+      instrument_name, obs_collection, access_url, project_code
+    FROM ivoa.ObsCore
+    WHERE obs_collection = 'ASKAP'
+      AND project_code LIKE '%${projectCode}%'
+    ORDER BY t_min DESC
+  `
+
+  const result = await queryCASDATAP(query)
+
+  if (!result.success) {
+    return result as ApiResponse<Observation[]>
+  }
+
+  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as CASDACatalogEntry))
+
+  return {
+    success: true,
+    data: observations,
+  }
+}
+
+/**
+ * Get recent ASKAP observations
+ */
+export async function getRecentASKAPObservations(
+  limit: number = 50
+): Promise<ApiResponse<Observation[]>> {
+  const query = `
+    SELECT TOP ${limit}
+      obs_id, target_name, s_ra, s_dec, t_min, t_exptime,
+      instrument_name, obs_collection, access_url, project_code
+    FROM ivoa.ObsCore
+    WHERE obs_collection = 'ASKAP'
+      AND dataproduct_type = 'cube'
+    ORDER BY t_min DESC
+  `
+
+  const result = await queryCASDATAP(query)
+
+  if (!result.success) {
+    return result as ApiResponse<Observation[]>
+  }
+
+  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as CASDACatalogEntry))
+
+  return {
+    success: true,
+    data: observations,
+  }
+}
+
+// ============================================
+// Transform Functions
+// ============================================
+
+function transformCASDATOObservation(entry: CASDACatalogEntry): Observation {
+  return {
+    id: entry.obs_id,
+    source: 'ASKAP',
+    targetName: entry.target_name || 'Unknown Target',
+    coordinates: {
+      ra: entry.s_ra,
+      dec: entry.s_dec,
+      equinox: 'J2000',
+    },
+    category: 'other', // Would need more info to categorize
+    wavelengthBand: 'radio',
+    instrument: entry.instrument_name as undefined,
+    observationDate: entry.t_min ? new Date(entry.t_min * 86400000 + Date.UTC(1858, 10, 17)).toISOString() : new Date().toISOString(),
+    exposureTime: entry.t_exptime,
+    proposalId: entry.project_code,
+    images: {
+      thumbnail: entry.thumbnail_url || '/images/radio-placeholder.svg',
+      preview: entry.thumbnail_url || '/images/radio-placeholder.svg',
+      full: entry.access_url || '',
+    },
+    externalLinks: [
+      {
+        label: 'View on CASDA',
+        url: `https://casda.csiro.au/casda_vo_tools/observations/${entry.obs_id}`,
+        type: 'other',
+      },
+    ],
+  }
+}
+
+// ============================================
+// SKA Information & Simulations
+// ============================================
+
+/**
+ * Get information about SKA science goals
+ */
+export function getSKAScienceGoals() {
+  return [
+    {
+      id: 'dark-energy',
+      title: 'Dark Energy & Dark Matter',
+      description: 'Mapping the distribution of hydrogen across the universe to understand cosmic acceleration.',
+      icon: '🌌',
+      wavelengthBand: 'radio' as const,
+      expectedResults: 'Precise measurements of the expansion history of the universe',
+    },
+    {
+      id: 'cosmic-magnetism',
+      title: 'Cosmic Magnetism',
+      description: 'Understanding the origin and evolution of magnetic fields in the universe.',
+      icon: '🧲',
+      wavelengthBand: 'radio' as const,
+      expectedResults: 'First detailed maps of intergalactic magnetic fields',
+    },
+    {
+      id: 'pulsars',
+      title: 'Gravity & Pulsars',
+      description: 'Using pulsars as natural gravitational wave detectors and to test general relativity.',
+      icon: '💫',
+      wavelengthBand: 'radio' as const,
+      expectedResults: 'Detection of gravitational waves from supermassive black hole mergers',
+    },
+    {
+      id: 'epoch-reionization',
+      title: 'Cosmic Dawn & Epoch of Reionization',
+      description: 'Observing the first stars and galaxies that lit up the universe.',
+      icon: '🌅',
+      wavelengthBand: 'radio' as const,
+      expectedResults: 'Direct observation of the first billion years of cosmic history',
+    },
+    {
+      id: 'seti',
+      title: 'Search for Extraterrestrial Intelligence',
+      description: 'The most comprehensive search for technosignatures in history.',
+      icon: '👽',
+      wavelengthBand: 'radio' as const,
+      expectedResults: 'Survey of millions of star systems for artificial signals',
+    },
+    {
+      id: 'transients',
+      title: 'Transient Radio Sky',
+      description: 'Monitoring the sky for fast radio bursts, supernovae, and other explosive events.',
+      icon: '💥',
+      wavelengthBand: 'radio' as const,
+      expectedResults: 'Real-time detection and localization of cosmic explosions',
+    },
+  ]
+}
+
+/**
+ * Get SKA construction timeline
+ */
+export function getSKATimeline() {
+  return [
+    { year: 2012, event: 'Site selection - Australia and South Africa chosen', status: 'completed' },
+    { year: 2018, event: 'SKA Observatory established', status: 'completed' },
+    { year: 2021, event: 'Construction approved', status: 'completed' },
+    { year: 2022, event: 'Construction begins', status: 'completed' },
+    { year: 2024, event: 'First antennas deployed at SKA-Low (Australia)', status: 'in-progress' },
+    { year: 2027, event: 'Expected first light observations', status: 'upcoming' },
+    { year: 2028, event: 'Early science operations begin', status: 'upcoming' },
+    { year: 2030, event: 'Full array completion', status: 'upcoming' },
+  ]
+}
+
+/**
+ * Compare SKA to current telescopes
+ */
+export function getSKAComparison() {
+  return {
+    sensitivity: {
+      current: 'Current largest radio telescopes',
+      ska: '50x more sensitive',
+      description: 'SKA will be able to detect signals 50 times fainter than current telescopes',
+    },
+    surveySpeed: {
+      current: 'Years to survey the sky',
+      ska: 'Days to weeks',
+      description: 'SKA will survey the entire sky millions of times faster',
+    },
+    resolution: {
+      current: 'Arcsecond resolution',
+      ska: 'Milliarcsecond resolution',
+      description: 'Able to see details 50 times smaller',
+    },
+    dataRate: {
+      current: 'Gigabytes per second',
+      ska: '710 petabytes per day (raw)',
+      description: 'More data than the entire internet traffic combined',
+    },
+    baselines: {
+      current: 'Hundreds of kilometers',
+      ska: 'Up to 3,000 km',
+      description: 'Creates a virtual telescope thousands of kilometers wide',
+    },
+  }
+}
+
+// ============================================
+// Featured Australian Radio Observations
+// ============================================
+
+export function getFeaturedRadioObservations(): Observation[] {
+  return [
+    {
+      id: 'askap-emu-pilot',
+      source: 'ASKAP',
+      targetName: 'EMU Pilot Survey Region',
+      aliases: ['Evolutionary Map of the Universe Pilot'],
+      coordinates: { ra: 0, dec: -27, equinox: 'J2000' },
+      category: 'deep-field',
+      wavelengthBand: 'radio',
+      observationDate: '2021-01-15T00:00:00Z',
+      images: {
+        thumbnail: '/images/emu-pilot.jpg',
+        preview: '/images/emu-pilot.jpg',
+        full: '/images/emu-pilot.jpg',
+      },
+      description: 'Radio continuum survey revealing millions of galaxies across the southern sky.',
+      isFeatured: true,
+      analysis: {
+        summary: 'ASKAP\'s EMU survey will catalog approximately 70 million galaxies at radio wavelengths.',
+        scientificContext: 'This survey is a pathfinder for SKA continuum science, demonstrating the power of wide-field radio imaging.',
+        keyFeatures: ['Radio galaxies', 'Active galactic nuclei', 'Star-forming galaxies'],
+        relatedObjects: ['Radio galaxy population'],
+        confidence: 'high',
+        generatedAt: new Date().toISOString(),
+      },
+      externalLinks: [
+        { label: 'EMU Project', url: 'https://www.atnf.csiro.au/people/Ray.Norris/emu/', type: 'other' },
+      ],
+    },
+    {
+      id: 'parkes-fast-radio-burst',
+      source: 'Parkes',
+      targetName: 'FRB 010724 (Lorimer Burst)',
+      aliases: ['The Lorimer Burst', 'First FRB'],
+      coordinates: { ra: 1.4, dec: -73.5, equinox: 'J2000' },
+      category: 'other',
+      wavelengthBand: 'radio',
+      observationDate: '2001-07-24T00:00:00Z',
+      images: {
+        thumbnail: '/images/frb-detection.jpg',
+        preview: '/images/frb-detection.jpg',
+        full: '/images/frb-detection.jpg',
+      },
+      description: 'The first fast radio burst ever discovered - a mysterious millisecond flash of radio waves.',
+      isFeatured: true,
+      analysis: {
+        summary: 'The discovery that launched an entirely new field of astrophysics.',
+        scientificContext: 'Fast radio bursts are intense millisecond pulses of radio waves from distant galaxies. Their origin is still being investigated.',
+        keyFeatures: ['Millisecond duration', 'High dispersion measure', 'Extragalactic origin'],
+        relatedObjects: ['Magnetars', 'Neutron stars'],
+        funFacts: ['In that millisecond, the burst released as much energy as the Sun does in 3 days'],
+        confidence: 'high',
+        generatedAt: new Date().toISOString(),
+      },
+    },
+    {
+      id: 'mwa-eor',
+      source: 'MWA',
+      targetName: 'Epoch of Reionization Field',
+      coordinates: { ra: 0, dec: -27, equinox: 'J2000' },
+      category: 'deep-field',
+      wavelengthBand: 'radio',
+      observationDate: '2023-06-01T00:00:00Z',
+      images: {
+        thumbnail: '/images/mwa-eor.jpg',
+        preview: '/images/mwa-eor.jpg',
+        full: '/images/mwa-eor.jpg',
+      },
+      description: 'Searching for the faint signal of neutral hydrogen from the cosmic dawn.',
+      isFeatured: true,
+      analysis: {
+        summary: 'MWA observations searching for the 21cm signal from the first billion years of the universe.',
+        scientificContext: 'During the Epoch of Reionization, the first stars and galaxies ionized the neutral hydrogen filling the universe. MWA seeks to detect this transition.',
+        keyFeatures: ['21cm hydrogen line', 'Redshifted signal', 'Foreground subtraction'],
+        relatedObjects: ['First galaxies', 'Cosmic dawn'],
+        confidence: 'high',
+        generatedAt: new Date().toISOString(),
+      },
+    },
+  ]
+}
