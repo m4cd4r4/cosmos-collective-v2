@@ -154,7 +154,7 @@ export function CitizenScienceHub() {
 
       {/* Call to Action */}
       <section className="mt-16 text-center">
-        <Card className="max-w-4xl mx-auto" variant="gradient" padding="xl">
+        <Card className="max-w-4xl mx-auto" variant="elevated" padding="xl">
           <CardContent>
             <div className="flex items-center justify-center gap-3 mb-4">
               <Radio className="w-8 h-8 text-cosmos-cyan" />

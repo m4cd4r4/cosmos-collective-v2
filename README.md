@@ -88,8 +88,8 @@ cosmos-collective/v2/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/cosmos-collective.git
-cd cosmos-collective/v2
+git clone https://github.com/m4cd4r4/cosmos-collective-v2.git
+cd cosmos-collective-v2
 
 # Install dependencies
 npm install
@@ -158,7 +158,9 @@ npm run lint
 
 ### Vercel (Recommended)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/cosmos-collective)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/m4cd4r4/cosmos-collective-v2)
+
+**Live Demo**: [cosmos-collective-v2.vercel.app](https://cosmos-collective-v2.vercel.app)
 
 ### Other Platforms
 
@@ -205,7 +207,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 <p align="center">
   Made with ❤️ for space enthusiasts everywhere
   <br />
-  <a href="https://cosmos-collective.vercel.app">Live Demo</a> •
+  <a href="https://cosmos-collective-v2.vercel.app">Live Demo</a> •
   <a href="/devlog">Devlog</a> •
-  <a href="https://github.com/yourusername/cosmos-collective/issues">Report Bug</a>
+  <a href="https://github.com/m4cd4r4/cosmos-collective-v2/issues">Report Bug</a>
 </p>

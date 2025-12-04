@@ -340,7 +340,7 @@ export function ClassificationInterface({
 
             {/* Options */}
             <div className="space-y-3" role="radiogroup" aria-label="Classification options">
-              {currentTask.options.map((option) => (
+              {currentTask.options?.map((option) => (
                 <button
                   key={option.value}
                   onClick={() => setSelectedOption(option.value)}

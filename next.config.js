@@ -45,7 +45,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.stsci.edu',
+        hostname: '**.stsci.edu',
+      },
+      {
+        protocol: 'https',
+        hostname: 'mast.stsci.edu',
       },
       {
         protocol: 'https',
@@ -61,7 +65,11 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: '*.zooniverse.org',
+        hostname: '**.zooniverse.org',
+      },
+      {
+        protocol: 'https',
+        hostname: 'panoptes-uploads.zooniverse.org',
       },
       {
         protocol: 'https',
@@ -73,6 +81,7 @@ const nextConfig = {
       }
     ],
     formats: ['image/avif', 'image/webp'],
+    unoptimized: process.env.NODE_ENV === 'development',
   },
 
   experimental: {

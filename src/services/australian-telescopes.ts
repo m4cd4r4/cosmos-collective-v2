@@ -159,10 +159,10 @@ export async function searchASKAPByPosition(
   const result = await queryCASDATAP(query)
 
   if (!result.success) {
-    return result as ApiResponse<Observation[]>
+    return result as unknown as ApiResponse<Observation[]>
   }
 
-  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as CASDACatalogEntry))
+  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as unknown as CASDACatalogEntry))
 
   return {
     success: true,
@@ -189,10 +189,10 @@ export async function searchASKAPByProject(
   const result = await queryCASDATAP(query)
 
   if (!result.success) {
-    return result as ApiResponse<Observation[]>
+    return result as unknown as ApiResponse<Observation[]>
   }
 
-  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as CASDACatalogEntry))
+  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as unknown as CASDACatalogEntry))
 
   return {
     success: true,
@@ -219,10 +219,10 @@ export async function getRecentASKAPObservations(
   const result = await queryCASDATAP(query)
 
   if (!result.success) {
-    return result as ApiResponse<Observation[]>
+    return result as unknown as ApiResponse<Observation[]>
   }
 
-  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as CASDACatalogEntry))
+  const observations = (result.data || []).map((row) => transformCASDATOObservation(row as unknown as CASDACatalogEntry))
 
   return {
     success: true,
@@ -246,7 +246,7 @@ function transformCASDATOObservation(entry: CASDACatalogEntry): Observation {
     },
     category: 'other', // Would need more info to categorize
     wavelengthBand: 'radio',
-    instrument: entry.instrument_name as undefined,
+    instrument: undefined, // Radio telescope - not a JWST instrument
     observationDate: entry.t_min ? new Date(entry.t_min * 86400000 + Date.UTC(1858, 10, 17)).toISOString() : new Date().toISOString(),
     exposureTime: entry.t_exptime,
     proposalId: entry.project_code,

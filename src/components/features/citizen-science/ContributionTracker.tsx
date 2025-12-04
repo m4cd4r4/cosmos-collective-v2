@@ -353,7 +353,7 @@ export function ContributionTracker() {
       )}
 
       {/* Call to Action */}
-      <Card padding="lg" variant="gradient" className="text-center">
+      <Card padding="lg" variant="elevated" className="text-center">
         <CardContent>
           <Sparkles className="w-10 h-10 text-cosmos-gold mx-auto mb-4" />
           <h3 className="text-xl font-semibold text-white mb-2">

@@ -1,3 +1,5 @@
+'use client'
+
 /**
  * Offline Page
  * Shown when the user is offline and the requested page is not cached

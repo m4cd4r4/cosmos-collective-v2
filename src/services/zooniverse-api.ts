@@ -26,7 +26,7 @@ export interface ZooniverseProject {
   retired_subjects_count: number
   completeness: number
   workflow_description?: string
-  urls: {
+  urls?: {
     external?: { label: string; url: string }[]
   }
   tags: string[]

@@ -64,7 +64,7 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
       <Component
         ref={ref as any}
         className={cn(cardVariants({ variant, padding }), className)}
-        {...props}
+        {...(props as any)}
       >
         {children}
       </Component>

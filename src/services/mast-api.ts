@@ -339,7 +339,7 @@ export async function getObservationProducts(
     return {
       success: true,
       data:
-        response.data.data?.map((p: Record<string, string>) => ({
+        (response.data.data as any[])?.map((p: any) => ({
           dataURI: p.dataURI,
           productType: p.productType,
         })) || [],
