@@ -1,0 +1,60 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="cosmosGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#ec4899" stop-opacity="0.15"/>
+      <stop offset="30%" stop-color="#a855f7" stop-opacity="0.1"/>
+      <stop offset="60%" stop-color="#06b6d4" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="#030014" stop-opacity="1"/>
+    </radialGradient>
+    <filter id="cosmosGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect fill="#030014" width="400" height="300"/>
+  <rect fill="url(#cosmosGrad)" width="400" height="300"/>
+
+  <!-- Stars field -->
+  <g fill="#ffffff">
+    <circle cx="50" cy="40" r="1" opacity="0.6"/>
+    <circle cx="350" cy="60" r="1.5" opacity="0.8"/>
+    <circle cx="80" cy="200" r="1" opacity="0.5"/>
+    <circle cx="320" cy="180" r="1" opacity="0.7"/>
+    <circle cx="150" cy="30" r="0.8" opacity="0.6"/>
+    <circle cx="280" cy="250" r="1.2" opacity="0.5"/>
+    <circle cx="30" cy="120" r="1" opacity="0.4"/>
+    <circle cx="370" cy="140" r="0.8" opacity="0.6"/>
+    <circle cx="180" cy="260" r="1" opacity="0.5"/>
+    <circle cx="220" cy="20" r="1.2" opacity="0.7"/>
+    <circle cx="100" cy="90" r="0.6" opacity="0.5"/>
+    <circle cx="300" cy="100" r="0.8" opacity="0.6"/>
+  </g>
+
+  <!-- Spiral galaxy -->
+  <g transform="translate(200, 150)" filter="url(#cosmosGlow)">
+    <!-- Core -->
+    <ellipse cx="0" cy="0" rx="20" ry="12" fill="#f59e0b" opacity="0.8"/>
+
+    <!-- Spiral arms -->
+    <g stroke="#ec4899" stroke-width="3" fill="none" opacity="0.5">
+      <path d="M 10 0 Q 40 -30 60 -20 Q 80 -10 70 20 Q 60 50 30 40"/>
+      <path d="M -10 0 Q -40 30 -60 20 Q -80 10 -70 -20 Q -60 -50 -30 -40"/>
+    </g>
+
+    <!-- Outer glow -->
+    <ellipse cx="0" cy="0" rx="80" ry="50" stroke="#a855f7" stroke-width="1" fill="none" opacity="0.2"/>
+  </g>
+
+  <!-- Label -->
+  <text x="200" y="265" text-anchor="middle" fill="#f59e0b" font-family="system-ui, sans-serif" font-size="14" font-weight="600">
+    Cosmos Collective
+  </text>
+  <text x="200" y="282" text-anchor="middle" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="11">
+    Astronomical Observation
+  </text>
+</svg>

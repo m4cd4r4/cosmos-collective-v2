@@ -5,7 +5,7 @@
  * Glass-morphism cards for displaying content
  */
 
-import { forwardRef, type HTMLAttributes } from 'react'
+import { forwardRef, useState, type HTMLAttributes } from 'react'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
@@ -166,6 +166,9 @@ CardFooter.displayName = 'CardFooter'
 // Image Card (for observations)
 // ============================================
 
+// Default fallback image for when images fail to load
+const FALLBACK_IMAGE = '/images/cosmos-placeholder.svg'
+
 export interface ImageCardProps extends Omit<CardProps, 'children'> {
   /** Image source URL */
   src: string
@@ -183,6 +186,8 @@ export interface ImageCardProps extends Omit<CardProps, 'children'> {
   isLoading?: boolean
   /** Aspect ratio */
   aspectRatio?: 'video' | 'square' | 'golden' | 'astronomical'
+  /** Fallback image URL */
+  fallbackSrc?: string
 }
 
 export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
@@ -197,10 +202,14 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
       badgeVariant = 'cyan',
       isLoading,
       aspectRatio = 'video',
+      fallbackSrc = FALLBACK_IMAGE,
       ...props
     },
     ref
   ) => {
+    const [imgSrc, setImgSrc] = useState(src)
+    const [hasError, setHasError] = useState(false)
+
     const aspectClasses = {
       video: 'aspect-video',
       square: 'aspect-square',
@@ -213,6 +222,13 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
       gold: 'bg-cosmos-gold/20 text-cosmos-gold',
       purple: 'bg-cosmos-purple/20 text-cosmos-purple',
       pink: 'bg-cosmos-pink/20 text-cosmos-pink',
+    }
+
+    const handleImageError = () => {
+      if (!hasError) {
+        setHasError(true)
+        setImgSrc(fallbackSrc)
+      }
     }
 
     return (
@@ -229,9 +245,10 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
           ) : (
             <>
               <img
-                src={src}
+                src={imgSrc}
                 alt={alt}
                 loading="lazy"
+                onError={handleImageError}
                 className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {/* Gradient overlay */}

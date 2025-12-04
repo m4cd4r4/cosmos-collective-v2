@@ -1,0 +1,51 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="askapGrad" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#22c55e" stop-opacity="0.2"/>
+      <stop offset="100%" stop-color="#030014" stop-opacity="1"/>
+    </radialGradient>
+    <filter id="askapGlow">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect fill="#030014" width="400" height="300"/>
+  <rect fill="url(#askapGrad)" width="400" height="300"/>
+
+  <!-- Stars -->
+  <g fill="#ffffff" opacity="0.3">
+    <circle cx="50" cy="40" r="1"/>
+    <circle cx="350" cy="60" r="1.5"/>
+    <circle cx="80" cy="200" r="1"/>
+    <circle cx="320" cy="180" r="1"/>
+    <circle cx="150" cy="30" r="0.8"/>
+    <circle cx="280" cy="250" r="1.2"/>
+  </g>
+
+  <!-- Radio source visualization -->
+  <g filter="url(#askapGlow)">
+    <!-- Central core -->
+    <ellipse cx="200" cy="150" rx="15" ry="10" fill="#22c55e" opacity="0.8"/>
+
+    <!-- Jets -->
+    <path d="M 185 150 Q 120 130 60 100" stroke="#22c55e" stroke-width="3" fill="none" opacity="0.6"/>
+    <path d="M 215 150 Q 280 170 340 200" stroke="#22c55e" stroke-width="3" fill="none" opacity="0.6"/>
+
+    <!-- Lobes -->
+    <ellipse cx="80" cy="110" rx="30" ry="20" fill="#22c55e" opacity="0.3"/>
+    <ellipse cx="320" cy="190" rx="30" ry="20" fill="#22c55e" opacity="0.3"/>
+  </g>
+
+  <!-- Label -->
+  <text x="200" y="265" text-anchor="middle" fill="#22c55e" font-family="system-ui, sans-serif" font-size="12" font-weight="600">
+    ASKAP
+  </text>
+  <text x="200" y="282" text-anchor="middle" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="11">
+    Radio Galaxy Survey
+  </text>
+</svg>

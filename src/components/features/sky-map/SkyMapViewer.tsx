@@ -315,15 +315,11 @@ export function SkyMapViewer({
 
   return (
     <>
-      {/* Load Aladin Lite */}
+      {/* Load Aladin Lite - CSS is loaded in app/layout.tsx */}
       <Script
         src="https://aladin.u-strasbg.fr/AladinLite/api/v3/latest/aladin.js"
         strategy="afterInteractive"
         onLoad={initializeAladin}
-      />
-      <link
-        rel="stylesheet"
-        href="https://aladin.u-strasbg.fr/AladinLite/api/v3/latest/aladin.min.css"
       />
 
       <div className="absolute inset-0 flex">

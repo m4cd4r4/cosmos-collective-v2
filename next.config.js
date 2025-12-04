@@ -5,13 +5,24 @@ const withPWA = require('next-pwa')({
   disable: process.env.NODE_ENV === 'development',
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/stsci-opo\.org\/.*/i,
+      urlPattern: /^https:\/\/www\.nasa\.gov\/wp-content\/uploads\/.*/i,
       handler: 'CacheFirst',
       options: {
-        cacheName: 'jwst-images',
+        cacheName: 'nasa-images',
         expiration: {
           maxEntries: 100,
           maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
+        }
+      }
+    },
+    {
+      urlPattern: /^https:\/\/images-api\.nasa\.gov\/.*/i,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'nasa-api',
+        expiration: {
+          maxEntries: 50,
+          maxAgeSeconds: 60 * 60 * 24 // 1 day
         }
       }
     },
@@ -58,6 +69,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'apod.nasa.gov',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images-api.nasa.gov',
+      },
+      {
+        protocol: 'https',
+        hostname: 'images-assets.nasa.gov',
       },
       {
         protocol: 'https',
