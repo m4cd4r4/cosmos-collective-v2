@@ -17,6 +17,14 @@ const CASDA_BASE = 'https://casda.csiro.au'
 const CASDA_TAP = `${CASDA_BASE}/votools/tap/sync`
 const CASDA_SIA = `${CASDA_BASE}/votools/sia2/query`
 
+// Placeholder images for radio observations
+const RADIO_PLACEHOLDER_IMAGES = {
+  askap: '/images/askap-placeholder.svg',
+  parkes: '/images/parkes-placeholder.svg',
+  mwa: '/images/mwa-placeholder.svg',
+  generic: '/images/radio-placeholder.svg',
+}
+
 // Australian telescope information
 export const AUSTRALIAN_TELESCOPES = {
   askap: {
@@ -251,8 +259,8 @@ function transformCASDATOObservation(entry: CASDACatalogEntry): Observation {
     exposureTime: entry.t_exptime,
     proposalId: entry.project_code,
     images: {
-      thumbnail: entry.thumbnail_url || '/images/radio-placeholder.svg',
-      preview: entry.thumbnail_url || '/images/radio-placeholder.svg',
+      thumbnail: entry.thumbnail_url || RADIO_PLACEHOLDER_IMAGES.generic,
+      preview: entry.thumbnail_url || RADIO_PLACEHOLDER_IMAGES.generic,
       full: entry.access_url || '',
     },
     externalLinks: [
@@ -390,9 +398,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2021-01-15T00:00:00Z',
       images: {
-        thumbnail: '/images/emu-pilot.jpg',
-        preview: '/images/emu-pilot.jpg',
-        full: '/images/emu-pilot.jpg',
+        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
+        preview: RADIO_PLACEHOLDER_IMAGES.askap,
+        full: RADIO_PLACEHOLDER_IMAGES.askap,
       },
       description: 'Radio continuum survey revealing millions of galaxies across the southern sky.',
       isFeatured: true,
@@ -418,9 +426,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2001-07-24T00:00:00Z',
       images: {
-        thumbnail: '/images/frb-detection.jpg',
-        preview: '/images/frb-detection.jpg',
-        full: '/images/frb-detection.jpg',
+        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
+        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
+        full: RADIO_PLACEHOLDER_IMAGES.parkes,
       },
       description: 'The first fast radio burst ever discovered - a mysterious millisecond flash of radio waves.',
       isFeatured: true,
@@ -443,9 +451,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2023-06-01T00:00:00Z',
       images: {
-        thumbnail: '/images/mwa-eor.jpg',
-        preview: '/images/mwa-eor.jpg',
-        full: '/images/mwa-eor.jpg',
+        thumbnail: RADIO_PLACEHOLDER_IMAGES.mwa,
+        preview: RADIO_PLACEHOLDER_IMAGES.mwa,
+        full: RADIO_PLACEHOLDER_IMAGES.mwa,
       },
       description: 'Searching for the faint signal of neutral hydrogen from the cosmic dawn.',
       isFeatured: true,

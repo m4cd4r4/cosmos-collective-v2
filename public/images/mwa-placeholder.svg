@@ -1,0 +1,48 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="mwaGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#a855f7" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#06b6d4" stop-opacity="0.1"/>
+      <stop offset="100%" stop-color="#030014" stop-opacity="1"/>
+    </radialGradient>
+    <filter id="mwaGlow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect fill="#030014" width="400" height="300"/>
+  <rect fill="url(#mwaGrad)" width="400" height="300"/>
+
+  <!-- Epoch of Reionization visualization - cosmic web -->
+  <g filter="url(#mwaGlow)" opacity="0.6">
+    <!-- Filaments -->
+    <path d="M 50 100 Q 150 80 200 150 Q 250 220 350 200" stroke="#a855f7" stroke-width="8" fill="none" opacity="0.3"/>
+    <path d="M 80 200 Q 150 180 200 150 Q 280 100 320 80" stroke="#06b6d4" stroke-width="6" fill="none" opacity="0.3"/>
+    <path d="M 30 150 Q 100 130 200 150 Q 300 170 380 140" stroke="#a855f7" stroke-width="4" fill="none" opacity="0.4"/>
+
+    <!-- Nodes (early galaxies) -->
+    <circle cx="100" cy="120" r="6" fill="#a855f7" opacity="0.5"/>
+    <circle cx="200" cy="150" r="10" fill="#06b6d4" opacity="0.6"/>
+    <circle cx="300" cy="130" r="5" fill="#a855f7" opacity="0.4"/>
+    <circle cx="150" cy="180" r="4" fill="#06b6d4" opacity="0.5"/>
+    <circle cx="280" cy="190" r="7" fill="#a855f7" opacity="0.4"/>
+  </g>
+
+  <!-- 21cm signal representation -->
+  <g stroke="#06b6d4" fill="none" stroke-width="1" opacity="0.3">
+    <path d="M 30 240 Q 50 235 70 240 Q 90 245 110 240 Q 130 235 150 240 Q 170 245 190 240 Q 210 235 230 240 Q 250 245 270 240 Q 290 235 310 240 Q 330 245 350 240 Q 370 235 390 240"/>
+  </g>
+
+  <!-- Label -->
+  <text x="200" y="265" text-anchor="middle" fill="#a855f7" font-family="system-ui, sans-serif" font-size="12" font-weight="600">
+    MWA
+  </text>
+  <text x="200" y="282" text-anchor="middle" fill="#9ca3af" font-family="system-ui, sans-serif" font-size="11">
+    Epoch of Reionization
+  </text>
+</svg>

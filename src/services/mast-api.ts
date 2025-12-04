@@ -362,8 +362,23 @@ export async function getObservationProducts(
 // ============================================
 
 /**
+ * NASA.gov image URLs - these are official press release images with permissive access
+ * Updated to use working URLs from nasa.gov instead of stsci-opo.org (which returns 403)
+ */
+const NASA_IMAGE_URLS = {
+  carina: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_star-forming_region_carina_702.jpg',
+  deepField: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_deep_field_702.jpg',
+  stephansQuintet: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_galaxies_702.jpg',
+  southernRing: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_stellar_702.jpg',
+  pillars: 'https://www.nasa.gov/wp-content/uploads/2022/10/stsci-01gfnp0nhpz8bk6f6vxjq3fdrr.png',
+  jupiter: 'https://www.nasa.gov/wp-content/uploads/2023/03/stsci-01g9hqd9aawqg4wt66c1bxvfbj.png',
+  tarantula: 'https://www.nasa.gov/wp-content/uploads/2023/03/stsci-01gbs7cjgbvzz7xf6xf5wqsp1s.png',
+  cartwheel: 'https://www.nasa.gov/wp-content/uploads/2023/03/stsci-01g9d2xxmvss1s2bp8ysjtrkrp_1.png',
+}
+
+/**
  * Get curated featured JWST images
- * These are hand-picked iconic images with verified URLs
+ * These are hand-picked iconic images with verified URLs from NASA.gov
  */
 export function getFeaturedJWSTImages(): Observation[] {
   return [
@@ -379,9 +394,9 @@ export function getFeaturedJWSTImages(): Observation[] {
       filters: ['F090W', 'F187N', 'F200W', 'F335M', 'F444W'],
       observationDate: '2022-07-12T00:00:00Z',
       images: {
-        thumbnail: 'https://stsci-opo.org/STScI-01G8GZR2PM5DH9B8DNSYSCXQ81.png',
-        preview: 'https://stsci-opo.org/STScI-01G8GZR2PM5DH9B8DNSYSCXQ81.png',
-        full: 'https://stsci-opo.org/STScI-01G8GZQ5RMASQ6PQMJ2P59CR6Q.png',
+        thumbnail: NASA_IMAGE_URLS.carina,
+        preview: NASA_IMAGE_URLS.carina,
+        full: NASA_IMAGE_URLS.carina,
       },
       description: 'The "Cosmic Cliffs" of the Carina Nebula reveal baby stars and structures previously hidden.',
       distanceLightYears: 7600,
@@ -412,9 +427,9 @@ export function getFeaturedJWSTImages(): Observation[] {
       filters: ['F090W', 'F150W', 'F200W', 'F277W', 'F356W', 'F444W'],
       observationDate: '2022-07-11T00:00:00Z',
       images: {
-        thumbnail: 'https://stsci-opo.org/STScI-01G7JJADTH90FR98AKKJFKSS0B.png',
-        preview: 'https://stsci-opo.org/STScI-01G7JJADTH90FR98AKKJFKSS0B.png',
-        full: 'https://stsci-opo.org/STScI-01G7DBRVK5M1JW5V3RXM1EY0Y0.png',
+        thumbnail: NASA_IMAGE_URLS.deepField,
+        preview: NASA_IMAGE_URLS.deepField,
+        full: NASA_IMAGE_URLS.deepField,
       },
       description: "JWST's first deep field image, showing thousands of galaxies including some from 13 billion years ago.",
       redshift: 0.39,
@@ -441,9 +456,9 @@ export function getFeaturedJWSTImages(): Observation[] {
       instrument: 'NIRCam',
       observationDate: '2022-07-12T00:00:00Z',
       images: {
-        thumbnail: 'https://stsci-opo.org/STScI-01G8H12BQGA8KBQCN6YT9MA6PG.png',
-        preview: 'https://stsci-opo.org/STScI-01G8H12BQGA8KBQCN6YT9MA6PG.png',
-        full: 'https://stsci-opo.org/STScI-01G8H1118D6WV5XFEXJTZWN2W6.png',
+        thumbnail: NASA_IMAGE_URLS.stephansQuintet,
+        preview: NASA_IMAGE_URLS.stephansQuintet,
+        full: NASA_IMAGE_URLS.stephansQuintet,
       },
       description: 'A visual grouping of five galaxies, four of which are locked in a cosmic dance of collisions.',
       distanceLightYears: 290000000,
@@ -469,9 +484,9 @@ export function getFeaturedJWSTImages(): Observation[] {
       instrument: 'NIRCam',
       observationDate: '2022-07-12T00:00:00Z',
       images: {
-        thumbnail: 'https://stsci-opo.org/STScI-01G8H0TDKJ5X2VVMD8X2HCCXTQ.png',
-        preview: 'https://stsci-opo.org/STScI-01G8H0TDKJ5X2VVMD8X2HCCXTQ.png',
-        full: 'https://stsci-opo.org/STScI-01G8H0TB22PRFTKDEWDHFJ2XST.png',
+        thumbnail: NASA_IMAGE_URLS.southernRing,
+        preview: NASA_IMAGE_URLS.southernRing,
+        full: NASA_IMAGE_URLS.southernRing,
       },
       description: 'A planetary nebula - shells of gas and dust expelled by a dying star.',
       distanceLightYears: 2500,
@@ -497,9 +512,9 @@ export function getFeaturedJWSTImages(): Observation[] {
       instrument: 'NIRCam',
       observationDate: '2022-10-19T00:00:00Z',
       images: {
-        thumbnail: 'https://stsci-opo.org/STScI-01GFK4S3B8XH9JYXVVC5SFK4J2.png',
-        preview: 'https://stsci-opo.org/STScI-01GFK4S3B8XH9JYXVVC5SFK4J2.png',
-        full: 'https://stsci-opo.org/STScI-01GFK4RN3Q73HGEDPGX0NCCHE4.png',
+        thumbnail: NASA_IMAGE_URLS.pillars,
+        preview: NASA_IMAGE_URLS.pillars,
+        full: NASA_IMAGE_URLS.pillars,
       },
       description: 'The iconic Pillars of Creation in the Eagle Nebula, now revealed in unprecedented infrared detail.',
       distanceLightYears: 6500,
@@ -525,9 +540,9 @@ export function getFeaturedJWSTImages(): Observation[] {
       instrument: 'NIRCam',
       observationDate: '2022-08-22T00:00:00Z',
       images: {
-        thumbnail: 'https://stsci-opo.org/STScI-01G9HQCCKFWB8DSXSDCQPXM5ME.png',
-        preview: 'https://stsci-opo.org/STScI-01G9HQCCKFWB8DSXSDCQPXM5ME.png',
-        full: 'https://stsci-opo.org/STScI-01G9HQ39ZCCEMW51HWEKRBH4B2.png',
+        thumbnail: NASA_IMAGE_URLS.jupiter,
+        preview: NASA_IMAGE_URLS.jupiter,
+        full: NASA_IMAGE_URLS.jupiter,
       },
       description: 'Jupiter in infrared light, revealing auroras, storms, and rings in stunning detail.',
       isFeatured: true,
@@ -553,9 +568,9 @@ export function getFeaturedJWSTImages(): Observation[] {
       instrument: 'NIRCam',
       observationDate: '2022-09-06T00:00:00Z',
       images: {
-        thumbnail: 'https://stsci-opo.org/STScI-01GBZ7CZ2R5F1MP8JMRSWJQPR1.png',
-        preview: 'https://stsci-opo.org/STScI-01GBZ7CZ2R5F1MP8JMRSWJQPR1.png',
-        full: 'https://stsci-opo.org/STScI-01GBZYB6C7YHP8E2SHK4XMFCGY.png',
+        thumbnail: NASA_IMAGE_URLS.tarantula,
+        preview: NASA_IMAGE_URLS.tarantula,
+        full: NASA_IMAGE_URLS.tarantula,
       },
       description: 'The most violent star-forming region in our cosmic neighborhood.',
       distanceLightYears: 161000,
@@ -582,9 +597,9 @@ export function getFeaturedJWSTImages(): Observation[] {
       instrument: 'NIRCam',
       observationDate: '2022-08-02T00:00:00Z',
       images: {
-        thumbnail: 'https://stsci-opo.org/STScI-01G9D2YE3S3BTGDC4FE2HSHFGA.png',
-        preview: 'https://stsci-opo.org/STScI-01G9D2YE3S3BTGDC4FE2HSHFGA.png',
-        full: 'https://stsci-opo.org/STScI-01G9D2XQKA5PH1MFHE2HT5K1G5.png',
+        thumbnail: NASA_IMAGE_URLS.cartwheel,
+        preview: NASA_IMAGE_URLS.cartwheel,
+        full: NASA_IMAGE_URLS.cartwheel,
       },
       description: 'A ring galaxy formed by a spectacular collision with another galaxy.',
       distanceLightYears: 500000000,
