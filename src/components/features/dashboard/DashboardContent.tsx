@@ -2,17 +2,20 @@
 
 /**
  * Dashboard Content
- * Main dashboard component showing user stats and activity
+ * Real-time astronomy dashboard with live data from APIs
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCosmosStore } from '@/store/cosmos-store'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { cn } from '@/lib/utils'
+import { cn, formatDate } from '@/lib/utils'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
-import { getUserStats, getRankForClassifications, getNextRank, FEATURED_ZOONIVERSE_PROJECTS } from '@/services/zooniverse-api'
+import { getFeaturedRadioObservations, getSKAScienceGoals, getSKATimeline } from '@/services/australian-telescopes'
+import { FEATURED_ZOONIVERSE_PROJECTS } from '@/services/zooniverse-api'
+import { getAllCurrentEvents, getISSPosition, getAstronomyPictureOfTheDay, type APODData } from '@/services/real-time-events'
+import type { AstronomicalEvent, Observation } from '@/types'
 import {
   Heart,
   Star,
@@ -28,20 +31,26 @@ import {
   Radio,
   BookOpen,
   Settings,
-  User,
+  Zap,
+  Globe,
+  Satellite,
+  RefreshCw,
+  Loader2,
+  ExternalLink,
+  Image,
 } from 'lucide-react'
 
 // ============================================
 // Tabs
 // ============================================
 
-type TabId = 'overview' | 'favorites' | 'activity' | 'settings'
+type TabId = 'overview' | 'favorites' | 'events' | 'projects'
 
 const tabs = [
   { id: 'overview' as TabId, label: 'Overview', icon: TrendingUp },
   { id: 'favorites' as TabId, label: 'Favorites', icon: Heart },
-  { id: 'activity' as TabId, label: 'Activity', icon: Clock },
-  { id: 'settings' as TabId, label: 'Settings', icon: Settings },
+  { id: 'events' as TabId, label: 'Live Events', icon: Zap },
+  { id: 'projects' as TabId, label: 'Projects', icon: Target },
 ]
 
 // ============================================
@@ -50,16 +59,73 @@ const tabs = [
 
 export function DashboardContent() {
   const [activeTab, setActiveTab] = useState<TabId>('overview')
-  const { favorites, preferences, clearFavorites } = useCosmosStore()
+  const { favorites, clearFavorites } = useCosmosStore()
+  const [events, setEvents] = useState<AstronomicalEvent[]>([])
+  const [apod, setApod] = useState<APODData | null>(null)
+  const [issPosition, setIssPosition] = useState<{ lat: number; lon: number } | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Get user stats (mock data for now)
-  const stats = getUserStats()
-  const currentRank = getRankForClassifications(stats.classificationsCount)
-  const nextRankInfo = getNextRank(stats.classificationsCount)
-
-  // Get favorite observations
-  const allObservations = getFeaturedJWSTImages()
+  // Get all observations
+  const jwstObservations = getFeaturedJWSTImages()
+  const radioObservations = getFeaturedRadioObservations()
+  const allObservations = [...jwstObservations, ...radioObservations]
   const favoriteObservations = allObservations.filter((obs) => favorites.includes(obs.id))
+
+  // Real-time stats
+  const stats = {
+    totalObservations: allObservations.length,
+    activeProjects: FEATURED_ZOONIVERSE_PROJECTS.length,
+    liveEvents: events.length,
+    savedFavorites: favorites.length,
+  }
+
+  // Fetch live data
+  useEffect(() => {
+    async function fetchData() {
+      setIsLoading(true)
+      try {
+        const [eventsResult, apodResult, issResult] = await Promise.allSettled([
+          getAllCurrentEvents(),
+          getAstronomyPictureOfTheDay(),
+          getISSPosition(),
+        ])
+
+        if (eventsResult.status === 'fulfilled' && eventsResult.value.success) {
+          setEvents(eventsResult.value.data || [])
+        }
+
+        if (apodResult.status === 'fulfilled' && apodResult.value.success) {
+          setApod(apodResult.value.data || null)
+        }
+
+        if (issResult.status === 'fulfilled' && issResult.value.success && issResult.value.data) {
+          setIssPosition({
+            lat: issResult.value.data.position.lat,
+            lon: issResult.value.data.position.lon,
+          })
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchData()
+
+    // Refresh ISS position every 30 seconds
+    const interval = setInterval(async () => {
+      const result = await getISSPosition()
+      if (result.success && result.data) {
+        setIssPosition({
+          lat: result.data.position.lat,
+          lon: result.data.position.lon,
+        })
+      }
+    }, 30000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <div className="container mx-auto px-4">
@@ -68,18 +134,22 @@ export function DashboardContent() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h1 className="text-3xl md:text-4xl font-display font-bold text-white mb-2">
-              Welcome Back, Explorer
+              Cosmos <span className="text-gradient-stellar">Dashboard</span>
             </h1>
             <p className="text-gray-400">
-              Track your cosmic journey and contributions
+              Real-time astronomical data and your cosmic collection
             </p>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cosmos-gold/10 border border-cosmos-gold/30">
-              <Award className="w-5 h-5 text-cosmos-gold" />
-              <span className="text-cosmos-gold font-medium">{currentRank.name}</span>
-            </div>
+            {issPosition && (
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-cosmos-cyan/10 border border-cosmos-cyan/30">
+                <Satellite className="w-4 h-4 text-cosmos-cyan" />
+                <span className="text-xs text-cosmos-cyan">
+                  ISS: {issPosition.lat.toFixed(1)}°, {issPosition.lon.toFixed(1)}°
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </section>
@@ -87,27 +157,27 @@ export function DashboardContent() {
       {/* Quick Stats */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         <StatCard
-          icon={Target}
-          value={stats.classificationsCount}
-          label="Classifications"
+          icon={Telescope}
+          value={stats.totalObservations}
+          label="Observations"
           color="cyan"
         />
         <StatCard
           icon={Heart}
-          value={favorites.length}
+          value={stats.savedFavorites}
           label="Favorites"
           color="pink"
         />
         <StatCard
-          icon={Telescope}
-          value={stats.projectsContributed}
-          label="Projects"
+          icon={Target}
+          value={stats.activeProjects}
+          label="Active Projects"
           color="gold"
         />
         <StatCard
-          icon={Clock}
-          value={`${stats.hoursSpent}h`}
-          label="Time Spent"
+          icon={Zap}
+          value={stats.liveEvents}
+          label="Live Events"
           color="purple"
         />
       </section>
@@ -144,45 +214,42 @@ export function DashboardContent() {
         {/* Overview Panel */}
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Progress Card */}
-            <Card className="lg:col-span-2" padding="lg">
-              <CardContent>
-                <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5 text-cosmos-cyan" />
-                  Your Progress
-                </h2>
-
-                {/* Rank Progress */}
-                {nextRankInfo && (
-                  <div className="mb-8">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-gray-400">{currentRank.name}</span>
-                      <span className="text-cosmos-gold">{nextRankInfo.rank.name}</span>
+            {/* APOD Card */}
+            <Card className="lg:col-span-2" padding="none">
+              <CardContent className="p-0">
+                {apod ? (
+                  <div className="relative">
+                    {apod.media_type === 'image' && (
+                      <div className="relative aspect-video overflow-hidden rounded-t-xl">
+                        <img
+                          src={apod.url}
+                          alt={apod.title}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void via-transparent to-transparent" />
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 text-cosmos-gold text-sm mb-2">
+                        <Image className="w-4 h-4" />
+                        NASA Picture of the Day
+                      </div>
+                      <h2 className="text-xl font-semibold text-white mb-2">{apod.title}</h2>
+                      <p className="text-gray-400 text-sm line-clamp-3">{apod.explanation}</p>
+                      {apod.copyright && (
+                        <p className="text-xs text-gray-500 mt-2">Credit: {apod.copyright}</p>
+                      )}
                     </div>
-                    <div className="h-3 bg-white/10 rounded-full overflow-hidden">
-                      <div
-                        className="h-full bg-gradient-to-r from-cosmos-cyan to-cosmos-gold transition-all duration-500"
-                        style={{
-                          width: `${(stats.classificationsCount / nextRankInfo.rank.minClassifications) * 100}%`,
-                        }}
-                      />
-                    </div>
-                    <p className="text-sm text-gray-500 mt-2">
-                      {nextRankInfo.classificationsNeeded} more classifications to reach {nextRankInfo.rank.name}
-                    </p>
+                  </div>
+                ) : (
+                  <div className="p-6 text-center">
+                    {isLoading ? (
+                      <Loader2 className="w-8 h-8 text-cosmos-cyan animate-spin mx-auto" />
+                    ) : (
+                      <p className="text-gray-400">Unable to load picture of the day</p>
+                    )}
                   </div>
                 )}
-
-                {/* Recent Activity Chart (placeholder) */}
-                <div className="p-6 rounded-lg bg-white/5 text-center">
-                  <Calendar className="w-8 h-8 text-gray-500 mx-auto mb-2" />
-                  <p className="text-sm text-gray-400">
-                    Activity chart visualization coming soon
-                  </p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Track your daily contributions over time
-                  </p>
-                </div>
               </CardContent>
             </Card>
 
@@ -214,73 +281,75 @@ export function DashboardContent() {
                     description="Navigate the cosmos"
                   />
                   <QuickActionLink
-                    href="/devlog"
-                    icon={BookOpen}
-                    label="Read Devlog"
-                    description="Technical deep-dives"
+                    href="/events"
+                    icon={Zap}
+                    label="Live Events"
+                    description="Real-time astronomical events"
                   />
                 </div>
               </CardContent>
             </Card>
 
-            {/* Recent Contributions */}
+            {/* Recent Events */}
             <Card className="lg:col-span-2" padding="lg">
               <CardContent>
-                <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Clock className="w-5 h-5 text-cosmos-purple" />
-                  Recent Activity
-                </h2>
-
-                <div className="space-y-3">
-                  {stats.recentActivity.map((activity) => (
-                    <div
-                      key={`${activity.date}-${activity.project}`}
-                      className="flex items-center justify-between p-3 rounded-lg bg-white/5"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-cosmos-cyan/20 flex items-center justify-center">
-                          <Target className="w-4 h-4 text-cosmos-cyan" />
-                        </div>
-                        <div>
-                          <p className="text-sm text-white">{activity.project}</p>
-                          <p className="text-xs text-gray-500">{activity.date}</p>
-                        </div>
-                      </div>
-                      <span className="text-cosmos-cyan font-medium">+{activity.count}</span>
-                    </div>
-                  ))}
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-cosmos-gold" />
+                    Upcoming Events
+                  </h2>
+                  <Button variant="ghost" size="sm" asChild>
+                    <Link href="/events">View All</Link>
+                  </Button>
                 </div>
 
-                <Button variant="ghost" fullWidth className="mt-4" asChild>
-                  <Link href="/citizen-science">
-                    View All Activity
-                    <ChevronRight className="w-4 h-4" />
-                  </Link>
-                </Button>
+                {isLoading ? (
+                  <div className="flex justify-center py-8">
+                    <Loader2 className="w-6 h-6 text-cosmos-cyan animate-spin" />
+                  </div>
+                ) : events.length > 0 ? (
+                  <div className="space-y-3">
+                    {events.slice(0, 4).map((event) => (
+                      <EventCard key={event.id} event={event} />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-center py-8">No upcoming events</p>
+                )}
               </CardContent>
             </Card>
 
-            {/* Badges */}
+            {/* SKA Progress */}
             <Card padding="lg">
               <CardContent>
                 <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-cosmos-gold" />
-                  Recent Badges
+                  <Radio className="w-5 h-5 text-cosmos-cyan" />
+                  SKA Progress
                 </h2>
 
                 <div className="space-y-3">
-                  {stats.badges.slice(0, 3).map((badge) => (
+                  {getSKATimeline().slice(-4).map((item) => (
                     <div
-                      key={badge.id}
-                      className="flex items-center gap-3 p-3 rounded-lg bg-cosmos-gold/5 border border-cosmos-gold/20"
+                      key={item.year}
+                      className={cn(
+                        'p-3 rounded-lg',
+                        item.status === 'completed' && 'bg-cosmos-cyan/10 border border-cosmos-cyan/20',
+                        item.status === 'in-progress' && 'bg-cosmos-gold/10 border border-cosmos-gold/20',
+                        item.status === 'upcoming' && 'bg-white/5 border border-white/10'
+                      )}
                     >
-                      <div className="w-8 h-8 rounded-full bg-cosmos-gold/20 flex items-center justify-center">
-                        <Star className="w-4 h-4 text-cosmos-gold" />
+                      <div className="flex items-center justify-between">
+                        <span className="text-white font-medium">{item.year}</span>
+                        <span className={cn(
+                          'text-xs px-2 py-0.5 rounded',
+                          item.status === 'completed' && 'bg-cosmos-cyan/20 text-cosmos-cyan',
+                          item.status === 'in-progress' && 'bg-cosmos-gold/20 text-cosmos-gold',
+                          item.status === 'upcoming' && 'bg-white/10 text-gray-400'
+                        )}>
+                          {item.status}
+                        </span>
                       </div>
-                      <div>
-                        <p className="text-sm font-medium text-white">{badge.name}</p>
-                        <p className="text-xs text-gray-500">{badge.description}</p>
-                      </div>
+                      <p className="text-xs text-gray-400 mt-1">{item.event}</p>
                     </div>
                   ))}
                 </div>
@@ -294,7 +363,7 @@ export function DashboardContent() {
           <div>
             <div className="flex items-center justify-between mb-6">
               <p className="text-gray-400">
-                {favorites.length} {favorites.length === 1 ? 'item' : 'items'} saved
+                {favorites.length} {favorites.length === 1 ? 'item' : 'items'} saved locally
               </p>
               {favorites.length > 0 && (
                 <Button variant="ghost" size="sm" onClick={clearFavorites}>
@@ -329,144 +398,162 @@ export function DashboardContent() {
           </div>
         )}
 
-        {/* Activity Panel */}
-        {activeTab === 'activity' && (
-          <Card padding="lg">
-            <CardContent>
-              <h2 className="text-lg font-semibold text-white mb-6">Activity History</h2>
-
-              {/* Activity Timeline */}
-              <div className="space-y-4">
-                {[
-                  { type: 'classification', project: 'Galaxy Zoo: Cosmic Dawn', date: '2024-01-20', count: 15 },
-                  { type: 'favorite', target: 'Carina Nebula', date: '2024-01-19' },
-                  { type: 'classification', project: 'Radio Galaxy Zoo', date: '2024-01-18', count: 8 },
-                  { type: 'view', target: 'Stephan\'s Quintet', date: '2024-01-17' },
-                  { type: 'classification', project: 'Planet Hunters TESS', date: '2024-01-16', count: 12 },
-                ].map((item, idx) => (
-                  <div key={idx} className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      <div
-                        className={cn(
-                          'w-10 h-10 rounded-full flex items-center justify-center',
-                          item.type === 'classification' && 'bg-cosmos-cyan/20',
-                          item.type === 'favorite' && 'bg-cosmos-pink/20',
-                          item.type === 'view' && 'bg-cosmos-purple/20'
-                        )}
-                      >
-                        {item.type === 'classification' && <Target className="w-5 h-5 text-cosmos-cyan" />}
-                        {item.type === 'favorite' && <Heart className="w-5 h-5 text-cosmos-pink" />}
-                        {item.type === 'view' && <Telescope className="w-5 h-5 text-cosmos-purple" />}
-                      </div>
-                      {idx < 4 && <div className="w-px h-full bg-white/10 mt-2" />}
-                    </div>
-                    <div className="flex-1 pb-6">
-                      <div className="flex items-center justify-between">
-                        <p className="text-white">
-                          {item.type === 'classification' && (
-                            <>Classified {item.count} subjects in <span className="text-cosmos-cyan">{item.project}</span></>
-                          )}
-                          {item.type === 'favorite' && (
-                            <>Favorited <span className="text-cosmos-pink">{item.target}</span></>
-                          )}
-                          {item.type === 'view' && (
-                            <>Viewed <span className="text-cosmos-purple">{item.target}</span></>
-                          )}
-                        </p>
-                        <span className="text-xs text-gray-500">{item.date}</span>
-                      </div>
-                    </div>
+        {/* Events Panel */}
+        {activeTab === 'events' && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <Card padding="lg">
+                <CardContent>
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-lg font-semibold text-white">All Astronomical Events</h2>
+                    <Button variant="ghost" size="sm" asChild>
+                      <Link href="/events">
+                        Full Events Page
+                        <ExternalLink className="w-4 h-4 ml-1" />
+                      </Link>
+                    </Button>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+
+                  {isLoading ? (
+                    <div className="flex justify-center py-12">
+                      <Loader2 className="w-8 h-8 text-cosmos-cyan animate-spin" />
+                    </div>
+                  ) : events.length > 0 ? (
+                    <div className="space-y-4">
+                      {events.map((event) => (
+                        <EventCard key={event.id} event={event} expanded />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-12">
+                      <Globe className="w-12 h-12 text-gray-500 mx-auto mb-4" />
+                      <p className="text-gray-400">No events available</p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="space-y-6">
+              {/* ISS Tracker */}
+              <Card padding="lg">
+                <CardContent>
+                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                    <Satellite className="w-5 h-5 text-cosmos-cyan" />
+                    ISS Location
+                  </h3>
+                  {issPosition ? (
+                    <div className="space-y-2">
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Latitude</span>
+                        <span className="text-white font-mono">{issPosition.lat.toFixed(4)}°</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-400">Longitude</span>
+                        <span className="text-white font-mono">{issPosition.lon.toFixed(4)}°</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-3">Updates every 30 seconds</p>
+                    </div>
+                  ) : (
+                    <p className="text-gray-400 text-sm">Loading ISS data...</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Event Types Legend */}
+              <Card padding="lg">
+                <CardContent>
+                  <h3 className="text-lg font-semibold text-white mb-4">Event Types</h3>
+                  <div className="space-y-2">
+                    {[
+                      { icon: Globe, label: 'Asteroids', color: 'text-cosmos-cyan' },
+                      { icon: Zap, label: 'Solar Activity', color: 'text-cosmos-gold' },
+                      { icon: Star, label: 'Meteor Showers', color: 'text-cosmos-pink' },
+                    ].map((type) => (
+                      <div key={type.label} className="flex items-center gap-2">
+                        <type.icon className={cn('w-4 h-4', type.color)} />
+                        <span className="text-sm text-gray-300">{type.label}</span>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
         )}
 
-        {/* Settings Panel */}
-        {activeTab === 'settings' && (
-          <div className="max-w-2xl">
-            <Card padding="lg" className="mb-6">
-              <CardContent>
-                <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                  <User className="w-5 h-5" />
-                  Profile Settings
-                </h2>
+        {/* Projects Panel */}
+        {activeTab === 'projects' && (
+          <div>
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-white mb-2">Active Citizen Science Projects</h2>
+              <p className="text-gray-400">
+                Contribute to real astronomical research through these active projects
+              </p>
+            </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2">Display Name</label>
-                    <input
-                      type="text"
-                      defaultValue="Space Explorer"
-                      className="w-full px-4 py-2 rounded-lg bg-cosmos-surface border border-white/10 text-white"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2">Email Notifications</label>
-                    <div className="space-y-2">
-                      <label className="flex items-center gap-3">
-                        <input type="checkbox" defaultChecked className="rounded bg-cosmos-surface border-white/20" />
-                        <span className="text-sm text-gray-300">Weekly digest of new observations</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input type="checkbox" defaultChecked className="rounded bg-cosmos-surface border-white/20" />
-                        <span className="text-sm text-gray-300">Badge achievements</span>
-                      </label>
-                      <label className="flex items-center gap-3">
-                        <input type="checkbox" className="rounded bg-cosmos-surface border-white/20" />
-                        <span className="text-sm text-gray-300">Citizen science project updates</span>
-                      </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {FEATURED_ZOONIVERSE_PROJECTS.map((project) => (
+                <Card key={project.id} padding="lg" className="group">
+                  <CardContent>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="w-10 h-10 rounded-lg bg-cosmos-cyan/20 flex items-center justify-center">
+                        <Target className="w-5 h-5 text-cosmos-cyan" />
+                      </div>
+                      <span className={cn(
+                        'px-2 py-0.5 rounded text-xs',
+                        project.state === 'live' && 'bg-green-500/20 text-green-400',
+                        project.state === 'paused' && 'bg-yellow-500/20 text-yellow-400',
+                        project.state === 'finished' && 'bg-gray-500/20 text-gray-400'
+                      )}>
+                        {project.state}
+                      </span>
                     </div>
-                  </div>
-                </div>
 
-                <Button variant="primary" className="mt-6">
-                  Save Changes
-                </Button>
-              </CardContent>
-            </Card>
+                    <h3 className="text-white font-semibold mb-2 group-hover:text-cosmos-cyan transition-colors">
+                      {project.display_name}
+                    </h3>
+                    <p className="text-sm text-gray-400 line-clamp-2 mb-4">
+                      {project.description}
+                    </p>
 
-            <Card padding="lg">
-              <CardContent>
-                <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                  <Settings className="w-5 h-5" />
-                  Preferences
-                </h2>
+                    <div className="flex items-center justify-between text-xs text-gray-500">
+                      <span>{project.classifications_count.toLocaleString()} classifications</span>
+                      <span>{Math.round(project.completeness * 100)}% complete</span>
+                    </div>
 
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2">Default Gallery View</label>
-                    <select className="w-full px-4 py-2 rounded-lg bg-cosmos-surface border border-white/10 text-white">
-                      <option value="grid">Grid</option>
-                      <option value="list">List</option>
-                    </select>
-                  </div>
+                    <Button variant="outline" size="sm" className="w-full mt-4" asChild>
+                      <Link href="/citizen-science">
+                        Contribute
+                        <ChevronRight className="w-4 h-4" />
+                      </Link>
+                    </Button>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
 
-                  <div>
-                    <label className="block text-sm text-gray-400 mb-2">Preferred Wavelength</label>
-                    <select className="w-full px-4 py-2 rounded-lg bg-cosmos-surface border border-white/10 text-white">
-                      <option value="all">All Wavelengths</option>
-                      <option value="optical">Optical</option>
-                      <option value="infrared">Infrared</option>
-                      <option value="radio">Radio</option>
-                      <option value="ultraviolet">Ultraviolet</option>
-                    </select>
-                  </div>
+            {/* SKA Science Goals */}
+            <div className="mt-12">
+              <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
+                <Radio className="w-5 h-5 text-cosmos-cyan" />
+                SKA Science Goals
+              </h2>
 
-                  <label className="flex items-center justify-between">
-                    <span className="text-sm text-gray-300">Enable reduced motion</span>
-                    <input type="checkbox" className="rounded bg-cosmos-surface border-white/20" />
-                  </label>
-
-                  <label className="flex items-center justify-between">
-                    <span className="text-sm text-gray-300">High contrast mode</span>
-                    <input type="checkbox" className="rounded bg-cosmos-surface border-white/20" />
-                  </label>
-                </div>
-              </CardContent>
-            </Card>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {getSKAScienceGoals().map((goal) => (
+                  <Card key={goal.id} padding="md">
+                    <CardContent>
+                      <div className="flex items-center gap-3 mb-2">
+                        <span className="text-2xl">{goal.icon}</span>
+                        <h3 className="text-white font-medium">{goal.title}</h3>
+                      </div>
+                      <p className="text-sm text-gray-400">{goal.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -538,10 +625,76 @@ function QuickActionLink({ href, icon: Icon, label, description }: QuickActionLi
 }
 
 // ============================================
-// Favorite Card
+// Event Card
 // ============================================
 
-import type { Observation } from '@/types'
+interface EventCardProps {
+  event: AstronomicalEvent
+  expanded?: boolean
+}
+
+function EventCard({ event, expanded }: EventCardProps) {
+  const getEventIcon = (type: string) => {
+    switch (type) {
+      case 'solar': return Zap
+      case 'asteroid': return Globe
+      case 'meteor-shower': return Star
+      default: return Sparkles
+    }
+  }
+
+  const getSeverityColor = (severity: string) => {
+    switch (severity) {
+      case 'rare':
+      case 'once-in-lifetime':
+        return 'bg-cosmos-pink/20 text-cosmos-pink'
+      case 'significant':
+        return 'bg-cosmos-gold/20 text-cosmos-gold'
+      case 'notable':
+        return 'bg-cosmos-cyan/20 text-cosmos-cyan'
+      default:
+        return 'bg-white/10 text-gray-400'
+    }
+  }
+
+  const Icon = getEventIcon(event.type)
+
+  return (
+    <div className={cn(
+      'flex items-start gap-3 p-3 rounded-lg bg-white/5',
+      expanded && 'p-4'
+    )}>
+      <div className={cn(
+        'w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0',
+        getSeverityColor(event.severity)
+      )}>
+        <Icon className="w-4 h-4" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-start justify-between gap-2">
+          <p className="text-sm text-white font-medium">{event.title}</p>
+          <span className={cn(
+            'text-xs px-2 py-0.5 rounded flex-shrink-0',
+            getSeverityColor(event.severity)
+          )}>
+            {event.severity}
+          </span>
+        </div>
+        {expanded && (
+          <p className="text-xs text-gray-400 mt-1">{event.description}</p>
+        )}
+        <p className="text-xs text-gray-500 mt-1">
+          {formatDate(event.eventTime, { month: 'short', day: 'numeric' })}
+          {event.isOngoing && <span className="text-cosmos-cyan ml-2">Ongoing</span>}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+// ============================================
+// Favorite Card
+// ============================================
 
 function FavoriteCard({ observation }: { observation: Observation }) {
   const { toggleFavorite } = useCosmosStore()
@@ -551,9 +704,14 @@ function FavoriteCard({ observation }: { observation: Observation }) {
       <CardContent className="p-0">
         {/* Image */}
         <Link href={`/explore/${observation.id}`} className="block relative aspect-video">
-          <div className="absolute inset-0 bg-gradient-to-br from-cosmos-cyan/20 to-cosmos-purple/20 flex items-center justify-center">
-            <Telescope className="w-12 h-12 text-white/20" />
-          </div>
+          <img
+            src={observation.images.thumbnail}
+            alt={observation.targetName}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/images/cosmos-placeholder.svg'
+            }}
+          />
           <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void to-transparent" />
         </Link>
 
