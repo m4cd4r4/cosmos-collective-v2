@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import NextImage from 'next/image'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
 import { ImageCard } from '@/components/ui/Card'
@@ -187,12 +188,15 @@ export function ExploreGallery({
                   href={`/explore/${observation.id}`}
                   className="flex-1 glass-panel rounded-xl p-4 flex gap-4 hover:border-white/20 transition-all"
                 >
-                  <img
-                    src={observation.images.thumbnail}
-                    alt=""
-                    className="w-32 h-24 object-cover rounded-lg"
-                    loading="lazy"
-                  />
+                  <div className="relative w-32 h-24 flex-shrink-0">
+                    <NextImage
+                      src={observation.images.thumbnail}
+                      alt={`${observation.targetName} - ${observation.category}`}
+                      fill
+                      className="object-cover rounded-lg"
+                      sizes="128px"
+                    />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between gap-2">
                       <h3 className="font-semibold text-white truncate">

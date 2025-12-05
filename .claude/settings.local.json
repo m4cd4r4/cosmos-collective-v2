@@ -21,7 +21,9 @@
       "Bash(head -3 curl -s \"https://images-api.nasa.gov/search?q=webb+jupiter&media_type=image\")",
       "Bash(head -3 curl -s \"https://images-api.nasa.gov/search?q=webb+stephans+quintet&media_type=image\")",
       "Bash(head -3 curl -s \"https://images-api.nasa.gov/search?q=webb+southern+ring&media_type=image\")",
-      "Bash(npm run build:*)"
+      "Bash(npm run build:*)",
+      "Bash(grep:*)",
+      "Bash(wc:*)"
     ],
     "deny": [],
     "ask": []

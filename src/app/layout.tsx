@@ -148,6 +148,57 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-title" content="Cosmos" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="msapplication-TileColor" content="#030014" />
+
+        {/* JSON-LD Structured Data - Organization Schema */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'WebSite',
+              name: 'Cosmos Collective',
+              url: 'https://cosmos-collective-v2.vercel.app',
+              description: 'Multi-spectrum astronomical data exploration platform featuring JWST, Australian radio telescopes, and citizen science.',
+              potentialAction: {
+                '@type': 'SearchAction',
+                target: {
+                  '@type': 'EntryPoint',
+                  urlTemplate: 'https://cosmos-collective-v2.vercel.app/explore?search={search_term_string}'
+                },
+                'query-input': 'required name=search_term_string'
+              },
+              publisher: {
+                '@type': 'Organization',
+                name: 'Cosmos Collective',
+                url: 'https://cosmos-collective-v2.vercel.app',
+                logo: {
+                  '@type': 'ImageObject',
+                  url: 'https://cosmos-collective-v2.vercel.app/icon.svg'
+                },
+                sameAs: [
+                  'https://github.com/m4cd4r4/cosmos-collective-v2'
+                ]
+              },
+              about: [
+                {
+                  '@type': 'Thing',
+                  name: 'James Webb Space Telescope',
+                  sameAs: 'https://www.nasa.gov/mission_pages/webb/main/index.html'
+                },
+                {
+                  '@type': 'Thing',
+                  name: 'Radio Astronomy',
+                  sameAs: 'https://en.wikipedia.org/wiki/Radio_astronomy'
+                },
+                {
+                  '@type': 'Thing',
+                  name: 'Citizen Science',
+                  sameAs: 'https://www.zooniverse.org'
+                }
+              ]
+            }),
+          }}
+        />
       </head>
       <body className="font-sans antialiased">
         {/* Skip to content link for keyboard navigation */}

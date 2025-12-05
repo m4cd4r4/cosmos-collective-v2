@@ -7,6 +7,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import NextImage from 'next/image'
 import { useCosmosStore } from '@/store/cosmos-store'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -221,10 +222,13 @@ export function DashboardContent() {
                   <div className="relative">
                     {apod.media_type === 'image' && (
                       <div className="relative aspect-video overflow-hidden rounded-t-xl">
-                        <img
+                        <NextImage
                           src={apod.url}
                           alt={apod.title}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void via-transparent to-transparent" />
                       </div>
@@ -698,19 +702,20 @@ function EventCard({ event, expanded }: EventCardProps) {
 
 function FavoriteCard({ observation }: { observation: Observation }) {
   const { toggleFavorite } = useCosmosStore()
+  const [imgError, setImgError] = useState(false)
 
   return (
     <Card className="group overflow-hidden" padding="none">
       <CardContent className="p-0">
         {/* Image */}
         <Link href={`/explore/${observation.id}`} className="block relative aspect-video">
-          <img
-            src={observation.images.thumbnail}
+          <NextImage
+            src={imgError ? '/images/cosmos-placeholder.svg' : observation.images.thumbnail}
             alt={observation.targetName}
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = '/images/cosmos-placeholder.svg'
-            }}
+            fill
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+            onError={() => setImgError(true)}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void to-transparent" />
         </Link>

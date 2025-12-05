@@ -6,6 +6,7 @@
  */
 
 import { forwardRef, useState, type HTMLAttributes } from 'react'
+import NextImage from 'next/image'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { cn } from '@/lib/utils'
 
@@ -244,12 +245,13 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
             <div className="absolute inset-0 skeleton" />
           ) : (
             <>
-              <img
+              <NextImage
                 src={imgSrc}
                 alt={alt}
-                loading="lazy"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 onError={handleImageError}
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-500 group-hover:scale-105"
               />
               {/* Gradient overlay */}
               <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void via-transparent to-transparent opacity-80" />

@@ -408,6 +408,170 @@ export function getUpcomingEvents(limit: number = 10): AstronomicalEvent[] {
 }
 
 // ============================================
+// ALeRCE Transient Alerts (Supernovae, Variable Stars)
+// ============================================
+
+interface ALeRCEObject {
+  oid: string
+  meanra: number
+  meandec: number
+  class: string
+  probability: number
+  firstmjd: number
+  lastmjd: number
+  ndet: number
+}
+
+export async function getTransientAlerts(
+  limit: number = 10
+): Promise<ApiResponse<AstronomicalEvent[]>> {
+  try {
+    // Query for recent high-probability transients
+    const response = await axios.get<{ items: ALeRCEObject[] }>(
+      `${API_ENDPOINTS.transients}`,
+      {
+        params: {
+          classifier: 'stamp_classifier',
+          class_name: 'SN', // Supernova candidates
+          probability: 0.7,
+          page_size: limit,
+          order_by: 'lastmjd',
+          order_mode: 'DESC',
+        },
+        timeout: 15000,
+      }
+    )
+
+    const events: AstronomicalEvent[] = (response.data.items || []).map((obj) => {
+      // Convert Modified Julian Date to ISO date
+      const lastDate = new Date((obj.lastmjd - 40587) * 86400000)
+
+      return {
+        id: `alerce-${obj.oid}`,
+        type: 'transient' as EventType,
+        title: `Transient Candidate: ${obj.oid}`,
+        description: `Potential ${obj.class} detected with ${(obj.probability * 100).toFixed(1)}% confidence. ${obj.ndet} detections recorded.`,
+        coordinates: { ra: obj.meanra, dec: obj.meandec },
+        eventTime: lastDate.toISOString(),
+        source: 'ALeRCE',
+        severity: obj.probability > 0.9 ? 'significant' : 'notable',
+        isOngoing: true,
+        references: [
+          {
+            label: 'ALeRCE Explorer',
+            url: `https://alerce.online/object/${obj.oid}`,
+            type: 'other',
+          },
+        ],
+      }
+    })
+
+    return {
+      success: true,
+      data: events,
+      meta: {
+        requestId: `alerce-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+      },
+    }
+  } catch (error) {
+    console.error('ALeRCE API error:', error)
+    return {
+      success: false,
+      error: {
+        code: 'ALERCE_ERROR',
+        message: 'Failed to fetch transient alerts from ALeRCE',
+      },
+    }
+  }
+}
+
+// ============================================
+// GCN Notices (Gamma-Ray Bursts, Gravitational Waves)
+// ============================================
+
+interface GCNCircular {
+  circularId: number
+  subject: string
+  submitter: string
+  createdOn: string
+  body: string
+}
+
+export async function getGCNNotices(
+  limit: number = 5
+): Promise<ApiResponse<AstronomicalEvent[]>> {
+  try {
+    const response = await axios.get<GCNCircular[]>(
+      API_ENDPOINTS.gcnNotices,
+      {
+        params: {
+          limit,
+        },
+        timeout: 15000,
+      }
+    )
+
+    const events: AstronomicalEvent[] = (response.data || []).map((notice) => {
+      // Determine severity based on subject keywords
+      const subject = notice.subject.toLowerCase()
+      let severity: EventSeverity = 'notable'
+      let eventType: EventType = 'transient'
+
+      if (subject.includes('gravitational') || subject.includes('ligo') || subject.includes('virgo')) {
+        severity = 'rare'
+        eventType = 'transient'
+      } else if (subject.includes('grb') || subject.includes('gamma-ray burst')) {
+        severity = 'significant'
+        eventType = 'transient'
+      } else if (subject.includes('supernova') || subject.includes('sn ')) {
+        severity = 'significant'
+        eventType = 'transient'
+      } else if (subject.includes('neutrino')) {
+        severity = 'rare'
+        eventType = 'transient'
+      }
+
+      return {
+        id: `gcn-${notice.circularId}`,
+        type: eventType,
+        title: notice.subject.slice(0, 100),
+        description: notice.body.slice(0, 300) + (notice.body.length > 300 ? '...' : ''),
+        eventTime: notice.createdOn,
+        source: 'GCN',
+        severity,
+        isOngoing: false,
+        references: [
+          {
+            label: 'GCN Circular',
+            url: `https://gcn.nasa.gov/circulars/${notice.circularId}`,
+            type: 'nasa',
+          },
+        ],
+      }
+    })
+
+    return {
+      success: true,
+      data: events,
+      meta: {
+        requestId: `gcn-${Date.now()}`,
+        timestamp: new Date().toISOString(),
+      },
+    }
+  } catch (error) {
+    console.error('GCN API error:', error)
+    return {
+      success: false,
+      error: {
+        code: 'GCN_ERROR',
+        message: 'Failed to fetch GCN notices',
+      },
+    }
+  }
+}
+
+// ============================================
 // Aggregate All Events
 // ============================================
 
@@ -415,6 +579,8 @@ export async function getAllCurrentEvents(): Promise<ApiResponse<AstronomicalEve
   const results = await Promise.allSettled([
     getNearEarthObjects(),
     getSolarWeather(),
+    getTransientAlerts(5),
+    getGCNNotices(3),
   ])
 
   const allEvents: AstronomicalEvent[] = []
@@ -427,6 +593,16 @@ export async function getAllCurrentEvents(): Promise<ApiResponse<AstronomicalEve
   // Add solar events
   if (results[1].status === 'fulfilled' && results[1].value.success && results[1].value.data) {
     allEvents.push(...results[1].value.data.events)
+  }
+
+  // Add transient alerts (ALeRCE)
+  if (results[2].status === 'fulfilled' && results[2].value.success && results[2].value.data) {
+    allEvents.push(...results[2].value.data)
+  }
+
+  // Add GCN notices
+  if (results[3].status === 'fulfilled' && results[3].value.success && results[3].value.data) {
+    allEvents.push(...results[3].value.data)
   }
 
   // Add upcoming scheduled events
