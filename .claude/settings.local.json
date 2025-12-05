@@ -6,7 +6,12 @@
       "Bash(npm i:*)",
       "Bash(vercel:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$(cat <<''EOF''\nFix TypeScript errors and deploy to Vercel\n\n- Add @tanstack/react-query-devtools dependency\n- Fix Card component variant type errors (gradient -> elevated)\n- Add optional chaining for currentTask.options\n- Fix type casting in australian-telescopes.ts and mast-api.ts\n- Make urls property optional in ZooniverseProject interface\n- Add ''use client'' directive to offline page\n- Update debounce/throttle function signatures for flexibility\n- Update next.config.js image remote patterns for proper wildcards\n- Update README.md with correct GitHub and deployment URLs\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix TypeScript errors and deploy to Vercel\n\n- Add @tanstack/react-query-devtools dependency\n- Fix Card component variant type errors (gradient -> elevated)\n- Add optional chaining for currentTask.options\n- Fix type casting in australian-telescopes.ts and mast-api.ts\n- Make urls property optional in ZooniverseProject interface\n- Add ''use client'' directive to offline page\n- Update debounce/throttle function signatures for flexibility\n- Update next.config.js image remote patterns for proper wildcards\n- Update README.md with correct GitHub and deployment URLs\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git push:*)",
+      "Bash(git pull:*)",
+      "Bash(node playwright-analyze.js:*)",
+      "Bash(npx playwright install:*)",
+      "Bash(curl:*)"
     ],
     "deny": [],
     "ask": []

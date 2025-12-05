@@ -232,8 +232,8 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
           })}
         </nav>
 
-        {/* User section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
+        {/* User section - Hidden for now, see FUTURE_FEATURES.md */}
+        {/* <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
           {session ? (
             <div className="space-y-2">
               <div className="flex items-center gap-3 px-4 py-2">
@@ -269,7 +269,7 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
               Sign In
             </Button>
           )}
-        </div>
+        </div> */}
       </div>
     </>
   )
@@ -382,10 +382,10 @@ export function Header() {
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            {/* User Menu (Desktop) */}
-            <div className="hidden lg:block">
+            {/* User Menu (Desktop) - Hidden for now, see FUTURE_FEATURES.md */}
+            {/* <div className="hidden lg:block">
               <UserMenu />
-            </div>
+            </div> */}
 
             {/* Mobile menu button */}
             <button

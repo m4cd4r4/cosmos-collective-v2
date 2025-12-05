@@ -135,11 +135,8 @@ export default function RootLayout({
         <link rel="preconnect" href="https://mast.stsci.edu" />
         <link rel="dns-prefetch" href="https://api.nasa.gov" />
 
-        {/* Aladin Lite Sky Map CSS */}
-        <link
-          rel="stylesheet"
-          href="https://aladin.u-strasbg.fr/AladinLite/api/v3/latest/aladin.min.css"
-        />
+        {/* Aladin Lite v3 - CSS is now bundled in the JS file */}
+        <link rel="preconnect" href="https://aladin.cds.unistra.fr" />
 
         {/* Color scheme for system UI */}
         <meta name="color-scheme" content="dark" />

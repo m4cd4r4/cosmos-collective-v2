@@ -315,9 +315,9 @@ export function SkyMapViewer({
 
   return (
     <>
-      {/* Load Aladin Lite - CSS is loaded in app/layout.tsx */}
+      {/* Load Aladin Lite v3 - CSS is bundled in the JS */}
       <Script
-        src="https://aladin.u-strasbg.fr/AladinLite/api/v3/latest/aladin.js"
+        src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js"
         strategy="afterInteractive"
         onLoad={initializeAladin}
       />

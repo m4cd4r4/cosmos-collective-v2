@@ -47,7 +47,7 @@ export function HeroSection() {
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('https://stsci-opo.org/STScI-01G8GZR2PM5DH9B8DNSYSCXQ81.png')`,
+            backgroundImage: `url('https://www.nasa.gov/wp-content/uploads/2023/03/main_image_star-forming_region_carina_702.jpg')`,
             filter: 'brightness(0.3)',
           }}
         />
