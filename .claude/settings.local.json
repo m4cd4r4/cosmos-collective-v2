@@ -11,7 +11,9 @@
       "Bash(git pull:*)",
       "Bash(node playwright-analyze.js:*)",
       "Bash(npx playwright install:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nFix multiple site issues and add Events page\n\n- Fix HeroSection background image URL (NASA instead of blocked stsci-opo.org)\n- Add Events page with live astronomical events, ISS tracking, and meteor showers\n- Fix Sky Map Aladin Lite URL (aladin.cds.unistra.fr instead of deprecated URL)\n- Remove deprecated Aladin CSS link (now bundled in JS)\n- Hide sign-in UI elements (see FUTURE_FEATURES.md)\n- Add Playwright dependency for testing\n- Add FUTURE_FEATURES.md documenting authentication setup\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Bash(git commit:*)"
     ],
     "deny": [],
     "ask": []

@@ -144,7 +144,6 @@ export async function searchNASAImages(
       meta: {
         requestId: `nasa-images-${Date.now()}`,
         timestamp: new Date().toISOString(),
-        totalHits: response.data.collection.metadata.total_hits,
       },
     }
   } catch (error) {
