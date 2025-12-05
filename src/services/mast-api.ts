@@ -362,18 +362,22 @@ export async function getObservationProducts(
 // ============================================
 
 /**
- * NASA.gov image URLs - these are official press release images with permissive access
- * Updated to use working URLs from nasa.gov instead of stsci-opo.org (which returns 403)
+ * NASA Images API URLs - these are reliable, publicly accessible image URLs
+ * Using images-assets.nasa.gov which has proper CORS and accessibility
  */
 const NASA_IMAGE_URLS = {
-  carina: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_star-forming_region_carina_702.jpg',
-  deepField: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_deep_field_702.jpg',
-  stephansQuintet: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_galaxies_702.jpg',
-  southernRing: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_stellar_702.jpg',
-  pillars: 'https://www.nasa.gov/wp-content/uploads/2022/10/stsci-01gfnp0nhpz8bk6f6vxjq3fdrr.png',
-  jupiter: 'https://www.nasa.gov/wp-content/uploads/2023/03/stsci-01g9hqd9aawqg4wt66c1bxvfbj.png',
-  tarantula: 'https://www.nasa.gov/wp-content/uploads/2023/03/stsci-01gbs7cjgbvzz7xf6xf5wqsp1s.png',
-  cartwheel: 'https://www.nasa.gov/wp-content/uploads/2023/03/stsci-01g9d2xxmvss1s2bp8ysjtrkrp_1.png',
+  // NASA Images API - JWST First Images collection
+  carina: 'https://images-assets.nasa.gov/image/carina_nebula/carina_nebula~large.jpg',
+  deepField: 'https://images-assets.nasa.gov/image/webb_first_deep_field/webb_first_deep_field~large.jpg',
+  // Jupiter from NASA/JPL
+  jupiter: 'https://images-assets.nasa.gov/image/PIA25433/PIA25433~large.jpg',
+  // Pillars of Creation from Hubble (high quality version)
+  pillars: 'https://images-assets.nasa.gov/image/PIA03096/PIA03096~large.jpg',
+  // Fallback to placeholder for other images - these require STScI access
+  stephansQuintet: '/images/cosmos-placeholder.svg',
+  southernRing: '/images/cosmos-placeholder.svg',
+  tarantula: '/images/cosmos-placeholder.svg',
+  cartwheel: '/images/cosmos-placeholder.svg',
 }
 
 /**
