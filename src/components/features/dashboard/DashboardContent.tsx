@@ -511,7 +511,7 @@ export function DashboardContent() {
                     </div>
 
                     <h3 className="text-white font-semibold mb-2 group-hover:text-cosmos-cyan transition-colors">
-                      {project.display_name}
+                      {project.displayName}
                     </h3>
                     <p className="text-sm text-gray-400 line-clamp-2 mb-4">
                       {project.description}
