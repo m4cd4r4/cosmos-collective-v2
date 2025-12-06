@@ -17,8 +17,8 @@ const API_ENDPOINTS = {
   nasaNeo: `https://api.nasa.gov/neo/rest/v1/feed?api_key=${NASA_API_KEY}`,
   issPosition: 'https://api.wheretheiss.at/v1/satellites/25544',
   solarWeather: 'https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json',
-  transients: 'https://alerce.online/api/v1/objects',
-  gcnNotices: 'https://gcn.nasa.gov/api/circulars',
+  transients: '/api/proxy/alerce',
+  gcnNotices: '/api/proxy/gcn',
 }
 
 // ============================================
@@ -422,49 +422,61 @@ interface ALeRCEObject {
   ndet: number
 }
 
+interface ALeRCEProxyResponse {
+  success: boolean
+  data: {
+    id: string
+    name: string
+    ra: number
+    dec: number
+    classification: string
+    probability: number
+    lastDetection: string
+    url: string
+  }[]
+  source: string
+}
+
 export async function getTransientAlerts(
   limit: number = 10
 ): Promise<ApiResponse<AstronomicalEvent[]>> {
   try {
-    // Query for recent high-probability transients
-    const response = await axios.get<{ items: ALeRCEObject[] }>(
+    // Use proxy endpoint to avoid CORS
+    const response = await axios.get<ALeRCEProxyResponse>(
       `${API_ENDPOINTS.transients}`,
       {
         params: {
           classifier: 'stamp_classifier',
-          class_name: 'SN', // Supernova candidates
+          class_name: 'SN',
           probability: 0.7,
-          page_size: limit,
-          order_by: 'lastmjd',
-          order_mode: 'DESC',
+          limit,
         },
         timeout: 15000,
       }
     )
 
-    const events: AstronomicalEvent[] = (response.data.items || []).map((obj) => {
-      // Convert Modified Julian Date to ISO date
-      const lastDate = new Date((obj.lastmjd - 40587) * 86400000)
+    if (!response.data.success) {
+      throw new Error('Proxy returned error')
+    }
 
-      return {
-        id: `alerce-${obj.oid}`,
-        type: 'transient' as EventType,
-        title: `Transient Candidate: ${obj.oid}`,
-        description: `Potential ${obj.class} detected with ${(obj.probability * 100).toFixed(1)}% confidence. ${obj.ndet} detections recorded.`,
-        coordinates: { ra: obj.meanra, dec: obj.meandec },
-        eventTime: lastDate.toISOString(),
-        source: 'ALeRCE',
-        severity: obj.probability > 0.9 ? 'significant' : 'notable',
-        isOngoing: true,
-        references: [
-          {
-            label: 'ALeRCE Explorer',
-            url: `https://alerce.online/object/${obj.oid}`,
-            type: 'other',
-          },
-        ],
-      }
-    })
+    const events: AstronomicalEvent[] = (response.data.data || []).map((obj) => ({
+      id: `alerce-${obj.id}`,
+      type: 'transient' as EventType,
+      title: `Transient Candidate: ${obj.name}`,
+      description: `Potential ${obj.classification} detected with ${(obj.probability * 100).toFixed(1)}% confidence.`,
+      coordinates: { ra: obj.ra, dec: obj.dec },
+      eventTime: obj.lastDetection,
+      source: 'ALeRCE',
+      severity: obj.probability > 0.9 ? 'significant' : 'notable',
+      isOngoing: true,
+      references: [
+        {
+          label: 'ALeRCE Explorer',
+          url: obj.url,
+          type: 'other',
+        },
+      ],
+    }))
 
     return {
       success: true,
@@ -490,61 +502,66 @@ export async function getTransientAlerts(
 // GCN Notices (Gamma-Ray Bursts, Gravitational Waves)
 // ============================================
 
-interface GCNCircular {
-  circularId: number
-  subject: string
-  submitter: string
-  createdOn: string
-  body: string
+interface GCNProxyResponse {
+  success: boolean
+  data: {
+    id: string | number
+    title: string
+    submitter: string
+    date: string
+    url: string
+    excerpt?: string
+    note?: string
+  }[]
+  source: string
 }
 
 export async function getGCNNotices(
   limit: number = 5
 ): Promise<ApiResponse<AstronomicalEvent[]>> {
   try {
-    const response = await axios.get<GCNCircular[]>(
+    // Use proxy endpoint to avoid CORS
+    const response = await axios.get<GCNProxyResponse>(
       API_ENDPOINTS.gcnNotices,
       {
-        params: {
-          limit,
-        },
+        params: { limit },
         timeout: 15000,
       }
     )
 
-    const events: AstronomicalEvent[] = (response.data || []).map((notice) => {
-      // Determine severity based on subject keywords
-      const subject = notice.subject.toLowerCase()
+    if (!response.data.success) {
+      throw new Error('Proxy returned error')
+    }
+
+    const events: AstronomicalEvent[] = (response.data.data || []).map((notice) => {
+      // Determine severity based on title keywords
+      const title = notice.title.toLowerCase()
       let severity: EventSeverity = 'notable'
       let eventType: EventType = 'transient'
 
-      if (subject.includes('gravitational') || subject.includes('ligo') || subject.includes('virgo')) {
+      if (title.includes('gravitational') || title.includes('ligo') || title.includes('virgo')) {
         severity = 'rare'
-        eventType = 'transient'
-      } else if (subject.includes('grb') || subject.includes('gamma-ray burst')) {
+      } else if (title.includes('grb') || title.includes('gamma-ray burst')) {
         severity = 'significant'
-        eventType = 'transient'
-      } else if (subject.includes('supernova') || subject.includes('sn ')) {
+      } else if (title.includes('supernova') || title.includes('sn ')) {
         severity = 'significant'
-        eventType = 'transient'
-      } else if (subject.includes('neutrino')) {
+      } else if (title.includes('neutrino')) {
         severity = 'rare'
-        eventType = 'transient'
       }
 
       return {
-        id: `gcn-${notice.circularId}`,
+        id: `gcn-${notice.id}`,
         type: eventType,
-        title: notice.subject.slice(0, 100),
-        description: notice.body.slice(0, 300) + (notice.body.length > 300 ? '...' : ''),
-        eventTime: notice.createdOn,
+        title: notice.title.slice(0, 100),
+        description: notice.excerpt || `GCN Notice from ${notice.submitter}`,
+        eventTime: notice.date,
         source: 'GCN',
         severity,
         isOngoing: false,
         references: [
           {
             label: 'GCN Circular',
-            url: `https://gcn.nasa.gov/circulars/${notice.circularId}`,
+            url: notice.url,
             type: 'nasa',
           },
         ],
