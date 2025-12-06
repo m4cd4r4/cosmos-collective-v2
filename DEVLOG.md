@@ -2,12 +2,55 @@
 
 > Technical analysis, issues, improvements, and implementation roadmap
 
-**Last Updated:** December 4, 2025
+**Last Updated:** December 6, 2025
 **Analysis Scope:** Complete codebase review
 
 ---
 
 ## Fixes Implemented (December 4, 2025)
+## Fixes Implemented (December 6, 2025)
+
+### Server-Side API Proxies for CORS Resolution
+
+**Problem:** ALeRCE (transient alerts) and GCN (gamma-ray circulars) APIs were blocked by CORS when called directly from the browser, causing the dashboard to show fallback data instead of live astronomical events.
+
+**Solution:** Created Next.js API route proxies that fetch data server-side:
+
+| File | Purpose | Status |
+|------|---------|--------|
+| `src/app/api/proxy/alerce/route.ts` | ALeRCE ZTF API proxy | **ADDED** |
+| `src/app/api/proxy/gcn/route.ts` | NASA GCN Circulars proxy | **ADDED** |
+| `src/services/real-time-events.ts` | Updated to use proxy endpoints | **MODIFIED** |
+
+#### ALeRCE Proxy Details
+- **Endpoint:** `https://api.alerce.online/ztf/v1/objects/`
+- **Default classifier:** `lc_classifier` with `SNIa` class
+- **Note:** `order_by` parameter not supported by this endpoint
+- **Cache:** 5-minute revalidation
+- **Fallback:** Returns sample data if API unavailable
+
+#### GCN Proxy Details
+- **Endpoint:** `https://gcn.nasa.gov/circulars/{id}.json`
+- **Approach:** Fetches individual circulars by sequential ID (~43000 range as of Dec 2025)
+- **Auto-discovery:** Finds latest circular ID automatically
+- **Cache:** 5-minute revalidation
+- **Fallback:** Returns placeholder data if API unavailable
+
+#### Verified Live Data
+
+| API | Status | Sample Data |
+|-----|--------|-------------|
+| ALeRCE | **WORKING** | ZTF19abnfgwe (SNIa), ZTF20abyvbvs |
+| GCN | **WORKING** | Circular #43006: "Swift GRB 251205A" |
+
+### Homepage Screenshot & Animated Demo
+
+- Captured site screenshots using Playwright
+- Added animated GIF demo to README
+- Shows homepage, explore page, and sky map features
+
+---
+
 
 The following automated fixes have been applied:
 
