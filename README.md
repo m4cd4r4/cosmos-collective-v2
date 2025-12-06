@@ -14,38 +14,42 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 ## ✨ Features
 
 ### 🔭 Multi-Wavelength Exploration
-- **JWST Gallery**: Browse thousands of infrared observations from the James Webb Space Telescope
-- **Australian Radio Telescopes**: Access data from ASKAP, MWA, Parkes, and ATCA
+- **JWST Gallery**: Browse infrared observations from the James Webb Space Telescope
+- **Hubble Gallery**: Classic optical imagery including nebulae, galaxies, and star clusters
+- **Australian Radio Telescopes**: Access data from ASKAP, MWA, and Parkes (10+ observations)
 - **Multi-Spectrum Comparison**: View the same object across different wavelengths
 
 ### 🗺️ Interactive Sky Map
-- Pan and zoom across the entire celestial sphere
+- Pan and zoom across the entire celestial sphere using Aladin Lite
 - Search by object name, coordinates, or constellation
-- Layer radio, infrared, optical, and X-ray data
+- Layer radio, infrared, optical, and X-ray survey data
+- Quick navigation to popular deep sky objects
 
-### 🚨 Real-Time Events
+### 🚨 Real-Time Events & ISS Cameras
 - Live feed of astronomical events (meteor showers, asteroids, solar activity)
-- ISS tracking and space weather alerts
-- Notifications for rare celestial phenomena
+- ISS tracking with real-time orbital position
+- **ISS Live Cameras** - Watch Earth from space via 3 NASA YouTube streams
+- Space weather alerts and notifications
 
 ### 👥 Citizen Science
 - Contribute to real astronomical research
-- Galaxy classification tasks
+- Galaxy classification tasks with real NASA imagery
 - Radio source matching for SKA pathfinder science
+- 12 classification tasks across 6 Zooniverse-style projects
 - Track your contributions and earn badges
 
 ### 📡 SKA (Square Kilometre Array) Showcase
 - Learn about the world's largest radio telescope
-- Construction timeline and science goals
+- Links to SKAO and CSIRO resources
 - Understand how SKA will revolutionize astronomy
 
 ### ♿ Accessibility First
-- WCAG 2.1 AA compliant
-- Screen reader optimized
-- Keyboard navigation throughout
-- High contrast mode
+- WCAG 2.1 AA compliant with dedicated [Accessibility page](/accessibility)
+- Screen reader optimized with ARIA labels
+- Full keyboard navigation throughout
+- High contrast color palette
 - Reduced motion support
-- Pattern/texture overlays for spectrum visualization (for color-blind users)
+- Semantic HTML structure
 
 ## 🏗️ Architecture
 
@@ -206,9 +210,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <p align="center">
-  
-  <br />
   <a href="https://cosmos-collective-v2.vercel.app">Live Demo</a> •
-  <a href="DEVLOG.md">Devlog</a> •
+  <a href="https://cosmos-collective-v2.vercel.app/devlog">Devlog</a> •
   <a href="https://github.com/m4cd4r4/cosmos-collective-v2/issues">Report Bug</a>
 </p>

@@ -32,10 +32,159 @@ export interface DevlogPost {
 
 const posts: DevlogPost[] = [
   {
+    slug: 'december-2024-feature-update',
+    title: 'December 2024: ISS Cameras, Expanded Gallery & UI Polish',
+    excerpt: 'Major feature update adding live ISS camera feeds, expanded telescope observations, real images in Citizen Science, and significant UI/UX improvements.',
+    date: '2024-12-06',
+    author: { name: 'Developer' },
+    category: 'architecture',
+    tags: ['Features', 'ISS', 'Hubble', 'Citizen Science', 'Accessibility'],
+    readingTime: 6,
+    featured: true,
+    content: `
+# December 2024: ISS Cameras, Expanded Gallery & UI Polish
+
+This update brings several exciting new features and improvements to Cosmos Collective, including live ISS camera feeds, expanded telescope coverage, and a streamlined user interface.
+
+## ISS Live Cameras
+
+The Events page now features **live camera feeds from the International Space Station**. Users can watch Earth from space in real-time through three NASA streams:
+
+- **NASA Live** - Official NASA TV featuring ISS views and mission coverage
+- **ISS HD Earth Viewing** - High-definition cameras mounted on the ISS exterior
+- **NASA Media Channel** - Public affairs events and press conferences
+
+The interface includes:
+- Camera selector with descriptions
+- Live indicator badge
+- Direct YouTube links
+- ISS orbital statistics (27,600 km/h, 408 km altitude, 92-min orbit)
+- Info card explaining dark/blue screens during orbital night
+
+\`\`\`typescript
+const ISS_CAMERAS = [
+  {
+    id: 'nasa-live',
+    name: 'NASA Live',
+    embedUrl: 'https://www.youtube.com/embed/P9C25Un7xaM',
+    // ...
+  },
+  // More cameras...
+]
+\`\`\`
+
+## Expanded Telescope Observations
+
+### Hubble Space Telescope
+
+Added **7 new Hubble observations** to the Explore gallery with verified NASA Images API URLs:
+
+- Helix Nebula (NGC 7293)
+- Sombrero Galaxy (M104)
+- Crab Nebula (M1)
+- Orion Nebula (M42)
+- Horsehead Nebula
+- Cat's Eye Nebula (NGC 6543)
+- Milky Way Center
+
+### Australian Radio Telescopes
+
+Expanded radio telescope data with new observations:
+
+**ASKAP** (4 total):
+- EMU Pilot Survey
+- WALLABY HI Survey
+- VAST Transient Discovery
+- Odd Radio Circles (ORCs)
+
+**Parkes** (3 total):
+- Lorimer Burst (First FRB)
+- Pulsar Timing Array
+- LMC HI Survey
+
+**MWA** (3 total):
+- Epoch of Reionization
+- GLEAM All-Sky Survey
+- Solar Radio Bursts
+
+## Citizen Science Improvements
+
+The classification interface now displays **real NASA images** instead of placeholder graphics:
+
+\`\`\`typescript
+// Before: Placeholder
+subjectUrl: 'https://panoptes-uploads.zooniverse.org/placeholder.jpg'
+
+// After: Real NASA images
+subjectUrl: 'https://images-assets.nasa.gov/image/PIA04230/PIA04230~medium.jpg'
+\`\`\`
+
+Added 12 classification tasks across 6 projects, each with verified working image URLs from NASA's Images API.
+
+## Sky Map Fixes
+
+Improved Aladin Lite initialization:
+
+1. **Container dimension check** - Now waits for proper width/height before initializing
+2. **Better retry logic** - More robust handling of script loading delays
+3. **Layout fixes** - Added \`overflow-hidden\` and \`min-h-[500px]\` for proper sizing
+
+## UI Cleanup
+
+### Header
+- Removed Sign In button (no authentication required for current features)
+- Simplified navigation structure
+
+### Footer
+- Removed "Made with heart for space enthusiasts" tagline
+- Removed Twitter icon
+- Removed Forums & Discord links
+- Updated GitHub link to project repository
+
+### New Accessibility Page
+
+Created comprehensive accessibility page at \`/accessibility\` covering:
+
+- WCAG 2.1 AA compliance commitment
+- Feature list (keyboard navigation, screen readers, contrast, etc.)
+- Technical standards documentation
+- Feedback instructions
+
+## Technical Notes
+
+### Image URL Verification
+
+All NASA image URLs were verified to return HTTP 200:
+
+\`\`\`bash
+# Verification process
+curl -sI "https://images-assets.nasa.gov/image/PIA18164/PIA18164~medium.jpg" | head -1
+# HTTP/2 200
+\`\`\`
+
+URLs returning 403 Forbidden were replaced with working alternatives.
+
+### Build Optimization
+
+- Removed unused auth imports (next-auth)
+- Cleaned up unused components
+- Build size reduced for Header component
+
+## What's Next
+
+- Further Sky Map debugging for survey loading edge cases
+- Additional telescope observations
+- Performance optimization for large galleries
+- Mobile experience improvements
+
+The platform continues to grow as a comprehensive resource for exploring the universe across multiple wavelengths.
+`,
+  },
+  {
     slug: 'building-multi-spectrum-data-platform',
     title: 'Building a Multi-Spectrum Astronomical Data Platform',
     excerpt: 'The technical architecture behind integrating data from JWST, Australian radio telescopes, and real-time event feeds into a cohesive exploration experience.',
-    date: '2024-01-15',
+    date: '2024-12-05',
     author: { name: 'Developer' },
     category: 'architecture',
     tags: ['Next.js', 'TypeScript', 'API Integration', 'Architecture'],
@@ -185,7 +334,7 @@ The platform demonstrates that modern web technologies can create compelling exp
     slug: 'integrating-australian-radio-telescopes',
     title: 'Integrating Australian Radio Telescope Data',
     excerpt: 'How I connected to CASDA and the Australian SKA Pathfinder data archives to bring radio astronomy to the web.',
-    date: '2024-01-10',
+    date: '2024-12-04',
     author: { name: 'Developer' },
     category: 'radio-astronomy',
     tags: ['ASKAP', 'CASDA', 'TAP', 'Radio Astronomy', 'SKA'],
@@ -325,7 +474,7 @@ Radio astronomy reveals a hidden universe of energetic phenomena. By making this
     slug: 'accessible-space-data-visualization',
     title: 'Making Space Data Accessible to Everyone',
     excerpt: 'Designing astronomical data visualizations that work for users of all abilities, with a focus on WCAG compliance and inclusive design.',
-    date: '2024-01-05',
+    date: '2024-12-04',
     author: { name: 'Developer' },
     category: 'accessibility',
     tags: ['Accessibility', 'WCAG', 'Inclusive Design', 'UX'],
@@ -508,7 +657,7 @@ The universe is for everyone. Our tools should be too.
     slug: 'citizen-science-technical-design',
     title: 'Technical Design for Citizen Science Classification',
     excerpt: 'Building a classification interface that empowers volunteers to contribute to real astronomical research through Zooniverse integration.',
-    date: '2024-01-01',
+    date: '2024-12-04',
     author: { name: 'Developer' },
     category: 'data-integration',
     tags: ['Citizen Science', 'Zooniverse', 'API', 'UX Design'],
