@@ -31,8 +31,35 @@ import {
   Sparkles,
   Radio,
   Satellite,
+  Video,
+  Eye,
 } from 'lucide-react'
 import { cn, formatDate } from '@/lib/utils'
+
+// ISS Live Camera feeds
+const ISS_CAMERAS = [
+  {
+    id: 'nasa-live',
+    name: 'NASA Live',
+    description: 'Official NASA TV live stream featuring ISS views and mission coverage',
+    embedUrl: 'https://www.youtube.com/embed/P9C25Un7xaM?autoplay=0',
+    directUrl: 'https://www.youtube.com/watch?v=P9C25Un7xaM',
+  },
+  {
+    id: 'iss-hdev',
+    name: 'ISS HD Earth Viewing',
+    description: 'High-definition cameras mounted on the ISS exterior showing Earth views',
+    embedUrl: 'https://www.youtube.com/embed/xRPTBhmcyXY?autoplay=0',
+    directUrl: 'https://www.youtube.com/watch?v=xRPTBhmcyXY',
+  },
+  {
+    id: 'nasa-media',
+    name: 'NASA Media Channel',
+    description: 'NASA public affairs events and press conferences',
+    embedUrl: 'https://www.youtube.com/embed/21X5lGlDOfg?autoplay=0',
+    directUrl: 'https://www.youtube.com/watch?v=21X5lGlDOfg',
+  },
+]
 
 export default function EventsPage() {
   const [events, setEvents] = useState<AstronomicalEvent[]>([])
@@ -40,6 +67,7 @@ export default function EventsPage() {
   const [issPosition, setIssPosition] = useState<{ lat: number; lon: number } | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const [selectedCamera, setSelectedCamera] = useState(ISS_CAMERAS[0])
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -324,6 +352,142 @@ export default function EventsPage() {
               )}
             </div>
           </div>
+
+          {/* ISS Live Cameras Section */}
+          <section className="mt-12">
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+              <div>
+                <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
+                  <Video className="w-6 h-6 text-cosmos-cyan" />
+                  ISS Live Cameras
+                </h2>
+                <p className="text-gray-400 mt-1">
+                  Watch Earth from space in real-time from the International Space Station
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-sm">
+                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+                  LIVE
+                </span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+              {/* Camera Selector */}
+              <div className="space-y-3">
+                <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide">
+                  Select Camera
+                </h3>
+                {ISS_CAMERAS.map((camera) => (
+                  <button
+                    key={camera.id}
+                    onClick={() => setSelectedCamera(camera)}
+                    className={cn(
+                      'w-full p-4 rounded-xl text-left transition-all',
+                      selectedCamera.id === camera.id
+                        ? 'bg-cosmos-cyan/20 border border-cosmos-cyan/50'
+                        : 'glass-panel hover:bg-white/5 border border-transparent'
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={cn(
+                        'w-10 h-10 rounded-lg flex items-center justify-center',
+                        selectedCamera.id === camera.id
+                          ? 'bg-cosmos-cyan/30'
+                          : 'bg-white/10'
+                      )}>
+                        <Eye className={cn(
+                          'w-5 h-5',
+                          selectedCamera.id === camera.id ? 'text-cosmos-cyan' : 'text-gray-400'
+                        )} />
+                      </div>
+                      <div>
+                        <h4 className={cn(
+                          'font-medium',
+                          selectedCamera.id === camera.id ? 'text-cosmos-cyan' : 'text-white'
+                        )}>
+                          {camera.name}
+                        </h4>
+                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
+                          {camera.description}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+
+                <Card className="mt-4" padding="md">
+                  <CardContent>
+                    <h4 className="text-sm font-medium text-white mb-2">About the Feed</h4>
+                    <p className="text-xs text-gray-400">
+                      When the ISS is in darkness or switching between cameras,
+                      you may see a blue or black screen. This is normal - the station
+                      orbits Earth every 90 minutes, experiencing sunrise and sunset
+                      16 times per day.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Video Player */}
+              <div className="lg:col-span-3">
+                <Card padding="none" className="overflow-hidden">
+                  <div className="relative aspect-video bg-cosmos-void">
+                    <iframe
+                      src={selectedCamera.embedUrl}
+                      title={selectedCamera.name}
+                      className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  </div>
+                  <div className="p-4 flex items-center justify-between">
+                    <div>
+                      <h3 className="font-semibold text-white">{selectedCamera.name}</h3>
+                      <p className="text-sm text-gray-400">{selectedCamera.description}</p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                    >
+                      <a
+                        href={selectedCamera.directUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Open in YouTube
+                        <ExternalLink className="w-4 h-4" />
+                      </a>
+                    </Button>
+                  </div>
+                </Card>
+
+                {/* Additional Info */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                  <Card padding="md" className="text-center">
+                    <CardContent>
+                      <div className="text-2xl font-bold text-cosmos-cyan">~27,600</div>
+                      <div className="text-xs text-gray-400">km/h orbital speed</div>
+                    </CardContent>
+                  </Card>
+                  <Card padding="md" className="text-center">
+                    <CardContent>
+                      <div className="text-2xl font-bold text-cosmos-gold">~408</div>
+                      <div className="text-xs text-gray-400">km altitude</div>
+                    </CardContent>
+                  </Card>
+                  <Card padding="md" className="text-center">
+                    <CardContent>
+                      <div className="text-2xl font-bold text-cosmos-pink">92</div>
+                      <div className="text-xs text-gray-400">min per orbit</div>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </div>
+          </section>
         </div>
       </main>
 

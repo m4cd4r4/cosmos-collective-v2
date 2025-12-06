@@ -8,9 +8,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { useSession, signIn, signOut } from 'next-auth/react'
 import { cn } from '@/lib/utils'
-import { Button } from '@/components/ui/Button'
 import {
   Telescope,
   Globe,
@@ -19,9 +17,6 @@ import {
   BookOpen,
   Menu,
   X,
-  User,
-  LogOut,
-  Settings,
 } from 'lucide-react'
 
 // ============================================
@@ -167,7 +162,6 @@ function DesktopNav() {
 
 function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const pathname = usePathname()
-  const { data: session } = useSession()
 
   return (
     <>
@@ -198,6 +192,7 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-white/5 transition-colors"
             aria-label="Close menu"
+            type="button"
           >
             <X className="w-5 h-5" />
           </button>
@@ -231,135 +226,8 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
             )
           })}
         </nav>
-
-        {/* User section */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
-          {session ? (
-            <div className="space-y-2">
-              <div className="flex items-center gap-3 px-4 py-2">
-                {session.user?.image ? (
-                  <img
-                    src={session.user.image}
-                    alt=""
-                    className="w-8 h-8 rounded-full"
-                  />
-                ) : (
-                  <User className="w-8 h-8 p-1.5 rounded-full bg-cosmos-surface" />
-                )}
-                <div className="flex-1 min-w-0">
-                  <div className="font-medium text-white truncate">
-                    {session.user?.name}
-                  </div>
-                  <div className="text-xs text-gray-400 truncate">
-                    {session.user?.email}
-                  </div>
-                </div>
-              </div>
-              <Button
-                variant="ghost"
-                fullWidth
-                onClick={() => signOut()}
-                leftIcon={<LogOut className="w-4 h-4" />}
-              >
-                Sign Out
-              </Button>
-            </div>
-          ) : (
-            <Button variant="primary" fullWidth onClick={() => signIn()}>
-              Sign In
-            </Button>
-          )}
-        </div>
       </div>
     </>
-  )
-}
-
-// ============================================
-// User Menu (Desktop)
-// ============================================
-
-function UserMenu() {
-  const { data: session, status } = useSession()
-  const [isOpen, setIsOpen] = useState(false)
-
-  if (status === 'loading') {
-    return <div className="w-9 h-9 rounded-full skeleton" />
-  }
-
-  if (!session) {
-    return (
-      <Button variant="primary" size="sm" onClick={() => signIn()}>
-        Sign In
-      </Button>
-    )
-  }
-
-  return (
-    <div className="relative">
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 p-1 rounded-full hover:bg-white/5 transition-colors focus-ring"
-        aria-expanded={isOpen}
-        aria-haspopup="true"
-      >
-        {session.user?.image ? (
-          <img
-            src={session.user.image}
-            alt=""
-            className="w-8 h-8 rounded-full ring-2 ring-white/10"
-          />
-        ) : (
-          <div className="w-8 h-8 rounded-full bg-cosmos-surface flex items-center justify-center">
-            <User className="w-4 h-4" />
-          </div>
-        )}
-      </button>
-
-      {/* Dropdown menu */}
-      {isOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setIsOpen(false)}
-            aria-hidden="true"
-          />
-          <div className="absolute right-0 mt-2 w-56 glass-panel rounded-lg shadow-cosmic z-50">
-            <div className="p-3 border-b border-white/10">
-              <div className="font-medium text-white">{session.user?.name}</div>
-              <div className="text-sm text-gray-400">{session.user?.email}</div>
-            </div>
-            <div className="p-2">
-              <Link
-                href="/dashboard"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                <User className="w-4 h-4" />
-                Dashboard
-              </Link>
-              <Link
-                href="/settings"
-                className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-                onClick={() => setIsOpen(false)}
-              >
-                <Settings className="w-4 h-4" />
-                Settings
-              </Link>
-            </div>
-            <div className="p-2 border-t border-white/10">
-              <button
-                onClick={() => signOut()}
-                className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-red-400 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </>
-      )}
-    </div>
   )
 }
 
@@ -380,23 +248,16 @@ export function Header() {
           {/* Desktop Navigation */}
           <DesktopNav />
 
-          {/* Right side */}
-          <div className="flex items-center gap-3">
-            {/* User Menu (Desktop) */}
-            <div className="hidden lg:block">
-              <UserMenu />
-            </div>
-
-            {/* Mobile menu button */}
-            <button
-              onClick={() => setMobileMenuOpen(true)}
-              className="lg:hidden p-2 rounded-lg hover:bg-white/5 transition-colors"
-              aria-label="Open menu"
-              aria-expanded={mobileMenuOpen}
-            >
-              <Menu className="w-6 h-6" />
-            </button>
-          </div>
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="lg:hidden p-2 rounded-lg hover:bg-white/5 transition-colors"
+            aria-label="Open menu"
+            aria-expanded={mobileMenuOpen ? 'true' : 'false'}
+            type="button"
+          >
+            <Menu className="w-6 h-6" />
+          </button>
         </div>
       </div>
 

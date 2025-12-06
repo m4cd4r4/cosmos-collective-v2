@@ -198,7 +198,7 @@ export function SkyMapViewer({
   const [searchQuery, setSearchQuery] = useState(initialTarget || '')
   const [currentCoords, setCurrentCoords] = useState<SkyCoordinates | null>(null)
   const [currentFov, setCurrentFov] = useState(initialFov)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedObject, setSelectedObject] = useState<{
     name: string
     ra: number
@@ -222,7 +222,7 @@ export function SkyMapViewer({
       return
     }
 
-    // Wait for container to be available
+    // Wait for container to be available and have dimensions
     if (!containerRef.current) {
       if (retryCountRef.current < maxRetries) {
         retryCountRef.current++
@@ -231,52 +231,66 @@ export function SkyMapViewer({
       return
     }
 
-    try {
-      const options: AladinOptions = {
-      survey: currentSurvey.survey,
-      fov: initialFov,
-      cooFrame: 'J2000',
-      showReticle: true,
-      showZoomControl: false,
-      showFullscreenControl: false,
-      showLayersControl: false,
-      showGotoControl: false,
-      showFrame: true,
-    }
-
-    // Set initial target
-    if (initialRa !== undefined && initialDec !== undefined) {
-      options.target = `${initialRa} ${initialDec}`
-    } else if (initialTarget) {
-      options.target = initialTarget
-    } else {
-      options.target = 'galactic center'
-    }
-
-    const aladin = window.A.aladin(containerRef.current, options)
-    aladinRef.current = aladin
-
-    // Add observation markers
-    addObservationMarkers(aladin)
-
-    // Set up event listeners
-    aladin.on('positionChanged', () => {
-      const [ra, dec] = aladin.getRaDec()
-      const [fov] = aladin.getFov()
-      setCurrentCoords({ ra, dec })
-      setCurrentFov(fov)
-    })
-
-    aladin.on('objectClicked', (object: unknown) => {
-      if (object && typeof object === 'object' && 'data' in object) {
-        const data = (object as { data: { name: string; ra: number; dec: number } }).data
-        setSelectedObject({
-          name: data.name,
-          ra: data.ra,
-          dec: data.dec,
-        })
+    // Ensure container has dimensions before initializing
+    const rect = containerRef.current.getBoundingClientRect()
+    if (rect.width === 0 || rect.height === 0) {
+      if (retryCountRef.current < maxRetries) {
+        retryCountRef.current++
+        setTimeout(initializeAladin, 100)
       }
-    })
+      return
+    }
+
+    try {
+      // Set initial target
+      let targetStr = 'galactic center'
+      if (initialRa !== undefined && initialDec !== undefined) {
+        targetStr = `${initialRa} ${initialDec}`
+      } else if (initialTarget) {
+        targetStr = initialTarget
+      }
+
+      const options: AladinOptions = {
+        survey: 'P/DSS2/color',
+        fov: initialFov,
+        target: targetStr,
+        cooFrame: 'J2000',
+        showReticle: true,
+        showZoomControl: false,
+        showFullscreenControl: false,
+        showLayersControl: false,
+        showGotoControl: false,
+        showFrame: true,
+      }
+
+      const aladin = window.A.aladin(containerRef.current, options)
+      aladinRef.current = aladin
+
+      // Add observation markers after a short delay to ensure map is ready
+      setTimeout(() => {
+        if (aladinRef.current) {
+          addObservationMarkers(aladinRef.current)
+        }
+      }, 500)
+
+      // Set up event listeners
+      aladin.on('positionChanged', () => {
+        const [ra, dec] = aladin.getRaDec()
+        const [fov] = aladin.getFov()
+        setCurrentCoords({ ra, dec })
+        setCurrentFov(fov)
+      })
+
+      aladin.on('objectClicked', (object: unknown) => {
+        if (object && typeof object === 'object' && 'data' in object) {
+          const data = (object as { data: { name: string; ra: number; dec: number } }).data
+          setSelectedObject({
+            name: data.name,
+            ra: data.ra,
+            dec: data.dec,
+          })
+        }
+      })
 
       setIsLoaded(true)
     } catch (error) {
@@ -287,7 +301,7 @@ export function SkyMapViewer({
         setTimeout(initializeAladin, 500)
       }
     }
-  }, [initialRa, initialDec, initialFov, initialTarget, currentSurvey.survey, maxRetries])
+  }, [initialRa, initialDec, initialFov, initialTarget, maxRetries])
 
   // Add observation markers from our data
   const addObservationMarkers = (aladin: AladinInstance) => {

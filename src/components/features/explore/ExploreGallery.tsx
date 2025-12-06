@@ -8,7 +8,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import NextImage from 'next/image'
-import { getFeaturedJWSTImages } from '@/services/mast-api'
+import { getFeaturedJWSTImages, getFeaturedHubbleImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
 import { ImageCard } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
@@ -39,6 +39,7 @@ export function ExploreGallery({
   // Combine all observations
   const allObservations: Observation[] = [
     ...getFeaturedJWSTImages(),
+    ...getFeaturedHubbleImages(),
     ...getFeaturedRadioObservations(),
   ]
 

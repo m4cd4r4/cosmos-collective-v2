@@ -168,9 +168,15 @@ export function CitizenScienceHub() {
               Your contributions directly support the development of the Square Kilometre Array -
               the world&apos;s largest radio telescope.
             </p>
-            <Button variant="primary">
-              Learn About SKA
-              <ArrowRight className="w-4 h-4" />
+            <Button variant="primary" asChild>
+              <a
+                href="https://www.skao.int/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Learn About SKA
+                <ArrowRight className="w-4 h-4" />
+              </a>
             </Button>
           </CardContent>
         </Card>

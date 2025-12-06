@@ -191,25 +191,30 @@ export function ClassificationInterface({
 
         {/* Image Viewer */}
         <Card padding="none" className="overflow-hidden">
-          <div className="relative aspect-square bg-cosmos-void">
-            {/* Placeholder for real image - using gradient for demo */}
+          <div className="relative aspect-square bg-cosmos-void overflow-hidden">
+            {/* Subject image from NASA */}
             <div
-              className="absolute inset-0 bg-gradient-to-br from-cosmos-depth via-cosmos-void to-cosmos-surface flex items-center justify-center"
+              className="absolute inset-0 flex items-center justify-center"
               style={{
                 transform: `scale(${zoom})`,
                 transition: 'transform 0.2s ease-out',
               }}
             >
-              <div className="text-center text-gray-500">
-                <Sparkles className="w-16 h-16 mx-auto mb-4 opacity-30" />
-                <p className="text-sm">
-                  Subject image would load here
-                  <br />
-                  <span className="text-xs text-gray-600">
-                    (Using placeholder for demo)
-                  </span>
-                </p>
-              </div>
+              {currentTask.subjectUrl ? (
+                <Image
+                  src={currentTask.subjectUrl}
+                  alt={`Classification subject from ${currentTask.projectName}`}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 66vw"
+                  priority
+                />
+              ) : (
+                <div className="text-center text-gray-500">
+                  <Sparkles className="w-16 h-16 mx-auto mb-4 opacity-30" />
+                  <p className="text-sm">No image available</p>
+                </div>
+              )}
             </div>
 
             {/* Zoom Controls */}

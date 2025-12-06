@@ -28,7 +28,7 @@ export default function SkyMapPage({
     <div className="flex flex-col h-screen">
       <Header />
 
-      <main className="flex-1 relative">
+      <main className="flex-1 relative overflow-hidden min-h-[500px]">
         <Suspense
           fallback={
             <div className="absolute inset-0 bg-cosmos-void flex items-center justify-center">
