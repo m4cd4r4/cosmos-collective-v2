@@ -85,7 +85,7 @@ Location: `src/app/settings/`
 
 Planned settings:
 - Notification preferences
-- Theme customization
+- Theme customisation
 - Accessibility options
 - Data export
 
@@ -95,7 +95,7 @@ Planned settings:
 2. **Phase 2**: Authentication with GitHub/Google OAuth
 3. **Phase 3**: Database integration for user persistence
 4. **Phase 4**: Full citizen science contribution tracking
-5. **Phase 5**: Dashboard and personalization features
+5. **Phase 5**: Dashboard and personalisation features
 
 ## Related Files
 

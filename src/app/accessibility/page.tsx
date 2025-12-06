@@ -39,7 +39,7 @@ const accessibilityFeatures = [
   {
     icon: Contrast,
     title: 'High Contrast',
-    description: 'Carefully chosen color combinations meet WCAG AA contrast requirements for readability.',
+    description: 'Carefully chosen colour combinations meet WCAG AA contrast requirements for readability.',
   },
   {
     icon: Type,
@@ -174,7 +174,7 @@ export default function AccessibilityPage() {
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-cosmos-cyan mt-1">-</span>
-                    <span>Color contrast ratios meeting WCAG 2.1 AA requirements</span>
+                    <span>Colour contrast ratios meeting WCAG 2.1 AA requirements</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <span className="text-cosmos-cyan mt-1">-</span>

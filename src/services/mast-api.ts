@@ -620,7 +620,7 @@ export function getFeaturedJWSTImages(): Observation[] {
       dataQuality: 'excellent',
       analysis: {
         summary: 'Ring galaxy showing expanding wave of star formation triggered by a galactic collision.',
-        scientificContext: 'About 400 million years ago, a smaller galaxy punched through the center, creating an expanding ring of star formation like ripples from a stone dropped in water.',
+        scientificContext: 'About 400 million years ago, a smaller galaxy punched through the centre, creating an expanding ring of star formation like ripples from a stone dropped in water.',
         keyFeatures: ['Double ring structure', 'Star formation wave', 'Central hub', 'Tidal tails', 'Companion galaxies'],
         relatedObjects: ['Hoag\'s Object', 'Arp 147'],
         confidence: 'high',
@@ -686,7 +686,7 @@ export function getFeaturedHubbleImages(): Observation[] {
       isFeatured: true,
       dataQuality: 'excellent',
       analysis: {
-        summary: 'An edge-on spiral galaxy famous for its prominent dust lane and bulging center.',
+        summary: 'An edge-on spiral galaxy famous for its prominent dust lane and bulging centre.',
         scientificContext: 'The Sombrero Galaxy hosts a supermassive black hole with a mass of 1 billion Suns.',
         keyFeatures: ['Prominent dust lane', 'Large central bulge', 'Supermassive black hole', 'Globular cluster halo'],
         relatedObjects: ['Andromeda Galaxy', 'Messier 82'],
@@ -714,7 +714,7 @@ export function getFeaturedHubbleImages(): Observation[] {
       isFeatured: true,
       dataQuality: 'excellent',
       analysis: {
-        summary: 'A supernova remnant powered by a rapidly spinning neutron star (pulsar) at its center.',
+        summary: 'A supernova remnant powered by a rapidly spinning neutron star (pulsar) at its centre.',
         scientificContext: 'The Crab Pulsar rotates 30 times per second and powers the nebula with its magnetic wind.',
         keyFeatures: ['Central pulsar', 'Expanding filaments', 'Synchrotron radiation', 'Historical supernova'],
         relatedObjects: ['Vela Supernova Remnant', 'Cassiopeia A'],
@@ -821,7 +821,7 @@ export function getFeaturedHubbleImages(): Observation[] {
         preview: NASA_IMAGE_URLS.milkyWay,
         full: NASA_IMAGE_URLS.milkyWay,
       },
-      description: 'A composite view of the Milky Way center from NASA Great Observatories.',
+      description: 'A composite view of the Milky Way centre from NASA Great Observatories.',
       distanceLightYears: 26000,
       isFeatured: true,
       dataQuality: 'excellent',

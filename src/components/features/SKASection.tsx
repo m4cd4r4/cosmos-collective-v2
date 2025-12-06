@@ -38,7 +38,7 @@ export function SKASection() {
         </h2>
         <p className="text-gray-400 max-w-2xl mx-auto">
           The world's largest and most sensitive radio telescope, currently under construction
-          in Australia and South Africa. It will revolutionize our understanding of the universe.
+          in Australia and South Africa. It will revolutionise our understanding of the universe.
         </p>
       </div>
 

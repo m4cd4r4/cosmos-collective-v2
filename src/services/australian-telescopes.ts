@@ -406,7 +406,7 @@ export function getFeaturedRadioObservations(): Observation[] {
       description: 'Radio continuum survey revealing millions of galaxies across the southern sky.',
       isFeatured: true,
       analysis: {
-        summary: 'ASKAP\'s EMU survey will catalog approximately 70 million galaxies at radio wavelengths.',
+        summary: 'ASKAP\'s EMU survey will catalogue approximately 70 million galaxies at radio wavelengths.',
         scientificContext: 'This survey is a pathfinder for SKA continuum science, demonstrating the power of wide-field radio imaging.',
         keyFeatures: ['Radio galaxies', 'Active galactic nuclei', 'Star-forming galaxies'],
         relatedObjects: ['Radio galaxy population'],
@@ -563,7 +563,7 @@ export function getFeaturedRadioObservations(): Observation[] {
         preview: RADIO_PLACEHOLDER_IMAGES.parkes,
         full: RADIO_PLACEHOLDER_IMAGES.parkes,
       },
-      description: 'Detailed mapping of neutral hydrogen in our nearest galactic neighbor.',
+      description: 'Detailed mapping of neutral hydrogen in our nearest galactic neighbour.',
       isFeatured: true,
       analysis: {
         summary: 'High-resolution map of the hydrogen gas in the Large Magellanic Cloud.',

@@ -308,7 +308,7 @@ export function ClassificationInterface({
                     {currentTask.type === 'source-matching' && (
                       <>
                         Compare the radio contours (usually colored) with the optical image.
-                        The host galaxy is usually at the center of the radio emission.
+                        The host galaxy is usually at the centre of the radio emission.
                       </>
                     )}
                     {currentTask.type === 'transient-detection' && (

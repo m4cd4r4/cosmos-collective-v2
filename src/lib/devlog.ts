@@ -164,7 +164,7 @@ curl -sI "https://images-assets.nasa.gov/image/PIA18164/PIA18164~medium.jpg" | h
 
 URLs returning 403 Forbidden were replaced with working alternatives.
 
-### Build Optimization
+### Build Optimisation
 
 - Removed unused auth imports (next-auth)
 - Cleaned up unused components
@@ -174,7 +174,7 @@ URLs returning 403 Forbidden were replaced with working alternatives.
 
 - Further Sky Map debugging for survey loading edge cases
 - Additional telescope observations
-- Performance optimization for large galleries
+- Performance optimisation for large galleries
 - Mobile experience improvements
 
 The platform continues to grow as a comprehensive resource for exploring the universe across multiple wavelengths.
@@ -322,7 +322,7 @@ async function queryCADSA(adql: string): Promise<RadioSource[]> {
 ## Looking Forward
 
 Future plans include:
-- 3D visualization of galaxy distributions using Three.js
+- 3D visualisation of galaxy distributions using Three.js
 - WebGL-accelerated radio image processing
 - Integration with more SKA precursor data
 - Enhanced citizen science classification tools
@@ -412,7 +412,7 @@ Radio data differs fundamentally from optical:
 
 ### Flux Density
 
-Radio sources are characterized by flux density (Jy or mJy):
+Radio sources are characterised by flux density (Jy or mJy):
 
 - 1 Jy = 10⁻²⁶ W m⁻² Hz⁻¹
 - Most EMU sources are 0.1-10 mJy
@@ -451,20 +451,20 @@ CASDA's TAP service doesn't include CORS headers by default. Solutions:
 Radio catalogs contain millions of sources. Strategies:
 - Server-side pagination
 - Spatial indexing (HEALPix)
-- Client-side virtualization
+- Client-side virtualisation
 
-### Visualization
+### Visualisation
 
-Radio images need different visualization than optical:
+Radio images need different visualisation than optical:
 - Logarithmic scaling
 - Contour overlays
-- Color maps (viridis, plasma)
+- Colour maps (viridis, plasma)
 
 ## Future Work
 
 - Real-time pulsar timing displays
 - Cross-matching radio/optical sources
-- HI spectral line data visualization
+- HI spectral line data visualisation
 - Integration with SKA Regional Centres (when available)
 
 Radio astronomy reveals a hidden universe of energetic phenomena. By making this data accessible through modern web interfaces, we can share these discoveries with everyone.
@@ -488,7 +488,7 @@ The universe belongs to everyone. When building Cosmos Collective, accessibility
 
 Astronomy is inherently visual. Images of galaxies, nebulae, and deep fields are the primary way we share discoveries. But what about users who:
 - Have low vision or blindness?
-- Have color vision deficiency?
+- Have colour vision deficiency?
 - Use screen readers?
 - Navigate with keyboards only?
 - Have cognitive or learning differences?
@@ -499,7 +499,7 @@ We target WCAG 2.1 Level AA compliance across the platform:
 
 ### Perceivable
 
-**Color Contrast**: All text meets 4.5:1 minimum contrast ratio:
+**Colour Contrast**: All text meets 4.5:1 minimum contrast ratio:
 
 \`\`\`css
 /* High contrast against dark background */
@@ -508,7 +508,7 @@ We target WCAG 2.1 Level AA compliance across the platform:
 --cosmos-cyan: #22d3ee;         /* 6.2:1 on void */
 \`\`\`
 
-**Non-color indicators**: Information isn't conveyed by color alone:
+**Non-colour indicators**: Information isn't conveyed by colour alone:
 
 \`\`\`tsx
 {/* Uses both color AND pattern */}
@@ -633,7 +633,7 @@ The Aladin Lite sky map includes:
 - Screen reader announcements for position changes
 - Keyboard shortcuts for navigation
 - Text-based coordinate display
-- Catalog search as alternative to visual browsing
+- Catalogue search as alternative to visual browsing
 
 ## Testing
 
@@ -665,7 +665,7 @@ The universe is for everyone. Our tools should be too.
     content: `
 # Technical Design for Citizen Science Classification
 
-Citizen science has revolutionized astronomy. Projects like Galaxy Zoo have demonstrated that volunteers can make meaningful contributions to research. Here's how I designed the classification system for Cosmos Collective.
+Citizen science has revolutionised astronomy. Projects like Galaxy Zoo have demonstrated that volunteers can make meaningful contributions to research. Here's how I designed the classification system for Cosmos Collective.
 
 ## The Zooniverse Model
 
@@ -791,7 +791,7 @@ Zooniverse ensures quality through:
 - Real-time collaboration (see what others classify)
 - Expert feedback on your classifications
 - Machine learning assistance (highlight features)
-- Mobile-optimized classification
+- Mobile-optimised classification
 
 Citizen science demonstrates that everyone can contribute to astronomical discovery. The platform makes this as accessible as possible.
 `,

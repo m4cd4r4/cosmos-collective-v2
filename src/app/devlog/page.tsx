@@ -23,7 +23,7 @@ import {
 
 export const metadata: Metadata = {
   title: 'Devlog',
-  description: 'Technical journey building Cosmos Collective. Deep dives into astronomical data integration, visualization techniques, and modern web development.',
+  description: 'Technical journey building Cosmos Collective. Deep dives into astronomical data integration, visualisation techniques, and modern web development.',
 }
 
 // ============================================
@@ -102,7 +102,7 @@ export default async function DevlogPage() {
                 <p className="text-gray-400">
                   Technical posts documenting the development journey are being written.
                   Check back soon for deep dives into the architecture, data integration,
-                  and visualization techniques.
+                  and visualisation techniques.
                 </p>
               </CardContent>
             </Card>

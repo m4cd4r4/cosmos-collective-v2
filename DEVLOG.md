@@ -296,7 +296,7 @@ The ImageCard uses a native `<img>` tag instead of Next.js Image:
 ```
 
 **Impact:**
-- No automatic image optimization
+- No automatic image optimisation
 - No WebP/AVIF conversion
 - No responsive sizing
 
@@ -460,7 +460,7 @@ async function loadFITS(url: string) {
 
 ### 4. Add 3D Visualization
 
-**Opportunity:** Three.js galaxy/catalog visualization (dependency already installed)
+**Opportunity:** Three.js galaxy/catalogue visualisation (dependency already installed)
 
 ```typescript
 // Already have @react-three/fiber and @react-three/drei
@@ -702,7 +702,7 @@ export async function getSkyViewImage(
 ### Phase 2: Enhanced Features (Week 3-4)
 - [ ] Real Zooniverse integration
 - [ ] Implement FITS viewing
-- [ ] Add 3D galaxy visualization
+- [ ] Add 3D galaxy visualisation
 - [ ] Improve PWA offline support
 
 ### Phase 3: Advanced Features (Month 2)
@@ -712,7 +712,7 @@ export async function getSkyViewImage(
 - [ ] Social sharing features
 
 ### Phase 4: Scale & Polish (Month 3)
-- [ ] Performance optimization
+- [ ] Performance optimisation
 - [ ] CDN for cached images
 - [ ] Analytics dashboard
 - [ ] Mobile app wrapper
@@ -721,7 +721,7 @@ export async function getSkyViewImage(
 
 ## Technical Debt
 
-1. **Next.js Image Optimization:** Not using `next/image` for external images
+1. **Next.js Image Optimisation:** Not using `next/image` for external images
 2. **Error Handling:** Limited error boundaries and fallbacks
 3. **Testing:** Test files exist but may need expansion
 4. **Database:** Prisma configured but not connected

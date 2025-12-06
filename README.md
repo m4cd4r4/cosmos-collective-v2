@@ -41,13 +41,13 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 ### 📡 SKA (Square Kilometre Array) Showcase
 - Learn about the world's largest radio telescope
 - Links to SKAO and CSIRO resources
-- Understand how SKA will revolutionize astronomy
+- Understand how SKA will revolutionise astronomy
 
 ### ♿ Accessibility First
 - WCAG 2.1 AA compliant with dedicated [Accessibility page](/accessibility)
-- Screen reader optimized with ARIA labels
+- Screen reader optimised with ARIA labels
 - Full keyboard navigation throughout
-- High contrast color palette
+- High contrast colour palette
 - Reduced motion support
 - Semantic HTML structure
 
@@ -126,9 +126,9 @@ See `.env.example` for all available configuration options. At minimum, you'll n
 
 ## 🎨 Design System
 
-### Color Palette - "Cosmic Optimism"
+### Colour Palette - "Cosmic Optimism"
 
-| Color | Hex | Usage |
+| Colour | Hex | Usage |
 |-------|-----|-------|
 | Void | `#030014` | Primary background |
 | Stellar Cyan | `#06b6d4` | Primary accent, radio waves |
