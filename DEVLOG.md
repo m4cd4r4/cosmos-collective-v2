@@ -49,6 +49,50 @@
 - Added animated GIF demo to README
 - Shows homepage, explore page, and sky map features
 
+### UI Bug Fixes (Session 2)
+
+Three user-reported issues fixed:
+
+#### 1. LIVE Banner 404 Errors
+**Problem:** Clicking events in the scrolling LIVE banner returned 404 errors.
+
+**Cause:** Links pointed to `/events/${event.id}` but no dynamic route existed for individual events.
+
+**Fix:** Changed links to point to `/events` page instead.
+
+| File | Change |
+|------|--------|
+| `src/components/features/LiveEventsBar.tsx` | `href="/events"` instead of dynamic route |
+
+#### 2. Explore Cards Not Displaying Images
+**Problem:** Observation cards showed broken images with 403 errors.
+
+**Cause:** Dynamic observations used `stsci-opo.org` CDN URLs which require authentication.
+
+**Fix:**
+- Updated `generateImageUrls()` to return placeholder images for dynamic observations
+- Featured images continue using verified NASA.gov URLs
+- Removed `stsci-opo.org` from `next.config.js` remote patterns
+
+| File | Change |
+|------|--------|
+| `src/services/mast-api.ts` | Use placeholder for dynamic observations |
+| `next.config.js` | Removed broken stsci-opo.org pattern |
+
+#### 3. Sky Map Not Loading
+**Problem:** Sky Map stuck on "Initializing sky map..." indefinitely.
+
+**Cause:** `window.A` (Aladin Lite library) not immediately available when Script `onLoad` fires.
+
+**Fix:** Added retry logic to `initializeAladin()`:
+- Retries up to 50 times (5 seconds max) if `window.A` not available
+- Handles container availability with separate retry
+- Try/catch with error recovery for initialization failures
+
+| File | Change |
+|------|--------|
+| `src/components/features/sky-map/SkyMapViewer.tsx` | Added `retryCountRef` and retry logic |
+
 ---
 
 
