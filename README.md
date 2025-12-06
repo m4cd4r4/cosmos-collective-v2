@@ -210,7 +210,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <p align="center">
-  <a href="https://cosmos-collective-v2.vercel.app">Live Demo</a> •
+  <a href="https://cosmos-collective-v2.vercel.app">Live Site</a> •
   <a href="https://cosmos-collective-v2.vercel.app/devlog">Devlog</a> •
-  <a href="https://github.com/m4cd4r4/cosmos-collective-v2/issues">Report Bug</a>
 </p>
