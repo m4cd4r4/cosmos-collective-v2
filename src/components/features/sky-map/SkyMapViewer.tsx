@@ -194,6 +194,7 @@ export function SkyMapViewer({
   const maxRetries = 50 // 5 seconds max wait (50 * 100ms)
 
   const [isLoaded, setIsLoaded] = useState(false)
+  const [loadError, setLoadError] = useState<string | null>(null)
   const [currentSurvey, setCurrentSurvey] = useState(surveyOptions[0])
   const [searchQuery, setSearchQuery] = useState(initialTarget || '')
   const [currentCoords, setCurrentCoords] = useState<SkyCoordinates | null>(null)
@@ -218,6 +219,7 @@ export function SkyMapViewer({
         setTimeout(initializeAladin, 100)
       } else {
         console.error('Aladin Lite failed to load after maximum retries')
+        setLoadError('Failed to load sky map. Please check your internet connection and try refreshing the page.')
       }
       return
     }
@@ -227,6 +229,8 @@ export function SkyMapViewer({
       if (retryCountRef.current < maxRetries) {
         retryCountRef.current++
         setTimeout(initializeAladin, 50)
+      } else {
+        setLoadError('Sky map container failed to initialize. Please refresh the page.')
       }
       return
     }
@@ -237,6 +241,8 @@ export function SkyMapViewer({
       if (retryCountRef.current < maxRetries) {
         retryCountRef.current++
         setTimeout(initializeAladin, 100)
+      } else {
+        setLoadError('Sky map container has invalid dimensions. Please try resizing your browser window.')
       }
       return
     }
@@ -293,15 +299,29 @@ export function SkyMapViewer({
       })
 
       setIsLoaded(true)
+      setLoadError(null)
     } catch (error) {
       console.error('Failed to initialize Aladin:', error)
       // Retry on error
       if (retryCountRef.current < maxRetries) {
         retryCountRef.current++
         setTimeout(initializeAladin, 500)
+      } else {
+        setLoadError(`Failed to initialize sky map: ${error instanceof Error ? error.message : 'Unknown error'}`)
       }
     }
   }, [initialRa, initialDec, initialFov, initialTarget, maxRetries])
+
+  // Also try to initialize on mount (in case script is cached)
+  useEffect(() => {
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (!aladinRef.current && !loadError) {
+        initializeAladin()
+      }
+    }, 100)
+    return () => clearTimeout(timer)
+  }, [initializeAladin, loadError])
 
   // Add observation markers from our data
   const addObservationMarkers = (aladin: AladinInstance) => {
@@ -517,11 +537,36 @@ export function SkyMapViewer({
           />
 
           {/* Loading overlay */}
-          {!isLoaded && (
+          {!isLoaded && !loadError && (
             <div className="absolute inset-0 bg-cosmos-void flex items-center justify-center z-10">
               <div className="text-center">
                 <div className="w-16 h-16 border-4 border-cosmos-cyan border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-gray-400">Initializing sky map...</p>
+                <p className="text-gray-500 text-sm mt-2">Loading Aladin Lite from CDS Strasbourg...</p>
+              </div>
+            </div>
+          )}
+
+          {/* Error overlay */}
+          {loadError && (
+            <div className="absolute inset-0 bg-cosmos-void flex items-center justify-center z-10">
+              <div className="text-center max-w-md px-4">
+                <div className="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-red-400 text-2xl">!</span>
+                </div>
+                <h3 className="text-white font-semibold mb-2">Sky Map Unavailable</h3>
+                <p className="text-gray-400 mb-4">{loadError}</p>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setLoadError(null)
+                    retryCountRef.current = 0
+                    initializeAladin()
+                  }}
+                  className="px-4 py-2 bg-cosmos-cyan/20 hover:bg-cosmos-cyan/30 text-cosmos-cyan rounded-lg transition-colors"
+                >
+                  Try Again
+                </button>
               </div>
             </div>
           )}
