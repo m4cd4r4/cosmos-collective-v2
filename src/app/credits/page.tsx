@@ -147,7 +147,7 @@ export default function CreditsPage() {
               Credits & Acknowledgments
             </h1>
             <p className="text-gray-400">
-              Cosmos Collective is built upon the incredible work of many organizations and open source projects.
+              Cosmos Collective is built upon the incredible work of many organisations and open source projects.
             </p>
           </div>
 
@@ -211,7 +211,7 @@ export default function CreditsPage() {
                   observatories, and space agencies as noted in each image&apos;s details.
                 </p>
                 <p className="text-sm text-gray-400 mt-4">
-                  All imagery is used in accordance with the respective organizations&apos; media
+                  All imagery is used in accordance with the respective organisations&apos; media
                   usage policies. For specific image credits, please refer to the original
                   data source.
                 </p>

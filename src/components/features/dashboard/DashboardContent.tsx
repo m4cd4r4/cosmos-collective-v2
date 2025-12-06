@@ -49,7 +49,7 @@ type TabId = 'overview' | 'favorites' | 'events' | 'projects'
 
 const tabs = [
   { id: 'overview' as TabId, label: 'Overview', icon: TrendingUp },
-  { id: 'favorites' as TabId, label: 'Favorites', icon: Heart },
+  { id: 'favorites' as TabId, label: 'Favourites', icon: Heart },
   { id: 'events' as TabId, label: 'Live Events', icon: Zap },
   { id: 'projects' as TabId, label: 'Projects', icon: Target },
 ]
@@ -166,7 +166,7 @@ export function DashboardContent() {
         <StatCard
           icon={Heart}
           value={stats.savedFavorites}
-          label="Favorites"
+          label="Favourites"
           color="pink"
         />
         <StatCard
@@ -386,9 +386,9 @@ export function DashboardContent() {
               <Card className="text-center" padding="xl">
                 <CardContent>
                   <Heart className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-white mb-2">No Favorites Yet</h3>
+                  <h3 className="text-lg font-semibold text-white mb-2">No Favourites Yet</h3>
                   <p className="text-gray-400 mb-4">
-                    Start exploring and save your favorite observations
+                    Start exploring and save your favourite observations
                   </p>
                   <Button variant="primary" asChild>
                     <Link href="/explore">
@@ -735,7 +735,7 @@ function FavoriteCard({ observation }: { observation: Observation }) {
             <button
               onClick={() => toggleFavorite(observation.id)}
               className="p-2 rounded-lg hover:bg-white/10 transition-colors"
-              aria-label="Remove from favorites"
+              aria-label="Remove from favourites"
             >
               <Heart className="w-5 h-5 text-cosmos-pink fill-current" />
             </button>

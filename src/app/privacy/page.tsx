@@ -58,7 +58,7 @@ export default function PrivacyPage() {
               </p>
               <ul className="list-disc list-inside text-gray-300 mb-6 space-y-2">
                 <li><strong>No account required</strong> - All features are accessible without signing in</li>
-                <li><strong>Local storage only</strong> - Preferences and favorites are stored in your browser</li>
+                <li><strong>Local storage only</strong> - Preferences and favourites are stored in your browser</li>
                 <li><strong>No tracking cookies</strong> - We do not use advertising or tracking cookies</li>
                 <li><strong>No personal data collection</strong> - We do not collect names, emails, or personal information</li>
               </ul>
@@ -68,7 +68,7 @@ export default function PrivacyPage() {
                 We use browser localStorage to save:
               </p>
               <ul className="list-disc list-inside text-gray-300 mb-6 space-y-2">
-                <li>Your favorited observations</li>
+                <li>Your favourited observations</li>
                 <li>Display preferences (view mode, sort order)</li>
                 <li>Citizen science session statistics</li>
               </ul>

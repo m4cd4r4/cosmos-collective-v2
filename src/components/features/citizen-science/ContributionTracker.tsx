@@ -312,7 +312,7 @@ export function ContributionTracker() {
             <div className="space-y-2">
               {/* Activity Calendar Placeholder */}
               <div className="p-4 rounded-lg bg-white/5 text-center text-gray-400">
-                <p className="text-sm mb-2">Activity calendar visualization would appear here</p>
+                <p className="text-sm mb-2">Activity calendar visualisation would appear here</p>
                 <p className="text-xs text-gray-500">
                   (GitHub-style contribution graph showing daily activity)
                 </p>

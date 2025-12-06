@@ -473,7 +473,7 @@ Radio astronomy reveals a hidden universe of energetic phenomena. By making this
   {
     slug: 'accessible-space-data-visualization',
     title: 'Making Space Data Accessible to Everyone',
-    excerpt: 'Designing astronomical data visualizations that work for users of all abilities, with a focus on WCAG compliance and inclusive design.',
+    excerpt: 'Designing astronomical data visualisations that work for users of all abilities, with a focus on WCAG compliance and inclusive design.',
     date: '2024-12-04',
     author: { name: 'Developer' },
     category: 'accessibility',

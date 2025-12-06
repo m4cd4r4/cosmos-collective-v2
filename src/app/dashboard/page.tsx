@@ -11,7 +11,7 @@ import { DashboardContent } from '@/components/features/dashboard/DashboardConte
 
 export const metadata: Metadata = {
   title: 'Dashboard',
-  description: 'Your personal dashboard. Track your contributions, favorites, and exploration journey through the cosmos.',
+  description: 'Your personal dashboard. Track your contributions, favourites, and exploration journey through the cosmos.',
 }
 
 export default function DashboardPage() {
