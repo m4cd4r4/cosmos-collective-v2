@@ -7,10 +7,27 @@
 
 ---
 
-## Fixes Implemented (December 4, 2025)
-## Fixes Implemented (December 6, 2025)
+## Table of Contents
 
-### Server-Side API Proxies for CORS Resolution
+1. [Changelog](#changelog)
+2. [Executive Summary](#executive-summary)
+3. [Critical Issues](#critical-issues)
+4. [Image & API Issues](#image--api-issues)
+5. [Sky Map Issues](#sky-map-issues)
+6. [Missing Files & Assets](#missing-files--assets)
+7. [API Integration Status](#api-integration-status)
+8. [Opportunities for Improvement](#opportunities-for-improvement)
+9. [Imagery API Implementation Guide](#imagery-api-implementation-guide)
+10. [Recommended Fixes](#recommended-fixes)
+11. [Future Roadmap](#future-roadmap)
+
+---
+
+## Changelog
+
+### December 6, 2025
+
+#### Server-Side API Proxies for CORS Resolution
 
 **Problem:** ALeRCE (transient alerts) and GCN (gamma-ray circulars) APIs were blocked by CORS when called directly from the browser, causing the dashboard to show fallback data instead of live astronomical events.
 
@@ -43,17 +60,17 @@
 | ALeRCE | **WORKING** | ZTF19abnfgwe (SNIa), ZTF20abyvbvs |
 | GCN | **WORKING** | Circular #43006: "Swift GRB 251205A" |
 
-### Homepage Screenshot & Animated Demo
+#### Homepage Screenshot & Animated Demo
 
 - Captured site screenshots using Playwright
 - Added animated GIF demo to README
 - Shows homepage, explore page, and sky map features
 
-### UI Bug Fixes (Session 2)
+#### UI Bug Fixes (Session 2)
 
 Three user-reported issues fixed:
 
-#### 1. LIVE Banner 404 Errors
+##### 1. LIVE Banner 404 Errors
 **Problem:** Clicking events in the scrolling LIVE banner returned 404 errors.
 
 **Cause:** Links pointed to `/events/${event.id}` but no dynamic route existed for individual events.
@@ -64,7 +81,7 @@ Three user-reported issues fixed:
 |------|--------|
 | `src/components/features/LiveEventsBar.tsx` | `href="/events"` instead of dynamic route |
 
-#### 2. Explore Cards Not Displaying Images
+##### 2. Explore Cards Not Displaying Images
 **Problem:** Observation cards showed broken images with 403 errors.
 
 **Cause:** Dynamic observations used `stsci-opo.org` CDN URLs which require authentication.
@@ -79,7 +96,7 @@ Three user-reported issues fixed:
 | `src/services/mast-api.ts` | Use placeholder for dynamic observations |
 | `next.config.js` | Removed broken stsci-opo.org pattern |
 
-#### 3. Sky Map Not Loading
+##### 3. Sky Map Not Loading
 **Problem:** Sky Map stuck on "Initializing sky map..." indefinitely.
 
 **Cause:** `window.A` (Aladin Lite library) not immediately available when Script `onLoad` fires.
@@ -93,8 +110,9 @@ Three user-reported issues fixed:
 |------|--------|
 | `src/components/features/sky-map/SkyMapViewer.tsx` | Added `retryCountRef` and retry logic |
 
----
+### December 4, 2025
 
+#### Automated Fixes Applied
 
 The following automated fixes have been applied:
 
@@ -107,26 +125,11 @@ The following automated fixes have been applied:
 | NASA Image Service | **ADDED** | New `src/services/nasa-images.ts` for NASA Image Library API |
 | PWA Caching | **FIXED** | Updated runtime caching for nasa.gov images |
 
-### Manual Steps Required (For Tonight)
+#### Manual Steps Required
 
 1. **Get NASA API Key** - Register at [api.nasa.gov](https://api.nasa.gov/) and add to `.env.local`
 2. **Optional: Higher Quality Images** - Download full-resolution JWST images from NASA to `/public/images/featured/`
 3. **OAuth Setup** - Configure Google/GitHub OAuth credentials for authentication
-
----
-
-## Table of Contents
-
-1. [Executive Summary](#executive-summary)
-2. [Critical Issues](#critical-issues)
-3. [Image & API Issues](#image--api-issues)
-4. [Sky Map Issues](#sky-map-issues)
-5. [Missing Files & Assets](#missing-files--assets)
-6. [API Integration Status](#api-integration-status)
-7. [Opportunities for Improvement](#opportunities-for-improvement)
-8. [Imagery API Implementation Guide](#imagery-api-implementation-guide)
-9. [Recommended Fixes](#recommended-fixes)
-10. [Future Roadmap](#future-roadmap)
 
 ---
 

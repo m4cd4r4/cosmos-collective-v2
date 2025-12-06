@@ -187,7 +187,7 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 ## 📚 Learn More
 
 - **[Development Log](DEVLOG.md)** - Technical analysis, known issues, and implementation roadmap
-- [Technical Devlog](/devlog) - Implementation details and decisions
+- [Technical Devlog](https://cosmos-collective-v2.vercel.app/devlog) - Implementation details and decisions
 - [SKA Observatory](https://www.skao.int/) - Learn about the Square Kilometre Array
 - [CSIRO ATNF](https://www.atnf.csiro.au/) - Australia Telescope National Facility
 - [STScI](https://www.stsci.edu/) - Space Telescope Science Institute
@@ -209,6 +209,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
   Made with ❤️ for space enthusiasts everywhere
   <br />
   <a href="https://cosmos-collective-v2.vercel.app">Live Demo</a> •
-  <a href="/devlog">Devlog</a> •
+  <a href="DEVLOG.md">Devlog</a> •
   <a href="https://github.com/m4cd4r4/cosmos-collective-v2/issues">Report Bug</a>
 </p>
