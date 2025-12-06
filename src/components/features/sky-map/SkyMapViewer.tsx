@@ -190,6 +190,8 @@ export function SkyMapViewer({
   const searchParams = useSearchParams()
   const containerRef = useRef<HTMLDivElement>(null)
   const aladinRef = useRef<AladinInstance | null>(null)
+  const retryCountRef = useRef(0)
+  const maxRetries = 50 // 5 seconds max wait (50 * 100ms)
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [currentSurvey, setCurrentSurvey] = useState(surveyOptions[0])
@@ -204,11 +206,33 @@ export function SkyMapViewer({
     type?: string
   } | null>(null)
 
-  // Initialize Aladin
+  // Initialize Aladin with retry logic
   const initializeAladin = useCallback(() => {
-    if (!containerRef.current || !window.A || aladinRef.current) return
+    // Already initialized
+    if (aladinRef.current) return
 
-    const options: AladinOptions = {
+    // Check if window.A is available (script might still be loading)
+    if (typeof window === 'undefined' || !window.A) {
+      if (retryCountRef.current < maxRetries) {
+        retryCountRef.current++
+        setTimeout(initializeAladin, 100)
+      } else {
+        console.error('Aladin Lite failed to load after maximum retries')
+      }
+      return
+    }
+
+    // Wait for container to be available
+    if (!containerRef.current) {
+      if (retryCountRef.current < maxRetries) {
+        retryCountRef.current++
+        setTimeout(initializeAladin, 50)
+      }
+      return
+    }
+
+    try {
+      const options: AladinOptions = {
       survey: currentSurvey.survey,
       fov: initialFov,
       cooFrame: 'J2000',
@@ -254,8 +278,16 @@ export function SkyMapViewer({
       }
     })
 
-    setIsLoaded(true)
-  }, [initialRa, initialDec, initialFov, initialTarget, currentSurvey.survey])
+      setIsLoaded(true)
+    } catch (error) {
+      console.error('Failed to initialize Aladin:', error)
+      // Retry on error
+      if (retryCountRef.current < maxRetries) {
+        retryCountRef.current++
+        setTimeout(initializeAladin, 500)
+      }
+    }
+  }, [initialRa, initialDec, initialFov, initialTarget, currentSurvey.survey, maxRetries])
 
   // Add observation markers from our data
   const addObservationMarkers = (aladin: AladinInstance) => {

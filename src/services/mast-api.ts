@@ -19,7 +19,8 @@ import type {
 
 const MAST_BASE_URL = 'https://mast.stsci.edu/api/v0'
 const MAST_INVOKE_URL = `${MAST_BASE_URL}/invoke`
-const IMAGE_CDN_BASE = 'https://stsci-opo.org/STScI-01'
+// Placeholder for dynamically fetched observations (STScI CDN requires authentication)
+const PLACEHOLDER_IMAGE = '/images/cosmos-placeholder.svg'
 
 // Request timeout
 const REQUEST_TIMEOUT = 30000
@@ -110,15 +111,16 @@ function inferCategory(targetName: string, classification?: string): ObjectCateg
 
 /**
  * Generate image URLs for an observation
+ * Note: STScI CDN requires authentication, so we use placeholders for dynamic observations
+ * Featured images use verified NASA.gov URLs instead
  */
-function generateImageUrls(obsid: string, targetName: string) {
-  // STScI image naming convention varies, so we provide multiple possible URLs
-  const cleanName = targetName.replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-]/g, '')
-
+function generateImageUrls(_obsid: string, _targetName: string) {
+  // STScI image CDN (stsci-opo.org) returns 403 for public access
+  // Use placeholder for dynamically fetched observations
   return {
-    thumbnail: `${IMAGE_CDN_BASE}${obsid.slice(-4)}-${cleanName.slice(0, 10)}.png`,
-    preview: `${IMAGE_CDN_BASE}${obsid.slice(-4)}-${cleanName.slice(0, 10)}.png`,
-    full: `${IMAGE_CDN_BASE}${obsid.slice(-4)}-${cleanName.slice(0, 10)}.png`,
+    thumbnail: PLACEHOLDER_IMAGE,
+    preview: PLACEHOLDER_IMAGE,
+    full: PLACEHOLDER_IMAGE,
   }
 }
 

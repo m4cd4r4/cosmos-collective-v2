@@ -50,10 +50,7 @@ const nextConfig = {
 
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'stsci-opo.org',
-      },
+      // Note: stsci-opo.org removed - returns 403 for public access
       {
         protocol: 'https',
         hostname: '**.stsci.edu',
