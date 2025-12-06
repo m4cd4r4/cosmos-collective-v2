@@ -206,7 +206,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <p align="center">
-  Made with ❤️ for space enthusiasts everywhere
+  
   <br />
   <a href="https://cosmos-collective-v2.vercel.app">Live Demo</a> •
   <a href="DEVLOG.md">Devlog</a> •
