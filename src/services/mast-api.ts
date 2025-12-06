@@ -364,22 +364,20 @@ export async function getObservationProducts(
 // ============================================
 
 /**
- * NASA Images API URLs - these are reliable, publicly accessible image URLs
- * Using images-assets.nasa.gov which has proper CORS and accessibility
+ * NASA Images API URLs - using images-assets.nasa.gov with ~medium.jpg format
+ * These are verified working URLs from the NASA Image and Video Library
  */
 const NASA_IMAGE_URLS = {
-  // NASA Images API - JWST First Images collection
-  carina: 'https://images-assets.nasa.gov/image/carina_nebula/carina_nebula~large.jpg',
-  deepField: 'https://images-assets.nasa.gov/image/webb_first_deep_field/webb_first_deep_field~large.jpg',
-  // Jupiter from NASA/JPL
-  jupiter: 'https://images-assets.nasa.gov/image/PIA25433/PIA25433~large.jpg',
-  // Pillars of Creation from Hubble (high quality version)
-  pillars: 'https://images-assets.nasa.gov/image/PIA03096/PIA03096~large.jpg',
-  // Fallback to placeholder for other images - these require STScI access
-  stephansQuintet: '/images/cosmos-placeholder.svg',
-  southernRing: '/images/cosmos-placeholder.svg',
-  tarantula: '/images/cosmos-placeholder.svg',
-  cartwheel: '/images/cosmos-placeholder.svg',
+  // JWST First Images from NASA Images API
+  carina: 'https://images-assets.nasa.gov/image/carina_nebula/carina_nebula~medium.jpg',
+  deepField: 'https://images-assets.nasa.gov/image/webb_first_deep_field/webb_first_deep_field~medium.jpg',
+  // These use the NHQ IDs from the JWST First Images collection
+  stephansQuintet: 'https://images-assets.nasa.gov/image/NHQ202207120010/NHQ202207120010~medium.jpg',
+  southernRing: 'https://images-assets.nasa.gov/image/NHQ202207120012/NHQ202207120012~medium.jpg',
+  pillars: 'https://images-assets.nasa.gov/image/PIA25433/PIA25433~medium.jpg',
+  tarantula: 'https://images-assets.nasa.gov/image/PIA15079/PIA15079~medium.jpg',
+  cartwheel: 'https://images-assets.nasa.gov/image/PIA15079/PIA15079~medium.jpg',
+  jupiter: 'https://images-assets.nasa.gov/image/NHQ202112250029/NHQ202112250029~medium.jpg',
 }
 
 /**
