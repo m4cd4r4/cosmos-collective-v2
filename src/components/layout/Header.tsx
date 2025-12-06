@@ -3,9 +3,9 @@
 /**
  * Header Component
  * Main navigation header with responsive design
+ * Includes mobile bottom navigation bar
  */
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -15,8 +15,7 @@ import {
   Calendar,
   Users,
   BookOpen,
-  Menu,
-  X,
+  Home,
 } from 'lucide-react'
 
 // ============================================
@@ -109,12 +108,12 @@ function Logo() {
         </svg>
       </div>
 
-      {/* Logo Text */}
-      <div className="hidden sm:block">
-        <span className="text-xl font-display font-bold text-gradient-stellar">
+      {/* Logo Text - Always visible */}
+      <div>
+        <span className="text-lg sm:text-xl font-display font-bold text-gradient-stellar">
           Cosmos
         </span>
-        <span className="text-xl font-display font-light text-white ml-1">
+        <span className="text-lg sm:text-xl font-display font-light text-white ml-1">
           Collective
         </span>
       </div>
@@ -157,77 +156,51 @@ function DesktopNav() {
 }
 
 // ============================================
-// Mobile Navigation
+// Mobile Bottom Navigation Bar
 // ============================================
 
-function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+// Bottom nav items (subset of main nav for mobile)
+const bottomNavItems = [
+  { label: 'Home', href: '/', icon: Home },
+  { label: 'Explore', href: '/explore', icon: Telescope },
+  { label: 'Sky Map', href: '/sky-map', icon: Globe },
+  { label: 'Events', href: '/events', icon: Calendar },
+  { label: 'Science', href: '/citizen-science', icon: Users },
+]
+
+function MobileBottomNav() {
   const pathname = usePathname()
 
   return (
-    <>
-      {/* Overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
-          onClick={onClose}
-          aria-hidden="true"
-        />
-      )}
+    <nav
+      className="fixed bottom-0 left-0 right-0 z-50 lg:hidden glass-panel border-t border-white/10 pb-safe"
+      aria-label="Mobile navigation"
+    >
+      <div className="flex items-center justify-around h-16">
+        {bottomNavItems.map((item) => {
+          const Icon = item.icon
+          const isActive = pathname === item.href ||
+            (item.href !== '/' && pathname.startsWith(item.href))
 
-      {/* Slide-out panel */}
-      <div
-        className={cn(
-          'fixed top-0 right-0 h-full w-72 bg-cosmos-depth border-l border-white/10 z-50 lg:hidden',
-          'transform transition-transform duration-300 ease-out',
-          isOpen ? 'translate-x-0' : 'translate-x-full'
-        )}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Mobile navigation menu"
-      >
-        {/* Close button */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
-          <span className="font-semibold text-white">Menu</span>
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-white/5 transition-colors"
-            aria-label="Close menu"
-            type="button"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Navigation links */}
-        <nav className="p-4 space-y-1" aria-label="Mobile navigation">
-          {navItems.map((item) => {
-            const Icon = item.icon
-            const isActive = pathname === item.href
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-200',
-                  isActive
-                    ? 'bg-cosmos-cyan/10 text-cosmos-cyan'
-                    : 'text-gray-300 hover:text-white hover:bg-white/5'
-                )}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                <Icon className="w-5 h-5" aria-hidden="true" />
-                <div>
-                  <div className="font-medium">{item.label}</div>
-                  <div className="text-xs text-gray-500">{item.description}</div>
-                </div>
-              </Link>
-            )
-          })}
-        </nav>
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                'flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors',
+                isActive
+                  ? 'text-cosmos-cyan'
+                  : 'text-gray-400 hover:text-white'
+              )}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <Icon className="w-5 h-5" aria-hidden="true" />
+              <span className="text-[10px] mt-1 font-medium">{item.label}</span>
+            </Link>
+          )
+        })}
       </div>
-    </>
+    </nav>
   )
 }
 
@@ -236,33 +209,22 @@ function MobileNav({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }
 // ============================================
 
 export function Header() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
   return (
-    <header className="sticky top-0 z-30 glass-panel border-b border-white/10">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Logo />
+    <>
+      <header className="sticky top-0 z-30 glass-panel border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <Logo />
 
-          {/* Desktop Navigation */}
-          <DesktopNav />
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className="lg:hidden p-2 rounded-lg hover:bg-white/5 transition-colors"
-            aria-label="Open menu"
-            aria-expanded={mobileMenuOpen ? 'true' : 'false'}
-            type="button"
-          >
-            <Menu className="w-6 h-6" />
-          </button>
+            {/* Desktop Navigation */}
+            <DesktopNav />
+          </div>
         </div>
-      </div>
+      </header>
 
-      {/* Mobile Navigation */}
-      <MobileNav isOpen={mobileMenuOpen} onClose={() => setMobileMenuOpen(false)} />
-    </header>
+      {/* Mobile Bottom Navigation Bar */}
+      <MobileBottomNav />
+    </>
   )
 }

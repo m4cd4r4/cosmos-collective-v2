@@ -419,6 +419,7 @@ export function SkyMapViewer({
                   {surveyOptions.map((survey) => (
                     <button
                       key={survey.id}
+                      type="button"
                       onClick={() => changeSurvey(survey)}
                       className={cn(
                         'w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all text-sm',
@@ -459,6 +460,7 @@ export function SkyMapViewer({
                   ].map((loc) => (
                     <button
                       key={loc.target}
+                      type="button"
                       onClick={() => aladinRef.current?.gotoObject(loc.target)}
                       className="px-3 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs text-gray-300 hover:text-white transition-colors truncate"
                     >
@@ -479,6 +481,7 @@ export function SkyMapViewer({
                       </p>
                     </div>
                     <button
+                      type="button"
                       onClick={() => setSelectedObject(null)}
                       className="text-gray-400 hover:text-white"
                     >
@@ -492,6 +495,7 @@ export function SkyMapViewer({
 
           {/* Toggle button */}
           <button
+            type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="absolute top-1/2 -right-4 -translate-y-1/2 z-30 w-8 h-16 bg-cosmos-surface border border-white/10 rounded-r-lg flex items-center justify-center hover:bg-white/5 transition-colors"
             aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
