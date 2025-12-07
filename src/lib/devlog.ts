@@ -33,13 +33,13 @@ export interface DevlogPost {
 const posts: DevlogPost[] = [
   {
     slug: 'december-2025-domain-launch',
-    title: 'December 2025: Custom Domain & Community Features',
-    excerpt: 'Launching cosmos-collective.com.au with custom domain setup, accessibility improvements for filter tooltips, and Ko-fi support integration.',
+    title: 'December 2025: Custom Domain, 75 Observations & Community Features',
+    excerpt: 'Launching cosmos-collective.com.au with custom domain setup, tripling observations from 25 to 75, adding accessibility improvements, and Ko-fi support integration.',
     date: '2025-12-07',
     author: { name: 'Developer' },
     category: 'architecture',
-    tags: ['Domain', 'DNS', 'Accessibility', 'Community', 'Ko-fi'],
-    readingTime: 4,
+    tags: ['Domain', 'DNS', 'Accessibility', 'Community', 'Ko-fi', 'JWST', 'Hubble', 'ASKAP', 'Radio Astronomy'],
+    readingTime: 6,
     featured: true,
     content: `
 # December 2025: Custom Domain & Community Features
@@ -161,12 +161,63 @@ Updated sitemap reference:
 Sitemap: https://cosmos-collective.com.au/sitemap.xml
 \`\`\`
 
+## Observation Expansion - 3x More Content
+
+Later in the day, we tripled the observation catalogue from ~25 to ~75 astronomical objects:
+
+### New JWST Observations (+6)
+| Target | Type | Description |
+|--------|------|-------------|
+| **Phantom Galaxy (M74)** | Galaxy | Face-on spiral showing intricate dust lanes |
+| **Neptune** | Planet | Ice giant with rings and moons |
+| **Uranus** | Planet | Tilted ice giant with ring system |
+| **Saturn** | Planet | Ring system in infrared detail |
+| **Mars** | Planet | Detailed surface features |
+| **Rho Ophiuchi** | Nebula | Closest star-forming region to Earth |
+
+### New Hubble Observations (+11)
+| Target | Type | Highlights |
+|--------|------|------------|
+| **Andromeda Galaxy (M31)** | Galaxy | Our nearest major galactic neighbour |
+| **Whirlpool Galaxy (M51)** | Galaxy | Classic spiral interacting with companion |
+| **Antennae Galaxies** | Galaxy | Spectacular merger in progress |
+| **Eagle Nebula** | Nebula | Home of the Pillars of Creation |
+| **Lagoon Nebula** | Nebula | Giant stellar nursery |
+| **Bubble Nebula** | Nebula | Stellar wind-blown cavity |
+| **Westerlund 2** | Star Cluster | Massive young star cluster |
+| **Veil Nebula** | Supernova Remnant | Ancient supernova debris |
+| **Centaurus A** | Galaxy | Nearest giant elliptical galaxy |
+| **Cigar Galaxy (M82)** | Galaxy | Starburst with galactic superwind |
+| **Cosmic Reef (NGC 2014)** | Nebula | 30 Doradus region in LMC |
+
+### New Radio Telescope Observations (+20)
+
+**ASKAP (+5):**
+- Fornax Galaxy Cluster, Centaurus A Radio Lobes, Small Magellanic Cloud Survey, Galactic Center Survey, Sculptor Galaxy
+
+**Parkes (+5):**
+- Galactic All-Sky Survey (GASS), Vela Pulsar, Crab Pulsar, Double Pulsar System, Repeating Fast Radio Burst
+
+**MWA (+4):**
+- Ionospheric Studies, Meteor Radar Detection, Low-Frequency Pulsar Survey, Cygnus A
+
+**ATCA (+5):**
+- Supernova 1987A, GRB Afterglow Detection, HL Tauri Protoplanetary Disk, NGC 4945 Starburst, Circinus Galaxy
+
+### Performance Note
+
+No significant performance impact expected because:
+- Images use \`loading="lazy"\` for deferred loading
+- Data is bundled at build time (static generation)
+- Client-side filtering operates on small in-memory dataset
+- Pagination via "Load More" button limits initial render
+
 ## What's Next
 
-- Continue expanding telescope observation coverage
 - Implement user authentication for personalised features
 - Add more citizen science classification projects
 - Performance optimisations for the gallery
+- Real-time data integration improvements
 
 The custom domain establishes Cosmos Collective as a permanent home for exploring the universe through Australian and international telescope data.
 `,
