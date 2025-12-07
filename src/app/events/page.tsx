@@ -37,27 +37,29 @@ import {
 import { cn, formatDate } from '@/lib/utils'
 
 // ISS Live Camera feeds
+// Note: YouTube stream IDs may change periodically as NASA updates their streams
+// Last updated: December 2025
 const ISS_CAMERAS = [
   {
-    id: 'nasa-live',
-    name: 'NASA Live',
-    description: 'Official NASA TV live stream featuring ISS views and mission coverage',
-    embedUrl: 'https://www.youtube.com/embed/P9C25Un7xaM?autoplay=0',
-    directUrl: 'https://www.youtube.com/watch?v=P9C25Un7xaM',
+    id: 'iss-live-1',
+    name: 'ISS Live Camera 1',
+    description: 'Live views from the International Space Station exterior cameras',
+    embedUrl: 'https://www.youtube.com/embed/Ni-YkkvH6DQ?autoplay=0&rel=0',
+    directUrl: 'https://www.youtube.com/watch?v=Ni-YkkvH6DQ',
   },
   {
-    id: 'iss-hdev',
-    name: 'ISS HD Earth Viewing',
-    description: 'High-definition cameras mounted on the ISS exterior showing Earth views',
-    embedUrl: 'https://www.youtube.com/embed/xRPTBhmcyXY?autoplay=0',
-    directUrl: 'https://www.youtube.com/watch?v=xRPTBhmcyXY',
+    id: 'iss-live-2',
+    name: 'ISS Live Camera 2',
+    description: 'Alternative ISS live stream with Earth views from orbit',
+    embedUrl: 'https://www.youtube.com/embed/iYmvCUonukw?autoplay=0&rel=0',
+    directUrl: 'https://www.youtube.com/watch?v=iYmvCUonukw',
   },
   {
-    id: 'nasa-media',
-    name: 'NASA Media Channel',
-    description: 'NASA public affairs events and press conferences',
-    embedUrl: 'https://www.youtube.com/embed/21X5lGlDOfg?autoplay=0',
-    directUrl: 'https://www.youtube.com/watch?v=21X5lGlDOfg',
+    id: 'nasa-plus',
+    name: 'NASA+ Live',
+    description: 'Official NASA streaming platform (opens externally)',
+    embedUrl: 'https://www.youtube.com/embed/nA9UZF-SZoQ?autoplay=0&rel=0',
+    directUrl: 'https://plus.nasa.gov/',
   },
 ]
 

@@ -34,6 +34,7 @@ import {
 declare global {
   interface Window {
     A: {
+      init: Promise<void>
       aladin: (container: string | HTMLElement, options: AladinOptions) => AladinInstance
       catalog: (options: CatalogOptions) => AladinCatalog
       source: (ra: number, dec: number, options: SourceOptions) => AladinSource
@@ -269,37 +270,45 @@ export function SkyMapViewer({
         showFrame: true,
       }
 
-      const aladin = window.A.aladin(containerRef.current, options)
-      aladinRef.current = aladin
+      // Aladin Lite v3 requires A.init to complete before calling A.aladin
+      window.A.init.then(() => {
+        if (!containerRef.current || aladinRef.current) return
 
-      // Add observation markers after a short delay to ensure map is ready
-      setTimeout(() => {
-        if (aladinRef.current) {
-          addObservationMarkers(aladinRef.current)
-        }
-      }, 500)
+        const aladin = window.A.aladin(containerRef.current, options)
+        aladinRef.current = aladin
 
-      // Set up event listeners
-      aladin.on('positionChanged', () => {
-        const [ra, dec] = aladin.getRaDec()
-        const [fov] = aladin.getFov()
-        setCurrentCoords({ ra, dec })
-        setCurrentFov(fov)
+        // Add observation markers after a short delay to ensure map is ready
+        setTimeout(() => {
+          if (aladinRef.current) {
+            addObservationMarkers(aladinRef.current)
+          }
+        }, 500)
+
+        // Set up event listeners
+        aladin.on('positionChanged', () => {
+          const [ra, dec] = aladin.getRaDec()
+          const [fov] = aladin.getFov()
+          setCurrentCoords({ ra, dec })
+          setCurrentFov(fov)
+        })
+
+        aladin.on('objectClicked', (object: unknown) => {
+          if (object && typeof object === 'object' && 'data' in object) {
+            const data = (object as { data: { name: string; ra: number; dec: number } }).data
+            setSelectedObject({
+              name: data.name,
+              ra: data.ra,
+              dec: data.dec,
+            })
+          }
+        })
+
+        setIsLoaded(true)
+        setLoadError(null)
+      }).catch((error: Error) => {
+        console.error('Aladin init failed:', error)
+        setLoadError(`Failed to initialize sky map: ${error.message}`)
       })
-
-      aladin.on('objectClicked', (object: unknown) => {
-        if (object && typeof object === 'object' && 'data' in object) {
-          const data = (object as { data: { name: string; ra: number; dec: number } }).data
-          setSelectedObject({
-            name: data.name,
-            ra: data.ra,
-            dec: data.dec,
-          })
-        }
-      })
-
-      setIsLoaded(true)
-      setLoadError(null)
     } catch (error) {
       console.error('Failed to initialize Aladin:', error)
       // Retry on error
