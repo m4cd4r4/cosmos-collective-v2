@@ -54,13 +54,6 @@ const ISS_CAMERAS = [
     embedUrl: 'https://www.youtube.com/embed/iYmvCUonukw?autoplay=0&rel=0',
     directUrl: 'https://www.youtube.com/watch?v=iYmvCUonukw',
   },
-  {
-    id: 'nasa-plus',
-    name: 'NASA+ Live',
-    description: 'Official NASA streaming platform (opens externally)',
-    embedUrl: 'https://www.youtube.com/embed/nA9UZF-SZoQ?autoplay=0&rel=0',
-    directUrl: 'https://plus.nasa.gov/',
-  },
 ]
 
 export default function EventsPage() {
