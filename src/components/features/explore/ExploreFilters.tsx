@@ -141,6 +141,8 @@ export function ExploreFilters({
                     : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-white'
                 )}
                 aria-pressed={currentSource === source.value}
+                aria-label={source.label}
+                title={source.label}
               >
                 {source.icon}
                 <span className="hidden sm:inline">{source.label}</span>
@@ -166,6 +168,8 @@ export function ExploreFilters({
                     : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-white'
                 )}
                 aria-pressed={currentCategory === category.value}
+                aria-label={category.label}
+                title={category.label}
               >
                 <span aria-hidden="true">{category.emoji}</span>
                 <span className="hidden sm:inline">{category.label}</span>
@@ -192,6 +196,8 @@ export function ExploreFilters({
                     : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-white'
                 )}
                 aria-pressed={currentWavelength === wavelength.value}
+                aria-label={wavelength.label}
+                title={wavelength.label}
               >
                 <span
                   className={cn('w-2 h-2 rounded-full', wavelength.color)}
