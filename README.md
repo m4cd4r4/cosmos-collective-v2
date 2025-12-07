@@ -190,7 +190,6 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ## 📚 Learn More
 
-- **[Development Log](DEVLOG.md)** - Technical analysis, known issues, and implementation roadmap
 - [Technical Devlog](https://cosmos-collective.com.au/devlog) - Implementation details and decisions
 - [SKA Observatory](https://www.skao.int/) - Learn about the Square Kilometre Array
 - [CSIRO ATNF](https://www.atnf.csiro.au/) - Australia Telescope National Facility
