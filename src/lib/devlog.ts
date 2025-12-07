@@ -32,6 +32,146 @@ export interface DevlogPost {
 
 const posts: DevlogPost[] = [
   {
+    slug: 'december-2025-domain-launch',
+    title: 'December 2025: Custom Domain & Community Features',
+    excerpt: 'Launching cosmos-collective.com.au with custom domain setup, accessibility improvements for filter tooltips, and Ko-fi support integration.',
+    date: '2025-12-07',
+    author: { name: 'Developer' },
+    category: 'architecture',
+    tags: ['Domain', 'DNS', 'Accessibility', 'Community', 'Ko-fi'],
+    readingTime: 4,
+    featured: true,
+    content: `
+# December 2025: Custom Domain & Community Features
+
+Today marks an exciting milestone for Cosmos Collective - we've launched our custom domain **cosmos-collective.com.au**! This update also brings accessibility improvements and community support features.
+
+## Custom Domain Launch
+
+The site is now live at [cosmos-collective.com.au](https://cosmos-collective.com.au), giving us a professional Australian presence that reflects our focus on Australian radio astronomy and the SKA project.
+
+### Technical Setup
+
+| Component | Configuration |
+|-----------|---------------|
+| **Domain** | cosmos-collective.com.au |
+| **Registrar** | Hostinger |
+| **Hosting** | Vercel (Free Hobby tier) |
+| **SSL** | Auto-provisioned via Let's Encrypt |
+
+### DNS Configuration
+
+Configured through Hostinger's DNS management:
+
+\`\`\`
+A     @      76.76.21.21          (Vercel's IP)
+CNAME www    cname.vercel-dns.com (Vercel's CNAME)
+\`\`\`
+
+The www subdomain automatically redirects to the apex domain for a consistent user experience.
+
+### Files Updated
+
+All references to the old Vercel URL were updated across the codebase:
+
+- \`src/app/layout.tsx\` - OpenGraph URLs, canonical links, JSON-LD schema
+- \`src/app/sitemap.ts\` - BASE_URL constant
+- \`public/robots.txt\` - Sitemap URL
+- \`docs/FUTURE_FEATURES.md\` - OAuth callback URLs
+- \`README.md\` - Live demo links
+
+## Accessibility Improvements
+
+### Filter Tooltips
+
+Added \`title\` and \`aria-label\` attributes to all filter buttons on the Explore page. This improves accessibility for:
+
+- **Screen reader users** - Clear labels describe each filter option
+- **Mobile users** - Long-press reveals tooltip text
+- **Keyboard navigators** - Better context when tabbing through filters
+
+\`\`\`tsx
+<button
+  onClick={() => updateFilter('source', source.value)}
+  aria-pressed={currentSource === source.value}
+  aria-label={source.label}
+  title={source.label}
+>
+  {source.icon}
+  <span className="hidden sm:inline">{source.label}</span>
+</button>
+\`\`\`
+
+Filter groups updated:
+- **Telescope sources** - JWST, Hubble, ASKAP, MWA, Parkes
+- **Object categories** - Galaxies, Nebulae, Stars, etc.
+- **Wavelength bands** - Radio, Infrared, Visible, UV, X-ray
+
+## Community Features
+
+### Ko-fi Support Integration
+
+Added a Ko-fi donation link to the footer, allowing supporters to contribute to the project's development:
+
+\`\`\`tsx
+<a
+  href="https://ko-fi.com/m4cd4r4"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Support on Ko-fi"
+>
+  <Heart className="w-5 h-5" />
+</a>
+\`\`\`
+
+### "Available for Hire" Badge
+
+Added a professional hire badge to the footer for potential collaboration opportunities:
+
+\`\`\`tsx
+<a href="https://github.com/m4cd4r4" className="...">
+  <Briefcase className="w-3.5 h-3.5" />
+  <span>Available for hire</span>
+</a>
+\`\`\`
+
+## SEO & Metadata Updates
+
+With the new domain, all SEO-related metadata was updated:
+
+### JSON-LD Schema
+
+\`\`\`json
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Cosmos Collective",
+  "url": "https://cosmos-collective.com.au",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://cosmos-collective.com.au/explore?search={search_term_string}"
+  }
+}
+\`\`\`
+
+### robots.txt
+
+Updated sitemap reference:
+\`\`\`
+Sitemap: https://cosmos-collective.com.au/sitemap.xml
+\`\`\`
+
+## What's Next
+
+- Continue expanding telescope observation coverage
+- Implement user authentication for personalised features
+- Add more citizen science classification projects
+- Performance optimisations for the gallery
+
+The custom domain establishes Cosmos Collective as a permanent home for exploring the universe through Australian and international telescope data.
+`,
+  },
+  {
     slug: 'december-2025-feature-update',
     title: 'December 2025: ISS Cameras, Expanded Gallery & UI Polish',
     excerpt: 'Major feature update adding live ISS camera feeds, expanded telescope observations, real images in Citizen Science, and significant UI/UX improvements.',
@@ -40,7 +180,6 @@ const posts: DevlogPost[] = [
     category: 'architecture',
     tags: ['Features', 'ISS', 'Hubble', 'Citizen Science', 'Accessibility'],
     readingTime: 6,
-    featured: true,
     content: `
 # December 2025: ISS Cameras, Expanded Gallery & UI Polish
 
