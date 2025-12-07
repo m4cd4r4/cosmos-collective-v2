@@ -44,7 +44,7 @@ const ISS_CAMERAS = [
     id: 'iss-live-1',
     name: 'ISS Live Camera 1',
     description: 'Live views from the International Space Station exterior cameras',
-    embedUrl: 'https://www.youtube.com/embed/Ni-YkkvH6DQ?autoplay=0&rel=0',
+    embedUrl: 'https://www.youtube.com/embed/Ni-YkkvH6DQ?autoplay=1&mute=1&rel=0',
     directUrl: 'https://www.youtube.com/watch?v=Ni-YkkvH6DQ',
   },
   {
