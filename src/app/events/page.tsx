@@ -147,6 +147,26 @@ export default function EventsPage() {
     }
   }
 
+  // Get thumbnail image for event type
+  const getEventThumbnail = (type: string) => {
+    switch (type) {
+      case 'solar':
+        return 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000393/GSFC_20171208_Archive_e000393~thumb.jpg'
+      case 'asteroid':
+        return 'https://images-assets.nasa.gov/image/PIA17041/PIA17041~thumb.jpg'
+      case 'meteor-shower':
+        return 'https://images-assets.nasa.gov/image/NHQ201908130001/NHQ201908130001~thumb.jpg'
+      case 'transit':
+        return 'https://images-assets.nasa.gov/image/PIA23172/PIA23172~thumb.jpg'
+      case 'transient':
+        return 'https://images-assets.nasa.gov/image/PIA22085/PIA22085~thumb.jpg'
+      case 'grb':
+        return 'https://images-assets.nasa.gov/image/PIA20051/PIA20051~thumb.jpg'
+      default:
+        return 'https://images-assets.nasa.gov/image/PIA17563/PIA17563~thumb.jpg'
+    }
+  }
+
   const meteorShowers = getMeteorShowers()
   const now = new Date()
   const upcomingShowers = meteorShowers.filter(
@@ -347,55 +367,93 @@ export default function EventsPage() {
                   <Loader2 className="w-8 h-8 text-cosmos-cyan animate-spin" />
                 </div>
               ) : events.length > 0 ? (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {events.map((event) => {
                     const Icon = getEventIcon(event.type)
+                    const primaryUrl = event.references?.[0]?.url
+                    const CardWrapper = primaryUrl ? 'a' : 'div'
+                    const cardProps = primaryUrl ? {
+                      href: primaryUrl,
+                      target: '_blank',
+                      rel: 'noopener noreferrer',
+                    } : {}
+
                     return (
-                      <Card key={event.id} variant="default" padding="md">
-                        <CardContent className="flex items-start gap-4">
-                          <div className={cn(
-                            'w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0',
-                            getSeverityColor(event.severity)
-                          )}>
-                            <Icon className="w-5 h-5" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-start justify-between gap-2">
-                              <div>
-                                <h3 className="font-semibold text-white">{event.title}</h3>
-                                <p className="text-sm text-gray-400 mt-1">{event.description}</p>
-                              </div>
-                              <span className={cn(
-                                'px-2 py-0.5 rounded-full text-xs font-medium border flex-shrink-0',
+                      <Card
+                        key={event.id}
+                        variant="default"
+                        padding="none"
+                        className={cn(
+                          'overflow-hidden transition-all duration-200',
+                          primaryUrl && 'hover:border-cosmos-cyan/50 hover:bg-white/5 cursor-pointer'
+                        )}
+                      >
+                        <CardWrapper {...cardProps} className="block">
+                          <div className="flex">
+                            {/* Event Thumbnail */}
+                            <div className="relative w-24 sm:w-32 flex-shrink-0">
+                              <img
+                                src={getEventThumbnail(event.type)}
+                                alt=""
+                                className="w-full h-full object-cover"
+                              />
+                              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-cosmos-depth/90" />
+                              <div className={cn(
+                                'absolute bottom-2 left-2 w-8 h-8 rounded-lg flex items-center justify-center',
                                 getSeverityColor(event.severity)
                               )}>
-                                {event.severity}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
-                              <span>
-                                {formatDate(event.eventTime, { month: 'short', day: 'numeric', year: 'numeric' })}
-                              </span>
-                              <span>Source: {event.source}</span>
-                              {event.isOngoing && (
-                                <span className="text-cosmos-cyan">Ongoing</span>
-                              )}
-                            </div>
-                            {event.references && event.references.length > 0 && (
-                              <div className="mt-2">
-                                <a
-                                  href={event.references[0].url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 text-xs text-cosmos-cyan hover:underline"
-                                >
-                                  {event.references[0].label}
-                                  <ExternalLink className="w-3 h-3" />
-                                </a>
+                                <Icon className="w-4 h-4" />
                               </div>
-                            )}
+                            </div>
+
+                            {/* Event Content */}
+                            <CardContent className="flex-1 p-4">
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <h3 className="font-semibold text-white line-clamp-1">{event.title}</h3>
+                                  <p className="text-sm text-gray-400 mt-1 line-clamp-2">{event.description}</p>
+                                </div>
+                                <span className={cn(
+                                  'px-2 py-0.5 rounded-full text-xs font-medium border flex-shrink-0',
+                                  getSeverityColor(event.severity)
+                                )}>
+                                  {event.severity}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
+                                <span>
+                                  {formatDate(event.eventTime, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </span>
+                                <span>Source: {event.source}</span>
+                                {event.isOngoing && (
+                                  <span className="text-cosmos-cyan">Ongoing</span>
+                                )}
+                              </div>
+                              {/* All reference links */}
+                              {event.references && event.references.length > 0 && (
+                                <div className="flex flex-wrap gap-3 mt-3">
+                                  {event.references.map((ref, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="inline-flex items-center gap-1 text-xs text-cosmos-cyan"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      <a
+                                        href={ref.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="hover:underline"
+                                      >
+                                        {ref.label}
+                                      </a>
+                                      <ExternalLink className="w-3 h-3" />
+                                    </span>
+                                  ))}
+                                </div>
+                              )}
+                            </CardContent>
                           </div>
-                        </CardContent>
+                        </CardWrapper>
                       </Card>
                     )
                   })}
@@ -471,22 +529,41 @@ export default function EventsPage() {
 
               {/* APOD */}
               {apod && (
-                <Card padding="none" className="overflow-hidden">
-                  {apod.media_type === 'image' && (
-                    <div className="relative aspect-video">
-                      <img
-                        src={apod.url}
-                        alt={apod.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void to-transparent" />
+                <a
+                  href={`https://apod.nasa.gov/apod/astropix.html`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <Card
+                    padding="none"
+                    className="overflow-hidden transition-all duration-200 hover:border-cosmos-cyan/50 hover:bg-white/5 cursor-pointer"
+                  >
+                    {apod.media_type === 'image' && (
+                      <div className="relative aspect-video">
+                        <img
+                          src={apod.url}
+                          alt={apod.title}
+                          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void to-transparent" />
+                        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-cosmos-gold/20 border border-cosmos-gold/50 text-cosmos-gold text-xs font-medium">
+                          Today
+                        </div>
+                      </div>
+                    )}
+                    <div className="p-4">
+                      <h3 className="font-semibold text-white text-sm line-clamp-1">{apod.title}</h3>
+                      <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
+                        NASA Picture of the Day
+                        <ExternalLink className="w-3 h-3" />
+                      </p>
+                      {apod.copyright && (
+                        <p className="text-xs text-gray-500 mt-1">© {apod.copyright}</p>
+                      )}
                     </div>
-                  )}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-white text-sm">{apod.title}</h3>
-                    <p className="text-xs text-gray-400 mt-1">NASA Picture of the Day</p>
-                  </div>
-                </Card>
+                  </Card>
+                </a>
               )}
             </div>
           </div>
