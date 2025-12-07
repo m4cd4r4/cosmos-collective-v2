@@ -84,3 +84,6 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 .env*.local
+
+# Private documentation
+DOMAIN_SETUP.md

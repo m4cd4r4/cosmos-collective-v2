@@ -68,7 +68,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_AU',
-    url: 'https://cosmos-collective.vercel.app',
+    url: 'https://cosmos-collective.com.au',
     siteName: 'Cosmos Collective',
     title: 'Cosmos Collective | Multi-Spectrum Astronomical Explorer',
     description:
@@ -98,7 +98,7 @@ export const metadata: Metadata = {
   },
   manifest: '/manifest.json',
   alternates: {
-    canonical: 'https://cosmos-collective.vercel.app',
+    canonical: 'https://cosmos-collective.com.au',
   },
 }
 
@@ -157,23 +157,23 @@ export default function RootLayout({
               '@context': 'https://schema.org',
               '@type': 'WebSite',
               name: 'Cosmos Collective',
-              url: 'https://cosmos-collective-v2.vercel.app',
+              url: 'https://cosmos-collective.com.au',
               description: 'Multi-spectrum astronomical data exploration platform featuring JWST, Australian radio telescopes, and citizen science.',
               potentialAction: {
                 '@type': 'SearchAction',
                 target: {
                   '@type': 'EntryPoint',
-                  urlTemplate: 'https://cosmos-collective-v2.vercel.app/explore?search={search_term_string}'
+                  urlTemplate: 'https://cosmos-collective.com.au/explore?search={search_term_string}'
                 },
                 'query-input': 'required name=search_term_string'
               },
               publisher: {
                 '@type': 'Organization',
                 name: 'Cosmos Collective',
-                url: 'https://cosmos-collective-v2.vercel.app',
+                url: 'https://cosmos-collective.com.au',
                 logo: {
                   '@type': 'ImageObject',
-                  url: 'https://cosmos-collective-v2.vercel.app/icon.svg'
+                  url: 'https://cosmos-collective.com.au/icon.svg'
                 },
                 sameAs: [
                   'https://github.com/m4cd4r4/cosmos-collective-v2'

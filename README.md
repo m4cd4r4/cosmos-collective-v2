@@ -164,7 +164,7 @@ npm run lint
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/m4cd4r4/cosmos-collective-v2)
 
-**Live Demo**: [cosmos-collective-v2.vercel.app](https://cosmos-collective-v2.vercel.app)
+**Live Demo**: [cosmos-collective.com.au](https://cosmos-collective.com.au)
 
 ### Other Platforms
 
@@ -191,7 +191,7 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 ## 📚 Learn More
 
 - **[Development Log](DEVLOG.md)** - Technical analysis, known issues, and implementation roadmap
-- [Technical Devlog](https://cosmos-collective-v2.vercel.app/devlog) - Implementation details and decisions
+- [Technical Devlog](https://cosmos-collective.com.au/devlog) - Implementation details and decisions
 - [SKA Observatory](https://www.skao.int/) - Learn about the Square Kilometre Array
 - [CSIRO ATNF](https://www.atnf.csiro.au/) - Australia Telescope National Facility
 - [STScI](https://www.stsci.edu/) - Space Telescope Science Institute
@@ -210,6 +210,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ---
 
 <p align="center">
-  <a href="https://cosmos-collective-v2.vercel.app">Live Site</a> •
-  <a href="https://cosmos-collective-v2.vercel.app/devlog">Devlog</a> •
+  <a href="https://cosmos-collective.com.au">Live Site</a> •
+  <a href="https://cosmos-collective.com.au/devlog">Devlog</a> •
 </p>

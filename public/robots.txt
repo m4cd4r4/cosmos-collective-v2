@@ -1,5 +1,5 @@
 # Cosmos Collective - Robots.txt
-# https://cosmos-collective-v2.vercel.app
+# https://cosmos-collective.com.au
 
 User-agent: *
 Allow: /
@@ -8,7 +8,7 @@ Disallow: /_next/
 Disallow: /offline
 
 # Sitemap location
-Sitemap: https://cosmos-collective-v2.vercel.app/sitemap.xml
+Sitemap: https://cosmos-collective.com.au/sitemap.xml
 
 # Crawl-delay for respectful crawling
 Crawl-delay: 1

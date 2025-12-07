@@ -18,8 +18,8 @@ In `src/components/layout/Header.tsx`:
 2. Click "New OAuth App"
 3. Fill in the details:
    - **Application name**: Cosmos Collective
-   - **Homepage URL**: `https://cosmos-collective-v2.vercel.app` (or your domain)
-   - **Authorization callback URL**: `https://cosmos-collective-v2.vercel.app/api/auth/callback/github`
+   - **Homepage URL**: `https://cosmos-collective.com.au` (or your domain)
+   - **Authorization callback URL**: `https://cosmos-collective.com.au/api/auth/callback/github`
 4. After creation, copy the Client ID and generate a Client Secret
 5. Add to `.env.local`:
    ```
@@ -38,7 +38,7 @@ In `src/components/layout/Header.tsx`:
 6. Select "Web application" as application type
 7. Add authorized redirect URIs:
    - `http://localhost:3000/api/auth/callback/google` (development)
-   - `https://cosmos-collective-v2.vercel.app/api/auth/callback/google` (production)
+   - `https://cosmos-collective.com.au/api/auth/callback/google` (production)
 8. Add to `.env.local`:
    ```
    GOOGLE_CLIENT_ID=your-google-client-id

@@ -8,7 +8,7 @@ import { getDevlogPosts } from '@/lib/devlog'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
 
-const BASE_URL = 'https://cosmos-collective-v2.vercel.app'
+const BASE_URL = 'https://cosmos-collective.com.au'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static routes

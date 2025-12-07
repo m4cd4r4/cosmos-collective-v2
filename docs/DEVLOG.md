@@ -2,7 +2,7 @@
 
 > Technical analysis, issues, improvements, and implementation roadmap
 
-**Last Updated:** December 6, 2025
+**Last Updated:** December 7, 2025
 **Analysis Scope:** Complete codebase review
 
 ---
@@ -24,6 +24,58 @@
 ---
 
 ## Changelog
+
+### December 7, 2025
+
+#### Custom Domain Launch
+
+**Achievement:** Launched production domain `cosmos-collective.com.au`
+
+| Item | Details |
+|------|---------|
+| **Domain** | cosmos-collective.com.au |
+| **Registrar** | Hostinger |
+| **Hosting** | Vercel (Free Hobby tier) |
+| **SSL** | Auto-provisioned via Let's Encrypt |
+
+**DNS Configuration (Hostinger):**
+- A record: `@` → `76.76.21.21` (Vercel)
+- CNAME: `www` → `cname.vercel-dns.com`
+
+**Files Updated for New Domain:**
+
+| File | Changes |
+|------|---------|
+| `README.md` | Updated all Live Demo links |
+| `src/app/layout.tsx` | Updated OpenGraph, canonical URLs, JSON-LD schema |
+| `src/app/sitemap.ts` | Updated BASE_URL constant |
+| `public/robots.txt` | Updated sitemap URL |
+| `docs/FUTURE_FEATURES.md` | Updated OAuth callback URLs |
+
+#### Accessibility Improvements
+
+**Filter Tooltips Added:**
+
+Added `title` and `aria-label` attributes to all filter buttons on the Explore page for improved mobile accessibility and screen reader support.
+
+| Filter Group | File |
+|--------------|------|
+| Telescope sources | `src/components/features/explore/ExploreFilters.tsx` |
+| Object categories | Same file |
+| Wavelength bands | Same file |
+
+#### Community Features
+
+**Ko-fi Support Integration:**
+- Added Ko-fi donation link to footer
+- "Available for hire" CTA badge added to footer bottom bar
+- Links to `https://ko-fi.com/m4cd4r4`
+
+| File | Component |
+|------|-----------|
+| `src/components/layout/Footer.tsx` | Heart icon link + Briefcase hire badge |
+
+---
 
 ### December 6, 2025
 
