@@ -39,7 +39,7 @@ export default function TermsPage() {
               Terms of Use
             </h1>
             <p className="text-gray-400">
-              Last updated: December 6, 2024
+              Last updated: December 7, 2025
             </p>
           </div>
 

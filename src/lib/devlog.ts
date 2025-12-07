@@ -32,17 +32,17 @@ export interface DevlogPost {
 
 const posts: DevlogPost[] = [
   {
-    slug: 'december-2024-feature-update',
-    title: 'December 2024: ISS Cameras, Expanded Gallery & UI Polish',
+    slug: 'december-2025-feature-update',
+    title: 'December 2025: ISS Cameras, Expanded Gallery & UI Polish',
     excerpt: 'Major feature update adding live ISS camera feeds, expanded telescope observations, real images in Citizen Science, and significant UI/UX improvements.',
-    date: '2024-12-06',
+    date: '2025-12-06',
     author: { name: 'Developer' },
     category: 'architecture',
     tags: ['Features', 'ISS', 'Hubble', 'Citizen Science', 'Accessibility'],
     readingTime: 6,
     featured: true,
     content: `
-# December 2024: ISS Cameras, Expanded Gallery & UI Polish
+# December 2025: ISS Cameras, Expanded Gallery & UI Polish
 
 This update brings several exciting new features and improvements to Cosmos Collective, including live ISS camera feeds, expanded telescope coverage, and a streamlined user interface.
 
@@ -184,7 +184,7 @@ The platform continues to grow as a comprehensive resource for exploring the uni
     slug: 'building-multi-spectrum-data-platform',
     title: 'Building a Multi-Spectrum Astronomical Data Platform',
     excerpt: 'The technical architecture behind integrating data from JWST, Australian radio telescopes, and real-time event feeds into a cohesive exploration experience.',
-    date: '2024-12-05',
+    date: '2025-12-05',
     author: { name: 'Developer' },
     category: 'architecture',
     tags: ['Next.js', 'TypeScript', 'API Integration', 'Architecture'],
@@ -334,7 +334,7 @@ The platform demonstrates that modern web technologies can create compelling exp
     slug: 'integrating-australian-radio-telescopes',
     title: 'Integrating Australian Radio Telescope Data',
     excerpt: 'How I connected to CASDA and the Australian SKA Pathfinder data archives to bring radio astronomy to the web.',
-    date: '2024-12-04',
+    date: '2025-12-04',
     author: { name: 'Developer' },
     category: 'radio-astronomy',
     tags: ['ASKAP', 'CASDA', 'TAP', 'Radio Astronomy', 'SKA'],
@@ -474,7 +474,7 @@ Radio astronomy reveals a hidden universe of energetic phenomena. By making this
     slug: 'accessible-space-data-visualization',
     title: 'Making Space Data Accessible to Everyone',
     excerpt: 'Designing astronomical data visualisations that work for users of all abilities, with a focus on WCAG compliance and inclusive design.',
-    date: '2024-12-04',
+    date: '2025-12-04',
     author: { name: 'Developer' },
     category: 'accessibility',
     tags: ['Accessibility', 'WCAG', 'Inclusive Design', 'UX'],
@@ -657,7 +657,7 @@ The universe is for everyone. Our tools should be too.
     slug: 'citizen-science-technical-design',
     title: 'Technical Design for Citizen Science Classification',
     excerpt: 'Building a classification interface that empowers volunteers to contribute to real astronomical research through Zooniverse integration.',
-    date: '2024-12-04',
+    date: '2025-12-04',
     author: { name: 'Developer' },
     category: 'data-integration',
     tags: ['Citizen Science', 'Zooniverse', 'API', 'UX Design'],
