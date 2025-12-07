@@ -44,17 +44,23 @@ const ISS_CAMERAS = [
     id: 'iss-live-1',
     name: 'ISS Live Camera 1',
     description: 'Live views from the International Space Station exterior cameras',
-    embedUrl: 'https://www.youtube.com/embed/Ni-YkkvH6DQ?autoplay=1&mute=1&rel=0',
+    videoId: 'Ni-YkkvH6DQ',
     directUrl: 'https://www.youtube.com/watch?v=Ni-YkkvH6DQ',
   },
   {
     id: 'iss-live-2',
     name: 'ISS Live Camera 2',
     description: 'Alternative ISS live stream with Earth views from orbit',
-    embedUrl: 'https://www.youtube.com/embed/iYmvCUonukw?autoplay=0&rel=0',
+    videoId: 'iYmvCUonukw',
     directUrl: 'https://www.youtube.com/watch?v=iYmvCUonukw',
   },
 ]
+
+// Build embed URL with autoplay (muted, as required by browsers)
+const getEmbedUrl = (videoId: string, autoplay: boolean = true) => {
+  const params = autoplay ? 'autoplay=1&mute=1&rel=0' : 'rel=0'
+  return `https://www.youtube.com/embed/${videoId}?${params}`
+}
 
 export default function EventsPage() {
   const [events, setEvents] = useState<AstronomicalEvent[]>([])
@@ -273,7 +279,7 @@ export default function EventsPage() {
                 <Card padding="none" className="overflow-hidden">
                   <div className="relative aspect-video bg-cosmos-void">
                     <iframe
-                      src={selectedCamera.embedUrl}
+                      src={getEmbedUrl(selectedCamera.videoId)}
                       title={selectedCamera.name}
                       className="absolute inset-0 w-full h-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
