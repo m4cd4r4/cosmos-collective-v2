@@ -31,7 +31,7 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 - **ISS Live Cameras** - Watch Earth from space via 3 NASA YouTube streams
 - Space weather alerts and notifications
 
-### 👥 Citizen Science
+### 👥 Citizen Science (In development)
 - Contribute to real astronomical research
 - Galaxy classification tasks with real NASA imagery
 - Radio source matching for SKA pathfinder science
