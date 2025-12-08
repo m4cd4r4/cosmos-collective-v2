@@ -104,7 +104,7 @@ export function LiveEventsBar() {
             {[...events, ...events].map((event, index) => (
               <Link
                 key={`${event.id}-${index}`}
-                href="/events"
+                href={`/events#${event.id}`}
                 className="inline-flex items-center gap-2 px-4 py-2 hover:bg-white/5 transition-colors group"
               >
                 <span className={severityColors[event.severity]}>

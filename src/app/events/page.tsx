@@ -5,7 +5,8 @@
  * Real-time astronomical events, meteor showers, and space weather
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { Starfield } from '@/components/ui/Starfield'
@@ -117,6 +118,27 @@ export default function EventsPage() {
 
     return () => clearInterval(issInterval)
   }, [])
+
+  // Scroll to specific event if hash is present in URL
+  useEffect(() => {
+    if (!isLoading && events.length > 0) {
+      const hash = window.location.hash.slice(1) // Remove the # symbol
+      if (hash) {
+        // Small delay to ensure DOM is ready
+        setTimeout(() => {
+          const element = document.getElementById(hash)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            // Add highlight effect
+            element.classList.add('ring-2', 'ring-cosmos-cyan', 'ring-offset-2', 'ring-offset-cosmos-void')
+            setTimeout(() => {
+              element.classList.remove('ring-2', 'ring-cosmos-cyan', 'ring-offset-2', 'ring-offset-cosmos-void')
+            }, 3000)
+          }
+        }, 100)
+      }
+    }
+  }, [isLoading, events])
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -381,10 +403,11 @@ export default function EventsPage() {
                     return (
                       <Card
                         key={event.id}
+                        id={event.id}
                         variant="default"
                         padding="none"
                         className={cn(
-                          'overflow-hidden transition-all duration-200',
+                          'overflow-hidden transition-all duration-300',
                           primaryUrl && 'hover:border-cosmos-cyan/50 hover:bg-white/5 cursor-pointer'
                         )}
                       >
@@ -513,15 +536,22 @@ export default function EventsPage() {
                 <CardContent>
                   <div className="space-y-3">
                     {upcomingShowers.map((shower) => (
-                      <div key={shower.name} className="p-3 rounded-lg bg-white/5">
+                      <a
+                        key={shower.name}
+                        href="https://www.imo.net/resources/calendar/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
+                      >
                         <div className="flex items-center justify-between">
-                          <span className="font-medium text-white">{shower.name}</span>
+                          <span className="font-medium text-white group-hover:text-cosmos-cyan transition-colors">{shower.name}</span>
                           <span className="text-xs text-cosmos-gold">{shower.zenithalHourlyRate}/hr</span>
                         </div>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
                           Peak: {formatDate(shower.peakDate, { month: 'short', day: 'numeric' })}
+                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </p>
-                      </div>
+                      </a>
                     ))}
                   </div>
                 </CardContent>

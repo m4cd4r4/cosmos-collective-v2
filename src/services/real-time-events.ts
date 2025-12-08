@@ -382,6 +382,9 @@ export function getUpcomingEvents(limit: number = 10): AstronomicalEvent[] {
     const diffDays = (peakDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
 
     if (diffDays > -7 && diffDays < 60) {
+      // Generate IMO meteor shower URL slug
+      const imoSlug = shower.name.toLowerCase().replace(/\s/g, '-')
+
       events.push({
         id: `meteor-${shower.name.toLowerCase().replace(/\s/g, '-')}`,
         type: 'meteor-shower',
@@ -397,6 +400,10 @@ export function getUpcomingEvents(limit: number = 10): AstronomicalEvent[] {
           bestViewingTime: 'After midnight',
           requiredEquipment: 'None - naked eye',
         },
+        references: [
+          { label: 'IMO Meteor Shower Calendar', url: `https://www.imo.net/resources/calendar/`, type: 'other' },
+          { label: 'NASA Sky Events', url: 'https://science.nasa.gov/skywatching/', type: 'nasa' },
+        ],
       })
     }
   }
