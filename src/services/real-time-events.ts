@@ -368,6 +368,275 @@ export function getMeteorShowers(year: number = new Date().getFullYear()): Meteo
 }
 
 // ============================================
+// Lunar Events (Moon Phases, Supermoons)
+// ============================================
+
+export interface LunarEvent {
+  name: string
+  date: string
+  type: 'new-moon' | 'first-quarter' | 'full-moon' | 'last-quarter' | 'supermoon' | 'blue-moon'
+  description: string
+  isSupermoon?: boolean
+}
+
+export function getLunarEvents(year: number = new Date().getFullYear()): LunarEvent[] {
+  // Key lunar events for 2025 (pre-computed from astronomical data)
+  const events2025: LunarEvent[] = [
+    { name: 'Full Moon (Wolf Moon)', date: '2025-01-13', type: 'full-moon', description: 'First full moon of the year, named Wolf Moon by Native Americans.' },
+    { name: 'New Moon', date: '2025-01-29', type: 'new-moon', description: 'Best time for deep-sky observation with no moonlight interference.' },
+    { name: 'Full Moon (Snow Moon)', date: '2025-02-12', type: 'full-moon', description: 'February full moon, traditionally called Snow Moon.' },
+    { name: 'Full Moon (Worm Moon)', date: '2025-03-14', type: 'full-moon', description: 'March full moon marking the end of winter.' },
+    { name: 'Full Moon (Pink Moon)', date: '2025-04-13', type: 'full-moon', description: 'April full moon named after spring wildflowers.' },
+    { name: 'Supermoon (Flower Moon)', date: '2025-05-12', type: 'supermoon', description: 'Full moon at perigee appears 14% larger and 30% brighter.', isSupermoon: true },
+    { name: 'Full Moon (Strawberry Moon)', date: '2025-06-11', type: 'full-moon', description: 'June full moon coinciding with strawberry harvest season.' },
+    { name: 'Supermoon (Buck Moon)', date: '2025-07-10', type: 'supermoon', description: 'Supermoon appearing larger and brighter than average.', isSupermoon: true },
+    { name: 'Supermoon (Sturgeon Moon)', date: '2025-08-09', type: 'supermoon', description: 'August supermoon at closest approach to Earth.', isSupermoon: true },
+    { name: 'Supermoon (Harvest Moon)', date: '2025-09-07', type: 'supermoon', description: 'Closest supermoon of 2025, spectacular viewing opportunity.', isSupermoon: true },
+    { name: 'Supermoon (Hunter\'s Moon)', date: '2025-10-07', type: 'supermoon', description: 'October supermoon with orange hue near horizon.', isSupermoon: true },
+    { name: 'Full Moon (Beaver Moon)', date: '2025-11-05', type: 'full-moon', description: 'November full moon when beavers prepare for winter.' },
+    { name: 'Full Moon (Cold Moon)', date: '2025-12-04', type: 'full-moon', description: 'Last full moon of the year during winter\'s start.' },
+  ]
+
+  return year === 2025 ? events2025 : events2025.map(e => ({
+    ...e,
+    date: e.date.replace('2025', String(year))
+  }))
+}
+
+// ============================================
+// Solar and Lunar Eclipses
+// ============================================
+
+export interface EclipseEvent {
+  name: string
+  date: string
+  type: 'solar-total' | 'solar-partial' | 'solar-annular' | 'lunar-total' | 'lunar-partial' | 'lunar-penumbral'
+  description: string
+  visibility: string[]
+  peakTime?: string
+  duration?: string
+}
+
+export function getEclipses(): EclipseEvent[] {
+  return [
+    // 2025 Eclipses
+    {
+      name: 'Total Lunar Eclipse',
+      date: '2025-03-14',
+      type: 'lunar-total',
+      description: 'Total lunar eclipse with the Moon passing through Earth\'s shadow. The Moon will appear reddish-orange (Blood Moon).',
+      visibility: ['Americas', 'Europe', 'Africa', 'Pacific'],
+      peakTime: '06:58 UTC',
+      duration: '1 hour 5 minutes totality',
+    },
+    {
+      name: 'Partial Solar Eclipse',
+      date: '2025-03-29',
+      type: 'solar-partial',
+      description: 'Partial solar eclipse visible from northwestern regions. Up to 93% coverage in some areas.',
+      visibility: ['Northwestern North America', 'Arctic', 'Northern Europe'],
+      peakTime: '10:47 UTC',
+    },
+    {
+      name: 'Total Lunar Eclipse',
+      date: '2025-09-07',
+      type: 'lunar-total',
+      description: 'Second total lunar eclipse of 2025. Blood Moon visible during totality phase.',
+      visibility: ['Europe', 'Africa', 'Asia', 'Australia'],
+      peakTime: '18:11 UTC',
+      duration: '1 hour 22 minutes totality',
+    },
+    {
+      name: 'Partial Solar Eclipse',
+      date: '2025-09-21',
+      type: 'solar-partial',
+      description: 'Partial solar eclipse visible from the Southern Hemisphere.',
+      visibility: ['New Zealand', 'Antarctica', 'Southern Pacific'],
+      peakTime: '19:42 UTC',
+    },
+    // 2026 Eclipses (for advance planning)
+    {
+      name: 'Annular Solar Eclipse',
+      date: '2026-02-17',
+      type: 'solar-annular',
+      description: 'Ring of fire eclipse with Moon too far to fully cover the Sun.',
+      visibility: ['Antarctica', 'Southern Africa', 'South America'],
+      peakTime: '12:28 UTC',
+    },
+    {
+      name: 'Total Solar Eclipse',
+      date: '2026-08-12',
+      type: 'solar-total',
+      description: 'Total solar eclipse crossing Spain and Iceland. Rare opportunity for European observers.',
+      visibility: ['Greenland', 'Iceland', 'Spain', 'North Africa'],
+      peakTime: '17:46 UTC',
+      duration: '2 minutes 18 seconds totality',
+    },
+  ]
+}
+
+// ============================================
+// Planetary Conjunctions and Alignments
+// ============================================
+
+export interface ConjunctionEvent {
+  name: string
+  date: string
+  bodies: string[]
+  separation: string
+  description: string
+  bestViewingTime: 'evening' | 'morning' | 'all-night'
+  magnitude?: number
+}
+
+export function getPlanetaryConjunctions(year: number = new Date().getFullYear()): ConjunctionEvent[] {
+  const events2025: ConjunctionEvent[] = [
+    {
+      name: 'Venus-Saturn Conjunction',
+      date: '2025-01-18',
+      bodies: ['Venus', 'Saturn'],
+      separation: '2.2°',
+      description: 'Brilliant Venus passes close to Saturn in the evening sky. Easy naked-eye observation.',
+      bestViewingTime: 'evening',
+      magnitude: -4.0,
+    },
+    {
+      name: 'Mars-Pleiades Conjunction',
+      date: '2025-01-21',
+      bodies: ['Mars', 'Pleiades'],
+      separation: '1.5°',
+      description: 'Mars passes by the famous Seven Sisters star cluster. Stunning binocular view.',
+      bestViewingTime: 'evening',
+      magnitude: 1.0,
+    },
+    {
+      name: 'Venus-Neptune Conjunction',
+      date: '2025-02-03',
+      bodies: ['Venus', 'Neptune'],
+      separation: '0.5°',
+      description: 'Venus and Neptune appear extremely close. Telescope needed to spot Neptune.',
+      bestViewingTime: 'evening',
+      magnitude: -4.0,
+    },
+    {
+      name: 'Moon-Jupiter Close Approach',
+      date: '2025-02-11',
+      bodies: ['Moon', 'Jupiter'],
+      separation: '0.8°',
+      description: 'Crescent Moon passes very close to Jupiter. Spectacular naked-eye sight.',
+      bestViewingTime: 'evening',
+    },
+    {
+      name: 'Mars-Jupiter Conjunction',
+      date: '2025-08-14',
+      bodies: ['Mars', 'Jupiter'],
+      separation: '0.3°',
+      description: 'Two bright planets appear almost touching in the pre-dawn sky.',
+      bestViewingTime: 'morning',
+      magnitude: 1.8,
+    },
+    {
+      name: 'Venus-Jupiter Conjunction',
+      date: '2025-08-12',
+      bodies: ['Venus', 'Jupiter'],
+      separation: '1.0°',
+      description: 'The two brightest planets meet in the morning sky. Unmissable event.',
+      bestViewingTime: 'morning',
+      magnitude: -4.2,
+    },
+    {
+      name: 'Saturn Opposition',
+      date: '2025-09-21',
+      bodies: ['Saturn'],
+      separation: 'N/A',
+      description: 'Saturn at its closest and brightest for the year. Rings beautifully visible.',
+      bestViewingTime: 'all-night',
+      magnitude: 0.4,
+    },
+    {
+      name: 'Jupiter Opposition',
+      date: '2025-12-07',
+      bodies: ['Jupiter'],
+      separation: 'N/A',
+      description: 'Jupiter at peak brightness and size. Great Galilean moons easily visible.',
+      bestViewingTime: 'all-night',
+      magnitude: -2.8,
+    },
+  ]
+
+  return year === 2025 ? events2025 : events2025.map(e => ({
+    ...e,
+    date: e.date.replace('2025', String(year))
+  }))
+}
+
+// ============================================
+// Rocket Launches
+// ============================================
+
+export interface RocketLaunch {
+  name: string
+  date: string
+  provider: string
+  rocket: string
+  mission: string
+  site: string
+  description: string
+  isCrewed: boolean
+  webcastUrl?: string
+}
+
+export function getUpcomingLaunches(): RocketLaunch[] {
+  // Static list of notable upcoming launches (would be replaced with API in production)
+  return [
+    {
+      name: 'SpaceX Starship Flight 8',
+      date: '2025-12-15',
+      provider: 'SpaceX',
+      rocket: 'Starship/Super Heavy',
+      mission: 'Test Flight',
+      site: 'Starbase, TX',
+      description: 'Next test flight of the largest rocket ever built. Full stack launch and landing attempt.',
+      isCrewed: false,
+      webcastUrl: 'https://www.spacex.com/launches/',
+    },
+    {
+      name: 'Artemis II',
+      date: '2025-09-01',
+      provider: 'NASA',
+      rocket: 'SLS Block 1',
+      mission: 'Crewed Lunar Flyby',
+      site: 'Kennedy Space Center, FL',
+      description: 'First crewed Artemis mission, sending astronauts around the Moon.',
+      isCrewed: true,
+      webcastUrl: 'https://www.nasa.gov/artemis-ii',
+    },
+    {
+      name: 'Europa Clipper Launch Window',
+      date: '2025-10-01',
+      provider: 'NASA/SpaceX',
+      rocket: 'Falcon Heavy',
+      mission: 'Jupiter/Europa Mission',
+      site: 'Kennedy Space Center, FL',
+      description: 'Mission to study Jupiter\'s moon Europa for signs of habitability.',
+      isCrewed: false,
+      webcastUrl: 'https://europa.nasa.gov/',
+    },
+    {
+      name: 'Crew Dragon Mission',
+      date: '2025-12-20',
+      provider: 'SpaceX',
+      rocket: 'Falcon 9',
+      mission: 'ISS Crew Rotation',
+      site: 'Kennedy Space Center, FL',
+      description: 'Regular crew rotation mission to the International Space Station.',
+      isCrewed: true,
+      webcastUrl: 'https://www.spacex.com/launches/',
+    },
+  ]
+}
+
+// ============================================
 // Upcoming Astronomical Events
 // ============================================
 
@@ -403,6 +672,123 @@ export function getUpcomingEvents(limit: number = 10): AstronomicalEvent[] {
         references: [
           { label: 'IMO Meteor Shower Calendar', url: `https://www.imo.net/resources/calendar/`, type: 'other' },
           { label: 'NASA Sky Events', url: 'https://science.nasa.gov/skywatching/', type: 'nasa' },
+        ],
+      })
+    }
+  }
+
+  // Add lunar events within next 2 months
+  const lunarEvents = getLunarEvents()
+  for (const lunar of lunarEvents) {
+    const eventDate = new Date(lunar.date)
+    const diffDays = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+
+    if (diffDays > -1 && diffDays < 60) {
+      events.push({
+        id: `lunar-${lunar.date}`,
+        type: 'lunar',
+        title: lunar.name,
+        description: lunar.description,
+        eventTime: lunar.date,
+        source: 'Astronomical Calendar',
+        severity: lunar.isSupermoon ? 'notable' : 'info',
+        isOngoing: diffDays >= -0.5 && diffDays <= 0.5,
+        visibility: {
+          locations: ['Worldwide'],
+          bestViewingTime: 'Night',
+          requiredEquipment: 'None - naked eye',
+        },
+        references: [
+          { label: 'TimeAndDate Moon Phases', url: 'https://www.timeanddate.com/moon/phases/', type: 'other' },
+          { label: 'NASA Moon Guide', url: 'https://moon.nasa.gov/', type: 'nasa' },
+        ],
+      })
+    }
+  }
+
+  // Add eclipses within next year
+  const eclipses = getEclipses()
+  for (const eclipse of eclipses) {
+    const eventDate = new Date(eclipse.date)
+    const diffDays = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+
+    if (diffDays > -1 && diffDays < 365) {
+      const isTotal = eclipse.type.includes('total')
+      events.push({
+        id: `eclipse-${eclipse.date}-${eclipse.type}`,
+        type: 'eclipse',
+        title: eclipse.name,
+        description: `${eclipse.description}${eclipse.duration ? ` Duration: ${eclipse.duration}.` : ''}${eclipse.peakTime ? ` Peak: ${eclipse.peakTime}.` : ''}`,
+        eventTime: eclipse.date,
+        source: 'NASA Eclipse',
+        severity: isTotal ? 'significant' : 'notable',
+        isOngoing: diffDays >= -0.5 && diffDays <= 0.5,
+        visibility: {
+          locations: eclipse.visibility,
+          bestViewingTime: eclipse.peakTime,
+          requiredEquipment: eclipse.type.includes('solar') ? 'Eclipse glasses required!' : 'None - naked eye',
+        },
+        references: [
+          { label: 'NASA Eclipse Website', url: 'https://eclipse.gsfc.nasa.gov/', type: 'nasa' },
+          { label: 'TimeAndDate Eclipse Guide', url: 'https://www.timeanddate.com/eclipse/', type: 'other' },
+        ],
+      })
+    }
+  }
+
+  // Add planetary conjunctions within next 2 months
+  const conjunctions = getPlanetaryConjunctions()
+  for (const conj of conjunctions) {
+    const eventDate = new Date(conj.date)
+    const diffDays = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+
+    if (diffDays > -1 && diffDays < 60) {
+      events.push({
+        id: `conjunction-${conj.date}-${conj.bodies.join('-').toLowerCase()}`,
+        type: 'conjunction',
+        title: conj.name,
+        description: `${conj.description} Separation: ${conj.separation}.`,
+        eventTime: conj.date,
+        source: 'Sky & Telescope',
+        severity: conj.separation.startsWith('0.') ? 'notable' : 'info',
+        isOngoing: diffDays >= -0.5 && diffDays <= 0.5,
+        visibility: {
+          locations: ['Worldwide (clear skies)'],
+          bestViewingTime: conj.bestViewingTime === 'evening' ? 'After sunset' : conj.bestViewingTime === 'morning' ? 'Before sunrise' : 'All night',
+          requiredEquipment: conj.magnitude && conj.magnitude > 4 ? 'Binoculars recommended' : 'None - naked eye',
+        },
+        references: [
+          { label: 'Sky & Telescope', url: 'https://skyandtelescope.org/observing/', type: 'other' },
+          { label: 'Heavens-Above', url: 'https://heavens-above.com/', type: 'other' },
+        ],
+      })
+    }
+  }
+
+  // Add rocket launches within next month
+  const launches = getUpcomingLaunches()
+  for (const launch of launches) {
+    const eventDate = new Date(launch.date)
+    const diffDays = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
+
+    if (diffDays > -1 && diffDays < 30) {
+      events.push({
+        id: `launch-${launch.date}-${launch.name.toLowerCase().replace(/\s/g, '-')}`,
+        type: 'launch',
+        title: launch.name,
+        description: `${launch.description} Launch site: ${launch.site}. Rocket: ${launch.rocket}.`,
+        eventTime: launch.date,
+        source: launch.provider,
+        severity: launch.isCrewed ? 'significant' : 'notable',
+        isOngoing: false,
+        visibility: {
+          locations: [launch.site],
+          requiredEquipment: 'Watch online',
+        },
+        liveFeedUrl: launch.webcastUrl,
+        references: [
+          { label: 'Watch Live', url: launch.webcastUrl || 'https://www.spacex.com/launches/', type: 'other' },
+          { label: 'Spaceflight Now', url: 'https://spaceflightnow.com/launch-schedule/', type: 'other' },
         ],
       })
     }

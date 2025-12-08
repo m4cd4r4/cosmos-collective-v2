@@ -219,6 +219,8 @@ export type EventType =
   | 'iss'
   | 'eclipse'
   | 'meteor-shower'
+  | 'lunar'         // Moon phases, supermoons
+  | 'conjunction'   // Planetary conjunctions
 
 export type EventSeverity = 'info' | 'notable' | 'significant' | 'rare' | 'once-in-lifetime'
 

@@ -34,6 +34,10 @@ import {
   Satellite,
   Video,
   Eye,
+  Moon,
+  Sun,
+  Rocket,
+  ChevronDown,
 } from 'lucide-react'
 import { cn, formatDate } from '@/lib/utils'
 
@@ -63,6 +67,10 @@ const getEmbedUrl = (videoId: string, autoplay: boolean = true) => {
   return `https://www.youtube.com/embed/${videoId}?${params}`
 }
 
+// Pagination constants
+const INITIAL_EVENT_COUNT = 8
+const LOAD_MORE_COUNT = 8
+
 export default function EventsPage() {
   const [events, setEvents] = useState<AstronomicalEvent[]>([])
   const [apod, setApod] = useState<APODData | null>(null)
@@ -70,6 +78,7 @@ export default function EventsPage() {
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [selectedCamera, setSelectedCamera] = useState(ISS_CAMERAS[0])
+  const [displayCount, setDisplayCount] = useState(INITIAL_EVENT_COUNT)
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -164,6 +173,14 @@ export default function EventsPage() {
         return Star
       case 'transit':
         return Radio
+      case 'lunar':
+        return Moon
+      case 'eclipse':
+        return Sun
+      case 'conjunction':
+        return Sparkles
+      case 'launch':
+        return Rocket
       default:
         return Sparkles
     }
@@ -184,6 +201,14 @@ export default function EventsPage() {
         return 'https://images-assets.nasa.gov/image/PIA22085/PIA22085~thumb.jpg'
       case 'grb':
         return 'https://images-assets.nasa.gov/image/PIA20051/PIA20051~thumb.jpg'
+      case 'lunar':
+        return 'https://images-assets.nasa.gov/image/PIA12235/PIA12235~thumb.jpg'
+      case 'eclipse':
+        return 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001435/GSFC_20171208_Archive_e001435~thumb.jpg'
+      case 'conjunction':
+        return 'https://images-assets.nasa.gov/image/PIA23962/PIA23962~thumb.jpg'
+      case 'launch':
+        return 'https://images-assets.nasa.gov/image/KSC-20201115-PH-SPX01_0001/KSC-20201115-PH-SPX01_0001~thumb.jpg'
       default:
         return 'https://images-assets.nasa.gov/image/PIA17563/PIA17563~thumb.jpg'
     }
@@ -390,7 +415,7 @@ export default function EventsPage() {
                 </div>
               ) : events.length > 0 ? (
                 <div className="space-y-4">
-                  {events.map((event) => {
+                  {events.slice(0, displayCount).map((event) => {
                     const Icon = getEventIcon(event.type)
                     const primaryUrl = event.references?.[0]?.url
                     const CardWrapper = primaryUrl ? 'a' : 'div'
@@ -480,6 +505,21 @@ export default function EventsPage() {
                       </Card>
                     )
                   })}
+
+                  {/* Show More Button */}
+                  {displayCount < events.length && (
+                    <div className="flex justify-center pt-4">
+                      <Button
+                        variant="outline"
+                        size="lg"
+                        onClick={() => setDisplayCount((c) => c + LOAD_MORE_COUNT)}
+                        leftIcon={<ChevronDown className="w-4 h-4" />}
+                        className="w-full sm:w-auto"
+                      >
+                        Show More Events ({events.length - displayCount} remaining)
+                      </Button>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <Card className="text-center" padding="xl">

@@ -51,6 +51,14 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 - Reduced motion support
 - Semantic HTML structure
 
+## 🆕 Recently Added
+
+- **Expanded Event Calendar** - 50+ astronomical events including lunar phases, eclipses, planetary conjunctions, and rocket launches
+- **Smart Banner Filtering** - Live events banner prioritizes ongoing and high-severity events
+- **Responsive Event Cards** - All event cards now clickable with external references
+- **Show More Pagination** - Events page loads progressively to avoid overwhelming users
+- **Scroll-to Event** - Click banner events to jump directly to that event on the events page
+
 ## 🏗️ Architecture
 
 ```
