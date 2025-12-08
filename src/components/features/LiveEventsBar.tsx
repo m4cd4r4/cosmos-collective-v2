@@ -10,7 +10,7 @@ import Link from 'next/link'
 import { getUpcomingEvents, type MeteorShower } from '@/services/real-time-events'
 import type { AstronomicalEvent } from '@/types'
 import { cn, getRelativeTime } from '@/lib/utils'
-import { Radio, AlertCircle, Star, Rocket, Sun, Sparkles } from 'lucide-react'
+import { Radio, AlertCircle, Star, Rocket, Sun, Sparkles, Moon, Globe, Zap } from 'lucide-react'
 
 // ============================================
 // Event Type Icons
@@ -18,10 +18,13 @@ import { Radio, AlertCircle, Star, Rocket, Sun, Sparkles } from 'lucide-react'
 
 const eventIcons: Record<string, React.ReactNode> = {
   'meteor-shower': <Sparkles className="w-4 h-4" />,
-  asteroid: <Star className="w-4 h-4" />,
-  solar: <Sun className="w-4 h-4" />,
+  asteroid: <Globe className="w-4 h-4" />,
+  solar: <Zap className="w-4 h-4" />,
   launch: <Rocket className="w-4 h-4" />,
   transient: <AlertCircle className="w-4 h-4" />,
+  lunar: <Moon className="w-4 h-4" />,
+  eclipse: <Sun className="w-4 h-4" />,
+  conjunction: <Star className="w-4 h-4" />,
   default: <Radio className="w-4 h-4" />,
 }
 
@@ -31,6 +34,43 @@ const severityColors: Record<string, string> = {
   significant: 'text-cosmos-gold',
   notable: 'text-cosmos-cyan',
   info: 'text-gray-400',
+}
+
+// Priority order for sorting (higher = more important)
+const severityOrder: Record<string, number> = {
+  'once-in-lifetime': 5,
+  rare: 4,
+  significant: 3,
+  notable: 2,
+  info: 1,
+}
+
+// Maximum events to show in banner
+const MAX_BANNER_EVENTS = 10
+
+// Filter and prioritize events for the banner
+function getPriorityEvents(events: AstronomicalEvent[]): AstronomicalEvent[] {
+  // Only show notable+ severity OR ongoing events
+  const priorityEvents = events.filter(
+    (e) => e.isOngoing || ['notable', 'significant', 'rare', 'once-in-lifetime'].includes(e.severity)
+  )
+
+  // Sort: ongoing first, then by severity, then by date proximity
+  const now = Date.now()
+  return priorityEvents
+    .sort((a, b) => {
+      // Ongoing events first
+      if (a.isOngoing && !b.isOngoing) return -1
+      if (!a.isOngoing && b.isOngoing) return 1
+
+      // Then by severity
+      const severityDiff = (severityOrder[b.severity] || 0) - (severityOrder[a.severity] || 0)
+      if (severityDiff !== 0) return severityDiff
+
+      // Then by date proximity (closest first)
+      return Math.abs(new Date(a.eventTime).getTime() - now) - Math.abs(new Date(b.eventTime).getTime() - now)
+    })
+    .slice(0, MAX_BANNER_EVENTS)
 }
 
 // ============================================
@@ -43,10 +83,11 @@ export function LiveEventsBar() {
   const [isPaused, setIsPaused] = useState(false)
 
   useEffect(() => {
-    // Load upcoming events
+    // Load upcoming events (get more to filter from)
     const loadEvents = () => {
-      const upcomingEvents = getUpcomingEvents(10)
-      setEvents(upcomingEvents)
+      const upcomingEvents = getUpcomingEvents(50) // Get more events to filter
+      const priorityEvents = getPriorityEvents(upcomingEvents)
+      setEvents(priorityEvents)
       setIsLoading(false)
     }
 
