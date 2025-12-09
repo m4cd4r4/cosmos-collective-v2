@@ -9,6 +9,7 @@ import '@/styles/globals.css'
 import { Providers } from './providers'
 import { SkipToContent } from '@/components/accessibility/SkipToContent'
 import { Starfield } from '@/components/ui/Starfield'
+import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 // ============================================
 // Font Configuration
@@ -206,6 +207,9 @@ export default function RootLayout({
 
         {/* Animated starfield background */}
         <Starfield />
+
+        {/* Google Analytics */}
+        <GoogleAnalytics />
 
         {/* App providers (React Query, Auth, etc.) */}
         <Providers>
