@@ -1,4 +1,4 @@
-# 🌌 Cosmos Collective
+# Cosmos Collective
 
 > A Multi-Spectrum Astronomical Data Exploration Platform
 
@@ -11,39 +11,39 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 
 ![Cosmos Collective Demo](./public/images/site-demo.gif)
 
-## ✨ Features
+## Features
 
-### 🔭 Multi-Wavelength Exploration
+### Multi-Wavelength Exploration
 - **JWST Gallery**: Browse infrared observations from the James Webb Space Telescope
 - **Hubble Gallery**: Classic optical imagery including nebulae, galaxies, and star clusters
 - **Australian Radio Telescopes**: Access data from ASKAP, MWA, and Parkes (10+ observations)
 - **Multi-Spectrum Comparison**: View the same object across different wavelengths
 
-### 🗺️ Interactive Sky Map
+### Interactive Sky Map
 - Pan and zoom across the entire celestial sphere using Aladin Lite
 - Search by object name, coordinates, or constellation
 - Layer radio, infrared, optical, and X-ray survey data
 - Quick navigation to popular deep sky objects
 
-### 🚨 Real-Time Events & ISS Cameras
+### Real-Time Events & ISS Cameras
 - Live feed of astronomical events (meteor showers, asteroids, solar activity)
 - ISS tracking with real-time orbital position
 - **ISS Live Cameras** - Watch Earth from space via 3 NASA YouTube streams
 - Space weather alerts and notifications
 
-### 👥 Citizen Science (In development)
+### Citizen Science (In development)
 - Contribute to real astronomical research
 - Galaxy classification tasks with real NASA imagery
 - Radio source matching for SKA pathfinder science
 - 12 classification tasks across 6 Zooniverse-style projects
 - Track your contributions and earn badges
 
-### 📡 SKA (Square Kilometre Array) Showcase
+### SKA (Square Kilometre Array) Showcase
 - Learn about the world's largest radio telescope
 - Links to SKAO and CSIRO resources
 - Understand how SKA will revolutionise astronomy
 
-### ♿ Accessibility First
+### Accessibility First
 - WCAG 2.1 AA compliant with dedicated [Accessibility page](/accessibility)
 - Screen reader optimised with ARIA labels
 - Full keyboard navigation throughout
@@ -51,7 +51,7 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 - Reduced motion support
 - Semantic HTML structure
 
-## 🆕 Recently Added
+## Recently Added
 
 - **Expanded Event Calendar** - 50+ astronomical events including lunar phases, eclipses, planetary conjunctions, and rocket launches
 - **Smart Banner Filtering** - Live events banner prioritizes ongoing and high-severity events
@@ -59,7 +59,7 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 - **Show More Pagination** - Events page loads progressively to avoid overwhelming users
 - **Scroll-to Event** - Click banner events to jump directly to that event on the events page
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 cosmos-collective/v2/
@@ -89,7 +89,7 @@ cosmos-collective/v2/
 └── ...config files
 ```
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -122,7 +122,7 @@ See `.env.example` for all available configuration options. At minimum, you'll n
 - `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
 - `NEXT_PUBLIC_NASA_API_KEY`: Get free at [api.nasa.gov](https://api.nasa.gov/)
 
-## 📊 Data Sources
+## Data Sources
 
 | Source | Data Type | Access |
 |--------|-----------|--------|
@@ -132,7 +132,7 @@ See `.env.example` for all available configuration options. At minimum, you'll n
 | [Zooniverse](https://www.zooniverse.org/) | Citizen science projects | Public API |
 | [NOAA SWPC](https://www.swpc.noaa.gov/) | Space weather | Public |
 
-## 🎨 Design System
+## Design System
 
 ### Colour Palette - "Cosmic Optimism"
 
@@ -150,7 +150,7 @@ See `.env.example` for all available configuration options. At minimum, you'll n
 - **Body**: Inter - Body text and UI
 - **Mono**: JetBrains Mono - Code and data
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run unit tests
@@ -166,7 +166,7 @@ npm run type-check
 npm run lint
 ```
 
-## 📦 Deployment
+## Deployment
 
 ### Vercel (Recommended)
 
@@ -186,7 +186,7 @@ npm run build
 npm run start
 ```
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
 
@@ -196,18 +196,18 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📚 Learn More
+## Learn More
 
 - [Technical Devlog](https://cosmos-collective.com.au/devlog) - Implementation details and decisions
 - [SKA Observatory](https://www.skao.int/) - Learn about the Square Kilometre Array
 - [CSIRO ATNF](https://www.atnf.csiro.au/) - Australia Telescope National Facility
 - [STScI](https://www.stsci.edu/) - Space Telescope Science Institute
 
-## 📄 License
+## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **NASA/ESA/CSA/STScI** - JWST imagery and data
 - **CSIRO** - Australian radio telescope data
