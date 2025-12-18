@@ -92,7 +92,21 @@ const config: Config = {
             xray: '#3b82f6',        // Blue for X-ray
             gamma: '#06b6d4',       // Cyan for gamma
           },
+
+          // Space Industry Colors (from The Great Expanse)
+          industry: {
+            'rocket-orange': '#f97316',
+            'plasma-blue': '#3b82f6',
+            'aurora-teal': '#14b8a6',
+            'void-purple': '#8b5cf6',
+            'solar-gold': '#eab308',
+            'mars-red': '#ef4444',
+          },
         },
+
+        // Top-level aliases for frequently used colors
+        'cosmos-cyan': '#06b6d4',
+        'rocket-orange': '#f97316',
 
         // Semantic colors with good contrast
         success: {
