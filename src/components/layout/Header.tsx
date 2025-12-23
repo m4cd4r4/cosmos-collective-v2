@@ -1,12 +1,11 @@
 'use client'
 
 /**
- * Header Component (Updated)
- * Tabbed navigation separating Observe (astronomy) and Launch (space industry)
- * Includes Arcade button for games
+ * Header Component
+ * Main navigation header with responsive design
+ * Includes mobile bottom navigation bar
  */
 
-import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
@@ -17,94 +16,44 @@ import {
   Users,
   BookOpen,
   Home,
-  Rocket,
-  Radio,
-  Building2,
-  Plane,
-  Video,
-  Gamepad2,
 } from 'lucide-react'
-import { ArcadeModal } from '@/components/features/arcade/ArcadeModal'
 
 // ============================================
-// Types
+// Navigation Items
 // ============================================
 
-type SectionId = 'observe' | 'launch'
-
-interface NavItem {
-  label: string
-  href: string
-  icon: React.ElementType
-  description: string
-}
-
-// ============================================
-// Navigation Configuration
-// ============================================
-
-const SECTIONS: Record<SectionId, { label: string; icon: React.ElementType; items: NavItem[] }> = {
-  observe: {
-    label: 'Observe',
+const navItems = [
+  {
+    label: 'Explore',
+    href: '/explore',
     icon: Telescope,
-    items: [
-      {
-        label: 'Explore',
-        href: '/explore',
-        icon: Telescope,
-        description: 'Browse JWST and radio telescope observations',
-      },
-      {
-        label: 'Sky Map',
-        href: '/sky-map',
-        icon: Globe,
-        description: 'Interactive celestial coordinate viewer',
-      },
-      {
-        label: 'Live Events',
-        href: '/events',
-        icon: Calendar,
-        description: 'Real-time astronomical events and alerts',
-      },
-      {
-        label: 'Citizen Science',
-        href: '/citizen-science',
-        icon: Users,
-        description: 'Contribute to real astronomy research',
-      },
-    ],
+    description: 'Browse JWST and radio telescope observations',
   },
-  launch: {
-    label: 'Launch',
-    icon: Rocket,
-    items: [
-      {
-        label: 'Upcoming',
-        href: '/launch',
-        icon: Rocket,
-        description: 'Track upcoming space launches worldwide',
-      },
-      {
-        label: 'Live',
-        href: '/live',
-        icon: Video,
-        description: 'Watch live launch streams',
-      },
-      {
-        label: 'Agencies',
-        href: '/agencies',
-        icon: Building2,
-        description: 'Space agencies and companies',
-      },
-      {
-        label: 'Vehicles',
-        href: '/vehicles',
-        icon: Plane,
-        description: 'Launch vehicle specifications',
-      },
-    ],
+  {
+    label: 'Sky Map',
+    href: '/sky-map',
+    icon: Globe,
+    description: 'Interactive celestial coordinate viewer',
   },
-}
+  {
+    label: 'Live Events',
+    href: '/events',
+    icon: Calendar,
+    description: 'Real-time astronomical events and alerts',
+  },
+  {
+    label: 'Citizen Science',
+    href: '/citizen-science',
+    icon: Users,
+    description: 'Contribute to real astronomy research',
+  },
+  {
+    label: 'Devlog',
+    href: '/devlog',
+    icon: BookOpen,
+    description: 'Technical blog and project updates',
+  },
+]
 
 // ============================================
 // Logo Component
@@ -159,8 +108,8 @@ function Logo() {
         </svg>
       </div>
 
-      {/* Logo Text */}
-      <div className="hidden sm:block">
+      {/* Logo Text - Always visible */}
+      <div>
         <span className="text-lg sm:text-xl font-display font-bold text-gradient-stellar">
           Cosmos
         </span>
@@ -173,63 +122,17 @@ function Logo() {
 }
 
 // ============================================
-// Section Tabs (Primary Navigation)
+// Desktop Navigation
 // ============================================
 
-interface SectionTabsProps {
-  activeSection: SectionId
-  onSectionChange: (section: SectionId) => void
-}
-
-function SectionTabs({ activeSection, onSectionChange }: SectionTabsProps) {
-  return (
-    <div className="flex items-center gap-1 bg-white/5 rounded-lg p-1">
-      {(Object.keys(SECTIONS) as SectionId[]).map((sectionId) => {
-        const section = SECTIONS[sectionId]
-        const Icon = section.icon
-        const isActive = activeSection === sectionId
-
-        return (
-          <button
-            key={sectionId}
-            type="button"
-            onClick={() => onSectionChange(sectionId)}
-            className={cn(
-              'flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-all duration-200',
-              isActive
-                ? sectionId === 'observe'
-                  ? 'bg-cosmos-cyan/20 text-cosmos-cyan'
-                  : 'bg-rocket-orange/20 text-rocket-orange'
-                : 'text-gray-400 hover:text-white hover:bg-white/5'
-            )}
-            aria-pressed={isActive}
-          >
-            <Icon className="w-4 h-4" aria-hidden="true" />
-            <span>{section.label}</span>
-          </button>
-        )
-      })}
-    </div>
-  )
-}
-
-// ============================================
-// Sub Navigation (Secondary Navigation)
-// ============================================
-
-interface SubNavProps {
-  section: SectionId
-}
-
-function SubNav({ section }: SubNavProps) {
+function DesktopNav() {
   const pathname = usePathname()
-  const items = SECTIONS[section].items
 
   return (
-    <nav className="hidden lg:flex items-center gap-1" aria-label={`${SECTIONS[section].label} navigation`}>
-      {items.map((item) => {
+    <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
+      {navItems.map((item) => {
         const Icon = item.icon
-        const isActive = pathname === item.href || pathname.startsWith(item.href + '/')
+        const isActive = pathname === item.href
 
         return (
           <Link
@@ -238,13 +141,10 @@ function SubNav({ section }: SubNavProps) {
             className={cn(
               'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
               isActive
-                ? section === 'observe'
-                  ? 'bg-cosmos-cyan/10 text-cosmos-cyan'
-                  : 'bg-rocket-orange/10 text-rocket-orange'
+                ? 'bg-cosmos-cyan/10 text-cosmos-cyan'
                 : 'text-gray-300 hover:text-white hover:bg-white/5'
             )}
             aria-current={isActive ? 'page' : undefined}
-            title={item.description}
           >
             <Icon className="w-4 h-4" aria-hidden="true" />
             {item.label}
@@ -256,38 +156,16 @@ function SubNav({ section }: SubNavProps) {
 }
 
 // ============================================
-// Arcade Button
-// ============================================
-
-interface ArcadeButtonProps {
-  onClick: () => void
-}
-
-function ArcadeButton({ onClick }: ArcadeButtonProps) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 transition-colors"
-      aria-label="Open Arcade"
-      title="Play space games while you wait!"
-    >
-      <Gamepad2 className="w-4 h-4" aria-hidden="true" />
-      <span className="hidden md:inline">Arcade</span>
-    </button>
-  )
-}
-
-// ============================================
 // Mobile Bottom Navigation Bar
 // ============================================
 
+// Bottom nav items (subset of main nav for mobile)
 const bottomNavItems = [
-  { label: 'Home', href: '/', icon: Home, section: null },
-  { label: 'Explore', href: '/explore', icon: Telescope, section: 'observe' as const },
-  { label: 'Launches', href: '/launch', icon: Rocket, section: 'launch' as const },
-  { label: 'Live', href: '/live', icon: Video, section: 'launch' as const },
-  { label: 'Science', href: '/citizen-science', icon: Users, section: 'observe' as const },
+  { label: 'Home', href: '/', icon: Home },
+  { label: 'Explore', href: '/explore', icon: Telescope },
+  { label: 'Sky Map', href: '/sky-map', icon: Globe },
+  { label: 'Events', href: '/events', icon: Calendar },
+  { label: 'Science', href: '/citizen-science', icon: Users },
 ]
 
 function MobileBottomNav() {
@@ -304,11 +182,6 @@ function MobileBottomNav() {
           const isActive = pathname === item.href ||
             (item.href !== '/' && pathname.startsWith(item.href))
 
-          // Color based on section
-          const activeColor = item.section === 'launch'
-            ? 'text-rocket-orange'
-            : 'text-cosmos-cyan'
-
           return (
             <Link
               key={item.href}
@@ -316,7 +189,7 @@ function MobileBottomNav() {
               className={cn(
                 'flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors',
                 isActive
-                  ? activeColor
+                  ? 'text-cosmos-cyan'
                   : 'text-gray-400 hover:text-white'
               )}
               aria-current={isActive ? 'page' : undefined}
@@ -332,76 +205,26 @@ function MobileBottomNav() {
 }
 
 // ============================================
-// Utility: Determine Active Section from Path
-// ============================================
-
-function getActiveSectionFromPath(pathname: string): SectionId {
-  const launchPaths = ['/launch', '/live', '/agencies', '/vehicles']
-  if (launchPaths.some(p => pathname.startsWith(p))) {
-    return 'launch'
-  }
-  return 'observe'
-}
-
-// ============================================
 // Main Header Component
 // ============================================
 
 export function Header() {
-  const pathname = usePathname()
-  const [activeSection, setActiveSection] = useState<SectionId>(
-    getActiveSectionFromPath(pathname)
-  )
-  const [arcadeOpen, setArcadeOpen] = useState(false)
-
   return (
     <>
       <header className="sticky top-0 z-30 glass-panel border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8">
-          {/* Main Header Row */}
-          <div className="flex items-center justify-between h-16 gap-4">
+          <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Logo />
 
-            {/* Section Tabs (Desktop) */}
-            <div className="hidden md:block">
-              <SectionTabs
-                activeSection={activeSection}
-                onSectionChange={setActiveSection}
-              />
-            </div>
-
-            {/* Arcade Button (Desktop) */}
-            <div className="hidden md:block">
-              <ArcadeButton onClick={() => setArcadeOpen(true)} />
-            </div>
-          </div>
-
-          {/* Sub Navigation Row (Desktop) */}
-          <div className="hidden lg:flex items-center justify-center py-2 border-t border-white/5">
-            <SubNav section={activeSection} />
+            {/* Desktop Navigation */}
+            <DesktopNav />
           </div>
         </div>
       </header>
 
       {/* Mobile Bottom Navigation Bar */}
       <MobileBottomNav />
-
-      {/* Arcade Modal */}
-      <ArcadeModal isOpen={arcadeOpen} onClose={() => setArcadeOpen(false)} />
     </>
   )
 }
-
-// ============================================
-// Tailwind Config Additions (for reference)
-// ============================================
-/*
-Add to tailwind.config.ts colors:
-
-colors: {
-  'rocket-orange': '#ff6b35',
-  'cosmos-cyan': '#06b6d4',
-  // ... existing colors
-}
-*/
