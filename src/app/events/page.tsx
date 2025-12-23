@@ -75,6 +75,7 @@ export default function EventsPage() {
   const [events, setEvents] = useState<AstronomicalEvent[]>([])
   const [apod, setApod] = useState<APODData | null>(null)
   const [issPosition, setIssPosition] = useState<{ lat: number; lon: number } | null>(null)
+  const [issError, setIssError] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [selectedCamera, setSelectedCamera] = useState(ISS_CAMERAS[0])
@@ -102,6 +103,9 @@ export default function EventsPage() {
           lat: issResult.value.data.position.lat,
           lon: issResult.value.data.position.lon,
         })
+        setIssError(false)
+      } else {
+        setIssError(true)
       }
 
       setLastUpdated(new Date())
@@ -122,6 +126,9 @@ export default function EventsPage() {
           lat: result.data.position.lat,
           lon: result.data.position.lon,
         })
+        setIssError(false)
+      } else {
+        setIssError(true)
       }
     }, 30000)
 
@@ -559,8 +566,23 @@ export default function EventsPage() {
                         Position updates every 30 seconds
                       </p>
                     </div>
+                  ) : issError ? (
+                    <div className="space-y-2">
+                      <p className="text-gray-400 text-sm">ISS tracking temporarily unavailable</p>
+                      <a
+                        href="https://spotthestation.nasa.gov/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-cosmos-cyan hover:underline"
+                      >
+                        View on NASA Spot the Station →
+                      </a>
+                    </div>
                   ) : (
-                    <p className="text-gray-400 text-sm">Loading ISS position...</p>
+                    <div className="flex items-center gap-2 text-gray-400 text-sm">
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Loading ISS position...
+                    </div>
                   )}
                 </CardContent>
               </Card>
