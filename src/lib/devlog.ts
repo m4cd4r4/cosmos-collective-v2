@@ -32,6 +32,96 @@ export interface DevlogPost {
 
 const posts: DevlogPost[] = [
   {
+    slug: 'december-2025-iss-tracking-improvements',
+    title: 'December 2025: ISS Tracking & Live Feed Reliability',
+    excerpt: 'Improving the resilience of real-time ISS features with retry logic, graceful error handling, and automatic camera feed fallback.',
+    date: '2025-12-23',
+    author: { name: 'Developer' },
+    category: 'data-integration',
+    tags: ['ISS', 'Real-time', 'Error Handling', 'Live Streaming', 'Reliability'],
+    readingTime: 4,
+    featured: true,
+    content: `
+# December 2025: ISS Tracking & Live Feed Reliability
+
+Real-time data is inherently unpredictable. APIs timeout, streams go offline, and network conditions vary. Today we've significantly improved the reliability of our ISS tracking features to handle these realities gracefully.
+
+## The Problem
+
+Users were experiencing two issues:
+1. **ISS Position stuck on "Loading..."** - When the Where The ISS At API timed out, the UI would show a loading state indefinitely
+2. **Dead camera feeds** - NASA's ISS live streams occasionally go offline or change URLs, leaving users with a black screen
+
+## ISS Position API Improvements
+
+### Retry Logic with Exponential Backoff
+
+The position API now retries failed requests up to 3 times with increasing delays:
+
+\`\`\`typescript
+for (let attempt = 0; attempt <= retries; attempt++) {
+  try {
+    const response = await axios.get(API_ENDPOINTS.issPosition, {
+      timeout: 5000,
+      signal: controller.signal,
+    })
+    return { success: true, data: response.data }
+  } catch (error) {
+    if (attempt < retries) {
+      // Exponential backoff: 1s, 2s, 3s...
+      await new Promise(r => setTimeout(r, 1000 * (attempt + 1)))
+    }
+  }
+}
+\`\`\`
+
+### Graceful Error States
+
+Instead of an infinite loading spinner, users now see:
+- A clear "ISS tracking temporarily unavailable" message
+- A direct link to NASA's Spot the Station website as a fallback
+- The error state clears automatically when the API recovers
+
+## Live Camera Feed Auto-Fallback
+
+### YouTube oEmbed Detection
+
+We now verify stream availability using YouTube's oEmbed API before displaying a camera:
+
+\`\`\`typescript
+async function checkVideoAvailability(videoId: string): Promise<boolean> {
+  const response = await fetch(
+    \`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=\${videoId}&format=json\`,
+    { method: 'HEAD' }
+  )
+  return response.ok
+}
+\`\`\`
+
+### Automatic Switching
+
+If the primary camera feed is unavailable:
+1. The system automatically checks the backup feed
+2. If available, it switches seamlessly with an "Auto-switched" notification
+3. The failed camera is marked as "Unavailable" with an option to retry
+
+### Visual Feedback
+
+| State | User Sees |
+|-------|-----------|
+| Checking | Loading overlay with spinner |
+| Auto-switched | Gold "Auto-switched" badge (fades after 5s) |
+| Camera unavailable | Red indicator with "Click to retry" |
+| Normal | Standard selection highlight |
+
+## Results
+
+These changes ensure users always see meaningful feedback rather than indefinite loading states. When external services are unavailable, we provide helpful alternatives rather than broken experiences.
+
+The ISS orbits Earth every 92 minutes at 27,600 km/h - our tracking should be just as reliable.
+    `,
+  },
+  {
     slug: 'december-2025-radio-imagery-upgrade',
     title: 'December 2025: Real Radio Astronomy Imagery',
     excerpt: 'Replacing placeholder graphics with genuine radio telescope imagery from CSIRO and international observatories, bringing the invisible universe to life.',
@@ -88,11 +178,11 @@ images: {
   full: '/images/askap-placeholder.svg',
 }
 
-// After: Real observatory imagery
+// After: Real NASA radio astronomy imagery
 images: {
-  thumbnail: 'https://www.atnf.csiro.au/images/emu_pilot_thumbnail.jpg',
-  preview: 'https://www.atnf.csiro.au/images/emu_pilot_preview.jpg',
-  full: 'https://www.atnf.csiro.au/images/emu_pilot_full.jpg',
+  thumbnail: 'https://images-assets.nasa.gov/image/PIA25163/PIA25163~thumb.jpg',
+  preview: 'https://images-assets.nasa.gov/image/PIA25163/PIA25163~medium.jpg',
+  full: 'https://images-assets.nasa.gov/image/PIA25163/PIA25163~orig.jpg',
 }
 \`\`\`
 

@@ -76,10 +76,11 @@ export const metadata: Metadata = {
       'Explore the universe through JWST, Australian radio telescopes, and citizen science.',
     images: [
       {
-        url: '/og-image.png',
+        // JWST Deep Field - stunning space imagery for social sharing
+        url: 'https://images-assets.nasa.gov/image/PIA25432/PIA25432~large.jpg',
         width: 1200,
         height: 630,
-        alt: 'Cosmos Collective - Explore the Universe',
+        alt: 'Cosmos Collective - Explore the Universe through Multi-Spectrum Astronomy',
       },
     ],
   },
@@ -88,7 +89,8 @@ export const metadata: Metadata = {
     title: 'Cosmos Collective | Multi-Spectrum Astronomical Explorer',
     description:
       'Explore the universe through JWST, Australian radio telescopes, and citizen science.',
-    images: ['/og-image.png'],
+    // JWST imagery for Twitter cards
+    images: ['https://images-assets.nasa.gov/image/PIA25432/PIA25432~large.jpg'],
   },
   icons: {
     icon: [
