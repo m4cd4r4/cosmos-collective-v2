@@ -17,12 +17,39 @@ const CASDA_BASE = 'https://casda.csiro.au'
 const CASDA_TAP = `${CASDA_BASE}/votools/tap/sync`
 const CASDA_SIA = `${CASDA_BASE}/votools/sia2/query`
 
-// Placeholder images for radio observations
+// Placeholder images for radio observations (fallback)
 const RADIO_PLACEHOLDER_IMAGES = {
   askap: '/images/askap-placeholder.svg',
   parkes: '/images/parkes-placeholder.svg',
   mwa: '/images/mwa-placeholder.svg',
   generic: '/images/radio-placeholder.svg',
+}
+
+// Real NASA imagery for radio astronomy observations
+// Source: NASA Image and Video Library (images.nasa.gov) - public domain
+const NASA_RADIO_IMAGES = {
+  // Multi-wavelength and radio composite images
+  herculesA: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001618/GSFC_20171208_Archive_e001618~medium.jpg',
+  centaurusA: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e002087/GSFC_20171208_Archive_e002087~medium.jpg',
+  m106Radio: 'https://images-assets.nasa.gov/image/PIA10204/PIA10204~medium.jpg',
+  andromeda: 'https://images-assets.nasa.gov/image/PIA25163/PIA25163~medium.jpg',
+  triangulum: 'https://images-assets.nasa.gov/image/PIA25165/PIA25165~medium.jpg',
+  smc: 'https://images-assets.nasa.gov/image/PIA25164/PIA25164~medium.jpg',
+  // Pulsars and transients
+  pulsarArtist: 'https://images-assets.nasa.gov/image/PIA21085/PIA21085~medium.jpg',
+  pulsarEclipse: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001984/GSFC_20171208_Archive_e001984~medium.jpg',
+  fastRadioBurst: 'https://images-assets.nasa.gov/image/PIA26274/PIA26274~medium.jpg',
+  // Supernova remnants
+  crabNebula: 'https://images-assets.nasa.gov/image/PIA03606/PIA03606~medium.jpg',
+  sn1987a: 'https://images-assets.nasa.gov/image/stsci-h-p1708c-m-2000x2000/stsci-h-p1708c-m-2000x2000~medium.jpg',
+  w49b: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e002134/GSFC_20171208_Archive_e002134~medium.jpg',
+  tychoRemnant: 'https://images-assets.nasa.gov/image/PIA11435/PIA11435~medium.jpg',
+  // Galaxy clusters and cosmic structures
+  galaxyCluster: 'https://images-assets.nasa.gov/image/PIA20052/PIA20052~medium.jpg',
+  bentJets: 'https://images-assets.nasa.gov/image/PIA13638/PIA13638~medium.jpg',
+  blackHoleJets: 'https://images-assets.nasa.gov/image/PIA13168/PIA13168~medium.jpg',
+  // Galactic center
+  galacticCenter: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000717/GSFC_20171208_Archive_e000717~medium.jpg',
 }
 
 // Australian telescope information
@@ -399,9 +426,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2021-01-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.herculesA,
+        preview: NASA_RADIO_IMAGES.herculesA,
+        full: NASA_RADIO_IMAGES.herculesA,
       },
       description: 'Radio continuum survey revealing millions of galaxies across the southern sky.',
       isFeatured: true,
@@ -427,9 +454,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2022-03-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.galaxyCluster,
+        preview: NASA_RADIO_IMAGES.galaxyCluster,
+        full: NASA_RADIO_IMAGES.galaxyCluster,
       },
       description: 'Mapping neutral hydrogen in galaxies to understand galaxy evolution and the cosmic web.',
       isFeatured: true,
@@ -455,9 +482,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2023-08-20T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.blackHoleJets,
+        preview: NASA_RADIO_IMAGES.blackHoleJets,
+        full: NASA_RADIO_IMAGES.blackHoleJets,
       },
       description: 'Discovering variable and transient radio sources across the southern sky.',
       isFeatured: true,
@@ -480,9 +507,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2020-09-01T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.bentJets,
+        preview: NASA_RADIO_IMAGES.bentJets,
+        full: NASA_RADIO_IMAGES.bentJets,
       },
       description: 'A mysterious new class of circular radio objects discovered by ASKAP.',
       isFeatured: true,
@@ -507,9 +534,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2001-07-24T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
-        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
-        full: RADIO_PLACEHOLDER_IMAGES.parkes,
+        thumbnail: NASA_RADIO_IMAGES.fastRadioBurst,
+        preview: NASA_RADIO_IMAGES.fastRadioBurst,
+        full: NASA_RADIO_IMAGES.fastRadioBurst,
       },
       description: 'The first fast radio burst ever discovered - a mysterious millisecond flash of radio waves.',
       isFeatured: true,
@@ -533,9 +560,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2023-01-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
-        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
-        full: RADIO_PLACEHOLDER_IMAGES.parkes,
+        thumbnail: NASA_RADIO_IMAGES.pulsarArtist,
+        preview: NASA_RADIO_IMAGES.pulsarArtist,
+        full: NASA_RADIO_IMAGES.pulsarArtist,
       },
       description: 'Precision timing of millisecond pulsars to detect gravitational waves.',
       isFeatured: true,
@@ -559,9 +586,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2003-06-01T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
-        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
-        full: RADIO_PLACEHOLDER_IMAGES.parkes,
+        thumbnail: NASA_RADIO_IMAGES.smc,
+        preview: NASA_RADIO_IMAGES.smc,
+        full: NASA_RADIO_IMAGES.smc,
       },
       description: 'Detailed mapping of neutral hydrogen in our nearest galactic neighbour.',
       isFeatured: true,
@@ -585,9 +612,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2023-06-01T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.mwa,
-        preview: RADIO_PLACEHOLDER_IMAGES.mwa,
-        full: RADIO_PLACEHOLDER_IMAGES.mwa,
+        thumbnail: NASA_RADIO_IMAGES.galacticCenter,
+        preview: NASA_RADIO_IMAGES.galacticCenter,
+        full: NASA_RADIO_IMAGES.galacticCenter,
       },
       description: 'Searching for the faint signal of neutral hydrogen from the cosmic dawn.',
       isFeatured: true,
@@ -610,9 +637,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2018-01-01T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.mwa,
-        preview: RADIO_PLACEHOLDER_IMAGES.mwa,
-        full: RADIO_PLACEHOLDER_IMAGES.mwa,
+        thumbnail: NASA_RADIO_IMAGES.andromeda,
+        preview: NASA_RADIO_IMAGES.andromeda,
+        full: NASA_RADIO_IMAGES.andromeda,
       },
       description: 'The most detailed low-frequency radio map of the southern sky ever created.',
       isFeatured: true,
@@ -639,9 +666,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2024-03-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.mwa,
-        preview: RADIO_PLACEHOLDER_IMAGES.mwa,
-        full: RADIO_PLACEHOLDER_IMAGES.mwa,
+        thumbnail: NASA_RADIO_IMAGES.triangulum,
+        preview: NASA_RADIO_IMAGES.triangulum,
+        full: NASA_RADIO_IMAGES.triangulum,
       },
       description: 'Monitoring solar radio bursts to understand space weather and protect Earth.',
       isFeatured: true,
@@ -666,9 +693,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2022-11-10T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.galaxyCluster,
+        preview: NASA_RADIO_IMAGES.galaxyCluster,
+        full: NASA_RADIO_IMAGES.galaxyCluster,
       },
       description: 'Deep radio imaging of the nearest galaxy cluster in the southern hemisphere.',
       analysis: {
@@ -690,9 +717,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2021-06-20T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.centaurusA,
+        preview: NASA_RADIO_IMAGES.centaurusA,
+        full: NASA_RADIO_IMAGES.centaurusA,
       },
       description: 'Wide-field imaging of the enormous radio lobes from the nearest radio galaxy.',
       analysis: {
@@ -715,9 +742,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2023-02-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.smc,
+        preview: NASA_RADIO_IMAGES.smc,
+        full: NASA_RADIO_IMAGES.smc,
       },
       description: 'High-resolution radio continuum survey of the Small Magellanic Cloud.',
       analysis: {
@@ -739,9 +766,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2022-07-01T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.galacticCenter,
+        preview: NASA_RADIO_IMAGES.galacticCenter,
+        full: NASA_RADIO_IMAGES.galacticCenter,
       },
       description: 'Wideband radio imaging of the chaotic center of our Milky Way galaxy.',
       analysis: {
@@ -764,9 +791,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2021-09-10T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.askap,
-        preview: RADIO_PLACEHOLDER_IMAGES.askap,
-        full: RADIO_PLACEHOLDER_IMAGES.askap,
+        thumbnail: NASA_RADIO_IMAGES.m106Radio,
+        preview: NASA_RADIO_IMAGES.m106Radio,
+        full: NASA_RADIO_IMAGES.m106Radio,
       },
       description: 'Radio observations of one of the brightest starburst galaxies in the sky.',
       analysis: {
@@ -789,9 +816,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2009-01-01T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
-        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
-        full: RADIO_PLACEHOLDER_IMAGES.parkes,
+        thumbnail: NASA_RADIO_IMAGES.andromeda,
+        preview: NASA_RADIO_IMAGES.andromeda,
+        full: NASA_RADIO_IMAGES.andromeda,
       },
       description: 'Complete survey of neutral hydrogen across the southern Milky Way.',
       analysis: {
@@ -813,9 +840,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2020-05-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
-        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
-        full: RADIO_PLACEHOLDER_IMAGES.parkes,
+        thumbnail: NASA_RADIO_IMAGES.pulsarEclipse,
+        preview: NASA_RADIO_IMAGES.pulsarEclipse,
+        full: NASA_RADIO_IMAGES.pulsarEclipse,
       },
       description: 'The brightest persistent radio source in the sky, a young pulsar in a supernova remnant.',
       analysis: {
@@ -838,9 +865,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2019-11-20T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
-        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
-        full: RADIO_PLACEHOLDER_IMAGES.parkes,
+        thumbnail: NASA_RADIO_IMAGES.crabNebula,
+        preview: NASA_RADIO_IMAGES.crabNebula,
+        full: NASA_RADIO_IMAGES.crabNebula,
       },
       description: 'The pulsar at the heart of the Crab Nebula, born in the supernova of 1054 AD.',
       analysis: {
@@ -863,9 +890,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2022-04-10T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
-        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
-        full: RADIO_PLACEHOLDER_IMAGES.parkes,
+        thumbnail: NASA_RADIO_IMAGES.pulsarArtist,
+        preview: NASA_RADIO_IMAGES.pulsarArtist,
+        full: NASA_RADIO_IMAGES.pulsarArtist,
       },
       description: 'The only known system where both neutron stars are visible as pulsars.',
       analysis: {
@@ -888,9 +915,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2017-10-19T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.parkes,
-        preview: RADIO_PLACEHOLDER_IMAGES.parkes,
-        full: RADIO_PLACEHOLDER_IMAGES.parkes,
+        thumbnail: NASA_RADIO_IMAGES.fastRadioBurst,
+        preview: NASA_RADIO_IMAGES.fastRadioBurst,
+        full: NASA_RADIO_IMAGES.fastRadioBurst,
       },
       description: 'A fast radio burst that was later found to repeat, suggesting a non-cataclysmic origin.',
       analysis: {
@@ -913,9 +940,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2023-09-01T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.mwa,
-        preview: RADIO_PLACEHOLDER_IMAGES.mwa,
-        full: RADIO_PLACEHOLDER_IMAGES.mwa,
+        thumbnail: NASA_RADIO_IMAGES.galacticCenter,
+        preview: NASA_RADIO_IMAGES.galacticCenter,
+        full: NASA_RADIO_IMAGES.galacticCenter,
       },
       description: 'Using radio sources as probes to study Earth\'s ionosphere.',
       analysis: {
@@ -937,9 +964,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2024-01-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.mwa,
-        preview: RADIO_PLACEHOLDER_IMAGES.mwa,
-        full: RADIO_PLACEHOLDER_IMAGES.mwa,
+        thumbnail: NASA_RADIO_IMAGES.triangulum,
+        preview: NASA_RADIO_IMAGES.triangulum,
+        full: NASA_RADIO_IMAGES.triangulum,
       },
       description: 'Detecting meteors through their radio reflections in the atmosphere.',
       analysis: {
@@ -962,9 +989,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2022-06-01T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.mwa,
-        preview: RADIO_PLACEHOLDER_IMAGES.mwa,
-        full: RADIO_PLACEHOLDER_IMAGES.mwa,
+        thumbnail: NASA_RADIO_IMAGES.pulsarArtist,
+        preview: NASA_RADIO_IMAGES.pulsarArtist,
+        full: NASA_RADIO_IMAGES.pulsarArtist,
       },
       description: 'Searching for pulsars at low radio frequencies where they are brightest.',
       analysis: {
@@ -986,9 +1013,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2020-10-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.mwa,
-        preview: RADIO_PLACEHOLDER_IMAGES.mwa,
-        full: RADIO_PLACEHOLDER_IMAGES.mwa,
+        thumbnail: NASA_RADIO_IMAGES.herculesA,
+        preview: NASA_RADIO_IMAGES.herculesA,
+        full: NASA_RADIO_IMAGES.herculesA,
       },
       description: 'Low-frequency view of one of the brightest radio sources in the sky.',
       analysis: {
@@ -1012,9 +1039,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2023-02-23T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.generic,
-        preview: RADIO_PLACEHOLDER_IMAGES.generic,
-        full: RADIO_PLACEHOLDER_IMAGES.generic,
+        thumbnail: NASA_RADIO_IMAGES.sn1987a,
+        preview: NASA_RADIO_IMAGES.sn1987a,
+        full: NASA_RADIO_IMAGES.sn1987a,
       },
       description: 'Long-term monitoring of the closest supernova in 400 years.',
       analysis: {
@@ -1037,9 +1064,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2023-10-05T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.generic,
-        preview: RADIO_PLACEHOLDER_IMAGES.generic,
-        full: RADIO_PLACEHOLDER_IMAGES.generic,
+        thumbnail: NASA_RADIO_IMAGES.w49b,
+        preview: NASA_RADIO_IMAGES.w49b,
+        full: NASA_RADIO_IMAGES.w49b,
       },
       description: 'Rapid follow-up of gamma-ray burst afterglows at radio wavelengths.',
       analysis: {
@@ -1061,9 +1088,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2021-03-15T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.generic,
-        preview: RADIO_PLACEHOLDER_IMAGES.generic,
-        full: RADIO_PLACEHOLDER_IMAGES.generic,
+        thumbnail: NASA_RADIO_IMAGES.bentJets,
+        preview: NASA_RADIO_IMAGES.bentJets,
+        full: NASA_RADIO_IMAGES.bentJets,
       },
       description: 'High-resolution imaging of a planet-forming disk around a young star.',
       analysis: {
@@ -1086,9 +1113,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2020-07-20T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.generic,
-        preview: RADIO_PLACEHOLDER_IMAGES.generic,
-        full: RADIO_PLACEHOLDER_IMAGES.generic,
+        thumbnail: NASA_RADIO_IMAGES.m106Radio,
+        preview: NASA_RADIO_IMAGES.m106Radio,
+        full: NASA_RADIO_IMAGES.m106Radio,
       },
       description: 'Radio study of a nearby edge-on starburst galaxy with an active nucleus.',
       analysis: {
@@ -1110,9 +1137,9 @@ export function getFeaturedRadioObservations(): Observation[] {
       wavelengthBand: 'radio',
       observationDate: '2019-08-10T00:00:00Z',
       images: {
-        thumbnail: RADIO_PLACEHOLDER_IMAGES.generic,
-        preview: RADIO_PLACEHOLDER_IMAGES.generic,
-        full: RADIO_PLACEHOLDER_IMAGES.generic,
+        thumbnail: NASA_RADIO_IMAGES.blackHoleJets,
+        preview: NASA_RADIO_IMAGES.blackHoleJets,
+        full: NASA_RADIO_IMAGES.blackHoleJets,
       },
       description: 'Radio imaging of the closest Seyfert 2 galaxy to Earth.',
       analysis: {
