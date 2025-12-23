@@ -170,37 +170,55 @@ interface ISSPosition {
   timestamp: number
 }
 
-export async function getISSPosition(): Promise<ApiResponse<{
+export async function getISSPosition(retries = 2): Promise<ApiResponse<{
   position: { lat: number; lon: number; alt: number }
   velocity: number
   timestamp: string
 }>> {
-  try {
-    const response = await axios.get<ISSPosition>(API_ENDPOINTS.issPosition, {
-      timeout: 5000,
-    })
+  const timeout = 5000
 
-    return {
-      success: true,
-      data: {
-        position: {
-          lat: response.data.latitude,
-          lon: response.data.longitude,
-          alt: response.data.altitude,
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const controller = new AbortController()
+      const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+      const response = await axios.get<ISSPosition>(API_ENDPOINTS.issPosition, {
+        timeout,
+        signal: controller.signal,
+      })
+
+      clearTimeout(timeoutId)
+
+      return {
+        success: true,
+        data: {
+          position: {
+            lat: response.data.latitude,
+            lon: response.data.longitude,
+            alt: response.data.altitude,
+          },
+          velocity: response.data.velocity,
+          timestamp: new Date(response.data.timestamp * 1000).toISOString(),
         },
-        velocity: response.data.velocity,
-        timestamp: new Date(response.data.timestamp * 1000).toISOString(),
-      },
+      }
+    } catch (error) {
+      // Log error but continue to retry
+      console.error(`ISS position error (attempt ${attempt + 1}/${retries + 1}):`, error)
+
+      // If we have more retries, wait before trying again (exponential backoff)
+      if (attempt < retries) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)))
+      }
     }
-  } catch (error) {
-    console.error('ISS position error:', error)
-    return {
-      success: false,
-      error: {
-        code: 'ISS_ERROR',
-        message: 'Failed to fetch ISS position',
-      },
-    }
+  }
+
+  // All retries failed
+  return {
+    success: false,
+    error: {
+      code: 'ISS_ERROR',
+      message: 'ISS position temporarily unavailable',
+    },
   }
 }
 
