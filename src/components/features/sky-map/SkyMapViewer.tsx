@@ -332,6 +332,50 @@ export function SkyMapViewer({
     return () => clearTimeout(timer)
   }, [initializeAladin, loadError])
 
+  // Keyboard shortcuts for map navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Don't capture if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return
+      }
+
+      const aladin = aladinRef.current
+      if (!aladin) return
+
+      switch (e.key) {
+        case '+':
+        case '=':
+          e.preventDefault()
+          aladin.increaseZoom()
+          break
+        case '-':
+        case '_':
+          e.preventDefault()
+          aladin.decreaseZoom()
+          break
+        case 'h':
+        case 'H':
+          e.preventDefault()
+          aladin.gotoObject('galactic center')
+          aladin.setFov(60)
+          break
+        case 's':
+        case 'S':
+          e.preventDefault()
+          setSidebarOpen(prev => !prev)
+          break
+        case '?':
+          e.preventDefault()
+          // Could show help modal in future
+          break
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   // Add observation markers from our data
   const addObservationMarkers = (aladin: AladinInstance) => {
     const observations = getFeaturedJWSTImages()

@@ -10,16 +10,57 @@ import { useRouter, useSearchParams, usePathname } from 'next/navigation'
 import { Search, X, Sparkles } from 'lucide-react'
 import { cn, debounce } from '@/lib/utils'
 
-// Popular search suggestions
-const popularSearches = [
-  'Carina Nebula',
-  'Pillars of Creation',
-  'Deep Field',
-  'Jupiter',
-  'Andromeda',
-  'Orion',
-  'Black Hole',
-  'Exoplanet',
+// Categorized search suggestions for cross-spectrum discovery
+const searchCategories = {
+  popular: [
+    'Carina Nebula',
+    'Pillars of Creation',
+    'Deep Field',
+    'Andromeda',
+    'Orion Nebula',
+    'Black Hole',
+  ],
+  objectTypes: [
+    'Galaxy',
+    'Nebula',
+    'Star Cluster',
+    'Exoplanet',
+    'Pulsar',
+    'Supernova Remnant',
+    'Quasar',
+  ],
+  telescopes: [
+    'JWST',
+    'Hubble',
+    'ASKAP',
+    'Parkes',
+    'MWA',
+    'ATCA',
+  ],
+  wavelengths: [
+    'Infrared',
+    'Radio',
+    'Optical',
+    'X-ray',
+    'Ultraviolet',
+  ],
+  targets: [
+    'M31',
+    'M42',
+    'M51',
+    'NGC 1300',
+    'Crab Nebula',
+    'Centaurus A',
+    'Sagittarius A*',
+    'Large Magellanic Cloud',
+  ],
+}
+
+// Flatten for autocomplete
+const allSuggestions = [
+  ...searchCategories.popular,
+  ...searchCategories.objectTypes,
+  ...searchCategories.targets,
 ]
 
 interface ExploreSearchProps {
@@ -50,12 +91,24 @@ export function ExploreSearch({ initialQuery = '' }: ExploreSearchProps) {
   // Filter suggestions based on input
   useEffect(() => {
     if (query.length > 0) {
-      const filtered = popularSearches.filter((s) =>
-        s.toLowerCase().includes(query.toLowerCase())
+      const queryLower = query.toLowerCase()
+      // Search across all categories
+      const filtered = allSuggestions.filter((s) =>
+        s.toLowerCase().includes(queryLower)
       )
-      setSuggestions(filtered)
+      // Also add telescope and wavelength matches
+      const telescopeMatches = searchCategories.telescopes.filter((t) =>
+        t.toLowerCase().includes(queryLower)
+      )
+      const wavelengthMatches = searchCategories.wavelengths.filter((w) =>
+        w.toLowerCase().includes(queryLower)
+      )
+      // Combine unique results, prioritizing direct matches
+      const combined = [...new Set([...filtered, ...telescopeMatches, ...wavelengthMatches])]
+      setSuggestions(combined.slice(0, 8))
     } else {
-      setSuggestions(popularSearches)
+      // Show popular searches when empty
+      setSuggestions(searchCategories.popular)
     }
   }, [query])
 
