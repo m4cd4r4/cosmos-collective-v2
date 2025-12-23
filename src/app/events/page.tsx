@@ -63,8 +63,21 @@ const ISS_CAMERAS = [
 
 // Build embed URL with autoplay (muted, as required by browsers)
 const getEmbedUrl = (videoId: string, autoplay: boolean = true) => {
-  const params = autoplay ? 'autoplay=1&mute=1&rel=0' : 'rel=0'
+  const params = autoplay ? 'autoplay=1&mute=1&rel=0&enablejsapi=1' : 'rel=0&enablejsapi=1'
   return `https://www.youtube.com/embed/${videoId}?${params}`
+}
+
+// Check if a YouTube video is available using oEmbed API
+async function checkVideoAvailability(videoId: string): Promise<boolean> {
+  try {
+    const response = await fetch(
+      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+      { method: 'HEAD' }
+    )
+    return response.ok
+  } catch {
+    return false
+  }
 }
 
 // Pagination constants
@@ -80,6 +93,9 @@ export default function EventsPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [selectedCamera, setSelectedCamera] = useState(ISS_CAMERAS[0])
   const [displayCount, setDisplayCount] = useState(INITIAL_EVENT_COUNT)
+  const [failedCameras, setFailedCameras] = useState<Set<string>>(new Set())
+  const [autoSwitched, setAutoSwitched] = useState(false)
+  const [checkingCamera, setCheckingCamera] = useState(true)
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -155,6 +171,63 @@ export default function EventsPage() {
       }
     }
   }, [isLoading, events])
+
+  // Check camera availability and auto-switch if needed
+  useEffect(() => {
+    let isMounted = true
+
+    async function checkAndSwitchCamera() {
+      setCheckingCamera(true)
+
+      // Check if current camera is available
+      const isAvailable = await checkVideoAvailability(selectedCamera.videoId)
+
+      if (!isMounted) return
+
+      if (!isAvailable) {
+        // Mark current camera as failed
+        setFailedCameras(prev => new Set(prev).add(selectedCamera.id))
+
+        // Find next available camera
+        const nextCamera = ISS_CAMERAS.find(
+          cam => cam.id !== selectedCamera.id && !failedCameras.has(cam.id)
+        )
+
+        if (nextCamera) {
+          // Check if the next camera is available before switching
+          const nextAvailable = await checkVideoAvailability(nextCamera.videoId)
+          if (isMounted && nextAvailable) {
+            setSelectedCamera(nextCamera)
+            setAutoSwitched(true)
+            // Clear the auto-switched message after 5 seconds
+            setTimeout(() => {
+              if (isMounted) setAutoSwitched(false)
+            }, 5000)
+          }
+        }
+      }
+
+      if (isMounted) setCheckingCamera(false)
+    }
+
+    checkAndSwitchCamera()
+
+    return () => {
+      isMounted = false
+    }
+  }, [selectedCamera.id, failedCameras])
+
+  // Handle manual camera selection
+  const handleCameraSelect = (camera: typeof ISS_CAMERAS[0]) => {
+    setAutoSwitched(false)
+    // Remove from failed list when manually selected (user wants to retry)
+    setFailedCameras(prev => {
+      const next = new Set(prev)
+      next.delete(camera.id)
+      return next
+    })
+    setSelectedCamera(camera)
+  }
 
   const getSeverityColor = (severity: string) => {
     switch (severity) {
@@ -283,6 +356,11 @@ export default function EventsPage() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
+                {autoSwitched && (
+                  <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-cosmos-gold/20 border border-cosmos-gold/30 text-cosmos-gold text-sm">
+                    Auto-switched
+                  </span>
+                )}
                 <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-sm">
                   <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                   LIVE
@@ -296,44 +374,66 @@ export default function EventsPage() {
                 <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide">
                   Select Camera
                 </h3>
-                {ISS_CAMERAS.map((camera) => (
-                  <button
-                    key={camera.id}
-                    type="button"
-                    onClick={() => setSelectedCamera(camera)}
-                    className={cn(
-                      'w-full p-4 rounded-xl text-left transition-all',
-                      selectedCamera.id === camera.id
-                        ? 'bg-cosmos-cyan/20 border border-cosmos-cyan/50'
-                        : 'glass-panel hover:bg-white/5 border border-transparent'
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={cn(
-                        'w-10 h-10 rounded-lg flex items-center justify-center',
+                {ISS_CAMERAS.map((camera) => {
+                  const isFailed = failedCameras.has(camera.id)
+                  return (
+                    <button
+                      key={camera.id}
+                      type="button"
+                      onClick={() => handleCameraSelect(camera)}
+                      className={cn(
+                        'w-full p-4 rounded-xl text-left transition-all',
                         selectedCamera.id === camera.id
-                          ? 'bg-cosmos-cyan/30'
-                          : 'bg-white/10'
-                      )}>
-                        <Eye className={cn(
-                          'w-5 h-5',
-                          selectedCamera.id === camera.id ? 'text-cosmos-cyan' : 'text-gray-400'
-                        )} />
-                      </div>
-                      <div>
-                        <h4 className={cn(
-                          'font-medium',
-                          selectedCamera.id === camera.id ? 'text-cosmos-cyan' : 'text-white'
+                          ? 'bg-cosmos-cyan/20 border border-cosmos-cyan/50'
+                          : isFailed
+                            ? 'glass-panel hover:bg-white/5 border border-red-500/30 opacity-60'
+                            : 'glass-panel hover:bg-white/5 border border-transparent'
+                      )}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={cn(
+                          'w-10 h-10 rounded-lg flex items-center justify-center',
+                          selectedCamera.id === camera.id
+                            ? 'bg-cosmos-cyan/30'
+                            : isFailed
+                              ? 'bg-red-500/20'
+                              : 'bg-white/10'
                         )}>
-                          {camera.name}
-                        </h4>
-                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
-                          {camera.description}
-                        </p>
+                          <Eye className={cn(
+                            'w-5 h-5',
+                            selectedCamera.id === camera.id
+                              ? 'text-cosmos-cyan'
+                              : isFailed
+                                ? 'text-red-400'
+                                : 'text-gray-400'
+                          )} />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h4 className={cn(
+                              'font-medium',
+                              selectedCamera.id === camera.id
+                                ? 'text-cosmos-cyan'
+                                : isFailed
+                                  ? 'text-red-400'
+                                  : 'text-white'
+                            )}>
+                              {camera.name}
+                            </h4>
+                            {isFailed && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-400">
+                                Unavailable
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
+                            {isFailed ? 'Click to retry' : camera.description}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  </button>
-                ))}
+                    </button>
+                  )
+                })}
 
                 <Card className="mt-4" padding="md">
                   <CardContent>
@@ -359,6 +459,14 @@ export default function EventsPage() {
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
                     />
+                    {checkingCamera && (
+                      <div className="absolute inset-0 bg-cosmos-void/80 flex items-center justify-center">
+                        <div className="text-center">
+                          <Loader2 className="w-8 h-8 text-cosmos-cyan animate-spin mx-auto mb-2" />
+                          <p className="text-sm text-gray-400">Checking stream availability...</p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div>
