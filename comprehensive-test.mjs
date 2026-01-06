@@ -337,8 +337,11 @@ async function testExploreFeatures(page) {
       warn('No filters found on Explore page');
     }
 
-    // Test Sky Map
-    await page.goto(`${BASE_URL}/sky-map`, { waitUntil: 'networkidle' });
+    // Test Sky Map (use 'load' instead of 'networkidle' - interactive maps continuously load tiles)
+    await page.goto(`${BASE_URL}/sky-map`, { waitUntil: 'load', timeout: TIMEOUT });
+
+    // Wait for Aladin container to be present (it loads dynamically)
+    await page.waitForSelector('#aladin-lite-div, [id*="aladin"]', { timeout: 10000 }).catch(() => null);
 
     // Check for Aladin Lite integration
     const aladinContainer = await page.$('#aladin-lite-div, [id*="aladin"]');
