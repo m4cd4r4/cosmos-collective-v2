@@ -137,13 +137,19 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Preconnect to external resources */}
-        <link rel="preconnect" href="https://images-api.nasa.gov" />
-        <link rel="preconnect" href="https://mast.stsci.edu" />
-        <link rel="dns-prefetch" href="https://api.nasa.gov" />
+        {/* Critical Resource Hints - Preconnect for immediate needs */}
+        <link rel="preconnect" href="https://images-api.nasa.gov" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://images-assets.nasa.gov" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://mast.stsci.edu" crossOrigin="anonymous" />
+        <link rel="preconnect" href="https://aladin.cds.unistra.fr" crossOrigin="anonymous" />
 
-        {/* Aladin Lite v3 - CSS is now bundled in the JS file */}
-        <link rel="preconnect" href="https://aladin.cds.unistra.fr" />
+        {/* DNS Prefetch - Lower priority external domains */}
+        <link rel="dns-prefetch" href="https://api.nasa.gov" />
+        <link rel="dns-prefetch" href="https://www.nasa.gov" />
+        <link rel="dns-prefetch" href="https://apod.nasa.gov" />
+        <link rel="dns-prefetch" href="https://casda.csiro.au" />
+        <link rel="dns-prefetch" href="https://www.zooniverse.org" />
+        <link rel="dns-prefetch" href="https://panoptes-uploads.zooniverse.org" />
 
         {/* Color scheme for system UI */}
         <meta name="color-scheme" content="dark" />

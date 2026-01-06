@@ -98,6 +98,9 @@ export async function GET(request: NextRequest) {
       return new NextResponse('Domain not allowed', { status: 403 })
     }
 
+    // Check if client sent ETag for conditional request
+    const clientETag = request.headers.get('if-none-match')
+
     // Fetch image with retry logic
     const response = await fetchWithRetry(decodedUrl)
 
@@ -105,14 +108,29 @@ export async function GET(request: NextRequest) {
     const imageBuffer = await response.arrayBuffer()
     const contentType = response.headers.get('content-type') || 'image/jpeg'
 
-    // Return proxied image with caching headers
+    // Generate ETag from URL (stable across requests for same image)
+    const etag = `W/"${Buffer.from(decodedUrl).toString('base64').substring(0, 27)}"`
+
+    // Return 304 if ETag matches (image hasn't changed)
+    if (clientETag === etag) {
+      return new NextResponse(null, {
+        status: 304,
+        headers: {
+          'ETag': etag,
+          'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
+        },
+      })
+    }
+
+    // Return proxied image with aggressive caching headers
     return new NextResponse(imageBuffer, {
       status: 200,
       headers: {
         'Content-Type': contentType,
-        'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000',
+        'Cache-Control': 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000, immutable',
         'CDN-Cache-Control': 'public, max-age=604800',
         'Vercel-CDN-Cache-Control': 'public, max-age=604800',
+        'ETag': etag,
         'X-Proxied-From': new URL(decodedUrl).hostname,
       },
     })
