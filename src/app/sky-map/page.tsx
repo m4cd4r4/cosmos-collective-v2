@@ -29,6 +29,9 @@ export default function SkyMapPage({
       <Header />
 
       <main className="flex-1 relative overflow-hidden min-h-[70vh] lg:min-h-[500px]">
+        {/* Screen reader heading - visually hidden but accessible */}
+        <h1 className="sr-only">Interactive Sky Map</h1>
+
         <Suspense
           fallback={
             <div className="absolute inset-0 bg-cosmos-void flex items-center justify-center">

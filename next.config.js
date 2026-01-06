@@ -49,6 +49,8 @@ const nextConfig = {
   reactStrictMode: true,
 
   images: {
+    loader: 'custom',
+    loaderFile: './image-loader.js',
     remotePatterns: [
       // Note: stsci-opo.org removed - returns 403 for public access
       {

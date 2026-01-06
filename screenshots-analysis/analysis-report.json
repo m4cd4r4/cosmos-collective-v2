@@ -1,0 +1,351 @@
+{
+  "timestamp": "2025-12-06T05:59:13.046Z",
+  "pages": [
+    {
+      "name": "homepage",
+      "path": "/",
+      "title": "Cosmos Collective | Multi-Spectrum Astronomical Explorer",
+      "screenshot": "homepage.png",
+      "totalImages": 8,
+      "loadedImages": 8,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Carina Nebula (Cosmic Cliffs) - nebula captured by JWST",
+          "loaded": true,
+          "dimensions": "633x367"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "SMACS 0723 (Webb's First Deep Field) - deep-field captured by JWST",
+          "loaded": true,
+          "dimensions": "633x646"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Stephan's Quintet - galaxy captured by JWST",
+          "loaded": true,
+          "dimensions": "633x791"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Southern Ring Nebula - nebula captured by JWST",
+          "loaded": true,
+          "dimensions": "633x294"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Pillars of Creation - nebula captured by JWST",
+          "loaded": true,
+          "dimensions": "633x594"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Jupiter - solar-system captured by JWST",
+          "loaded": true,
+          "dimensions": "633x615"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Tarantula Nebula - nebula captured by JWST",
+          "loaded": true,
+          "dimensions": "633x506"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Cartwheel Galaxy - galaxy captured by JWST",
+          "loaded": true,
+          "dimensions": "633x633"
+        }
+      ]
+    },
+    {
+      "name": "explore",
+      "path": "/explore",
+      "title": "Explore | Cosmos Collective",
+      "screenshot": "explore.png",
+      "totalImages": 11,
+      "loadedImages": 11,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/images/mwa-placeholder.svg",
+          "alt": "Epoch of Reionization Field - deep-field observed by MWA",
+          "loaded": true,
+          "dimensions": "200x150"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Pillars of Creation - nebula observed by JWST",
+          "loaded": true,
+          "dimensions": "633x594"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Tarantula Nebula - nebula observed by JWST",
+          "loaded": true,
+          "dimensions": "633x506"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Jupiter - solar-system observed by JWST",
+          "loaded": true,
+          "dimensions": "633x615"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Cartwheel Galaxy - galaxy observed by JWST",
+          "loaded": true,
+          "dimensions": "633x633"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Carina Nebula (Cosmic Cliffs) - nebula observed by JWST",
+          "loaded": true,
+          "dimensions": "633x367"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Stephan's Quintet - galaxy observed by JWST",
+          "loaded": true,
+          "dimensions": "633x791"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "Southern Ring Nebula - nebula observed by JWST",
+          "loaded": true,
+          "dimensions": "633x294"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fimages-assets.nasa.gov%2Fimage...",
+          "alt": "SMACS 0723 (Webb's First Deep Field) - deep-field observed by JWST",
+          "loaded": true,
+          "dimensions": "633x646"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/images/askap-placeholder.svg",
+          "alt": "EMU Pilot Survey Region - deep-field observed by ASKAP",
+          "loaded": true,
+          "dimensions": "200x150"
+        },
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/images/parkes-placeholder.svg",
+          "alt": "FRB 010724 (Lorimer Burst) - other observed by Parkes",
+          "loaded": true,
+          "dimensions": "200x150"
+        }
+      ]
+    },
+    {
+      "name": "explore-carina",
+      "path": "/explore/jwst-carina-nebula",
+      "title": "Carina Nebula (Cosmic Cliffs) | Cosmos Collective",
+      "screenshot": "explore-carina.png",
+      "totalImages": 1,
+      "loadedImages": 1,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://images-assets.nasa.gov/image/carina_nebula/carina_nebula~medium.jpg",
+          "alt": "Carina Nebula (Cosmic Cliffs) - The \"Cosmic Cliffs\" of the Carina Nebula reveal baby stars and structures previously hidden.",
+          "loaded": true,
+          "dimensions": "1280x741"
+        }
+      ]
+    },
+    {
+      "name": "explore-smacs",
+      "path": "/explore/jwst-smacs-0723",
+      "title": "SMACS 0723 (Webb's First Deep Field) | Cosmos Collective",
+      "screenshot": "explore-smacs.png",
+      "totalImages": 1,
+      "loadedImages": 1,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://images-assets.nasa.gov/image/webb_first_deep_field/webb_first_deep_field~medium.jpg",
+          "alt": "SMACS 0723 (Webb's First Deep Field) - JWST's first deep field image, showing thousands of galaxies including some from 13 billion years ago.",
+          "loaded": true,
+          "dimensions": "1254x1280"
+        }
+      ]
+    },
+    {
+      "name": "explore-stephans",
+      "path": "/explore/jwst-stephans-quintet",
+      "title": "Stephan's Quintet | Cosmos Collective",
+      "screenshot": "explore-stephans.png",
+      "totalImages": 1,
+      "loadedImages": 1,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://images-assets.nasa.gov/image/PIA04201/PIA04201~medium.jpg",
+          "alt": "Stephan's Quintet - A visual grouping of five galaxies, four of which are locked in a cosmic dance of collisions.",
+          "loaded": true,
+          "dimensions": "1024x1280"
+        }
+      ]
+    },
+    {
+      "name": "explore-southern-ring",
+      "path": "/explore/jwst-southern-ring",
+      "title": "Southern Ring Nebula | Cosmos Collective",
+      "screenshot": "explore-southern-ring.png",
+      "totalImages": 1,
+      "loadedImages": 1,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://images-assets.nasa.gov/image/southern_ring_nebula/southern_ring_nebula~medium.jpg",
+          "alt": "Southern Ring Nebula - A planetary nebula - shells of gas and dust expelled by a dying star.",
+          "loaded": true,
+          "dimensions": "1280x593"
+        }
+      ]
+    },
+    {
+      "name": "explore-pillars",
+      "path": "/explore/jwst-pillars-creation",
+      "title": "Pillars of Creation | Cosmos Collective",
+      "screenshot": "explore-pillars.png",
+      "totalImages": 1,
+      "loadedImages": 1,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000842/GSFC_20171208_Archive_e000842~med...",
+          "alt": "Pillars of Creation - The iconic Pillars of Creation in the Eagle Nebula, now revealed in unprecedented infrared detail.",
+          "loaded": true,
+          "dimensions": "1280x1199"
+        }
+      ]
+    },
+    {
+      "name": "explore-jupiter",
+      "path": "/explore/jwst-jupiter",
+      "title": "Jupiter | Cosmos Collective",
+      "screenshot": "explore-jupiter.png",
+      "totalImages": 1,
+      "loadedImages": 1,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://images-assets.nasa.gov/image/PIA22949/PIA22949~medium.jpg",
+          "alt": "Jupiter - Jupiter in infrared light, revealing auroras, storms, and rings in stunning detail.",
+          "loaded": true,
+          "dimensions": "1280x1244"
+        }
+      ]
+    },
+    {
+      "name": "sky-map",
+      "path": "/sky-map",
+      "title": "Sky Map | Cosmos Collective",
+      "screenshot": "sky-map.png",
+      "totalImages": 5,
+      "loadedImages": 5,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KDTwhLS0gVXBsb2FkZWQgdG...",
+          "alt": "",
+          "loaded": true,
+          "dimensions": "800x800"
+        },
+        {
+          "src": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz48IS0tIFVwbG9hZGVkIHRvOi...",
+          "alt": "",
+          "loaded": true,
+          "dimensions": "800x800"
+        },
+        {
+          "src": "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzIgMzIiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3...",
+          "alt": "",
+          "loaded": true,
+          "dimensions": "150x150"
+        },
+        {
+          "src": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCg0KPCFET0NUWVBFIHN2Zy...",
+          "alt": "",
+          "loaded": true,
+          "dimensions": "800x800"
+        },
+        {
+          "src": "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCg0KPCEtLSBVcGxvYWRlZC...",
+          "alt": "",
+          "loaded": true,
+          "dimensions": "150x150"
+        }
+      ]
+    },
+    {
+      "name": "events",
+      "path": "/events",
+      "title": "Live Events | Cosmos Collective",
+      "screenshot": "events.png",
+      "totalImages": 1,
+      "loadedImages": 1,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://apod.nasa.gov/apod/image/2512/moonshorty_apollo17_1080.jpg",
+          "alt": "Apollo 17 at Shorty Crater",
+          "loaded": true,
+          "dimensions": "1080x548"
+        }
+      ]
+    },
+    {
+      "name": "citizen-science",
+      "path": "/citizen-science",
+      "title": "Citizen Science | Cosmos Collective",
+      "screenshot": "citizen-science.png",
+      "totalImages": 0,
+      "loadedImages": 0,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": []
+    },
+    {
+      "name": "dashboard",
+      "path": "/dashboard",
+      "title": "Dashboard | Cosmos Collective",
+      "screenshot": "dashboard.png",
+      "totalImages": 1,
+      "loadedImages": 1,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": [
+        {
+          "src": "https://cosmos-collective-v2.vercel.app/_next/image?url=https%3A%2F%2Fapod.nasa.gov%2Fapod%2Fimage%2...",
+          "alt": "Apollo 17 at Shorty Crater",
+          "loaded": true,
+          "dimensions": "633x321"
+        }
+      ]
+    },
+    {
+      "name": "devlog",
+      "path": "/devlog",
+      "title": "Devlog | Cosmos Collective",
+      "screenshot": "devlog.png",
+      "totalImages": 0,
+      "loadedImages": 0,
+      "brokenImages": 0,
+      "brokenImageDetails": [],
+      "allImages": []
+    }
+  ]
+}

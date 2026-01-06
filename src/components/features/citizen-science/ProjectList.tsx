@@ -143,6 +143,7 @@ function ProjectCard({ project, onStartClassifying }: ProjectCardProps) {
 
   return (
     <Card
+      data-testid="citizen-science-project"
       className={cn(
         'group transition-all duration-300 hover:scale-[1.02]',
         isAustralian && 'ring-1 ring-cosmos-gold/30'

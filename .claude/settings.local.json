@@ -23,7 +23,17 @@
       "Bash(head -3 curl -s \"https://images-api.nasa.gov/search?q=webb+southern+ring&media_type=image\")",
       "Bash(npm run build:*)",
       "Bash(grep:*)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(git fetch:*)",
+      "Bash(node:*)",
+      "Bash(cat:*)",
+      "Bash(for id in PIA03606 PIA04227 PIA04230 PIA04215 GSFC_20171208_Archive_e000833)",
+      "Bash(do curl -sI \"https://images-assets.nasa.gov/image/$id/$id~medium.jpg\")",
+      "Bash(done)",
+      "Bash(git stash:*)",
+      "Bash(git restore:*)",
+      "Bash(ls:*)",
+      "Bash(dir:*)"
     ],
     "deny": [],
     "ask": []
