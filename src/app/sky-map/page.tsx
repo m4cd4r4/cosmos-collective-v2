@@ -7,6 +7,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/Header'
 import { SkyMapViewer } from '@/components/features/sky-map/SkyMapViewer'
+import { SkyMapSkeleton } from '@/components/loading/SkyMapSkeleton'
 
 export const metadata: Metadata = {
   title: 'Sky Map',
@@ -32,16 +33,7 @@ export default function SkyMapPage({
         {/* Screen reader heading - visually hidden but accessible */}
         <h1 className="sr-only">Interactive Sky Map</h1>
 
-        <Suspense
-          fallback={
-            <div className="absolute inset-0 bg-cosmos-void flex items-center justify-center">
-              <div className="text-center">
-                <div className="w-16 h-16 border-4 border-cosmos-cyan border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-                <p className="text-gray-400">Loading sky map...</p>
-              </div>
-            </div>
-          }
-        >
+        <Suspense fallback={<SkyMapSkeleton />}>
           <SkyMapViewer
             initialRa={ra}
             initialDec={dec}

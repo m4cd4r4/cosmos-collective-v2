@@ -329,10 +329,10 @@ async function testExploreFeatures(page) {
       warn('Search input not found on Explore page');
     }
 
-    // Check for filter options
-    const filters = await page.$$('select, [role="combobox"]');
+    // Check for filter options (button groups with role="group")
+    const filters = await page.$$('[role="group"], select, [role="combobox"]');
     if (filters.length > 0) {
-      pass(`${filters.length} filter(s) found on Explore page`);
+      pass(`${filters.length} filter group(s) found on Explore page`);
     } else {
       warn('No filters found on Explore page');
     }

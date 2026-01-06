@@ -17,6 +17,11 @@ const Starfield = dynamic(() => import('@/components/ui/Starfield').then(mod => 
   loading: () => <div className="fixed inset-0 -z-10 bg-cosmos-void" />
 })
 
+// Lazy load Web Vitals (performance monitoring)
+const WebVitals = dynamic(() => import('@/components/analytics/WebVitals').then(mod => ({ WebVitals: mod.WebVitals })), {
+  ssr: false,
+})
+
 // ============================================
 // Font Configuration
 // ============================================
@@ -222,6 +227,9 @@ export default function RootLayout({
 
         {/* Google Analytics */}
         <GoogleAnalytics />
+
+        {/* Web Vitals Performance Monitoring */}
+        <WebVitals />
 
         {/* App providers (React Query, Auth, etc.) */}
         <Providers>
