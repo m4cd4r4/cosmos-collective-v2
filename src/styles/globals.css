@@ -9,16 +9,16 @@
 
 /* ---------- CSS Custom Properties ---------- */
 :root {
-  /* Color tokens */
-  --cosmos-void: #030014;
-  --cosmos-depth: #0a0a1a;
-  --cosmos-surface: #111127;
-  --cosmos-elevated: #1a1a3e;
+  /* Astronomy-Authentic Color Tokens */
+  --cosmos-void: #0a0e1a;
+  --cosmos-depth: #131820;
+  --cosmos-surface: #1a1f2e;
+  --cosmos-elevated: #2a2f3e;
 
-  --cosmos-cyan: #06b6d4;
-  --cosmos-gold: #f59e0b;
-  --cosmos-purple: #a855f7;
-  --cosmos-pink: #ec4899;
+  --cosmos-gold: #d4af37;
+  --cosmos-amber: #ff9a3c;
+  --cosmos-nebula-blue: #4a90e2;
+  --cosmos-hydrogen: #ff6b6b;
 
   /* Spacing scale */
   --space-unit: 4px;
@@ -29,7 +29,7 @@
   --duration-slow: 500ms;
 
   /* Focus ring */
-  --focus-ring-color: var(--cosmos-cyan);
+  --focus-ring-color: var(--cosmos-gold);
   --focus-ring-width: 3px;
   --focus-ring-offset: 2px;
 
@@ -46,8 +46,8 @@
   :root {
     --cosmos-void: #000000;
     --cosmos-surface: #1a1a1a;
-    --cosmos-cyan: #00ffff;
-    --cosmos-gold: #ffff00;
+    --cosmos-gold: #ffd700;
+    --cosmos-amber: #ffaa00;
     --focus-ring-width: 4px;
   }
 }
@@ -87,12 +87,12 @@
 
   /* Selection styling */
   ::selection {
-    @apply bg-cosmos-cyan/30 text-white;
+    @apply bg-cosmos-gold/30 text-white;
   }
 
   /* Focus visible for keyboard navigation */
   *:focus-visible {
-    @apply outline-none ring-[3px] ring-cosmos-cyan ring-offset-2 ring-offset-cosmos-void;
+    @apply outline-none ring-[3px] ring-cosmos-gold ring-offset-2 ring-offset-cosmos-void;
   }
 
   /* Remove focus ring for mouse users */
@@ -114,12 +114,12 @@
 
   /* Links */
   a {
-    @apply text-cosmos-cyan hover:text-cosmos-cyan-400 transition-colors duration-200;
+    @apply text-cosmos-amber hover:text-cosmos-gold transition-colors duration-200;
   }
 
   /* Code */
   code {
-    @apply font-mono text-cosmos-pink bg-cosmos-surface px-1.5 py-0.5 rounded text-sm;
+    @apply font-mono text-cosmos-hydrogen bg-cosmos-surface px-1.5 py-0.5 rounded text-sm;
   }
 
   pre {
@@ -130,7 +130,7 @@
   input, textarea, select {
     @apply bg-cosmos-surface border border-white/10 rounded-lg px-4 py-2;
     @apply text-gray-100 placeholder:text-gray-500;
-    @apply focus:border-cosmos-cyan focus:ring-2 focus:ring-cosmos-cyan/20;
+    @apply focus:border-cosmos-gold focus:ring-2 focus:ring-cosmos-gold/20;
     @apply transition-colors duration-200;
   }
 
@@ -161,7 +161,7 @@
   /* Skip link for accessibility */
   .skip-to-content {
     @apply absolute -top-12 left-4 z-[100];
-    @apply bg-cosmos-cyan text-cosmos-void font-semibold;
+    @apply bg-cosmos-gold text-cosmos-void font-semibold;
     @apply px-4 py-2 rounded-lg;
     @apply focus:top-4;
     @apply transition-all duration-200;
@@ -184,12 +184,12 @@
   /* Card hover effects */
   .card-hover {
     @apply transition-all duration-300 ease-out;
-    @apply hover:-translate-y-1 hover:shadow-glow-cyan;
+    @apply hover:-translate-y-1 hover:shadow-glow-gold;
   }
 
-  /* Gradient text */
+  /* Gradient text (Astronomy-authentic) */
   .text-gradient-stellar {
-    @apply bg-gradient-to-r from-cosmos-cyan via-cosmos-purple to-cosmos-pink;
+    @apply bg-gradient-to-r from-cosmos-gold to-cosmos-amber;
     @apply bg-clip-text text-transparent;
     background-size: 200% auto;
   }
@@ -265,7 +265,7 @@
   /* Scrollbar styling */
   .custom-scrollbar {
     scrollbar-width: thin;
-    scrollbar-color: theme('colors.cosmos.cyan') theme('colors.cosmos.surface');
+    scrollbar-color: theme('colors.cosmos.gold') theme('colors.cosmos.surface');
   }
 
   .custom-scrollbar::-webkit-scrollbar {
@@ -277,8 +277,8 @@
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
-    @apply bg-cosmos-cyan/50 rounded-full;
-    @apply hover:bg-cosmos-cyan/70;
+    @apply bg-cosmos-gold/50 rounded-full;
+    @apply hover:bg-cosmos-gold/70;
   }
 
   /* Hide scrollbar but keep functionality */
@@ -450,11 +450,11 @@
 }
 
 .devlog-content blockquote {
-  @apply pl-4 border-l-4 border-cosmos-cyan/50 italic text-gray-400 my-6;
+  @apply pl-4 border-l-4 border-cosmos-gold/50 italic text-gray-400 my-6;
 }
 
 .devlog-content a {
-  @apply text-cosmos-cyan hover:text-white underline underline-offset-4 transition-colors;
+  @apply text-cosmos-amber hover:text-cosmos-gold underline underline-offset-4 transition-colors;
 }
 
 .devlog-content hr {
@@ -479,12 +479,12 @@
 }
 
 .devlog-content .inline-code {
-  @apply px-1.5 py-0.5 rounded bg-cosmos-surface text-cosmos-pink text-sm font-mono;
+  @apply px-1.5 py-0.5 rounded bg-cosmos-surface text-cosmos-hydrogen text-sm font-mono;
 }
 
-/* Syntax highlighting */
+/* Syntax highlighting (Astronomy-authentic) */
 .code-keyword {
-  @apply text-cosmos-purple;
+  @apply text-cosmos-nebula-blue;
 }
 
 .code-string {
@@ -496,7 +496,7 @@
 }
 
 .code-number {
-  @apply text-cosmos-cyan;
+  @apply text-cosmos-amber;
 }
 
 /* Tables */
