@@ -39,7 +39,7 @@ export function WebVitals() {
     }
 
     // Import web-vitals dynamically to reduce initial bundle
-    import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB, onINP }) => {
+    import('web-vitals').then(({ onCLS, onFCP, onLCP, onTTFB, onINP }) => {
       // Report to Google Analytics (if available)
       const reportWebVital = (metric: Metric) => {
         // Check if gtag is available
@@ -66,7 +66,6 @@ export function WebVitals() {
 
       // Register all Core Web Vitals
       onCLS(reportWebVital)
-      onFID(reportWebVital)
       onFCP(reportWebVital)
       onLCP(reportWebVital)
       onTTFB(reportWebVital)
