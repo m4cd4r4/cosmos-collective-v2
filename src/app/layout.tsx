@@ -4,12 +4,18 @@
  */
 
 import type { Metadata, Viewport } from 'next'
+import dynamic from 'next/dynamic'
 import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google'
 import '@/styles/globals.css'
 import { Providers } from './providers'
 import { SkipToContent } from '@/components/accessibility/SkipToContent'
-import { Starfield } from '@/components/ui/Starfield'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
+
+// Lazy load Starfield (WebGL animation) to reduce initial bundle
+const Starfield = dynamic(() => import('@/components/ui/Starfield').then(mod => ({ default: mod.Starfield })), {
+  ssr: false,
+  loading: () => <div className="fixed inset-0 -z-10 bg-cosmos-void" />
+})
 
 // ============================================
 // Font Configuration

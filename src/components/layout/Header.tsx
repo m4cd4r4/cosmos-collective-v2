@@ -138,6 +138,7 @@ function DesktopNav() {
           <Link
             key={item.href}
             href={item.href}
+            prefetch={true}
             className={cn(
               'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
               isActive
@@ -186,6 +187,7 @@ function MobileBottomNav() {
             <Link
               key={item.href}
               href={item.href}
+              prefetch={true}
               className={cn(
                 'flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors',
                 isActive

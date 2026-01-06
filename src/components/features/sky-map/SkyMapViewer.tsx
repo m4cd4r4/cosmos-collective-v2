@@ -541,6 +541,8 @@ export function SkyMapViewer({
         <div className="flex-1 relative">
           <div
             ref={containerRef}
+            id="aladin-lite-div"
+            data-testid="aladin-container"
             className="absolute inset-0 bg-cosmos-void"
             style={{ minHeight: '400px' }}
           />

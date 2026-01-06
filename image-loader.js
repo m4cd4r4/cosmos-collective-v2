@@ -4,9 +4,22 @@
  */
 
 export default function customImageLoader({ src, width, quality }) {
-  // For NASA images, bypass Next.js optimization due to CORS/timeout issues
-  if (src.includes('nasa.gov') || src.includes('images-assets.nasa.gov')) {
-    // Return original NASA URL without optimization
+  const isProduction = process.env.NODE_ENV === 'production'
+  const isNASA = src.includes('nasa.gov') || src.includes('images-assets.nasa.gov')
+  const isExternalImage = src.includes('stsci.edu') || src.includes('casda.csiro.au')
+
+  // In production, use proxy for external images to handle timeouts/CORS
+  if (isProduction && (isNASA || isExternalImage)) {
+    const encodedSrc = encodeURIComponent(src)
+    const params = [`url=${encodedSrc}`, `w=${width}`]
+    if (quality) {
+      params.push(`q=${quality}`)
+    }
+    return `/api/image-proxy?${params.join('&')}`
+  }
+
+  // In development or for internal images, return original URL
+  if (isNASA || isExternalImage) {
     return src
   }
 
