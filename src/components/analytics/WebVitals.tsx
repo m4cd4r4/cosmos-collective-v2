@@ -15,6 +15,14 @@
 
 import { useEffect } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
+import type { Metric } from 'web-vitals'
+
+// Extend window with gtag type
+declare global {
+  interface Window {
+    gtag?: (command: string, action: string, params: Record<string, unknown>) => void
+  }
+}
 
 export function WebVitals() {
   const pathname = usePathname()
@@ -33,10 +41,10 @@ export function WebVitals() {
     // Import web-vitals dynamically to reduce initial bundle
     import('web-vitals').then(({ onCLS, onFID, onFCP, onLCP, onTTFB, onINP }) => {
       // Report to Google Analytics (if available)
-      const reportWebVital = (metric: any) => {
+      const reportWebVital = (metric: Metric) => {
         // Check if gtag is available
-        if (typeof window !== 'undefined' && (window as any).gtag) {
-          ;(window as any).gtag('event', metric.name, {
+        if (typeof window !== 'undefined' && window.gtag) {
+          window.gtag('event', metric.name, {
             event_category: 'Web Vitals',
             value: Math.round(metric.name === 'CLS' ? metric.value * 1000 : metric.value),
             event_label: metric.id,
@@ -44,8 +52,9 @@ export function WebVitals() {
           })
         }
 
-        // Also log to console in development
+        // Log to console in development only (disabled in production)
         if (process.env.NODE_ENV === 'development') {
+          // eslint-disable-next-line no-console
           console.log(`[Web Vitals] ${metric.name}:`, {
             value: metric.value,
             rating: metric.rating,

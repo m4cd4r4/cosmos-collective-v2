@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const imageUrl = searchParams.get('url')
-    const width = searchParams.get('w')
+    const _width = searchParams.get('w') // Reserved for future image resizing
 
     if (!imageUrl) {
       return new NextResponse('Missing url parameter', { status: 400 })
