@@ -18,7 +18,7 @@ const Starfield = dynamic(() => import('@/components/ui/Starfield').then(mod => 
 })
 
 // Lazy load Web Vitals (performance monitoring)
-const WebVitals = dynamic(() => import('@/components/analytics/WebVitals').then(mod => ({ WebVitals: mod.WebVitals })), {
+const WebVitals = dynamic(() => import('@/components/analytics/WebVitals').then(mod => ({ default: mod.WebVitals })), {
   ssr: false,
 })
 
@@ -116,8 +116,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#030014' },
-    { media: '(prefers-color-scheme: dark)', color: '#030014' },
+    { media: '(prefers-color-scheme: light)', color: '#0a0e1a' },
+    { media: '(prefers-color-scheme: dark)', color: '#0a0e1a' },
   ],
   width: 'device-width',
   initialScale: 1,
@@ -165,7 +165,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="apple-mobile-web-app-title" content="Cosmos" />
         <meta name="mobile-web-app-capable" content="yes" />
-        <meta name="msapplication-TileColor" content="#030014" />
+        <meta name="msapplication-TileColor" content="#0a0e1a" />
 
         {/* JSON-LD Structured Data - Organization Schema */}
         <script

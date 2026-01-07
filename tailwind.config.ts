@@ -10,87 +10,104 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Primary "Cosmic Optimism" Palette
+        // Astronomy-Authentic Palette (Based on Real Space Observations)
         cosmos: {
-          // Deep space backgrounds
-          void: '#030014',        // Deepest background
-          depth: '#0a0a1a',       // Secondary background
-          surface: '#111127',     // Card/panel backgrounds
-          elevated: '#1a1a3e',    // Elevated elements
+          // Deep space backgrounds (warmer, more depth)
+          void: '#0a0e1a',        // Deep space observation
+          depth: '#131820',       // Nebula background
+          surface: '#1a1f2e',     // Professional panels
+          elevated: '#2a2f3e',    // Elevated elements
+          border: '#2a2f3e',      // Cosmic dust lanes
 
-          // Stellar accent colors - Primary
-          cyan: {
-            DEFAULT: '#06b6d4',
-            50: '#ecfeff',
-            100: '#cffafe',
-            200: '#a5f3fc',
-            300: '#67e8f9',
-            400: '#22d3ee',
-            500: '#06b6d4',
-            600: '#0891b2',
-            700: '#0e7490',
-            800: '#155e75',
-            900: '#164e63',
-            950: '#083344',
-          },
-
-          // Solar gold - Secondary accent
+          // Primary: Stellar Gold (Real star cores ~5000K)
           gold: {
-            DEFAULT: '#f59e0b',
-            50: '#fffbeb',
-            100: '#fef3c7',
-            200: '#fde68a',
-            300: '#fcd34d',
-            400: '#fbbf24',
-            500: '#f59e0b',
-            600: '#d97706',
-            700: '#b45309',
-            800: '#92400e',
-            900: '#78350f',
-            950: '#451a03',
+            DEFAULT: '#d4af37',   // 24k gold - stellar cores
+            50: '#fef9e7',
+            100: '#fdf3d0',
+            200: '#fbe7a1',
+            300: '#f8db72',
+            400: '#f6cf43',
+            500: '#d4af37',        // Primary
+            600: '#b8962f',
+            700: '#9c7e27',
+            800: '#80651f',
+            900: '#644c17',
+            950: '#48340f',
           },
 
-          // Aurora purple - Tertiary
-          purple: {
-            DEFAULT: '#a855f7',
-            50: '#faf5ff',
-            100: '#f3e8ff',
-            200: '#e9d5ff',
-            300: '#d8b4fe',
-            400: '#c084fc',
-            500: '#a855f7',
-            600: '#9333ea',
-            700: '#7e22ce',
-            800: '#6b21a8',
-            900: '#581c87',
-            950: '#3b0764',
+          // Secondary: Infrared Amber (Spitzer 3.6µm)
+          amber: {
+            DEFAULT: '#ff9a3c',   // Infrared emissions
+            50: '#fff4e6',
+            100: '#ffe9cc',
+            200: '#ffd399',
+            300: '#ffbd66',
+            400: '#ffa733',
+            500: '#ff9a3c',        // Primary
+            600: '#e68a35',
+            700: '#cc7a2e',
+            800: '#b36a27',
+            900: '#995a20',
+            950: '#804a19',
           },
 
-          // Nebula pink - Highlights
-          pink: {
-            DEFAULT: '#ec4899',
-            50: '#fdf2f8',
-            100: '#fce7f3',
-            200: '#fbcfe8',
-            300: '#f9a8d4',
-            400: '#f472b6',
-            500: '#ec4899',
-            600: '#db2777',
-            700: '#be185d',
-            800: '#9d174d',
-            900: '#831843',
-            950: '#500724',
+          // Tertiary: Reflection Nebulae Blue
+          'nebula-blue': {
+            DEFAULT: '#4a90e2',   // Reflection nebulae
+            50: '#ebf5ff',
+            100: '#d6ebff',
+            200: '#add6ff',
+            300: '#85c2ff',
+            400: '#5cadff',
+            500: '#4a90e2',        // Primary
+            600: '#3d7ac2',
+            700: '#3064a2',
+            800: '#234e82',
+            900: '#163862',
+            950: '#092242',
           },
 
-          // Spectrum representation colors
+          // Alert: H-alpha Emission (656.3nm)
+          hydrogen: {
+            DEFAULT: '#ff6b6b',   // H-alpha emission line
+            50: '#fff0f0',
+            100: '#ffe0e0',
+            200: '#ffc2c2',
+            300: '#ffa3a3',
+            400: '#ff8585',
+            500: '#ff6b6b',        // Primary
+            600: '#e65d5d',
+            700: '#cc4f4f',
+            800: '#b34141',
+            900: '#993333',
+            950: '#802525',
+          },
+
+          // Info: Oxygen Emission ([OIII] 496nm)
+          oxygen: {
+            DEFAULT: '#3b82f6',   // [OIII] emission doublet
+            50: '#eff6ff',
+            100: '#dbeafe',
+            200: '#bfdbfe',
+            300: '#93c5fd',
+            400: '#60a5fa',
+            500: '#3b82f6',        // Primary
+            600: '#2563eb',
+            700: '#1d4ed8',
+            800: '#1e40af',
+            900: '#1e3a8a',
+            950: '#172554',
+          },
+
+          // Legacy spectrum colors (for astronomical data viz)
           spectrum: {
             radio: '#22c55e',       // Green for radio waves
             microwave: '#84cc16',   // Yellow-green
-            infrared: '#ef4444',    // Red for infrared
-            visible: '#f59e0b',     // Gold for visible
-            ultraviolet: '#8b5cf6', // Purple for UV
-            xray: '#3b82f6',        // Blue for X-ray
-            gamma: '#06b6d4',       // Cyan for gamma
+            infrared: '#ff9a3c',    // Amber for infrared
+            visible: '#d4af37',     // Gold for visible
+            ultraviolet: '#3b82f6', // Blue for UV
+            xray: '#4a90e2',        // Nebula blue for X-ray
+            gamma: '#ff6b6b',       // Hydrogen for gamma
           },
         },
 
@@ -139,21 +156,21 @@ const config: Config = {
       },
 
       boxShadow: {
-        'glow-cyan': '0 0 20px rgba(6, 182, 212, 0.35)',
-        'glow-gold': '0 0 20px rgba(245, 158, 11, 0.35)',
-        'glow-purple': '0 0 20px rgba(168, 85, 247, 0.35)',
-        'glow-pink': '0 0 20px rgba(236, 72, 153, 0.35)',
+        'glow-gold': '0 4px 16px rgba(212, 175, 55, 0.25)',
+        'glow-amber': '0 4px 16px rgba(255, 154, 60, 0.25)',
+        'glow-blue': '0 4px 16px rgba(74, 144, 226, 0.25)',
+        'glow-hydrogen': '0 4px 16px rgba(255, 107, 107, 0.25)',
         'inner-glow': 'inset 0 0 20px rgba(255, 255, 255, 0.05)',
         'cosmic': '0 8px 32px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.05)',
       },
 
       backgroundImage: {
-        // Gradient backgrounds
+        // Gradient backgrounds (Astronomy-authentic)
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-cosmic': 'linear-gradient(135deg, #030014 0%, #0a0a1a 50%, #111127 100%)',
-        'gradient-nebula': 'linear-gradient(135deg, rgba(168, 85, 247, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%)',
-        'gradient-stellar': 'linear-gradient(90deg, #06b6d4 0%, #a855f7 50%, #ec4899 100%)',
-        'gradient-aurora': 'linear-gradient(180deg, transparent 0%, rgba(6, 182, 212, 0.05) 50%, transparent 100%)',
+        'gradient-cosmic': 'linear-gradient(135deg, #0a0e1a 0%, #131820 50%, #1a1f2e 100%)',
+        'gradient-nebula': 'linear-gradient(135deg, rgba(212, 175, 55, 0.1) 0%, rgba(74, 144, 226, 0.1) 100%)',
+        'gradient-stellar': 'linear-gradient(90deg, #d4af37 0%, #ff9a3c 50%, #ff6b6b 100%)',
+        'gradient-aurora': 'linear-gradient(180deg, transparent 0%, rgba(212, 175, 55, 0.05) 50%, transparent 100%)',
 
         // Glass effects
         'glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
@@ -183,8 +200,8 @@ const config: Config = {
           '50%': { opacity: '1' },
         },
         'pulse-glow': {
-          '0%, 100%': { boxShadow: '0 0 20px rgba(6, 182, 212, 0.3)' },
-          '50%': { boxShadow: '0 0 40px rgba(6, 182, 212, 0.6)' },
+          '0%, 100%': { boxShadow: '0 4px 16px rgba(212, 175, 55, 0.25)' },
+          '50%': { boxShadow: '0 8px 32px rgba(212, 175, 55, 0.5)' },
         },
         float: {
           '0%, 100%': { transform: 'translateY(0px)' },
@@ -252,13 +269,13 @@ const config: Config = {
         '.focus-ring': {
           '&:focus-visible': {
             outline: 'none',
-            boxShadow: `0 0 0 3px ${theme('colors.cosmos.cyan.500')}`,
+            boxShadow: `0 0 0 3px ${theme('colors.cosmos.gold.500')}`,
           },
         },
         '.focus-ring-inset': {
           '&:focus-visible': {
             outline: 'none',
-            boxShadow: `inset 0 0 0 2px ${theme('colors.cosmos.cyan.500')}`,
+            boxShadow: `inset 0 0 0 2px ${theme('colors.cosmos.gold.500')}`,
           },
         },
         // High contrast mode utilities
@@ -297,9 +314,9 @@ const config: Config = {
           border: '1px solid rgba(255, 255, 255, 0.15)',
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15)',
         },
-        // Text gradient
+        // Text gradient (Astronomy-authentic)
         '.text-gradient-stellar': {
-          background: 'linear-gradient(90deg, #06b6d4, #a855f7, #ec4899)',
+          background: 'linear-gradient(90deg, #d4af37 0%, #ff9a3c 100%)',
           backgroundClip: 'text',
           '-webkit-background-clip': 'text',
           color: 'transparent',
@@ -310,7 +327,7 @@ const config: Config = {
           position: 'absolute',
           top: '-40px',
           left: '0',
-          background: theme('colors.cosmos.cyan.500'),
+          background: theme('colors.cosmos.gold.500'),
           color: 'white',
           padding: '8px 16px',
           zIndex: '100',

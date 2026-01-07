@@ -92,7 +92,7 @@ export default function TestErrorPage() {
               </p>
               <Button
                 onClick={() => triggerError('render')}
-                variant="destructive"
+                variant="danger"
               >
                 Trigger Render Error
               </Button>
@@ -108,7 +108,7 @@ export default function TestErrorPage() {
               </p>
               <Button
                 onClick={triggerEventError}
-                variant="destructive"
+                variant="danger"
               >
                 Trigger Event Error
               </Button>
@@ -124,7 +124,7 @@ export default function TestErrorPage() {
               </p>
               <Button
                 onClick={() => triggerError('async')}
-                variant="destructive"
+                variant="danger"
               >
                 Trigger Async Error
               </Button>
