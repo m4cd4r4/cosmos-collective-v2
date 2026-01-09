@@ -7,9 +7,11 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
+import { PageHero } from '@/components/features/PageHero'
 import { ExploreGallery } from '@/components/features/explore/ExploreGallery'
 import { ExploreFilters } from '@/components/features/explore/ExploreFilters'
 import { ExploreSearch } from '@/components/features/explore/ExploreSearch'
+import { Telescope } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Explore',
@@ -43,18 +45,20 @@ export default function ExplorePage({
       <Header />
 
       <main className="flex-1">
-        {/* Page Header */}
-        <section className="py-8 px-4 md:px-6 lg:px-8 border-b border-white/10">
-          <div className="max-w-7xl mx-auto">
-            <h1 className="text-3xl md:text-4xl font-display font-bold text-white mb-2">
-              Explore the <span className="text-gradient-stellar">Cosmos</span>
-            </h1>
-            <p className="text-gray-400 max-w-2xl">
-              Browse observations from JWST, Hubble, and Australian radio telescopes.
-              Click any image to view details and analysis.
-            </p>
-          </div>
-        </section>
+        {/* Page Hero with Jupiter Background */}
+        <PageHero
+          title="Explore the Cosmos"
+          titleHighlight="Cosmos"
+          description="Browse observations from JWST, Hubble, and Australian radio telescopes. Click any image to view details and analysis."
+          backgroundKey="jupiter"
+          size="sm"
+          badge={
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-cyan/10 border border-cosmos-cyan/30">
+              <Telescope className="w-4 h-4 text-cosmos-cyan" />
+              <span className="text-sm text-cosmos-cyan font-medium">Deep Space Observatory</span>
+            </div>
+          }
+        />
 
         {/* Search and Filters */}
         <section className="py-6 px-4 md:px-6 lg:px-8 border-b border-white/10 bg-cosmos-surface/30">

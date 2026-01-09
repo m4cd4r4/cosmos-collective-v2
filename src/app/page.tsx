@@ -39,8 +39,8 @@ export default function HomePage() {
       </Suspense>
 
       <main className="flex-1">
-        {/* Hero Section */}
-        <HeroSection />
+        {/* Hero Section with Mars Background */}
+        <HeroSection backgroundKey="mars" backgroundBrightness={0.35} />
 
         {/* Featured JWST Observations */}
         <section className="py-16 px-4 md:px-6 lg:px-8" aria-labelledby="featured-heading">

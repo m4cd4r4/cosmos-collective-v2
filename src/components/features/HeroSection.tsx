@@ -2,13 +2,112 @@
 
 /**
  * Hero Section Component
- * Stunning intro section with animated elements
+ * Stunning intro section with animated elements and planetary backgrounds
  */
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Telescope, Globe, Sparkles, ChevronDown } from 'lucide-react'
+
+// ============================================
+// High-Resolution Planet Hero Images
+// Using NASA's highest quality images for dramatic hero backgrounds
+// ============================================
+
+export const PLANET_HERO_IMAGES = {
+  // Mars - Stunning red planet views
+  mars: {
+    url: 'https://images-assets.nasa.gov/image/PIA24420/PIA24420~orig.jpg',
+    name: 'Mars',
+    description: 'JWST first images of Mars showing the Red Planet in infrared',
+    credit: 'NASA/ESA/CSA/STScI',
+  },
+  marsOlympia: {
+    url: 'https://images-assets.nasa.gov/image/PIA24546/PIA24546~orig.jpg',
+    name: 'Mars Olympia',
+    description: 'Mars surface from Perseverance rover',
+    credit: 'NASA/JPL-Caltech',
+  },
+
+  // Jupiter - Gas giant with stunning atmospheric details
+  jupiter: {
+    url: 'https://images-assets.nasa.gov/image/PIA22949/PIA22949~orig.jpg',
+    name: 'Jupiter',
+    description: 'Jupiter in infrared from JWST showing auroras and storms',
+    credit: 'NASA/ESA/CSA/STScI',
+  },
+  jupiterJuno: {
+    url: 'https://images-assets.nasa.gov/image/PIA21973/PIA21973~orig.jpg',
+    name: 'Jupiter Juno',
+    description: 'Jupiter from Juno spacecraft showing swirling clouds',
+    credit: 'NASA/JPL-Caltech/SwRI/MSSS',
+  },
+
+  // Saturn - The ringed planet
+  saturn: {
+    url: 'https://images-assets.nasa.gov/image/PIA12567/PIA12567~orig.jpg',
+    name: 'Saturn',
+    description: 'Saturn portrait from Cassini spacecraft',
+    credit: 'NASA/JPL-Caltech/SSI',
+  },
+  saturnRings: {
+    url: 'https://images-assets.nasa.gov/image/PIA21046/PIA21046~orig.jpg',
+    name: 'Saturn Rings',
+    description: 'Saturn with backlit rings from Cassini',
+    credit: 'NASA/JPL-Caltech/SSI',
+  },
+
+  // Earth - Our pale blue dot
+  earth: {
+    url: 'https://images-assets.nasa.gov/image/PIA18033/PIA18033~orig.jpg',
+    name: 'Earth',
+    description: 'Earth from Saturn - the Pale Blue Dot',
+    credit: 'NASA/JPL-Caltech/SSI',
+  },
+  earthBlueMarble: {
+    url: 'https://images-assets.nasa.gov/image/PIA00342/PIA00342~orig.jpg',
+    name: 'Blue Marble',
+    description: 'Full Earth from space showing oceans and continents',
+    credit: 'NASA',
+  },
+
+  // Neptune & Uranus - Ice giants
+  neptune: {
+    url: 'https://images-assets.nasa.gov/image/PIA01492/PIA01492~orig.jpg',
+    name: 'Neptune',
+    description: 'Neptune from Voyager 2 showing the Great Dark Spot',
+    credit: 'NASA/JPL',
+  },
+  uranus: {
+    url: 'https://images-assets.nasa.gov/image/PIA18182/PIA18182~orig.jpg',
+    name: 'Uranus',
+    description: 'Uranus showing rings and atmospheric features',
+    credit: 'NASA/JPL/Voyager',
+  },
+
+  // Deep Space - Nebulae and galaxies
+  carina: {
+    url: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_star-forming_region_carina_702.jpg',
+    name: 'Carina Nebula',
+    description: 'JWST Cosmic Cliffs in the Carina Nebula',
+    credit: 'NASA/ESA/CSA/STScI',
+  },
+  pillars: {
+    url: 'https://images-assets.nasa.gov/image/PIA17563/PIA17563~orig.jpg',
+    name: 'Pillars of Creation',
+    description: 'The iconic Pillars of Creation in the Eagle Nebula',
+    credit: 'NASA/ESA/Hubble',
+  },
+  deepField: {
+    url: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e002151/GSFC_20171208_Archive_e002151~orig.jpg',
+    name: 'Deep Field',
+    description: 'Hubble Ultra Deep Field showing thousands of galaxies',
+    credit: 'NASA/ESA/Hubble',
+  },
+} as const
+
+export type PlanetHeroKey = keyof typeof PLANET_HERO_IMAGES
 
 // ============================================
 // Stats Display
@@ -22,17 +121,42 @@ const stats = [
 ]
 
 // ============================================
+// Hero Section Props
+// ============================================
+
+export interface HeroSectionProps {
+  /** Planet/space image to use as background */
+  backgroundKey?: PlanetHeroKey
+  /** Custom background image URL (overrides backgroundKey) */
+  customBackgroundUrl?: string
+  /** Brightness filter for background (0-1, default 0.3) */
+  backgroundBrightness?: number
+  /** Show parallax effect (default true) */
+  enableParallax?: boolean
+}
+
+// ============================================
 // Hero Section Component
 // ============================================
 
-export function HeroSection() {
+export function HeroSection({
+  backgroundKey = 'carina',
+  customBackgroundUrl,
+  backgroundBrightness = 0.3,
+  enableParallax = true,
+}: HeroSectionProps = {}) {
   const [scrollY, setScrollY] = useState(0)
 
+  // Get background image URL
+  const backgroundImageUrl = customBackgroundUrl || PLANET_HERO_IMAGES[backgroundKey].url
+  const backgroundInfo = PLANET_HERO_IMAGES[backgroundKey]
+
   useEffect(() => {
+    if (!enableParallax) return
     const handleScroll = () => setScrollY(window.scrollY)
     window.addEventListener('scroll', handleScroll, { passive: true })
     return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  }, [enableParallax])
 
   return (
     <section
@@ -42,17 +166,24 @@ export function HeroSection() {
       {/* Background Image with Parallax */}
       <div
         className="absolute inset-0 z-0"
-        style={{ transform: `translateY(${scrollY * 0.3}px)` }}
+        style={{ transform: enableParallax ? `translateY(${scrollY * 0.3}px)` : undefined }}
       >
         <div
           className="absolute inset-0 bg-cover bg-center"
           style={{
-            backgroundImage: `url('https://www.nasa.gov/wp-content/uploads/2023/03/main_image_star-forming_region_carina_702.jpg')`,
-            filter: 'brightness(0.3)',
+            backgroundImage: `url('${backgroundImageUrl}')`,
+            filter: `brightness(${backgroundBrightness})`,
           }}
+          role="img"
+          aria-label={`Background: ${backgroundInfo.name} - ${backgroundInfo.description}`}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void via-cosmos-void/50 to-transparent" />
         <div className="absolute inset-0 bg-gradient-to-b from-cosmos-void via-transparent to-cosmos-void" />
+      </div>
+
+      {/* Image credit (optional display) */}
+      <div className="absolute bottom-2 right-4 z-20 text-xs text-white/30 font-mono">
+        {backgroundInfo.credit}
       </div>
 
       {/* Content */}
@@ -79,7 +210,7 @@ export function HeroSection() {
 
         {/* Description */}
         <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8 animate-slide-up animation-delay-200">
-          From JWST's infrared eyes to Australian radio telescopes,
+          From JWST&apos;s infrared eyes to Australian radio telescopes,
           journey through the cosmos across all wavelengths.
           Contribute to real science as a citizen astronomer.
         </p>
