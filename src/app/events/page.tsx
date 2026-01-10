@@ -5,11 +5,10 @@
  * Real-time astronomical events, meteor showers, and space weather
  */
 
-import { useState, useEffect, useRef } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
-import { Starfield } from '@/components/ui/Starfield'
+import { PageHero } from '@/components/features/PageHero'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import {
@@ -229,46 +228,42 @@ export default function EventsPage() {
 
   return (
     <div className="min-h-screen relative">
-      <Starfield />
       <Header />
 
-      <main className="relative z-10 pt-20 pb-24 lg:pb-16">
-        <div className="container mx-auto px-4">
-          {/* Page Header */}
-          <section className="mb-8">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-              <div>
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-cyan/10 border border-cosmos-cyan/30 mb-4">
-                  <Calendar className="w-4 h-4 text-cosmos-cyan" />
-                  <span className="text-sm text-cosmos-cyan font-medium">Live Updates</span>
-                </div>
-                <h1 className="text-3xl md:text-4xl font-display font-bold text-white mb-2">
-                  Live <span className="text-gradient-stellar">Events</span>
-                </h1>
-                <p className="text-gray-400 max-w-xl">
-                  Real-time astronomical events, meteor showers, asteroid approaches,
-                  and space weather alerts.
-                </p>
-              </div>
+      {/* Page Hero with Saturn Background */}
+      <PageHero
+        title="Live Events"
+        titleHighlight="Events"
+        description="Real-time astronomical events, meteor showers, asteroid approaches, and space weather alerts."
+        backgroundKey="saturnRings"
+        size="sm"
+        badge={
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-cyan/10 border border-cosmos-cyan/30">
+            <Calendar className="w-4 h-4 text-cosmos-cyan" />
+            <span className="text-sm text-cosmos-cyan font-medium">Live Updates</span>
+          </div>
+        }
+      >
+        <div className="flex items-center gap-3 mt-4">
+          {lastUpdated && (
+            <span className="text-sm text-gray-400">
+              Updated {formatDate(lastUpdated.toISOString(), { hour: 'numeric', minute: 'numeric' })}
+            </span>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchData}
+            disabled={isLoading}
+            leftIcon={isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+          >
+            Refresh
+          </Button>
+        </div>
+      </PageHero>
 
-              <div className="flex items-center gap-3">
-                {lastUpdated && (
-                  <span className="text-sm text-gray-500">
-                    Updated {formatDate(lastUpdated.toISOString(), { hour: 'numeric', minute: 'numeric' })}
-                  </span>
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={fetchData}
-                  disabled={isLoading}
-                  leftIcon={isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-                >
-                  Refresh
-                </Button>
-              </div>
-            </div>
-          </section>
+      <main className="relative z-10 pb-24 lg:pb-16">
+        <div className="container mx-auto px-4 pt-8">
 
           {/* ISS Live Cameras Section - Featured at top */}
           <section className="mb-12">
