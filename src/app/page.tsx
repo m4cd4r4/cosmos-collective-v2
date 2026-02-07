@@ -12,6 +12,7 @@ import { TelescopeShowcase } from '@/components/features/TelescopeShowcase'
 import { CitizenSciencePreview } from '@/components/features/CitizenSciencePreview'
 import { SKASection } from '@/components/features/SKASection'
 import { Footer } from '@/components/layout/Footer'
+import { ScrollReveal } from '@/components/ui/ScrollReveal'
 
 // Loading fallbacks
 function SectionSkeleton() {
@@ -44,11 +45,11 @@ export default function HomePage() {
 
         {/* Featured JWST Observations */}
         <section className="py-16 px-4 md:px-6 lg:px-8" aria-labelledby="featured-heading">
-          <div className="max-w-7xl mx-auto">
+          <ScrollReveal className="max-w-7xl mx-auto">
             <Suspense fallback={<SectionSkeleton />}>
               <FeaturedObservations />
             </Suspense>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* Australian Telescopes & SKA */}
@@ -56,20 +57,20 @@ export default function HomePage() {
           className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-transparent via-cosmos-nebula-blue/5 to-transparent"
           aria-labelledby="aussie-telescopes-heading"
         >
-          <div className="max-w-7xl mx-auto">
+          <ScrollReveal className="max-w-7xl mx-auto" delay={0.1}>
             <Suspense fallback={<SectionSkeleton />}>
               <TelescopeShowcase />
             </Suspense>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* SKA Deep Dive */}
         <section className="py-16 px-4 md:px-6 lg:px-8" aria-labelledby="ska-heading">
-          <div className="max-w-7xl mx-auto">
+          <ScrollReveal className="max-w-7xl mx-auto" delay={0.1}>
             <Suspense fallback={<SectionSkeleton />}>
               <SKASection />
             </Suspense>
-          </div>
+          </ScrollReveal>
         </section>
 
         {/* Citizen Science */}
@@ -77,11 +78,11 @@ export default function HomePage() {
           className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-transparent via-cosmos-gold/5 to-transparent"
           aria-labelledby="citizen-science-heading"
         >
-          <div className="max-w-7xl mx-auto">
+          <ScrollReveal className="max-w-7xl mx-auto" delay={0.1}>
             <Suspense fallback={<SectionSkeleton />}>
               <CitizenSciencePreview />
             </Suspense>
-          </div>
+          </ScrollReveal>
         </section>
       </main>
 

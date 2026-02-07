@@ -5,7 +5,7 @@
 
 import type { Metadata, Viewport } from 'next'
 import dynamic from 'next/dynamic'
-import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google'
+import { Inter, Outfit, JetBrains_Mono } from 'next/font/google'
 import '@/styles/globals.css'
 import { Providers } from './providers'
 import { SkipToContent } from '@/components/accessibility/SkipToContent'
@@ -32,10 +32,10 @@ const inter = Inter({
   variable: '--font-inter',
 })
 
-const spaceGrotesk = Space_Grotesk({
+const outfit = Outfit({
   subsets: ['latin'],
   display: 'swap',
-  variable: '--font-space-grotesk',
+  variable: '--font-display',
 })
 
 const jetbrainsMono = JetBrains_Mono({
@@ -138,7 +138,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${outfit.variable} ${jetbrainsMono.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -234,7 +234,7 @@ export default function RootLayout({
         {/* App providers (React Query, Auth, etc.) */}
         <Providers>
           {/* Main content area */}
-          <div id="main-content" className="relative min-h-screen">
+          <div id="main-content" className="relative min-h-screen grain-overlay">
             {children}
           </div>
         </Providers>

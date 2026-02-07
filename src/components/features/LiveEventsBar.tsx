@@ -134,7 +134,7 @@ export function LiveEventsBar() {
         <div className="overflow-hidden flex-1">
           <div
             className={cn(
-              'flex gap-8 animate-scroll whitespace-nowrap',
+              'flex gap-8 animate-marquee whitespace-nowrap',
               isPaused && 'animation-paused'
             )}
             style={{
@@ -178,28 +178,6 @@ export function LiveEventsBar() {
         </Link>
       </div>
 
-      {/* CSS for scroll animation */}
-      <style jsx>{`
-        @keyframes scroll {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-        .animate-scroll {
-          animation: scroll linear infinite;
-        }
-        .animation-paused {
-          animation-play-state: paused;
-        }
-        @media (prefers-reduced-motion: reduce) {
-          .animate-scroll {
-            animation: none;
-          }
-        }
-      `}</style>
     </div>
   )
 }

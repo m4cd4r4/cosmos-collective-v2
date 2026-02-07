@@ -137,7 +137,7 @@ const config: Config = {
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-jetbrains-mono)', 'Menlo', 'monospace'],
-        display: ['var(--font-space-grotesk)', 'system-ui', 'sans-serif'],
+        display: ['var(--font-display)', 'system-ui', 'sans-serif'],
       },
 
       fontSize: {
@@ -192,6 +192,7 @@ const config: Config = {
         'slide-down': 'slide-down 0.5s ease-out',
         'scale-in': 'scale-in 0.3s ease-out',
         'shimmer': 'shimmer 2s linear infinite',
+        'page-enter': 'page-enter 0.4s ease-out both',
       },
 
       keyframes: {
@@ -230,6 +231,10 @@ const config: Config = {
         shimmer: {
           '0%': { backgroundPosition: '-200% 0' },
           '100%': { backgroundPosition: '200% 0' },
+        },
+        'page-enter': {
+          '0%': { opacity: '0', transform: 'translateY(6px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
         },
       },
 
