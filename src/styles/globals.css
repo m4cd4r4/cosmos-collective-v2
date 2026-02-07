@@ -359,30 +359,6 @@
   }
 }
 
-/* ---------- Marquee / Scroll Animation ---------- */
-@keyframes marquee-scroll {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee-scroll linear infinite;
-}
-
-.animation-paused {
-  animation-play-state: paused;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-marquee {
-    animation: none;
-  }
-}
-
 /* ---------- Star field background ---------- */
 .starfield {
   position: fixed;
