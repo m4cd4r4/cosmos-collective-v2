@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    "frame-ancestors 'self'",
     "upgrade-insecure-requests",
   ].join('; ')
 
@@ -43,7 +43,7 @@ export function middleware(request: NextRequest) {
 
   // X-Frame-Options
   // Prevent clickjacking attacks
-  response.headers.set('X-Frame-Options', 'DENY')
+  response.headers.set('X-Frame-Options', 'SAMEORIGIN')
 
   // X-Content-Type-Options
   // Prevent MIME type sniffing
