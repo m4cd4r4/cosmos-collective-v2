@@ -11,7 +11,6 @@ import { LiveEventsBar } from '@/components/features/LiveEventsBar'
 import { TelescopeShowcase } from '@/components/features/TelescopeShowcase'
 import { CitizenSciencePreview } from '@/components/features/CitizenSciencePreview'
 import { SKASection } from '@/components/features/SKASection'
-import { SolarSystemPreview } from '@/components/features/SolarSystemPreview'
 import { Footer } from '@/components/layout/Footer'
 
 // Loading fallbacks
@@ -40,8 +39,8 @@ export default function HomePage() {
       </Suspense>
 
       <main className="flex-1">
-        {/* Hero Section with Mars Background */}
-        <HeroSection backgroundKey="mars" backgroundBrightness={0.35} />
+        {/* Hero Section with Solar System 3D Background */}
+        <HeroSection />
 
         {/* Featured JWST Observations */}
         <section className="py-16 px-4 md:px-6 lg:px-8" aria-labelledby="featured-heading">
@@ -70,16 +69,6 @@ export default function HomePage() {
             <Suspense fallback={<SectionSkeleton />}>
               <SKASection />
             </Suspense>
-          </div>
-        </section>
-
-        {/* Interactive Solar System */}
-        <section
-          className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-transparent via-cosmos-amber/5 to-transparent"
-          aria-labelledby="solar-system-heading"
-        >
-          <div className="max-w-7xl mx-auto">
-            <SolarSystemPreview />
           </div>
         </section>
 

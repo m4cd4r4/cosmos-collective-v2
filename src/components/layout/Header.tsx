@@ -16,7 +16,6 @@ import {
   Users,
   BookOpen,
   Home,
-  Orbit,
 } from 'lucide-react'
 
 // ============================================
@@ -29,12 +28,6 @@ const navItems = [
     href: '/explore',
     icon: Telescope,
     description: 'Browse JWST and radio telescope observations',
-  },
-  {
-    label: 'Solar System',
-    href: '/solar-system',
-    icon: Orbit,
-    description: '3D photorealistic solar system explorer',
   },
   {
     label: 'Sky Map',
@@ -171,8 +164,8 @@ function DesktopNav() {
 const bottomNavItems = [
   { label: 'Home', href: '/', icon: Home },
   { label: 'Explore', href: '/explore', icon: Telescope },
-  { label: 'Planets', href: '/solar-system', icon: Orbit },
   { label: 'Sky Map', href: '/sky-map', icon: Globe },
+  { label: 'Events', href: '/events', icon: Calendar },
   { label: 'Science', href: '/citizen-science', icon: Users },
 ]
 
