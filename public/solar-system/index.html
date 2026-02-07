@@ -185,14 +185,14 @@
         .loading-bar { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 15px; overflow: hidden; }
         .loading-bar-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 2px; transition: width 0.3s; width: 0%; }
 
-        /* Earth dive button */
-        #earth-dive-btn {
+        /* Planet dive button */
+        #planet-dive-btn {
             background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
             animation: pulse-glow 3s infinite;
             font-size: 12px;
             padding: 8px 14px;
         }
-        #earth-dive-btn.active {
+        #planet-dive-btn.active {
             background: linear-gradient(135deg, #F44336 0%, #B71C1C 100%);
             animation: none;
         }
@@ -314,7 +314,7 @@
 
         <div class="toggle-section">
             <label style="display:block; margin-bottom:8px; color:#ccc; font-size:13px;">Actions:</label>
-            <button id="earth-dive-btn" title="Fly into Earth orbit and back">Dive to Earth</button>
+            <button id="planet-dive-btn" title="Dive into orbit around the selected planet">Dive Into Earth</button>
             <button id="export-screenshot" style="font-size:12px; padding:7px 12px;">Screenshot</button>
             <button id="export-video-start" style="font-size:12px; padding:7px 12px;">Record</button>
             <button id="export-video-stop" style="font-size:12px; padding:7px 12px; display:none; background:linear-gradient(135deg, #ea4444 0%, #a22222 100%);">Stop Rec</button>
@@ -384,10 +384,10 @@
         </div>
     </div>
 
-    <!-- Earth Dive HUD -->
+    <!-- Planet Dive HUD -->
     <div id="dive-hud">
-        <h2>EARTH</h2>
-        <div class="dive-subtitle">LOW EARTH ORBIT</div>
+        <h2 id="dive-planet-name">EARTH</h2>
+        <div class="dive-subtitle" id="dive-subtitle">LOW EARTH ORBIT</div>
     </div>
     <div id="dive-altitude"></div>
 
@@ -1169,25 +1169,53 @@
         }
 
         // =====================================================================
-        // EARTH DIVE SYSTEM
+        // PLANET DIVE SYSTEM — works for all planets + Sun
         // =====================================================================
         let diveState = 'none'; // 'none' | 'diving' | 'orbiting' | 'returning'
         let diveProgress = 0;
         let diveStartCam = null;
-        let preDiveState = null; // Save camera state before dive
+        let preDiveState = null;
+        let diveTarget = null;       // planet object from planets[]
+        let diveTargetName = 'Earth';
 
-        const earthPlanet = planets.find(p => p.name === 'Earth');
+        const diveInfo = {
+            Sun:     { subtitle: 'SOLAR CORONA',       symbol: '\u2609', orbitMult: 4.0, realRadius: 696340, speedMult: 0.3, tilt: 0.15 },
+            Mercury: { subtitle: 'HERMEAN ORBIT',      symbol: '\u263F', orbitMult: 3.5, realRadius: 2439.7, speedMult: 1.2, tilt: 0.2 },
+            Venus:   { subtitle: 'CYTHEREAN ORBIT',    symbol: '\u2640', orbitMult: 3.5, realRadius: 6051.8, speedMult: 0.9, tilt: 0.25 },
+            Earth:   { subtitle: 'LOW EARTH ORBIT',    symbol: 'R\u2295', orbitMult: 3.5, realRadius: 6371,  speedMult: 0.8, tilt: 0.3 },
+            Mars:    { subtitle: 'AREOCENTRIC ORBIT',  symbol: '\u2642', orbitMult: 3.5, realRadius: 3389.5, speedMult: 1.0, tilt: 0.25 },
+            Jupiter: { subtitle: 'JOVIAN ORBIT',       symbol: '\u2643', orbitMult: 2.8, realRadius: 69911,  speedMult: 0.5, tilt: 0.2 },
+            Saturn:  { subtitle: 'SATURNIAN ORBIT',    symbol: '\u2644', orbitMult: 3.0, realRadius: 58232,  speedMult: 0.5, tilt: 0.35 },
+            Uranus:  { subtitle: 'URANIAN ORBIT',      symbol: '\u26E2', orbitMult: 3.0, realRadius: 25362,  speedMult: 0.6, tilt: 0.4 },
+            Neptune: { subtitle: 'NEPTUNIAN ORBIT',    symbol: '\u2646', orbitMult: 3.0, realRadius: 24622,  speedMult: 0.6, tilt: 0.3 },
+        };
 
-        function startEarthDive() {
+        function getDiveTargetFromFollow() {
+            if (followTarget === 'sun') return { name: 'Sun', mesh: sun, originalRadius: 3 };
+            if (followTarget === 'none') return planets.find(p => p.name === 'Earth');
+            if (followTarget === 'moon') return planets.find(p => p.name === 'Earth');
+            return planets.find(p => p.name.toLowerCase() === followTarget) || planets.find(p => p.name === 'Earth');
+        }
+
+        function updateDiveButtonText() {
+            const btn = document.getElementById('planet-dive-btn');
+            if (diveState !== 'none') return;
+            const target = getDiveTargetFromFollow();
+            btn.textContent = 'Dive Into ' + target.name;
+        }
+
+        function startDive() {
             if (diveState !== 'none') {
-                // Return from dive
                 diveState = 'returning';
                 diveProgress = 0;
-                document.getElementById('earth-dive-btn').textContent = 'Returning...';
+                document.getElementById('planet-dive-btn').textContent = 'Returning...';
                 return;
             }
 
-            // Save current camera state
+            diveTarget = getDiveTargetFromFollow();
+            diveTargetName = diveTarget.name;
+            const info = diveInfo[diveTargetName] || diveInfo.Earth;
+
             preDiveState = {
                 rotation: { ...cameraRotation },
                 distance: cameraDistance,
@@ -1202,40 +1230,43 @@
             diveProgress = 0;
             cameraMode = 'dive';
 
-            const btn = document.getElementById('earth-dive-btn');
+            const btn = document.getElementById('planet-dive-btn');
             btn.textContent = 'Exit Orbit';
             btn.classList.add('active');
 
+            document.getElementById('dive-planet-name').textContent = diveTargetName.toUpperCase();
+            document.getElementById('dive-subtitle').textContent = info.subtitle;
             document.getElementById('dive-hud').classList.add('visible');
             document.getElementById('dive-altitude').classList.add('visible');
         }
 
-        function updateEarthDive(dt) {
+        function updateDive(dt) {
             if (diveState === 'none') return;
 
-            const earthPos = earthPlanet.mesh.position;
-            const earthRadius = earthPlanet.originalRadius;
+            const info = diveInfo[diveTargetName] || diveInfo.Earth;
+            const targetPos = diveTarget.mesh.position;
+            const targetRadius = diveTarget.originalRadius;
+            const orbitDist = targetRadius * info.orbitMult;
+            const realRadiusKm = info.realRadius;
+            const kmPerUnit = realRadiusKm / targetRadius;
 
             if (diveState === 'diving') {
-                diveProgress += dt * 0.4; // Speed of approach
+                diveProgress += dt * 0.4;
                 const t = Math.min(diveProgress, 1);
-                const eased = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; // easeInOutCubic
+                const eased = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
 
-                // Interpolate from current overview to close orbit
                 const startDist = preDiveState.distance;
-                const endDist = earthRadius * 3.5;
+                const endDist = orbitDist;
                 const dist = startDist + (endDist - startDist) * eased;
 
-                // Orbit angle during approach
                 const orbitAngle = diveProgress * 0.5;
-                camera.position.x = earthPos.x + Math.cos(orbitAngle) * dist * (1 - eased * 0.7);
-                camera.position.y = earthPos.y + dist * 0.3 * (1 - eased * 0.5) + earthRadius * 2 * eased;
-                camera.position.z = earthPos.z + Math.sin(orbitAngle) * dist * (1 - eased * 0.7);
-                camera.lookAt(earthPos.x, earthPos.y, earthPos.z);
+                camera.position.x = targetPos.x + Math.cos(orbitAngle) * dist * (1 - eased * 0.7);
+                camera.position.y = targetPos.y + dist * 0.3 * (1 - eased * 0.5) + targetRadius * 2 * eased;
+                camera.position.z = targetPos.z + Math.sin(orbitAngle) * dist * (1 - eased * 0.7);
+                camera.lookAt(targetPos.x, targetPos.y, targetPos.z);
 
-                // Update altitude display
-                const altitude = ((dist - earthRadius) * 6371).toFixed(0);
-                document.getElementById('dive-altitude').textContent = `ALT ${altitude} km | ${(dist/earthRadius).toFixed(1)}R\u2295`;
+                const altitude = ((dist - targetRadius) * kmPerUnit).toFixed(0);
+                document.getElementById('dive-altitude').textContent = `ALT ${Number(altitude).toLocaleString()} km | ${(dist/targetRadius).toFixed(1)}${info.symbol}`;
 
                 if (t >= 1) {
                     diveState = 'orbiting';
@@ -1243,44 +1274,38 @@
                 }
             }
             else if (diveState === 'orbiting') {
-                diveProgress += dt * 0.8; // Orbit speed
-                const orbitDist = earthRadius * 3.5;
-                const tilt = 0.3; // Camera tilt above orbital plane
+                diveProgress += dt * info.speedMult;
+                const tilt = info.tilt;
 
-                camera.position.x = earthPos.x + Math.cos(diveProgress) * orbitDist;
-                camera.position.y = earthPos.y + Math.sin(diveProgress * 0.3) * orbitDist * tilt + earthRadius * 1.5;
-                camera.position.z = earthPos.z + Math.sin(diveProgress) * orbitDist;
-                camera.lookAt(earthPos.x, earthPos.y, earthPos.z);
+                camera.position.x = targetPos.x + Math.cos(diveProgress) * orbitDist;
+                camera.position.y = targetPos.y + Math.sin(diveProgress * 0.3) * orbitDist * tilt + targetRadius * 1.5;
+                camera.position.z = targetPos.z + Math.sin(diveProgress) * orbitDist;
+                camera.lookAt(targetPos.x, targetPos.y, targetPos.z);
 
-                const altitude = ((orbitDist - earthRadius) * 6371).toFixed(0);
-                document.getElementById('dive-altitude').textContent = `ALT ${altitude} km | ORBIT ${(diveProgress * 180 / Math.PI % 360).toFixed(0)}\u00B0`;
+                const altitude = ((orbitDist - targetRadius) * kmPerUnit).toFixed(0);
+                document.getElementById('dive-altitude').textContent = `ALT ${Number(altitude).toLocaleString()} km | ORBIT ${(diveProgress * 180 / Math.PI % 360).toFixed(0)}\u00B0`;
             }
             else if (diveState === 'returning') {
                 diveProgress += dt * 0.5;
                 const t = Math.min(diveProgress, 1);
                 const eased = t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
 
-                // Current orbit position
-                const earthRadius3 = earthRadius * 3.5;
                 const currentOrbitAngle = diveProgress * 0.3;
-
-                // Return to pre-dive camera
                 const targetDist = preDiveState.distance;
-                const dist = earthRadius3 + (targetDist - earthRadius3) * eased;
+                const dist = orbitDist + (targetDist - orbitDist) * eased;
 
-                // Blend from Earth-centric to sun-centric
                 const sunZ = sun.position.z;
-                const targetX = preDiveState.target.x + Math.cos(preDiveState.rotation.y) * Math.cos(preDiveState.rotation.x) * targetDist;
-                const targetY = preDiveState.target.y + Math.sin(preDiveState.rotation.x) * targetDist;
-                const targetZ = sunZ + Math.sin(preDiveState.rotation.y) * Math.cos(preDiveState.rotation.x) * targetDist;
+                const camX = preDiveState.target.x + Math.cos(preDiveState.rotation.y) * Math.cos(preDiveState.rotation.x) * targetDist;
+                const camY = preDiveState.target.y + Math.sin(preDiveState.rotation.x) * targetDist;
+                const camZ = sunZ + Math.sin(preDiveState.rotation.y) * Math.cos(preDiveState.rotation.x) * targetDist;
 
-                camera.position.x = earthPos.x * (1-eased) + targetX * eased;
-                camera.position.y = (earthPos.y + earthRadius * 1.5) * (1-eased) + targetY * eased;
-                camera.position.z = earthPos.z * (1-eased) + targetZ * eased;
+                camera.position.x = targetPos.x * (1-eased) + camX * eased;
+                camera.position.y = (targetPos.y + targetRadius * 1.5) * (1-eased) + camY * eased;
+                camera.position.z = targetPos.z * (1-eased) + camZ * eased;
 
-                const lookX = earthPos.x * (1-eased) + preDiveState.target.x * eased;
-                const lookY = earthPos.y * (1-eased) + preDiveState.target.y * eased;
-                const lookZ = earthPos.z * (1-eased) + sunZ * eased;
+                const lookX = targetPos.x * (1-eased) + preDiveState.target.x * eased;
+                const lookY = targetPos.y * (1-eased) + preDiveState.target.y * eased;
+                const lookZ = targetPos.z * (1-eased) + sunZ * eased;
                 camera.lookAt(lookX, lookY, lookZ);
 
                 document.getElementById('dive-altitude').textContent = `RETURNING... ${((1-eased)*100).toFixed(0)}%`;
@@ -1296,9 +1321,9 @@
                     followTarget = preDiveState.followTarget;
                     document.getElementById('follow-target').value = followTarget;
 
-                    const btn = document.getElementById('earth-dive-btn');
-                    btn.textContent = 'Dive to Earth';
+                    const btn = document.getElementById('planet-dive-btn');
                     btn.classList.remove('active');
+                    updateDiveButtonText();
                     document.getElementById('dive-hud').classList.remove('visible');
                     document.getElementById('dive-altitude').classList.remove('visible');
                 }
@@ -1412,8 +1437,8 @@
                 if (eventsUpdateCounter >= 60) { updateEventsDisplay(); eventsUpdateCounter = 0; }
             }
 
-            // Earth dive
-            updateEarthDive(dt);
+            // Planet dive
+            updateDive(dt);
 
             // Camera
             if (diveState === 'none') {
@@ -1555,7 +1580,7 @@
             }
         });
         document.getElementById('show-grid').addEventListener('change', (e) => { showGrid = e.target.checked; if (referenceGrid) referenceGrid.visible = showGrid; });
-        document.getElementById('follow-target').addEventListener('change', (e) => { followTarget = e.target.value; });
+        document.getElementById('follow-target').addEventListener('change', (e) => { followTarget = e.target.value; updateDiveButtonText(); });
         document.getElementById('camera-mode').addEventListener('change', (e) => { cameraMode = e.target.value; cinematicAngle = cameraRotation.y; });
         document.getElementById('show-particles').addEventListener('change', (e) => {
             showParticles = e.target.checked;
@@ -1563,8 +1588,8 @@
             else if (!showParticles && coronaParticles) { scene.remove(coronaParticles); coronaParticles = null; }
         });
 
-        // Earth dive button
-        document.getElementById('earth-dive-btn').addEventListener('click', startEarthDive);
+        // Planet dive button
+        document.getElementById('planet-dive-btn').addEventListener('click', startDive);
 
         // Export: Screenshot
         document.getElementById('export-screenshot').addEventListener('click', () => {
@@ -1669,7 +1694,7 @@
         window.addEventListener('keydown', (e) => {
             if (e.code === 'Space') { e.preventDefault(); document.getElementById('toggle-pause').click(); }
             if (e.code === 'KeyR') document.getElementById('reset-view').click();
-            if (e.code === 'KeyE') startEarthDive();
+            if (e.code === 'KeyE') startDive();
         });
 
         // =====================================================================
