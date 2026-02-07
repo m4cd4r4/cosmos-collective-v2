@@ -63,10 +63,10 @@ function Logo() {
   return (
     <Link
       href="/"
-      className="flex items-center gap-2 group"
+      className="flex items-center gap-2.5 group"
       aria-label="Cosmos Collective - Home"
     >
-      {/* Logo Icon */}
+      {/* Logo Icon — Armillary Sphere */}
       <div className="relative w-10 h-10">
         <svg
           viewBox="0 0 40 40"
@@ -75,45 +75,76 @@ function Logo() {
           className="w-full h-full"
           aria-hidden="true"
         >
-          {/* Outer ring */}
-          <circle
-            cx="20"
-            cy="20"
-            r="18"
-            stroke="url(#logoGradient)"
-            strokeWidth="2"
-            className="transition-all duration-300 group-hover:stroke-[3]"
-          />
-          {/* Inner star pattern */}
-          <circle cx="20" cy="20" r="3" fill="#d4af37" />
-          <circle cx="20" cy="10" r="1.5" fill="#ff9a3c" />
-          <circle cx="28" cy="16" r="1.5" fill="#4a90e2" />
-          <circle cx="28" cy="24" r="1.5" fill="#ff6b6b" />
-          <circle cx="20" cy="30" r="1.5" fill="#d4af37" />
-          <circle cx="12" cy="24" r="1.5" fill="#4a90e2" />
-          <circle cx="12" cy="16" r="1.5" fill="#ff9a3c" />
-          {/* Connecting lines */}
-          <path
-            d="M20 13 L20 17 M26 17 L23 19 M26 23 L23 21 M20 27 L20 23 M14 23 L17 21 M14 17 L17 19"
-            stroke="rgba(255,255,255,0.3)"
-            strokeWidth="0.5"
-          />
           <defs>
-            <linearGradient id="logoGradient" x1="0" y1="0" x2="40" y2="40">
+            <radialGradient id="cc-core" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
+              <stop offset="35%" stopColor="#d4af37" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="#d4af37" stopOpacity="0" />
+            </radialGradient>
+            <linearGradient id="cc-ring-gold" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stopColor="#d4af37" />
-              <stop offset="50%" stopColor="#ff9a3c" />
-              <stop offset="100%" stopColor="#ff6b6b" />
+              <stop offset="100%" stopColor="#ff9a3c" />
+            </linearGradient>
+            <linearGradient id="cc-ring-blue" x1="1" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="#4a90e2" />
+              <stop offset="100%" stopColor="#7ec4ff" />
+            </linearGradient>
+            <linearGradient id="cc-ring-red" x1="0.5" y1="0" x2="0.5" y2="1">
+              <stop offset="0%" stopColor="#ff6b6b" />
+              <stop offset="100%" stopColor="#d4af37" />
             </linearGradient>
           </defs>
+
+          {/* Core glow */}
+          <circle cx="20" cy="20" r="10" fill="url(#cc-core)" />
+
+          {/* Armillary rings */}
+          <ellipse
+            cx="20" cy="20" rx="17" ry="6"
+            stroke="url(#cc-ring-gold)" strokeWidth="1.2"
+            opacity="0.65"
+            transform="rotate(-25, 20, 20)"
+            className="transition-opacity duration-700 group-hover:opacity-100"
+          />
+          <ellipse
+            cx="20" cy="20" rx="17" ry="6"
+            stroke="url(#cc-ring-blue)" strokeWidth="1.2"
+            opacity="0.65"
+            transform="rotate(35, 20, 20)"
+            className="transition-opacity duration-700 group-hover:opacity-100"
+          />
+          <ellipse
+            cx="20" cy="20" rx="17" ry="6"
+            stroke="url(#cc-ring-red)" strokeWidth="1.2"
+            opacity="0.65"
+            transform="rotate(90, 20, 20)"
+            className="transition-opacity duration-700 group-hover:opacity-100"
+          />
+
+          {/* Central star */}
+          <circle cx="20" cy="20" r="3.5" fill="#d4af37" />
+          <circle cx="20" cy="20" r="1.8" fill="white" opacity="0.85" />
+
+          {/* Celestial bodies on orbits */}
+          <circle cx="35" cy="13" r="1.8" fill="#ff9a3c" />
+          <circle cx="7" cy="11" r="1.5" fill="#4a90e2" />
+          <circle cx="20" cy="3" r="1.5" fill="#ff6b6b" />
+
+          {/* Distant stars */}
+          <circle cx="33" cy="32" r="0.6" fill="white" opacity="0.4" />
+          <circle cx="8" cy="33" r="0.5" fill="white" opacity="0.3" />
         </svg>
+
+        {/* Hover glow ring */}
+        <div className="absolute inset-0 rounded-full border border-cosmos-gold/0 group-hover:border-cosmos-gold/20 transition-all duration-500" />
       </div>
 
-      {/* Logo Text - Always visible */}
-      <div>
+      {/* Logo Text */}
+      <div className="flex items-baseline gap-1.5">
         <span className="text-lg sm:text-xl font-display font-bold text-gradient-stellar">
           Cosmos
         </span>
-        <span className="text-lg sm:text-xl font-display font-light text-white ml-1">
+        <span className="text-lg sm:text-xl font-display font-light text-white/80 group-hover:text-white transition-colors duration-300">
           Collective
         </span>
       </div>
