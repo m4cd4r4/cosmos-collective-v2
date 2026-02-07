@@ -254,8 +254,8 @@
         </div>
 
         <div class="control-group">
-            <label>Orbital Speed: <span id="orbit-speed-val">0.36</span>x</label>
-            <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="0.6">
+            <label>Orbital Speed: <span id="orbit-speed-val">0.04</span>x</label>
+            <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="0.2">
         </div>
 
         <div class="control-group">
@@ -991,8 +991,30 @@
         // TRAIL SYSTEM
         // =====================================================================
         const trailLines = new Map();
+        const sunTrail = [];
+        let sunTrailMaxLength = 2000;
 
         function updateTrails() {
+            // Sun trail — shows the vortex forward path
+            sunTrail.push(sun.position.clone());
+            if (sunTrail.length > sunTrailMaxLength) sunTrail.shift();
+
+            const oldSunLine = trailLines.get('__sun__');
+            if (oldSunLine) { scene.remove(oldSunLine); oldSunLine.geometry.dispose(); oldSunLine.material.dispose(); }
+
+            if (sunTrail.length > 2) {
+                const points = sunTrail.map(p => new THREE.Vector3(p.x, p.y, p.z));
+                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                const mat = new THREE.LineBasicMaterial({
+                    color: new THREE.Color(0xfdb813),
+                    transparent: true,
+                    opacity: trailOpacity * 0.4
+                });
+                const line = new THREE.Line(geo, mat);
+                trailLines.set('__sun__', line);
+                scene.add(line);
+            }
+
             // Planet trails
             planets.forEach(planet => {
                 planet.trail.push(planet.mesh.position.clone());
@@ -1335,7 +1357,7 @@
         // =====================================================================
         let sunPosition = 0;
         const sunSpeed = 0.5;
-        let orbitSpeedMultiplier = 0.6 * 0.6; // 0.36
+        let orbitSpeedMultiplier = 0.2 * 0.2; // 0.04
         let isPaused = false;
         let currentSunSpeed = 0.3 * 0.3; // 0.09
         let showLabels = true;
@@ -1396,7 +1418,7 @@
 
                     if (showMoons) {
                         planet.moons.forEach(moon => {
-                            const step = Math.min(moon.speed * 0.01 * orbitSpeedMultiplier, 0.15);
+                            const step = moon.speed * 0.01 * orbitSpeedMultiplier;
                             moon.angle += step;
                             moon.mesh.position.set(
                                 planet.mesh.position.x + Math.cos(moon.angle) * moon.distance,
@@ -1544,6 +1566,7 @@
         document.getElementById('trail-length').addEventListener('input', (e) => {
             const len = parseInt(e.target.value);
             planets.forEach(p => p.maxTrailLength = len);
+            sunTrailMaxLength = Math.round(len * 2.5);
             document.getElementById('trail-length-val').textContent = len;
         });
         document.getElementById('trail-opacity').addEventListener('input', (e) => {
@@ -1580,7 +1603,33 @@
             }
         });
         document.getElementById('show-grid').addEventListener('change', (e) => { showGrid = e.target.checked; if (referenceGrid) referenceGrid.visible = showGrid; });
-        document.getElementById('follow-target').addEventListener('change', (e) => { followTarget = e.target.value; updateDiveButtonText(); });
+        document.getElementById('follow-target').addEventListener('change', (e) => {
+            const newTarget = e.target.value;
+            // If currently diving, instantly exit dive and switch to new target
+            if (diveState !== 'none') {
+                diveState = 'none';
+                cameraMode = preDiveState ? preDiveState.mode : 'free';
+                if (preDiveState) {
+                    cameraDistance = preDiveState.distance;
+                    cameraRotation = { ...preDiveState.rotation };
+                    currentSunSpeed = preDiveState.sunSpeed;
+                    orbitSpeedMultiplier = preDiveState.orbitSpeed;
+                }
+                document.getElementById('planet-dive-btn').classList.remove('active');
+                document.getElementById('dive-hud').classList.remove('visible');
+                document.getElementById('dive-altitude').classList.remove('visible');
+            }
+            followTarget = newTarget;
+            // Snap camera target to new follow position
+            const followPos = getFollowPosition();
+            if (followPos) {
+                cameraTarget.x = followPos.x;
+                cameraTarget.y = followPos.y;
+                cameraTarget.z = followPos.z;
+            }
+            updateCameraPosition();
+            updateDiveButtonText();
+        });
         document.getElementById('camera-mode').addEventListener('change', (e) => { cameraMode = e.target.value; cinematicAngle = cameraRotation.y; });
         document.getElementById('show-particles').addEventListener('change', (e) => {
             showParticles = e.target.checked;
@@ -1655,7 +1704,35 @@
             document.getElementById('bottom-left-btns').style.display = 'none';
         }
 
-        planetLabels.forEach((label, name) => label.addEventListener('click', () => showPlanetInfo(name)));
+        planetLabels.forEach((label, name) => label.addEventListener('click', () => {
+            showPlanetInfo(name);
+            // Also switch follow target to this planet
+            const val = name.toLowerCase();
+            followTarget = val;
+            document.getElementById('follow-target').value = val;
+            // If in dive, exit it
+            if (diveState !== 'none') {
+                diveState = 'none';
+                cameraMode = preDiveState ? preDiveState.mode : 'free';
+                if (preDiveState) {
+                    cameraDistance = preDiveState.distance;
+                    cameraRotation = { ...preDiveState.rotation };
+                    currentSunSpeed = preDiveState.sunSpeed;
+                    orbitSpeedMultiplier = preDiveState.orbitSpeed;
+                }
+                document.getElementById('planet-dive-btn').classList.remove('active');
+                document.getElementById('dive-hud').classList.remove('visible');
+                document.getElementById('dive-altitude').classList.remove('visible');
+            }
+            const followPos = getFollowPosition();
+            if (followPos) {
+                cameraTarget.x = followPos.x;
+                cameraTarget.y = followPos.y;
+                cameraTarget.z = followPos.z;
+            }
+            updateCameraPosition();
+            updateDiveButtonText();
+        }));
 
         document.getElementById('close-science').addEventListener('click', () => {
             document.getElementById('science-panel').style.display = 'none';
