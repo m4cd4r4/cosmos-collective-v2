@@ -82,7 +82,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
           {/* Back Link */}
           <Link
             href="/devlog"
-            className="inline-flex items-center gap-2 text-cosmos-cyan hover:text-white transition-colors mb-8"
+            className="inline-flex items-center gap-2 text-cosmos-gold hover:text-white transition-colors mb-8"
           >
             <ArrowLeft className="w-4 h-4" />
             Back to Devlog
@@ -91,7 +91,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
           {/* Header */}
           <header className="mb-12">
             {/* Category */}
-            <span className="inline-block px-3 py-1 rounded-full bg-cosmos-cyan/20 text-cosmos-cyan text-sm font-medium mb-4">
+            <span className="inline-block px-3 py-1 rounded-full bg-cosmos-gold/20 text-cosmos-gold text-sm font-medium mb-4">
               {post.category.replace('-', ' ')}
             </span>
 
@@ -135,7 +135,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
           </header>
 
           {/* Excerpt */}
-          <div className="glass-panel rounded-xl p-6 mb-12 border-l-4 border-cosmos-cyan">
+          <div className="glass-panel rounded-xl p-6 mb-12 border-l-4 border-cosmos-gold">
             <p className="text-lg text-gray-300 italic">{post.excerpt}</p>
           </div>
 
@@ -196,7 +196,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
           <div className="flex justify-between">
             <Link
               href="/devlog"
-              className="flex items-center gap-2 text-gray-400 hover:text-cosmos-cyan transition-colors"
+              className="flex items-center gap-2 text-gray-400 hover:text-cosmos-gold transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               All Posts
@@ -219,10 +219,10 @@ function RelatedPostCard({ post }: { post: DevlogPost }) {
     <Link href={`/devlog/${post.slug}`} className="block group">
       <Card className="h-full transition-all group-hover:scale-[1.02]" padding="md">
         <CardContent>
-          <span className="text-xs text-cosmos-cyan font-medium uppercase tracking-wider">
+          <span className="text-xs text-cosmos-gold font-medium uppercase tracking-wider">
             {post.category.replace('-', ' ')}
           </span>
-          <h3 className="text-lg font-semibold text-white mt-2 mb-2 group-hover:text-cosmos-cyan transition-colors line-clamp-2">
+          <h3 className="text-lg font-semibold text-white mt-2 mb-2 group-hover:text-cosmos-gold transition-colors line-clamp-2">
             {post.title}
           </h3>
           <p className="text-sm text-gray-400 line-clamp-2">{post.excerpt}</p>

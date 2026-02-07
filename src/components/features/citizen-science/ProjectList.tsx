@@ -80,7 +80,7 @@ export function ProjectList({ onStartClassifying }: ProjectListProps) {
             placeholder="Search projects..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2.5 rounded-lg glass-panel border border-white/10 text-white placeholder:text-gray-500 text-sm focus:outline-none focus:border-cosmos-cyan"
+            className="w-full pl-10 pr-4 py-2.5 rounded-lg glass-panel border border-white/10 text-white placeholder:text-gray-500 text-sm focus:outline-none focus:border-cosmos-gold"
           />
         </div>
 
@@ -93,7 +93,7 @@ export function ProjectList({ onStartClassifying }: ProjectListProps) {
               className={cn(
                 'px-3 py-1.5 rounded-full text-xs font-medium transition-all',
                 selectedTag === tag.id
-                  ? 'bg-cosmos-cyan text-white'
+                  ? 'bg-cosmos-gold text-white'
                   : 'glass-panel text-gray-300 hover:text-white hover:bg-white/10'
               )}
               aria-pressed={selectedTag === tag.id}
@@ -182,11 +182,11 @@ function ProjectCard({ project, onStartClassifying }: ProjectCardProps) {
           {/* Icon */}
           <div className="absolute bottom-4 left-4">
             {project.tags.includes('radio') ? (
-              <Radio className="w-10 h-10 text-cosmos-cyan opacity-50" />
+              <Radio className="w-10 h-10 text-cosmos-gold opacity-50" />
             ) : project.tags.includes('exoplanets') ? (
               <Star className="w-10 h-10 text-cosmos-gold opacity-50" />
             ) : (
-              <Sparkles className="w-10 h-10 text-cosmos-purple opacity-50" />
+              <Sparkles className="w-10 h-10 text-cosmos-nebula-blue opacity-50" />
             )}
           </div>
         </div>
@@ -194,7 +194,7 @@ function ProjectCard({ project, onStartClassifying }: ProjectCardProps) {
         {/* Content */}
         <div className="p-4 space-y-4">
           <div>
-            <h3 className="text-lg font-semibold text-white group-hover:text-cosmos-cyan transition-colors">
+            <h3 className="text-lg font-semibold text-white group-hover:text-cosmos-gold transition-colors">
               {project.displayName}
             </h3>
             <p className="text-sm text-gray-400 mt-1 line-clamp-2">
@@ -230,11 +230,11 @@ function ProjectCard({ project, onStartClassifying }: ProjectCardProps) {
           <div>
             <div className="flex items-center justify-between text-xs mb-1">
               <span className="text-gray-400">Progress</span>
-              <span className="text-cosmos-cyan">{progressPercent}%</span>
+              <span className="text-cosmos-gold">{progressPercent}%</span>
             </div>
             <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-cosmos-cyan to-cosmos-purple transition-all duration-500"
+                className="h-full bg-gradient-to-r from-cosmos-gold to-cosmos-nebula-blue transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>

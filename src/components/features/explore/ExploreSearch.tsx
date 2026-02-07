@@ -103,7 +103,7 @@ export function ExploreSearch({ initialQuery = '' }: ExploreSearchProps) {
               'w-full pl-12 pr-12 py-3 rounded-xl',
               'bg-cosmos-surface border border-white/10',
               'text-white placeholder:text-gray-500',
-              'focus:border-cosmos-cyan focus:ring-2 focus:ring-cosmos-cyan/20',
+              'focus:border-cosmos-gold focus:ring-2 focus:ring-cosmos-gold/20',
               'transition-all duration-200'
             )}
             aria-label="Search observations"

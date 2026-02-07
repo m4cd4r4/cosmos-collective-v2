@@ -72,7 +72,7 @@ export function CitizenScienceHub() {
 
       {/* Hero Section */}
       <section className="text-center mb-12">
-        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-cosmos-cyan text-sm font-medium mb-4">
+        <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-cosmos-gold text-sm font-medium mb-4">
           <Users className="w-4 h-4" />
           Join 2+ million citizen scientists worldwide
         </span>
@@ -121,7 +121,7 @@ export function CitizenScienceHub() {
               className={cn(
                 'flex items-center gap-2 px-6 py-3 rounded-lg text-sm font-medium transition-all',
                 activeTab === tab.id
-                  ? 'bg-cosmos-cyan/20 text-cosmos-cyan'
+                  ? 'bg-cosmos-gold/20 text-cosmos-gold'
                   : 'text-gray-400 hover:text-white hover:bg-white/5'
               )}
             >
@@ -177,7 +177,7 @@ export function CitizenScienceHub() {
         <Card className="max-w-4xl mx-auto" variant="elevated" padding="xl">
           <CardContent>
             <div className="flex items-center justify-center gap-3 mb-4">
-              <Radio className="w-8 h-8 text-cosmos-cyan" />
+              <Radio className="w-8 h-8 text-cosmos-gold" />
               <Telescope className="w-8 h-8 text-cosmos-gold" />
             </div>
             <h2 className="text-2xl font-display font-bold text-white mb-3">
@@ -233,7 +233,7 @@ export function CitizenScienceHub() {
           ].map((item) => (
             <Card key={item.step} padding="lg" className="text-center">
               <CardContent>
-                <div className="w-10 h-10 rounded-full bg-cosmos-cyan/20 text-cosmos-cyan flex items-center justify-center mx-auto mb-4 text-lg font-bold">
+                <div className="w-10 h-10 rounded-full bg-cosmos-gold/20 text-cosmos-gold flex items-center justify-center mx-auto mb-4 text-lg font-bold">
                   {item.step}
                 </div>
                 <h3 className="text-lg font-semibold text-white mb-2">{item.title}</h3>

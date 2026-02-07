@@ -151,9 +151,9 @@ export function DashboardContent() {
 
           <div className="flex items-center gap-3">
             {issPosition && (
-              <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-cosmos-cyan/10 border border-cosmos-cyan/30">
-                <Satellite className="w-4 h-4 text-cosmos-cyan" />
-                <span className="text-xs text-cosmos-cyan">
+              <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-cosmos-gold/10 border border-cosmos-gold/30">
+                <Satellite className="w-4 h-4 text-cosmos-gold" />
+                <span className="text-xs text-cosmos-gold">
                   ISS: {issPosition.lat.toFixed(1)}°, {issPosition.lon.toFixed(1)}°
                 </span>
               </div>
@@ -207,7 +207,7 @@ export function DashboardContent() {
               'flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all whitespace-nowrap',
               'border-b-2 -mb-px',
               activeTab === tab.id
-                ? 'border-cosmos-cyan text-cosmos-cyan'
+                ? 'border-cosmos-gold text-cosmos-gold'
                 : 'border-transparent text-gray-400 hover:text-white'
             )}
           >
@@ -255,7 +255,7 @@ export function DashboardContent() {
                 ) : (
                   <div className="p-6 text-center">
                     {isLoading ? (
-                      <Loader2 className="w-8 h-8 text-cosmos-cyan animate-spin mx-auto" />
+                      <Loader2 className="w-8 h-8 text-cosmos-gold animate-spin mx-auto" />
                     ) : (
                       <p className="text-gray-400">Unable to load picture of the day</p>
                     )}
@@ -316,7 +316,7 @@ export function DashboardContent() {
 
                 {isLoading ? (
                   <div className="flex justify-center py-8">
-                    <Loader2 className="w-6 h-6 text-cosmos-cyan animate-spin" />
+                    <Loader2 className="w-6 h-6 text-cosmos-gold animate-spin" />
                   </div>
                 ) : events.length > 0 ? (
                   <div className="space-y-3">
@@ -334,7 +334,7 @@ export function DashboardContent() {
             <Card padding="lg">
               <CardContent>
                 <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                  <Radio className="w-5 h-5 text-cosmos-cyan" />
+                  <Radio className="w-5 h-5 text-cosmos-gold" />
                   SKA Progress
                 </h2>
 
@@ -344,7 +344,7 @@ export function DashboardContent() {
                       key={item.year}
                       className={cn(
                         'p-3 rounded-lg',
-                        item.status === 'completed' && 'bg-cosmos-cyan/10 border border-cosmos-cyan/20',
+                        item.status === 'completed' && 'bg-cosmos-gold/10 border border-cosmos-gold/20',
                         item.status === 'in-progress' && 'bg-cosmos-gold/10 border border-cosmos-gold/20',
                         item.status === 'upcoming' && 'bg-white/5 border border-white/10'
                       )}
@@ -353,7 +353,7 @@ export function DashboardContent() {
                         <span className="text-white font-medium">{item.year}</span>
                         <span className={cn(
                           'text-xs px-2 py-0.5 rounded',
-                          item.status === 'completed' && 'bg-cosmos-cyan/20 text-cosmos-cyan',
+                          item.status === 'completed' && 'bg-cosmos-gold/20 text-cosmos-gold',
                           item.status === 'in-progress' && 'bg-cosmos-gold/20 text-cosmos-gold',
                           item.status === 'upcoming' && 'bg-white/10 text-gray-400'
                         )}>
@@ -427,7 +427,7 @@ export function DashboardContent() {
 
                   {isLoading ? (
                     <div className="flex justify-center py-12">
-                      <Loader2 className="w-8 h-8 text-cosmos-cyan animate-spin" />
+                      <Loader2 className="w-8 h-8 text-cosmos-gold animate-spin" />
                     </div>
                   ) : events.length > 0 ? (
                     <div className="space-y-4">
@@ -450,7 +450,7 @@ export function DashboardContent() {
               <Card padding="lg">
                 <CardContent>
                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <Satellite className="w-5 h-5 text-cosmos-cyan" />
+                    <Satellite className="w-5 h-5 text-cosmos-gold" />
                     ISS Location
                   </h3>
                   {issPosition ? (
@@ -472,7 +472,7 @@ export function DashboardContent() {
                         href="https://spotthestation.nasa.gov/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-cosmos-cyan hover:underline"
+                        className="text-xs text-cosmos-gold hover:underline"
                       >
                         View on NASA Spot the Station →
                       </a>
@@ -492,9 +492,9 @@ export function DashboardContent() {
                   <h3 className="text-lg font-semibold text-white mb-4">Event Types</h3>
                   <div className="space-y-2">
                     {[
-                      { icon: Globe, label: 'Asteroids', color: 'text-cosmos-cyan' },
+                      { icon: Globe, label: 'Asteroids', color: 'text-cosmos-gold' },
                       { icon: Zap, label: 'Solar Activity', color: 'text-cosmos-gold' },
-                      { icon: Star, label: 'Meteor Showers', color: 'text-cosmos-pink' },
+                      { icon: Star, label: 'Meteor Showers', color: 'text-cosmos-hydrogen' },
                     ].map((type) => (
                       <div key={type.label} className="flex items-center gap-2">
                         <type.icon className={cn('w-4 h-4', type.color)} />
@@ -523,8 +523,8 @@ export function DashboardContent() {
                 <Card key={project.id} padding="lg" className="group">
                   <CardContent>
                     <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 rounded-lg bg-cosmos-cyan/20 flex items-center justify-center">
-                        <Target className="w-5 h-5 text-cosmos-cyan" />
+                      <div className="w-10 h-10 rounded-lg bg-cosmos-gold/20 flex items-center justify-center">
+                        <Target className="w-5 h-5 text-cosmos-gold" />
                       </div>
                       <span className={cn(
                         'px-2 py-0.5 rounded text-xs',
@@ -536,7 +536,7 @@ export function DashboardContent() {
                       </span>
                     </div>
 
-                    <h3 className="text-white font-semibold mb-2 group-hover:text-cosmos-cyan transition-colors">
+                    <h3 className="text-white font-semibold mb-2 group-hover:text-cosmos-gold transition-colors">
                       {project.displayName}
                     </h3>
                     <p className="text-sm text-gray-400 line-clamp-2 mb-4">
@@ -562,7 +562,7 @@ export function DashboardContent() {
             {/* SKA Science Goals */}
             <div className="mt-12">
               <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
-                <Radio className="w-5 h-5 text-cosmos-cyan" />
+                <Radio className="w-5 h-5 text-cosmos-gold" />
                 SKA Science Goals
               </h2>
 
@@ -600,10 +600,10 @@ interface StatCardProps {
 
 function StatCard({ icon: Icon, value, label, color }: StatCardProps) {
   const colorClasses = {
-    cyan: 'text-cosmos-cyan bg-cosmos-cyan/10',
-    pink: 'text-cosmos-pink bg-cosmos-pink/10',
+    cyan: 'text-cosmos-gold bg-cosmos-gold/10',
+    pink: 'text-cosmos-hydrogen bg-cosmos-hydrogen/10',
     gold: 'text-cosmos-gold bg-cosmos-gold/10',
-    purple: 'text-cosmos-purple bg-cosmos-purple/10',
+    purple: 'text-cosmos-nebula-blue bg-cosmos-nebula-blue/10',
   }
 
   return (
@@ -636,16 +636,16 @@ function QuickActionLink({ href, icon: Icon, label, description }: QuickActionLi
       href={href}
       className="flex items-center gap-3 p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors group"
     >
-      <div className="w-10 h-10 rounded-lg bg-cosmos-cyan/10 flex items-center justify-center group-hover:bg-cosmos-cyan/20 transition-colors">
-        <Icon className="w-5 h-5 text-cosmos-cyan" />
+      <div className="w-10 h-10 rounded-lg bg-cosmos-gold/10 flex items-center justify-center group-hover:bg-cosmos-gold/20 transition-colors">
+        <Icon className="w-5 h-5 text-cosmos-gold" />
       </div>
       <div className="flex-1">
-        <p className="text-sm font-medium text-white group-hover:text-cosmos-cyan transition-colors">
+        <p className="text-sm font-medium text-white group-hover:text-cosmos-gold transition-colors">
           {label}
         </p>
         <p className="text-xs text-gray-500">{description}</p>
       </div>
-      <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-cosmos-cyan transition-colors" />
+      <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-cosmos-gold transition-colors" />
     </Link>
   )
 }
@@ -673,11 +673,11 @@ function EventCard({ event, expanded }: EventCardProps) {
     switch (severity) {
       case 'rare':
       case 'once-in-lifetime':
-        return 'bg-cosmos-pink/20 text-cosmos-pink'
+        return 'bg-cosmos-hydrogen/20 text-cosmos-hydrogen'
       case 'significant':
         return 'bg-cosmos-gold/20 text-cosmos-gold'
       case 'notable':
-        return 'bg-cosmos-cyan/20 text-cosmos-cyan'
+        return 'bg-cosmos-gold/20 text-cosmos-gold'
       default:
         return 'bg-white/10 text-gray-400'
     }
@@ -711,7 +711,7 @@ function EventCard({ event, expanded }: EventCardProps) {
         )}
         <p className="text-xs text-gray-500 mt-1">
           {formatDate(event.eventTime, { month: 'short', day: 'numeric' })}
-          {event.isOngoing && <span className="text-cosmos-cyan ml-2">Ongoing</span>}
+          {event.isOngoing && <span className="text-cosmos-gold ml-2">Ongoing</span>}
         </p>
       </div>
     </div>
@@ -748,7 +748,7 @@ function FavoriteCard({ observation }: { observation: Observation }) {
             <div>
               <Link
                 href={`/explore/${observation.id}`}
-                className="text-lg font-semibold text-white hover:text-cosmos-cyan transition-colors line-clamp-1"
+                className="text-lg font-semibold text-white hover:text-cosmos-gold transition-colors line-clamp-1"
               >
                 {observation.targetName}
               </Link>
@@ -759,7 +759,7 @@ function FavoriteCard({ observation }: { observation: Observation }) {
               className="p-2 rounded-lg hover:bg-white/10 transition-colors"
               aria-label="Remove from favourites"
             >
-              <Heart className="w-5 h-5 text-cosmos-pink fill-current" />
+              <Heart className="w-5 h-5 text-cosmos-hydrogen fill-current" />
             </button>
           </div>
 

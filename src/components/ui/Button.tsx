@@ -20,7 +20,7 @@ const buttonVariants = cva(
     'inline-flex items-center justify-center gap-2',
     'font-medium rounded-lg',
     'transition-all duration-200',
-    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cosmos-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void',
+    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cosmos-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void',
     'disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none',
     'touch-target', // Ensures minimum 44px touch target
   ],
@@ -28,7 +28,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary: [
-          'bg-gradient-to-r from-cosmos-cyan to-cosmos-purple',
+          'bg-gradient-to-r from-cosmos-gold to-cosmos-nebula-blue',
           'text-white font-semibold',
           'hover:shadow-glow-cyan hover:scale-[1.02]',
           'active:scale-[0.98]',
@@ -44,9 +44,9 @@ const buttonVariants = cva(
           'hover:bg-white/5',
         ],
         outline: [
-          'border-2 border-cosmos-cyan/50',
-          'text-cosmos-cyan',
-          'hover:bg-cosmos-cyan/10 hover:border-cosmos-cyan',
+          'border-2 border-cosmos-gold/50',
+          'text-cosmos-gold',
+          'hover:bg-cosmos-gold/10 hover:border-cosmos-gold',
         ],
         danger: [
           'bg-red-600 hover:bg-red-700',
@@ -57,7 +57,7 @@ const buttonVariants = cva(
           'text-white font-semibold',
         ],
         link: [
-          'text-cosmos-cyan underline-offset-4',
+          'text-cosmos-gold underline-offset-4',
           'hover:underline',
           'p-0 h-auto',
         ],

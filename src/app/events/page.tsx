@@ -145,9 +145,9 @@ export default function EventsPage() {
           if (element) {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' })
             // Add highlight effect
-            element.classList.add('ring-2', 'ring-cosmos-cyan', 'ring-offset-2', 'ring-offset-cosmos-void')
+            element.classList.add('ring-2', 'ring-cosmos-gold', 'ring-offset-2', 'ring-offset-cosmos-void')
             setTimeout(() => {
-              element.classList.remove('ring-2', 'ring-cosmos-cyan', 'ring-offset-2', 'ring-offset-cosmos-void')
+              element.classList.remove('ring-2', 'ring-cosmos-gold', 'ring-offset-2', 'ring-offset-cosmos-void')
             }, 3000)
           }
         }, 100)
@@ -159,11 +159,11 @@ export default function EventsPage() {
     switch (severity) {
       case 'once-in-lifetime':
       case 'rare':
-        return 'bg-cosmos-pink/20 text-cosmos-pink border-cosmos-pink/50'
+        return 'bg-cosmos-hydrogen/20 text-cosmos-hydrogen border-cosmos-hydrogen/50'
       case 'significant':
         return 'bg-cosmos-gold/20 text-cosmos-gold border-cosmos-gold/50'
       case 'notable':
-        return 'bg-cosmos-cyan/20 text-cosmos-cyan border-cosmos-cyan/50'
+        return 'bg-cosmos-gold/20 text-cosmos-gold border-cosmos-gold/50'
       default:
         return 'bg-white/10 text-gray-300 border-white/20'
     }
@@ -238,9 +238,9 @@ export default function EventsPage() {
         backgroundKey="saturnRings"
         size="sm"
         badge={
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-cyan/10 border border-cosmos-cyan/30">
-            <Calendar className="w-4 h-4 text-cosmos-cyan" />
-            <span className="text-sm text-cosmos-cyan font-medium">Live Updates</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30">
+            <Calendar className="w-4 h-4 text-cosmos-gold" />
+            <span className="text-sm text-cosmos-gold font-medium">Live Updates</span>
           </div>
         }
       >
@@ -270,7 +270,7 @@ export default function EventsPage() {
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
               <div>
                 <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-                  <Video className="w-6 h-6 text-cosmos-cyan" />
+                  <Video className="w-6 h-6 text-cosmos-gold" />
                   ISS Live Cameras
                 </h2>
                 <p className="text-gray-400 mt-1">
@@ -299,7 +299,7 @@ export default function EventsPage() {
                     className={cn(
                       'w-full p-4 rounded-xl text-left transition-all',
                       selectedCamera.id === camera.id
-                        ? 'bg-cosmos-cyan/20 border border-cosmos-cyan/50'
+                        ? 'bg-cosmos-gold/20 border border-cosmos-gold/50'
                         : 'glass-panel hover:bg-white/5 border border-transparent'
                     )}
                   >
@@ -307,18 +307,18 @@ export default function EventsPage() {
                       <div className={cn(
                         'w-10 h-10 rounded-lg flex items-center justify-center',
                         selectedCamera.id === camera.id
-                          ? 'bg-cosmos-cyan/30'
+                          ? 'bg-cosmos-gold/30'
                           : 'bg-white/10'
                       )}>
                         <Eye className={cn(
                           'w-5 h-5',
-                          selectedCamera.id === camera.id ? 'text-cosmos-cyan' : 'text-gray-400'
+                          selectedCamera.id === camera.id ? 'text-cosmos-gold' : 'text-gray-400'
                         )} />
                       </div>
                       <div>
                         <h4 className={cn(
                           'font-medium',
-                          selectedCamera.id === camera.id ? 'text-cosmos-cyan' : 'text-white'
+                          selectedCamera.id === camera.id ? 'text-cosmos-gold' : 'text-white'
                         )}>
                           {camera.name}
                         </h4>
@@ -381,7 +381,7 @@ export default function EventsPage() {
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <Card padding="md" className="text-center">
                     <CardContent>
-                      <div className="text-lg sm:text-2xl font-bold text-cosmos-cyan">~27,600</div>
+                      <div className="text-lg sm:text-2xl font-bold text-cosmos-gold">~27,600</div>
                       <div className="text-[10px] sm:text-xs text-gray-400">km/h orbital speed</div>
                     </CardContent>
                   </Card>
@@ -393,7 +393,7 @@ export default function EventsPage() {
                   </Card>
                   <Card padding="md" className="text-center">
                     <CardContent>
-                      <div className="text-lg sm:text-2xl font-bold text-cosmos-pink">92</div>
+                      <div className="text-lg sm:text-2xl font-bold text-cosmos-hydrogen">92</div>
                       <div className="text-[10px] sm:text-xs text-gray-400">min per orbit</div>
                     </CardContent>
                   </Card>
@@ -413,7 +413,7 @@ export default function EventsPage() {
 
               {isLoading ? (
                 <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 text-cosmos-cyan animate-spin" />
+                  <Loader2 className="w-8 h-8 text-cosmos-gold animate-spin" />
                 </div>
               ) : events.length > 0 ? (
                 <div className="space-y-4">
@@ -435,7 +435,7 @@ export default function EventsPage() {
                         padding="none"
                         className={cn(
                           'overflow-hidden transition-all duration-300',
-                          primaryUrl && 'hover:border-cosmos-cyan/50 hover:bg-white/5 cursor-pointer'
+                          primaryUrl && 'hover:border-cosmos-gold/50 hover:bg-white/5 cursor-pointer'
                         )}
                       >
                         <CardWrapper {...cardProps} className="block">
@@ -476,7 +476,7 @@ export default function EventsPage() {
                                 </span>
                                 <span>Source: {event.source}</span>
                                 {event.isOngoing && (
-                                  <span className="text-cosmos-cyan">Ongoing</span>
+                                  <span className="text-cosmos-gold">Ongoing</span>
                                 )}
                               </div>
                               {/* All reference links */}
@@ -485,7 +485,7 @@ export default function EventsPage() {
                                   {event.references.map((ref, idx) => (
                                     <span
                                       key={idx}
-                                      className="inline-flex items-center gap-1 text-xs text-cosmos-cyan"
+                                      className="inline-flex items-center gap-1 text-xs text-cosmos-gold"
                                       onClick={(e) => e.stopPropagation()}
                                     >
                                       <a
@@ -542,7 +542,7 @@ export default function EventsPage() {
               <Card padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
-                    <Satellite className="w-5 h-5 text-cosmos-cyan" />
+                    <Satellite className="w-5 h-5 text-cosmos-gold" />
                     ISS Position
                   </CardTitle>
                 </CardHeader>
@@ -568,7 +568,7 @@ export default function EventsPage() {
                         href="https://spotthestation.nasa.gov/"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs text-cosmos-cyan hover:underline"
+                        className="text-xs text-cosmos-gold hover:underline"
                       >
                         View on NASA Spot the Station →
                       </a>
@@ -601,7 +601,7 @@ export default function EventsPage() {
                         className="block p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
                       >
                         <div className="flex items-center justify-between">
-                          <span className="font-medium text-white group-hover:text-cosmos-cyan transition-colors">{shower.name}</span>
+                          <span className="font-medium text-white group-hover:text-cosmos-gold transition-colors">{shower.name}</span>
                           <span className="text-xs text-cosmos-gold">{shower.zenithalHourlyRate}/hr</span>
                         </div>
                         <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
@@ -624,7 +624,7 @@ export default function EventsPage() {
                 >
                   <Card
                     padding="none"
-                    className="overflow-hidden transition-all duration-200 hover:border-cosmos-cyan/50 hover:bg-white/5 cursor-pointer"
+                    className="overflow-hidden transition-all duration-200 hover:border-cosmos-gold/50 hover:bg-white/5 cursor-pointer"
                   >
                     {apod.media_type === 'image' && (
                       <div className="relative aspect-video">

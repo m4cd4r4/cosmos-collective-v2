@@ -32,8 +32,8 @@ export default function PrivacyPage() {
 
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="w-16 h-16 rounded-2xl bg-cosmos-purple/20 flex items-center justify-center mx-auto mb-6">
-              <Shield className="w-8 h-8 text-cosmos-purple" />
+            <div className="w-16 h-16 rounded-2xl bg-cosmos-nebula-blue/20 flex items-center justify-center mx-auto mb-6">
+              <Shield className="w-8 h-8 text-cosmos-nebula-blue" />
             </div>
             <h1 className="text-4xl font-display font-bold text-white mb-4">
               Privacy Policy
@@ -108,7 +108,7 @@ export default function PrivacyPage() {
                   href="https://github.com/m4cd4r4/cosmos-collective-v2"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-cosmos-cyan hover:underline"
+                  className="text-cosmos-gold hover:underline"
                 >
                   GitHub repository
                 </a>

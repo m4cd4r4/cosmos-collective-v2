@@ -85,7 +85,7 @@ export function Footer() {
                 href="https://ko-fi.com/m4cd4r4"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:text-cosmos-pink hover:bg-cosmos-pink/10 transition-colors"
+                className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:text-cosmos-hydrogen hover:bg-cosmos-hydrogen/10 transition-colors"
                 aria-label="Support on Ko-fi"
               >
                 <Heart className="w-5 h-5" />
@@ -231,7 +231,7 @@ export function Footer() {
                 href="https://github.com/m4cd4r4"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-cosmos-cyan/10 hover:text-cosmos-cyan transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-cosmos-gold/10 hover:text-cosmos-gold transition-colors"
               >
                 <Briefcase className="w-3.5 h-3.5" />
                 <span>Available for hire</span>

@@ -1035,7 +1035,7 @@ We target WCAG 2.1 Level AA compliance across the platform:
 /* High contrast against dark background */
 --text-primary: #ffffff;        /* 21:1 on void */
 --text-secondary: #9ca3af;      /* 5.5:1 on void */
---cosmos-cyan: #22d3ee;         /* 6.2:1 on void */
+--cosmos-gold: #d4af37;         /* 6.2:1 on void */
 \`\`\`
 
 **Non-colour indicators**: Information isn't conveyed by colour alone:
@@ -1072,7 +1072,7 @@ We target WCAG 2.1 Level AA compliance across the platform:
 
 \`\`\`css
 :focus-visible {
-  outline: 2px solid var(--cosmos-cyan);
+  outline: 2px solid var(--cosmos-gold);
   outline-offset: 2px;
 }
 \`\`\`

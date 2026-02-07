@@ -80,7 +80,7 @@ export default async function DevlogPage() {
           {years.map((year) => (
             <section key={year} className="mb-12">
               <h2 className="text-2xl font-display font-bold text-white mb-6 flex items-center gap-3">
-                <span className="w-12 h-0.5 bg-cosmos-cyan" />
+                <span className="w-12 h-0.5 bg-cosmos-gold" />
                 {year}
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -95,7 +95,7 @@ export default async function DevlogPage() {
           {posts.length === 0 && (
             <Card className="max-w-2xl mx-auto text-center" padding="xl">
               <CardContent>
-                <Code2 className="w-12 h-12 text-cosmos-cyan mx-auto mb-4" />
+                <Code2 className="w-12 h-12 text-cosmos-gold mx-auto mb-4" />
                 <h2 className="text-xl font-semibold text-white mb-2">
                   Devlog Coming Soon
                 </h2>
@@ -128,14 +128,14 @@ function FeaturedPost({ post }: { post: DevlogPost }) {
         <CardContent className="p-0">
           <div className="grid md:grid-cols-2 gap-0">
             {/* Image/Gradient */}
-            <div className="h-48 md:h-auto bg-gradient-to-br from-cosmos-cyan/20 via-cosmos-purple/20 to-cosmos-gold/20 flex items-center justify-center">
+            <div className="h-48 md:h-auto bg-gradient-to-br from-cosmos-gold/20 via-cosmos-nebula-blue/20 to-cosmos-gold/20 flex items-center justify-center">
               <CategoryIcon className="w-24 h-24 text-white/20" />
             </div>
 
             {/* Content */}
             <div className="p-6 md:p-8">
               <div className="flex items-center gap-2 mb-4">
-                <span className="px-3 py-1 rounded-full bg-cosmos-cyan/20 text-cosmos-cyan text-xs font-medium">
+                <span className="px-3 py-1 rounded-full bg-cosmos-gold/20 text-cosmos-gold text-xs font-medium">
                   Featured
                 </span>
                 <span className="px-3 py-1 rounded-full bg-white/10 text-gray-300 text-xs">
@@ -143,7 +143,7 @@ function FeaturedPost({ post }: { post: DevlogPost }) {
                 </span>
               </div>
 
-              <h3 className="text-2xl font-display font-bold text-white mb-3 group-hover:text-cosmos-cyan transition-colors">
+              <h3 className="text-2xl font-display font-bold text-white mb-3 group-hover:text-cosmos-gold transition-colors">
                 {post.title}
               </h3>
 
@@ -164,7 +164,7 @@ function FeaturedPost({ post }: { post: DevlogPost }) {
                 </span>
               </div>
 
-              <span className="inline-flex items-center gap-2 text-cosmos-cyan group-hover:gap-3 transition-all">
+              <span className="inline-flex items-center gap-2 text-cosmos-gold group-hover:gap-3 transition-all">
                 Read post
                 <ArrowRight className="w-4 h-4" />
               </span>
@@ -188,17 +188,17 @@ function PostCard({ post }: { post: DevlogPost }) {
       <Card className="h-full transition-all duration-300 group-hover:scale-[1.02]" padding="lg">
         <CardContent className="h-full flex flex-col">
           {/* Icon */}
-          <div className="w-10 h-10 rounded-lg bg-cosmos-cyan/10 flex items-center justify-center mb-4">
-            <CategoryIcon className="w-5 h-5 text-cosmos-cyan" />
+          <div className="w-10 h-10 rounded-lg bg-cosmos-gold/10 flex items-center justify-center mb-4">
+            <CategoryIcon className="w-5 h-5 text-cosmos-gold" />
           </div>
 
           {/* Category */}
-          <span className="text-xs text-cosmos-cyan font-medium uppercase tracking-wider mb-2">
+          <span className="text-xs text-cosmos-gold font-medium uppercase tracking-wider mb-2">
             {post.category.replace('-', ' ')}
           </span>
 
           {/* Title */}
-          <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-cosmos-cyan transition-colors">
+          <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-cosmos-gold transition-colors">
             {post.title}
           </h3>
 

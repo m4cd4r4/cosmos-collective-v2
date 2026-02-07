@@ -16,6 +16,7 @@ import {
   Users,
   BookOpen,
   Home,
+  Orbit,
 } from 'lucide-react'
 
 // ============================================
@@ -28,6 +29,12 @@ const navItems = [
     href: '/explore',
     icon: Telescope,
     description: 'Browse JWST and radio telescope observations',
+  },
+  {
+    label: 'Solar System',
+    href: '/solar-system',
+    icon: Orbit,
+    description: '3D photorealistic solar system explorer',
   },
   {
     label: 'Sky Map',
@@ -85,13 +92,13 @@ function Logo() {
             className="transition-all duration-300 group-hover:stroke-[3]"
           />
           {/* Inner star pattern */}
-          <circle cx="20" cy="20" r="3" fill="#06b6d4" />
-          <circle cx="20" cy="10" r="1.5" fill="#f59e0b" />
-          <circle cx="28" cy="16" r="1.5" fill="#a855f7" />
-          <circle cx="28" cy="24" r="1.5" fill="#ec4899" />
-          <circle cx="20" cy="30" r="1.5" fill="#06b6d4" />
-          <circle cx="12" cy="24" r="1.5" fill="#a855f7" />
-          <circle cx="12" cy="16" r="1.5" fill="#f59e0b" />
+          <circle cx="20" cy="20" r="3" fill="#d4af37" />
+          <circle cx="20" cy="10" r="1.5" fill="#ff9a3c" />
+          <circle cx="28" cy="16" r="1.5" fill="#4a90e2" />
+          <circle cx="28" cy="24" r="1.5" fill="#ff6b6b" />
+          <circle cx="20" cy="30" r="1.5" fill="#d4af37" />
+          <circle cx="12" cy="24" r="1.5" fill="#4a90e2" />
+          <circle cx="12" cy="16" r="1.5" fill="#ff9a3c" />
           {/* Connecting lines */}
           <path
             d="M20 13 L20 17 M26 17 L23 19 M26 23 L23 21 M20 27 L20 23 M14 23 L17 21 M14 17 L17 19"
@@ -100,9 +107,9 @@ function Logo() {
           />
           <defs>
             <linearGradient id="logoGradient" x1="0" y1="0" x2="40" y2="40">
-              <stop offset="0%" stopColor="#06b6d4" />
-              <stop offset="50%" stopColor="#a855f7" />
-              <stop offset="100%" stopColor="#ec4899" />
+              <stop offset="0%" stopColor="#d4af37" />
+              <stop offset="50%" stopColor="#ff9a3c" />
+              <stop offset="100%" stopColor="#ff6b6b" />
             </linearGradient>
           </defs>
         </svg>
@@ -142,7 +149,7 @@ function DesktopNav() {
             className={cn(
               'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
               isActive
-                ? 'bg-cosmos-cyan/10 text-cosmos-cyan'
+                ? 'bg-cosmos-gold/10 text-cosmos-gold'
                 : 'text-gray-300 hover:text-white hover:bg-white/5'
             )}
             aria-current={isActive ? 'page' : undefined}
@@ -164,8 +171,8 @@ function DesktopNav() {
 const bottomNavItems = [
   { label: 'Home', href: '/', icon: Home },
   { label: 'Explore', href: '/explore', icon: Telescope },
+  { label: 'Planets', href: '/solar-system', icon: Orbit },
   { label: 'Sky Map', href: '/sky-map', icon: Globe },
-  { label: 'Events', href: '/events', icon: Calendar },
   { label: 'Science', href: '/citizen-science', icon: Users },
 ]
 
@@ -191,7 +198,7 @@ function MobileBottomNav() {
               className={cn(
                 'flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors',
                 isActive
-                  ? 'text-cosmos-cyan'
+                  ? 'text-cosmos-gold'
                   : 'text-gray-400 hover:text-white'
               )}
               aria-current={isActive ? 'page' : undefined}

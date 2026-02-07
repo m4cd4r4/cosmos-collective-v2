@@ -75,7 +75,7 @@ export default function TermsPage() {
                   href="https://github.com/m4cd4r4/cosmos-collective-v2"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-cosmos-cyan hover:underline"
+                  className="text-cosmos-gold hover:underline"
                 >
                   GitHub repository
                 </a>{' '}
@@ -95,7 +95,7 @@ export default function TermsPage() {
                   href="https://www.zooniverse.org/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-cosmos-cyan hover:underline"
+                  className="text-cosmos-gold hover:underline"
                 >
                   Zooniverse
                 </a>
@@ -140,7 +140,7 @@ export default function TermsPage() {
                   href="https://github.com/m4cd4r4/cosmos-collective-v2/issues"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-cosmos-cyan hover:underline"
+                  className="text-cosmos-gold hover:underline"
                 >
                   GitHub issues
                 </a>

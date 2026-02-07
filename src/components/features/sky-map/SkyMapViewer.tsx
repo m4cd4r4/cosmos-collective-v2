@@ -551,7 +551,7 @@ export function SkyMapViewer({
           {!isLoaded && !loadError && (
             <div className="absolute inset-0 bg-cosmos-void flex items-center justify-center z-10">
               <div className="text-center">
-                <div className="w-16 h-16 border-4 border-cosmos-cyan border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+                <div className="w-16 h-16 border-4 border-cosmos-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                 <p className="text-gray-400">Initializing sky map...</p>
                 <p className="text-gray-500 text-sm mt-2">Loading Aladin Lite from CDS Strasbourg...</p>
               </div>
@@ -574,7 +574,7 @@ export function SkyMapViewer({
                     retryCountRef.current = 0
                     initializeAladin()
                   }}
-                  className="px-4 py-2 bg-cosmos-cyan/20 hover:bg-cosmos-cyan/30 text-cosmos-cyan rounded-lg transition-colors"
+                  className="px-4 py-2 bg-cosmos-gold/20 hover:bg-cosmos-gold/30 text-cosmos-gold rounded-lg transition-colors"
                 >
                   Try Again
                 </button>

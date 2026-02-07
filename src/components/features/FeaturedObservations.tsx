@@ -74,7 +74,7 @@ export function FeaturedObservations() {
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200',
                 selectedCategory === category.value
-                  ? 'bg-cosmos-cyan/20 text-cosmos-cyan border border-cosmos-cyan/50'
+                  ? 'bg-cosmos-gold/20 text-cosmos-gold border border-cosmos-gold/50'
                   : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-white'
               )}
               aria-pressed={selectedCategory === category.value}

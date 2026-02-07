@@ -75,7 +75,7 @@ export function ContributionTracker() {
         {/* Total Classifications */}
         <Card padding="lg" className="text-center">
           <CardContent>
-            <Target className="w-8 h-8 text-cosmos-cyan mx-auto mb-2" />
+            <Target className="w-8 h-8 text-cosmos-gold mx-auto mb-2" />
             <div className="text-3xl font-bold text-white">{stats.classificationsCount}</div>
             <div className="text-sm text-gray-400">Total Classifications</div>
           </CardContent>
@@ -93,7 +93,7 @@ export function ContributionTracker() {
         {/* Hours */}
         <Card padding="lg" className="text-center">
           <CardContent>
-            <Clock className="w-8 h-8 text-cosmos-purple mx-auto mb-2" />
+            <Clock className="w-8 h-8 text-cosmos-nebula-blue mx-auto mb-2" />
             <div className="text-3xl font-bold text-white">{stats.hoursSpent}</div>
             <div className="text-sm text-gray-400">Hours Contributed</div>
           </CardContent>
@@ -126,7 +126,7 @@ export function ContributionTracker() {
               {/* Progress Bar */}
               <div className="h-3 bg-white/10 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-cosmos-cyan to-cosmos-gold transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-cosmos-gold to-cosmos-gold transition-all duration-500"
                   style={{
                     width: `${(stats.classificationsCount / nextRankInfo.rank.minClassifications) * 100}%`,
                   }}
@@ -208,7 +208,7 @@ export function ContributionTracker() {
           <Card padding="lg">
             <CardContent>
               <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-cosmos-cyan" />
+                <TrendingUp className="w-5 h-5 text-cosmos-gold" />
                 Recent Activity
               </h3>
               <div className="space-y-3">
@@ -221,7 +221,7 @@ export function ContributionTracker() {
                       <div className="text-sm text-white">{activity.project}</div>
                       <div className="text-xs text-gray-500">{activity.date}</div>
                     </div>
-                    <div className="text-cosmos-cyan font-medium">+{activity.count}</div>
+                    <div className="text-cosmos-gold font-medium">+{activity.count}</div>
                   </div>
                 ))}
               </div>
@@ -246,14 +246,14 @@ export function ContributionTracker() {
                       className="flex items-center justify-between p-3 rounded-lg bg-white/5 group hover:bg-white/10 transition-colors"
                     >
                       <div>
-                        <div className="text-sm text-white group-hover:text-cosmos-cyan transition-colors">
+                        <div className="text-sm text-white group-hover:text-cosmos-gold transition-colors">
                           {project.displayName}
                         </div>
                         <div className="text-xs text-gray-500">
                           {Math.round(project.completeness * 100)}% complete
                         </div>
                       </div>
-                      <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-cosmos-cyan" />
+                      <ChevronRight className="w-4 h-4 text-gray-500 group-hover:text-cosmos-gold" />
                     </div>
                   )
                 })}
@@ -306,7 +306,7 @@ export function ContributionTracker() {
         <Card padding="lg">
           <CardContent>
             <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-cosmos-purple" />
+              <Calendar className="w-5 h-5 text-cosmos-nebula-blue" />
               Classification History
             </h3>
             <div className="space-y-2">
@@ -334,8 +334,8 @@ export function ContributionTracker() {
                       className="flex items-center justify-between p-3 rounded-lg bg-white/5"
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded bg-cosmos-purple/20 flex items-center justify-center">
-                          <Sparkles className="w-4 h-4 text-cosmos-purple" />
+                        <div className="w-8 h-8 rounded bg-cosmos-nebula-blue/20 flex items-center justify-center">
+                          <Sparkles className="w-4 h-4 text-cosmos-nebula-blue" />
                         </div>
                         <div>
                           <div className="text-sm text-white">{item.project}</div>

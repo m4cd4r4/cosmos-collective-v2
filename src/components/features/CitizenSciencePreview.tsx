@@ -85,9 +85,9 @@ export function CitizenSciencePreview() {
     <div>
       {/* Section Header */}
       <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-cyan/10 border border-cosmos-cyan/30 mb-4">
-          <Users className="w-4 h-4 text-cosmos-cyan" />
-          <span className="text-sm text-cosmos-cyan font-medium">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-4">
+          <Users className="w-4 h-4 text-cosmos-gold" />
+          <span className="text-sm text-cosmos-gold font-medium">
             Real Science, Real Impact
           </span>
         </div>
@@ -95,7 +95,7 @@ export function CitizenSciencePreview() {
           id="citizen-science-heading"
           className="text-3xl md:text-4xl font-display font-bold text-white mb-4"
         >
-          Become a <span className="text-cosmos-cyan">Citizen Scientist</span>
+          Become a <span className="text-cosmos-gold">Citizen Scientist</span>
         </h2>
         <p className="text-gray-400 max-w-2xl mx-auto">
           Contribute to real astronomical research from your browser.
@@ -120,7 +120,7 @@ export function CitizenSciencePreview() {
                   {project.difficulty}
                 </span>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-cosmos-cyan transition-colors">
+              <h3 className="text-lg font-semibold text-white mb-2 group-hover:text-cosmos-gold transition-colors">
                 {project.name}
               </h3>
               <p className="text-sm text-gray-400 mb-3">{project.description}</p>
@@ -140,8 +140,8 @@ export function CitizenSciencePreview() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {benefits.map((benefit) => (
             <div key={benefit.title} className="text-center">
-              <div className="w-12 h-12 rounded-full bg-cosmos-cyan/10 flex items-center justify-center mx-auto mb-3">
-                <benefit.icon className="w-6 h-6 text-cosmos-cyan" />
+              <div className="w-12 h-12 rounded-full bg-cosmos-gold/10 flex items-center justify-center mx-auto mb-3">
+                <benefit.icon className="w-6 h-6 text-cosmos-gold" />
               </div>
               <h4 className="font-semibold text-white mb-1">{benefit.title}</h4>
               <p className="text-sm text-gray-400">{benefit.description}</p>

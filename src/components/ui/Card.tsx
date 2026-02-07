@@ -30,7 +30,7 @@ const cardVariants = cva(
           'glass-panel',
           'cursor-pointer',
           'hover:border-white/20 hover:shadow-glow-cyan',
-          'focus-visible:ring-2 focus-visible:ring-cosmos-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void',
+          'focus-visible:ring-2 focus-visible:ring-cosmos-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void',
         ],
       },
       padding: {
@@ -219,10 +219,10 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
     }
 
     const badgeColors = {
-      cyan: 'bg-cosmos-cyan/20 text-cosmos-cyan',
+      cyan: 'bg-cosmos-gold/20 text-cosmos-gold',
       gold: 'bg-cosmos-gold/20 text-cosmos-gold',
-      purple: 'bg-cosmos-purple/20 text-cosmos-purple',
-      pink: 'bg-cosmos-pink/20 text-cosmos-pink',
+      purple: 'bg-cosmos-nebula-blue/20 text-cosmos-nebula-blue',
+      pink: 'bg-cosmos-hydrogen/20 text-cosmos-hydrogen',
     }
 
     const handleImageError = () => {

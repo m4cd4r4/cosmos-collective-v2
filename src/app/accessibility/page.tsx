@@ -76,8 +76,8 @@ export default function AccessibilityPage() {
 
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="w-16 h-16 rounded-2xl bg-cosmos-cyan/20 flex items-center justify-center mx-auto mb-6">
-              <Accessibility className="w-8 h-8 text-cosmos-cyan" />
+            <div className="w-16 h-16 rounded-2xl bg-cosmos-gold/20 flex items-center justify-center mx-auto mb-6">
+              <Accessibility className="w-8 h-8 text-cosmos-gold" />
             </div>
             <h1 className="text-4xl font-display font-bold text-white mb-4">
               Accessibility
@@ -114,8 +114,8 @@ export default function AccessibilityPage() {
               <Card key={feature.title} padding="lg">
                 <CardContent>
                   <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 rounded-lg bg-cosmos-purple/20 flex items-center justify-center flex-shrink-0">
-                      <feature.icon className="w-5 h-5 text-cosmos-purple" />
+                    <div className="w-10 h-10 rounded-lg bg-cosmos-nebula-blue/20 flex items-center justify-center flex-shrink-0">
+                      <feature.icon className="w-5 h-5 text-cosmos-nebula-blue" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-white mb-1">{feature.title}</h3>
@@ -128,10 +128,10 @@ export default function AccessibilityPage() {
           </div>
 
           {/* Feedback Section */}
-          <Card padding="lg" className="bg-cosmos-cyan/5 border-cosmos-cyan/20">
+          <Card padding="lg" className="bg-cosmos-gold/5 border-cosmos-gold/20">
             <CardContent>
               <div className="flex items-start gap-4">
-                <Volume2 className="w-6 h-6 text-cosmos-cyan flex-shrink-0 mt-1" />
+                <Volume2 className="w-6 h-6 text-cosmos-gold flex-shrink-0 mt-1" />
                 <div>
                   <h2 className="text-xl font-semibold text-white mb-2">Feedback</h2>
                   <p className="text-gray-300 mb-4">
@@ -145,7 +145,7 @@ export default function AccessibilityPage() {
                       href="https://github.com/m4cd4r4"
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-cosmos-cyan hover:underline"
+                      className="text-cosmos-gold hover:underline"
                     >
                       GitHub repository
                     </a>
@@ -165,31 +165,31 @@ export default function AccessibilityPage() {
               <CardContent>
                 <ul className="space-y-3 text-gray-300">
                   <li className="flex items-start gap-2">
-                    <span className="text-cosmos-cyan mt-1">-</span>
+                    <span className="text-cosmos-gold mt-1">-</span>
                     <span>Semantic HTML5 markup for proper document structure</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-cosmos-cyan mt-1">-</span>
+                    <span className="text-cosmos-gold mt-1">-</span>
                     <span>ARIA landmarks and labels for assistive technology</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-cosmos-cyan mt-1">-</span>
+                    <span className="text-cosmos-gold mt-1">-</span>
                     <span>Colour contrast ratios meeting WCAG 2.1 AA requirements</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-cosmos-cyan mt-1">-</span>
+                    <span className="text-cosmos-gold mt-1">-</span>
                     <span>Descriptive alt text for all meaningful images</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-cosmos-cyan mt-1">-</span>
+                    <span className="text-cosmos-gold mt-1">-</span>
                     <span>Visible focus states for interactive elements</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-cosmos-cyan mt-1">-</span>
+                    <span className="text-cosmos-gold mt-1">-</span>
                     <span>Consistent and predictable navigation</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <span className="text-cosmos-cyan mt-1">-</span>
+                    <span className="text-cosmos-gold mt-1">-</span>
                     <span>No content that flashes more than three times per second</span>
                   </li>
                 </ul>

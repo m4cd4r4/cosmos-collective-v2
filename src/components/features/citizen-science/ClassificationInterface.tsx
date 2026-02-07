@@ -128,12 +128,12 @@ export function ClassificationInterface({
               >
                 <div className="flex items-center justify-between">
                   <div>
-                    <div className="font-medium text-white group-hover:text-cosmos-cyan">
+                    <div className="font-medium text-white group-hover:text-cosmos-gold">
                       {p.displayName}
                     </div>
                     <div className="text-sm text-gray-400">{p.description}</div>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-cosmos-cyan" />
+                  <ChevronRight className="w-5 h-5 text-gray-500 group-hover:text-cosmos-gold" />
                 </div>
               </button>
             ))}
@@ -147,7 +147,7 @@ export function ClassificationInterface({
     return (
       <Card className="max-w-2xl mx-auto" padding="xl">
         <CardContent className="text-center">
-          <div className="w-12 h-12 border-4 border-cosmos-cyan border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <div className="w-12 h-12 border-4 border-cosmos-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-gray-400">Loading classification task...</p>
         </CardContent>
       </Card>
@@ -353,7 +353,7 @@ export function ClassificationInterface({
                     'w-full p-4 rounded-lg text-left transition-all',
                     'border-2',
                     selectedOption === option.value
-                      ? 'border-cosmos-cyan bg-cosmos-cyan/10'
+                      ? 'border-cosmos-gold bg-cosmos-gold/10'
                       : 'border-white/10 hover:border-white/20 hover:bg-white/5'
                   )}
                   role="radio"
@@ -364,7 +364,7 @@ export function ClassificationInterface({
                       className={cn(
                         'w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center mt-0.5',
                         selectedOption === option.value
-                          ? 'border-cosmos-cyan bg-cosmos-cyan'
+                          ? 'border-cosmos-gold bg-cosmos-gold'
                           : 'border-gray-500'
                       )}
                     >
@@ -426,7 +426,7 @@ export function ClassificationInterface({
             </h4>
             <div className="grid grid-cols-2 gap-4">
               <div className="text-center">
-                <div className="text-2xl font-bold text-cosmos-cyan">
+                <div className="text-2xl font-bold text-cosmos-gold">
                   {classificationsCount}
                 </div>
                 <div className="text-xs text-gray-400">Classified</div>

@@ -29,10 +29,10 @@ const eventIcons: Record<string, React.ReactNode> = {
 }
 
 const severityColors: Record<string, string> = {
-  'once-in-lifetime': 'text-cosmos-pink',
-  rare: 'text-cosmos-purple',
+  'once-in-lifetime': 'text-cosmos-hydrogen',
+  rare: 'text-cosmos-nebula-blue',
   significant: 'text-cosmos-gold',
-  notable: 'text-cosmos-cyan',
+  notable: 'text-cosmos-gold',
   info: 'text-gray-400',
 }
 
@@ -172,7 +172,7 @@ export function LiveEventsBar() {
         {/* View all link */}
         <Link
           href="/events"
-          className="flex-shrink-0 px-4 border-l border-white/10 h-full flex items-center text-xs text-cosmos-cyan hover:text-white transition-colors bg-cosmos-surface/80 z-10"
+          className="flex-shrink-0 px-4 border-l border-white/10 h-full flex items-center text-xs text-cosmos-gold hover:text-white transition-colors bg-cosmos-surface/80 z-10"
         >
           View All →
         </Link>

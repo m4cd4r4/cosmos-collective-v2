@@ -180,7 +180,7 @@ export function ObservationViewer({ observation }: ObservationViewerProps) {
                         'absolute border-2 rounded transition-all cursor-pointer',
                         selectedFeature?.id === feature.id
                           ? 'border-cosmos-gold bg-cosmos-gold/20'
-                          : 'border-cosmos-cyan/50 hover:border-cosmos-cyan bg-cosmos-cyan/10'
+                          : 'border-cosmos-gold/50 hover:border-cosmos-gold bg-cosmos-gold/10'
                       )}
                       style={{
                         left: `${feature.boundingBox.x}%`,
@@ -212,7 +212,7 @@ export function ObservationViewer({ observation }: ObservationViewerProps) {
               </div>
               <div className="text-right">
                 <span className="text-xs text-gray-500">Confidence</span>
-                <div className="text-cosmos-cyan font-bold">
+                <div className="text-cosmos-gold font-bold">
                   {(selectedFeature.confidence * 100).toFixed(0)}%
                 </div>
               </div>

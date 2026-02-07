@@ -140,8 +140,8 @@ export default function CreditsPage() {
 
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="w-16 h-16 rounded-2xl bg-cosmos-pink/20 flex items-center justify-center mx-auto mb-6">
-              <Heart className="w-8 h-8 text-cosmos-pink" />
+            <div className="w-16 h-16 rounded-2xl bg-cosmos-hydrogen/20 flex items-center justify-center mx-auto mb-6">
+              <Heart className="w-8 h-8 text-cosmos-hydrogen" />
             </div>
             <h1 className="text-4xl font-display font-bold text-white mb-4">
               Credits & Acknowledgments
@@ -171,7 +171,7 @@ export default function CreditsPage() {
                           href={source.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 text-lg font-semibold text-cosmos-cyan hover:underline"
+                          className="inline-flex items-center gap-2 text-lg font-semibold text-cosmos-gold hover:underline"
                         >
                           {source.name}
                           <ExternalLink className="w-4 h-4" />
@@ -236,7 +236,7 @@ export default function CreditsPage() {
                       href={tech.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 font-semibold text-white hover:text-cosmos-cyan transition-colors"
+                      className="inline-flex items-center gap-2 font-semibold text-white hover:text-cosmos-gold transition-colors"
                     >
                       {tech.name}
                       <ExternalLink className="w-3 h-3" />
@@ -262,7 +262,7 @@ export default function CreditsPage() {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 font-semibold text-white hover:text-cosmos-cyan transition-colors"
+                      className="inline-flex items-center gap-2 font-semibold text-white hover:text-cosmos-gold transition-colors"
                     >
                       {item.name}
                       <ExternalLink className="w-3 h-3" />
@@ -307,7 +307,7 @@ export default function CreditsPage() {
                 href="https://github.com/m4cd4r4/cosmos-collective-v2"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-cosmos-cyan hover:underline"
+                className="inline-flex items-center gap-2 text-cosmos-gold hover:underline"
               >
                 View source code on GitHub
                 <ExternalLink className="w-4 h-4" />

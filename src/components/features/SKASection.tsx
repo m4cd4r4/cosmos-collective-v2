@@ -24,9 +24,9 @@ export function SKASection() {
     <div>
       {/* Section Header */}
       <div className="text-center mb-12">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-purple/10 border border-cosmos-purple/30 mb-4">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-nebula-blue/10 border border-cosmos-nebula-blue/30 mb-4">
           <span>🔭</span>
-          <span className="text-sm text-cosmos-purple font-medium">
+          <span className="text-sm text-cosmos-nebula-blue font-medium">
             The Future of Radio Astronomy
           </span>
         </div>
@@ -34,7 +34,7 @@ export function SKASection() {
           id="ska-heading"
           className="text-3xl md:text-4xl font-display font-bold text-white mb-4"
         >
-          Square Kilometre <span className="text-cosmos-purple">Array</span>
+          Square Kilometre <span className="text-cosmos-nebula-blue">Array</span>
         </h2>
         <p className="text-gray-400 max-w-2xl mx-auto">
           The world's largest and most sensitive radio telescope, currently under construction
@@ -50,7 +50,7 @@ export function SKASection() {
               <span className="text-3xl mb-3 block">{goal.icon}</span>
               <h3 className="text-lg font-semibold text-white mb-2">{goal.title}</h3>
               <p className="text-sm text-gray-400 mb-3">{goal.description}</p>
-              <div className="text-xs text-cosmos-cyan bg-cosmos-cyan/10 px-2 py-1 rounded inline-block">
+              <div className="text-xs text-cosmos-gold bg-cosmos-gold/10 px-2 py-1 rounded inline-block">
                 {goal.expectedResults}
               </div>
             </CardContent>
@@ -128,7 +128,7 @@ export function SKASection() {
                 <div key={key} className="glass-panel rounded-lg p-4">
                   <div className="flex justify-between items-start mb-2">
                     <span className="text-sm text-gray-400">{value.current}</span>
-                    <span className="text-sm font-bold text-cosmos-purple">{value.ska}</span>
+                    <span className="text-sm font-bold text-cosmos-nebula-blue">{value.ska}</span>
                   </div>
                   <p className="text-xs text-gray-500">{value.description}</p>
                 </div>
@@ -143,7 +143,7 @@ export function SKASection() {
         <span className="text-4xl mb-4 block">💾</span>
         <h3 className="text-xl font-bold text-white mb-2">The Data Challenge</h3>
         <p className="text-gray-400 mb-4">
-          SKA will generate <span className="text-cosmos-pink font-bold">710 petabytes of raw data per day</span> —
+          SKA will generate <span className="text-cosmos-hydrogen font-bold">710 petabytes of raw data per day</span> —
           more than the entire global internet traffic. Processing this data requires revolutionary
           high-performance computing infrastructure.
         </p>

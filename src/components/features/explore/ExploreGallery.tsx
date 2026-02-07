@@ -107,7 +107,7 @@ export function ExploreGallery({
           Showing <span className="text-white font-medium">{filteredObservations.length}</span> observations
           {query && (
             <span>
-              {' '}for "<span className="text-cosmos-cyan">{query}</span>"
+              {' '}for "<span className="text-cosmos-gold">{query}</span>"
             </span>
           )}
         </p>
@@ -208,7 +208,7 @@ export function ExploreGallery({
                           'flex-shrink-0 px-2 py-0.5 rounded-full text-xs',
                           observation.source === 'JWST'
                             ? 'bg-cosmos-gold/20 text-cosmos-gold'
-                            : 'bg-cosmos-cyan/20 text-cosmos-cyan'
+                            : 'bg-cosmos-gold/20 text-cosmos-gold'
                         )}
                       >
                         {observation.source}

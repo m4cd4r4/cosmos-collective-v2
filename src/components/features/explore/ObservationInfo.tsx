@@ -51,7 +51,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
                   'inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-xs font-medium mb-2',
                   observation.source === 'JWST'
                     ? 'bg-cosmos-gold/20 text-cosmos-gold'
-                    : 'bg-cosmos-cyan/20 text-cosmos-cyan'
+                    : 'bg-cosmos-gold/20 text-cosmos-gold'
                 )}
               >
                 {observation.source === 'JWST' ? (
@@ -123,7 +123,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
                   {observation.analysis.keyFeatures.map((feature) => (
                     <li
                       key={feature}
-                      className="px-2 py-1 rounded bg-cosmos-purple/10 text-cosmos-purple text-xs"
+                      className="px-2 py-1 rounded bg-cosmos-nebula-blue/10 text-cosmos-nebula-blue text-xs"
                     >
                       {feature}
                     </li>
@@ -143,7 +143,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
 
             <button
               onClick={() => setShowFullAnalysis(!showFullAnalysis)}
-              className="mt-3 text-sm text-cosmos-cyan hover:text-white flex items-center gap-1 transition-colors"
+              className="mt-3 text-sm text-cosmos-gold hover:text-white flex items-center gap-1 transition-colors"
             >
               {showFullAnalysis ? (
                 <>
@@ -170,7 +170,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
           <dl className="space-y-3">
             {/* Coordinates */}
             <div className="flex items-start gap-3">
-              <MapPin className="w-5 h-5 text-cosmos-cyan flex-shrink-0 mt-0.5" />
+              <MapPin className="w-5 h-5 text-cosmos-gold flex-shrink-0 mt-0.5" />
               <div>
                 <dt className="text-xs text-gray-500">Coordinates</dt>
                 <dd className="text-sm text-white font-mono">
@@ -198,7 +198,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
             {/* Instrument */}
             {observation.instrument && (
               <div className="flex items-start gap-3">
-                <Telescope className="w-5 h-5 text-cosmos-purple flex-shrink-0 mt-0.5" />
+                <Telescope className="w-5 h-5 text-cosmos-nebula-blue flex-shrink-0 mt-0.5" />
                 <div>
                   <dt className="text-xs text-gray-500">Instrument</dt>
                   <dd className="text-sm text-white">{observation.instrument}</dd>
@@ -214,7 +214,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
             {/* Distance */}
             {observation.distanceLightYears && (
               <div className="flex items-start gap-3">
-                <Globe className="w-5 h-5 text-cosmos-pink flex-shrink-0 mt-0.5" />
+                <Globe className="w-5 h-5 text-cosmos-hydrogen flex-shrink-0 mt-0.5" />
                 <div>
                   <dt className="text-xs text-gray-500">Distance</dt>
                   <dd className="text-sm text-white">
@@ -264,7 +264,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
                   <span className="text-sm text-gray-300 group-hover:text-white">
                     {link.label}
                   </span>
-                  <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-cosmos-cyan" />
+                  <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-cosmos-gold" />
                 </a>
               ))}
             </div>

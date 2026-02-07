@@ -8,7 +8,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { Telescope, Globe, Sparkles, ChevronDown } from 'lucide-react'
+import { Telescope, Globe, Orbit, Sparkles, ChevronDown } from 'lucide-react'
 
 // ============================================
 // High-Resolution Planet Hero Images
@@ -189,9 +189,9 @@ export function HeroSection({
       {/* Content */}
       <div className="relative z-10 max-w-5xl mx-auto px-4 text-center">
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-cyan/10 border border-cosmos-cyan/30 mb-8 animate-fade-in">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-8 animate-fade-in">
           <Sparkles className="w-4 h-4 text-cosmos-gold" />
-          <span className="text-sm text-cosmos-cyan font-medium">
+          <span className="text-sm text-cosmos-gold font-medium">
             Multi-Spectrum Astronomical Explorer
           </span>
         </div>
@@ -231,6 +231,14 @@ export function HeroSection({
             asChild
           >
             <Link href="/sky-map">Open Sky Map</Link>
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            leftIcon={<Orbit className="w-5 h-5" />}
+            asChild
+          >
+            <Link href="/solar-system">Solar System 3D</Link>
           </Button>
         </div>
 

@@ -30,7 +30,7 @@ export default function OfflinePage() {
         {/* Retry Button */}
         <button
           onClick={() => window.location.reload()}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-cosmos-cyan to-cosmos-purple text-white font-semibold hover:shadow-glow-cyan transition-all mb-8"
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-cosmos-gold to-cosmos-nebula-blue text-white font-semibold hover:shadow-glow-cyan transition-all mb-8"
         >
           <RefreshCw className="w-5 h-5" />
           Try Again
@@ -47,11 +47,11 @@ export default function OfflinePage() {
               <span className="text-sm text-gray-300">Favorites</span>
             </div>
             <div className="p-4 rounded-lg bg-cosmos-surface">
-              <BookOpen className="w-6 h-6 text-cosmos-cyan mx-auto mb-2" />
+              <BookOpen className="w-6 h-6 text-cosmos-gold mx-auto mb-2" />
               <span className="text-sm text-gray-300">Devlog</span>
             </div>
             <div className="p-4 rounded-lg bg-cosmos-surface">
-              <Home className="w-6 h-6 text-cosmos-purple mx-auto mb-2" />
+              <Home className="w-6 h-6 text-cosmos-nebula-blue mx-auto mb-2" />
               <span className="text-sm text-gray-300">Dashboard</span>
             </div>
           </div>

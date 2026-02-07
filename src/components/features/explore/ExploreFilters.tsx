@@ -104,7 +104,7 @@ export function ExploreFilters({
           <Filter className="w-4 h-4" />
           <span>Filters</span>
           {hasActiveFilters && (
-            <span className="px-2 py-0.5 rounded-full bg-cosmos-cyan/20 text-cosmos-cyan text-xs">
+            <span className="px-2 py-0.5 rounded-full bg-cosmos-gold/20 text-cosmos-gold text-xs">
               Active
             </span>
           )}
@@ -137,7 +137,7 @@ export function ExploreFilters({
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
                   currentSource === source.value
-                    ? 'bg-cosmos-cyan/20 text-cosmos-cyan border border-cosmos-cyan/50'
+                    ? 'bg-cosmos-gold/20 text-cosmos-gold border border-cosmos-gold/50'
                     : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-white'
                 )}
                 aria-pressed={currentSource === source.value}
@@ -192,7 +192,7 @@ export function ExploreFilters({
                 className={cn(
                   'flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-200',
                   currentWavelength === wavelength.value
-                    ? 'bg-cosmos-purple/20 text-cosmos-purple border border-cosmos-purple/50'
+                    ? 'bg-cosmos-nebula-blue/20 text-cosmos-nebula-blue border border-cosmos-nebula-blue/50'
                     : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-white'
                 )}
                 aria-pressed={currentWavelength === wavelength.value}

@@ -85,7 +85,7 @@ export function TelescopeShowcase() {
 
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-cosmos-cyan flex-shrink-0 mt-0.5" />
+                  <MapPin className="w-5 h-5 text-cosmos-gold flex-shrink-0 mt-0.5" />
                   <div>
                     <div className="text-sm text-gray-400">Location</div>
                     <div className="text-white">{selected.location}</div>
@@ -102,7 +102,7 @@ export function TelescopeShowcase() {
 
                 {'dishes' in selected && (
                   <div className="flex items-start gap-3">
-                    <Satellite className="w-5 h-5 text-cosmos-purple flex-shrink-0 mt-0.5" />
+                    <Satellite className="w-5 h-5 text-cosmos-nebula-blue flex-shrink-0 mt-0.5" />
                     <div>
                       <div className="text-sm text-gray-400">Configuration</div>
                       <div className="text-white">
@@ -125,7 +125,7 @@ export function TelescopeShowcase() {
                     key={project}
                     className="flex items-center gap-2 text-gray-300"
                   >
-                    <span className="w-1.5 h-1.5 rounded-full bg-cosmos-cyan" />
+                    <span className="w-1.5 h-1.5 rounded-full bg-cosmos-gold" />
                     {project}
                   </li>
                 ))}

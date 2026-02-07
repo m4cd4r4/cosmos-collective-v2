@@ -60,7 +60,7 @@ export default function CitizenScienceError({
                 href="https://www.zooniverse.org/projects?discipline=astronomy"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-cosmos-cyan hover:text-cosmos-cyan/80 transition-colors"
+                className="flex items-center gap-2 text-sm text-cosmos-gold hover:text-cosmos-gold/80 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
                 Zooniverse Astronomy Projects
@@ -69,7 +69,7 @@ export default function CitizenScienceError({
                 href="https://www.galaxyzoo.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sm text-cosmos-cyan hover:text-cosmos-cyan/80 transition-colors"
+                className="flex items-center gap-2 text-sm text-cosmos-gold hover:text-cosmos-gold/80 transition-colors"
               >
                 <ExternalLink className="w-4 h-4" />
                 Galaxy Zoo
