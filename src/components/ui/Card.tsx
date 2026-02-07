@@ -29,7 +29,7 @@ const cardVariants = cva(
         interactive: [
           'glass-panel',
           'cursor-pointer',
-          'hover:border-white/20 hover:shadow-glow-cyan',
+          'hover:border-white/20 hover:shadow-glow-gold',
           'focus-visible:ring-2 focus-visible:ring-cosmos-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void',
         ],
       },
@@ -182,7 +182,7 @@ export interface ImageCardProps extends Omit<CardProps, 'children'> {
   /** Optional badge text */
   badge?: string
   /** Badge color variant */
-  badgeVariant?: 'cyan' | 'gold' | 'purple' | 'pink'
+  badgeVariant?: 'cyan' | 'gold' | 'purple' | 'pink' | 'blue' | 'hydrogen'
   /** Loading state */
   isLoading?: boolean
   /** Aspect ratio */
@@ -218,10 +218,12 @@ export const ImageCard = forwardRef<HTMLDivElement, ImageCardProps>(
       astronomical: 'aspect-astronomical',
     }
 
-    const badgeColors = {
+    const badgeColors: Record<string, string> = {
       cyan: 'bg-cosmos-gold/20 text-cosmos-gold',
       gold: 'bg-cosmos-gold/20 text-cosmos-gold',
+      blue: 'bg-cosmos-nebula-blue/20 text-cosmos-nebula-blue',
       purple: 'bg-cosmos-nebula-blue/20 text-cosmos-nebula-blue',
+      hydrogen: 'bg-cosmos-hydrogen/20 text-cosmos-hydrogen',
       pink: 'bg-cosmos-hydrogen/20 text-cosmos-hydrogen',
     }
 

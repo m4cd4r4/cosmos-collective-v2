@@ -21,7 +21,6 @@ import {
   Sparkles,
   Radio,
   Star,
-  Construction,
 } from 'lucide-react'
 
 // ============================================
@@ -51,25 +50,6 @@ export function CitizenScienceHub() {
 
   return (
     <div className="container mx-auto px-4">
-      {/* Coming Soon Banner */}
-      <div className="mb-8 mx-auto max-w-3xl">
-        <div className="relative overflow-hidden rounded-xl border border-amber-500/30 bg-gradient-to-r from-amber-500/10 via-amber-600/15 to-amber-500/10 p-4">
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAwIDEwIEwgNDAgMTAgTSAxMCAwIEwgMTAgNDAgTSAwIDIwIEwgNDAgMjAgTSAyMCAwIEwgMjAgNDAgTSAwIDMwIEwgNDAgMzAgTSAzMCAwIEwgMzAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTEsIDE5MSwgMzYsIDAuMDMpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiLz48L3N2Zz4=')] opacity-50" />
-          <div className="relative flex items-center justify-center gap-3">
-            <Construction className="w-5 h-5 text-amber-400 animate-pulse" />
-            <div className="text-center">
-              <p className="text-amber-200 font-semibold">
-                Preview Mode - Full Feature Coming Soon
-              </p>
-              <p className="text-amber-300/70 text-sm mt-1">
-                This is a demonstration of the citizen science experience. Live classification features are in development.
-              </p>
-            </div>
-            <Construction className="w-5 h-5 text-amber-400 animate-pulse" />
-          </div>
-        </div>
-      </div>
-
       {/* Hero Section */}
       <section className="text-center mb-12">
         <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-panel text-cosmos-gold text-sm font-medium mb-4">

@@ -109,21 +109,10 @@ const stats = [
 ]
 
 // ============================================
-// Hero Section Props
-// ============================================
-
-export interface HeroSectionProps {
-  backgroundKey?: PlanetHeroKey
-  customBackgroundUrl?: string
-  backgroundBrightness?: number
-  enableParallax?: boolean
-}
-
-// ============================================
 // Hero Section Component
 // ============================================
 
-export function HeroSection(_props: HeroSectionProps = {}) {
+export function HeroSection() {
   const [cardDismissed, setCardDismissed] = useState(false)
 
   return (

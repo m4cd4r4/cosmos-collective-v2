@@ -30,7 +30,7 @@ const buttonVariants = cva(
         primary: [
           'bg-gradient-to-r from-cosmos-gold to-cosmos-nebula-blue',
           'text-white font-semibold',
-          'hover:shadow-glow-cyan hover:scale-[1.02]',
+          'hover:shadow-glow-gold hover:scale-[1.02]',
           'active:scale-[0.98]',
         ],
         secondary: [
