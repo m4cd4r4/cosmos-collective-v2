@@ -161,7 +161,7 @@ export function HeroSection() {
               </button>
 
               {/* Glass card */}
-              <div className="glass-panel-strong rounded-2xl p-8 md:p-12 text-center backdrop-blur-xl bg-cosmos-void/70">
+              <div className="glass-panel-strong rounded-2xl p-8 md:p-12 text-center backdrop-blur-md bg-cosmos-void/40 border border-white/10">
                 {/* Badge */}
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-6">
                   <Sparkles className="w-4 h-4 text-cosmos-gold" />
@@ -212,7 +212,7 @@ export function HeroSection() {
                   {stats.map((stat) => (
                     <div
                       key={stat.label}
-                      className="rounded-lg bg-white/5 p-3 text-center"
+                      className="rounded-lg bg-white/8 backdrop-blur-sm p-3 text-center"
                     >
                       <span className="text-lg mb-0.5 block" aria-hidden="true">
                         {stat.icon}
