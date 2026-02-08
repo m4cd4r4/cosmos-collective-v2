@@ -1,19 +1,17 @@
 /**
  * NextAuth.js Configuration
- * Supports Google, GitHub, and Email authentication
+ * Supports Google, GitHub, and Zooniverse authentication
  */
 
 import { type NextAuthOptions } from 'next-auth'
 import GoogleProvider from 'next-auth/providers/google'
 import GitHubProvider from 'next-auth/providers/github'
-import EmailProvider from 'next-auth/providers/email'
-
-// Note: In production, you'd use PrismaAdapter with a real database
-// import { PrismaAdapter } from '@auth/prisma-adapter'
-// import { prisma } from '@/lib/prisma'
+import ZooniverseProvider from '@/lib/zooniverse-provider'
+import { PrismaAdapter } from '@auth/prisma-adapter'
+import { prisma } from '@/lib/prisma'
 
 export const authOptions: NextAuthOptions = {
-  // adapter: PrismaAdapter(prisma), // Uncomment when using Prisma
+  adapter: PrismaAdapter(prisma),
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
@@ -30,11 +28,10 @@ export const authOptions: NextAuthOptions = {
       clientId: process.env.GITHUB_ID ?? '',
       clientSecret: process.env.GITHUB_SECRET ?? '',
     }),
-    // Email provider for passwordless auth (requires email service setup)
-    // EmailProvider({
-    //   server: process.env.EMAIL_SERVER,
-    //   from: process.env.EMAIL_FROM,
-    // }),
+    ZooniverseProvider({
+      clientId: process.env.ZOONIVERSE_CLIENT_ID ?? '',
+      clientSecret: process.env.ZOONIVERSE_CLIENT_SECRET ?? '',
+    }),
   ],
   session: {
     strategy: 'jwt',
@@ -47,11 +44,20 @@ export const authOptions: NextAuthOptions = {
     verifyRequest: '/auth/verify-request',
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, profile }) {
       // Persist the OAuth access_token and user id to the token
       if (account && user) {
         token.accessToken = account.access_token
+        token.refreshToken = account.refresh_token
+        token.expiresAt = account.expires_at
         token.id = user.id
+        token.provider = account.provider
+
+        // Store Zooniverse-specific data
+        if (account.provider === 'zooniverse' && profile) {
+          token.zooniverseId = (profile as any).id
+          token.zooniverseUsername = (profile as any).login
+        }
       }
       return token
     },
@@ -59,12 +65,35 @@ export const authOptions: NextAuthOptions = {
       // Send properties to the client
       if (session.user) {
         session.user.id = token.id as string
+        session.user.zooniverseId = token.zooniverseId as string | undefined
+        session.user.zooniverseUsername = token.zooniverseUsername as string | undefined
       }
+
+      // Include access token for Zooniverse API calls
+      session.accessToken = token.accessToken as string | undefined
+      session.provider = token.provider as string | undefined
+
       return session
     },
     async signIn({ user, account, profile }) {
-      // You can add custom sign-in logic here
-      // For example, create/update user in your database
+      // Store Zooniverse token in database when user signs in
+      if (account?.provider === 'zooniverse' && account.access_token) {
+        try {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              zooniverseId: (profile as any)?.id,
+              zooniverseUsername: (profile as any)?.login,
+              zooniverseToken: account.access_token,
+              zooniverseExpires: account.expires_at
+                ? new Date(account.expires_at * 1000)
+                : null,
+            },
+          })
+        } catch (error) {
+          console.error('Failed to store Zooniverse token:', error)
+        }
+      }
       return true
     },
   },
@@ -88,7 +117,11 @@ declare module 'next-auth' {
       name?: string | null
       email?: string | null
       image?: string | null
+      zooniverseId?: string
+      zooniverseUsername?: string
     }
+    accessToken?: string
+    provider?: string
   }
 }
 
@@ -96,5 +129,10 @@ declare module 'next-auth/jwt' {
   interface JWT {
     id: string
     accessToken?: string
+    refreshToken?: string
+    expiresAt?: number
+    provider?: string
+    zooniverseId?: string
+    zooniverseUsername?: string
   }
 }

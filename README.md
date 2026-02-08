@@ -9,7 +9,7 @@
 
 Cosmos Collective is an interactive platform for exploring the universe through multiple wavelengths of light. From JWST's stunning infrared imagery to Australian radio telescopes scanning for signals across the cosmos, this project bridges the gap between professional astronomy and public engagement through citizen science.
 
-![Cosmos Collective Demo](./public/images/site-demo.gif)
+![Cosmos Collective - Interactive Solar System](./public/images/hero-solar-system.png)
 
 ## Features
 

@@ -1,0 +1,243 @@
+// Cosmos Collective - Database Schema
+// Supports NextAuth.js + Citizen Science features
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// NextAuth.js Models
+// ============================================
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  // Citizen Science fields
+  zooniverseId       String?                 @unique
+  zooniverseUsername String?
+  zooniverseToken    String?                 @db.Text
+  zooniverseExpires  DateTime?
+  classifications    Classification[]
+  userStats          UserStats?
+  badgeAwards        BadgeAward[]
+  activityLog        ActivityLog[]
+  favoriteProjects   UserFavoriteProject[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([zooniverseId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ============================================
+// Citizen Science Models
+// ============================================
+
+model Classification {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Zooniverse data
+  zooniverseId    String?  @unique // ID from Zooniverse API
+  projectId       String   // Zooniverse project ID
+  projectName     String
+  workflowId      String?  // Zooniverse workflow ID
+  subjectId       String   // Zooniverse subject ID
+
+  // Classification data
+  taskType        String   // galaxy-morphology, radio-source-matching, etc.
+  annotations     Json     // User's answers/annotations
+  metadata        Json?    // Additional metadata (user agent, started_at, finished_at, etc.)
+
+  // Timing
+  timeSpent       Int?     // Seconds spent on this classification
+
+  // Status
+  submittedToZooniverse Boolean @default(false)
+  submissionError       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([projectId])
+  @@index([createdAt])
+  @@index([zooniverseId])
+}
+
+model UserStats {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Counts
+  classificationsCount  Int      @default(0)
+  projectsContributed   Int      @default(0)
+
+  // Time tracking
+  totalTimeSpent        Int      @default(0) // Total seconds
+
+  // Rank system
+  currentRank           Int      @default(0) // 0-10 based on classification count
+
+  // Streaks
+  currentStreak         Int      @default(0) // Days in a row
+  longestStreak         Int      @default(0)
+  lastClassificationAt  DateTime?
+
+  // Accuracy (if we implement consensus scoring)
+  accuracyScore         Float?   // 0.0 - 1.0
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([classificationsCount])
+  @@index([currentRank])
+}
+
+model Badge {
+  id          String       @id @default(cuid())
+  name        String       @unique
+  description String
+  icon        String       // Icon name (from lucide-react or emoji)
+  rarity      String       // common, uncommon, rare, epic, legendary
+
+  // Requirements
+  requirementType  String  // classification_count, project_count, streak, accuracy, etc.
+  requirementValue Int?    // Threshold value
+
+  awards      BadgeAward[]
+
+  createdAt DateTime @default(now())
+}
+
+model BadgeAward {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  earnedAt  DateTime @default(now())
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+  @@index([earnedAt])
+}
+
+model ActivityLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  activityType String  // classification, badge_earned, rank_up, project_completed
+  projectId    String?
+  projectName  String?
+  details      Json?
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+  @@index([activityType])
+}
+
+model UserFavoriteProject {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  projectId   String   // Zooniverse project ID
+  projectName String
+
+  addedAt DateTime @default(now())
+
+  @@unique([userId, projectId])
+  @@index([userId])
+}
+
+// ============================================
+// Project Metadata Cache
+// ============================================
+
+model ZooniverseProject {
+  id                String   @id // Zooniverse project ID
+  slug              String   @unique
+  displayName       String
+  description       String?  @db.Text
+  introduction      String?  @db.Text
+
+  // Stats (cached from Zooniverse API)
+  classificationsCount Int    @default(0)
+  subjectsCount        Int    @default(0)
+  completeness         Float? // 0.0 - 1.0
+
+  // Status
+  launchApproved    Boolean @default(false)
+  launchRequested   Boolean @default(false)
+  isActive          Boolean @default(true)
+
+  // Tags
+  tags              String[] // Array of tag names
+
+  // Metadata
+  metadata          Json?    // Additional project metadata from API
+
+  // Cache timestamps
+  lastFetchedAt DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([launchApproved])
+}
