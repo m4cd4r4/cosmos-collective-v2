@@ -68,6 +68,8 @@ next-env.d.ts
 # Testing
 coverage/
 .nyc_output
+test-results/
+playwright-report/
 
 # Prisma
 prisma/*.db
