@@ -5,10 +5,10 @@
  * Solar System 3D as interactive background with dismissible info card overlay
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { Telescope, Globe, Sparkles, ChevronDown, X } from 'lucide-react'
+import { Telescope, Globe, Sparkles, ChevronDown, X, Eye, EyeOff } from 'lucide-react'
 
 // ============================================
 // Planet Hero Images (kept for re-use elsewhere)
@@ -114,6 +114,15 @@ const stats = [
 
 export function HeroSection() {
   const [cardDismissed, setCardDismissed] = useState(false)
+  const [cardRevealed, setCardRevealed] = useState(false)
+  const [uiHidden, setUiHidden] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setCardRevealed(true), 5000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  const showCard = cardRevealed && !cardDismissed && !uiHidden
 
   return (
     <section
@@ -130,12 +139,12 @@ export function HeroSection() {
         sandbox="allow-scripts allow-same-origin"
       />
 
-      {/* Dismissible Hero Card Overlay */}
-      {!cardDismissed && (
+      {/* Dismissible Hero Card Overlay - appears after 3.5s delay */}
+      {showCard && (
         <>
           {/* Clickable backdrop - click outside card to dismiss */}
           <div
-            className="absolute inset-0 z-10 cursor-pointer"
+            className="absolute inset-0 z-10 cursor-pointer animate-[fade-in_1.5s_ease-out]"
             onClick={() => setCardDismissed(true)}
             role="button"
             tabIndex={0}
@@ -148,7 +157,7 @@ export function HeroSection() {
           {/* Hero content card */}
           <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
             <div
-              className="relative max-w-3xl mx-4 pointer-events-auto animate-fade-in"
+              className="relative max-w-3xl mx-4 pointer-events-auto animate-[fade-in_1.5s_ease-out]"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Close button */}
@@ -235,8 +244,8 @@ export function HeroSection() {
         </>
       )}
 
-      {/* Scroll indicator (always visible) */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 animate-bounce">
+      {/* Scroll indicator */}
+      <div className={`absolute bottom-8 left-1/2 -translate-x-1/2 z-30 animate-bounce transition-opacity duration-300 ${uiHidden ? 'opacity-0 pointer-events-none' : ''}`}>
         <button
           onClick={() =>
             window.scrollTo({ top: window.innerHeight, behavior: 'smooth' })
@@ -247,6 +256,24 @@ export function HeroSection() {
           <ChevronDown className="w-6 h-6 text-white" />
         </button>
       </div>
+
+      {/* Hide/Show All UI Toggle */}
+      <button
+        onClick={() => setUiHidden(!uiHidden)}
+        className={`absolute z-30 transition-all duration-300 rounded-lg p-2 backdrop-blur-sm hover:bg-white/10 ${
+          uiHidden
+            ? 'bottom-6 right-6 bg-white/5 opacity-50 hover:opacity-100'
+            : 'bottom-8 right-6 bg-white/10'
+        }`}
+        aria-label={uiHidden ? 'Show controls' : 'Hide controls'}
+        title={uiHidden ? 'Show controls' : 'Hide controls'}
+      >
+        {uiHidden ? (
+          <Eye className="w-5 h-5 text-white" />
+        ) : (
+          <EyeOff className="w-5 h-5 text-white" />
+        )}
+      </button>
     </section>
   )
 }
