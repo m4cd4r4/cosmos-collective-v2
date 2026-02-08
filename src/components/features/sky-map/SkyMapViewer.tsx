@@ -25,6 +25,8 @@ import {
   Info,
   ChevronLeft,
   ChevronRight,
+  Eye,
+  EyeOff,
 } from 'lucide-react'
 
 // ============================================
@@ -207,6 +209,7 @@ export function SkyMapViewer({
     dec: number
     type?: string
   } | null>(null)
+  const [uiHidden, setUiHidden] = useState(false)
 
   // Initialize Aladin with retry logic
   const initializeAladin = useCallback(() => {
@@ -402,7 +405,7 @@ export function SkyMapViewer({
         <aside
           className={cn(
             'relative z-20 h-full bg-cosmos-depth border-r border-white/10 transition-all duration-300',
-            sidebarOpen ? 'w-80' : 'w-0'
+            uiHidden ? 'w-0 opacity-0 pointer-events-none' : sidebarOpen ? 'w-80' : 'w-0'
           )}
         >
           {sidebarOpen && (
@@ -526,7 +529,10 @@ export function SkyMapViewer({
           <button
             type="button"
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="absolute top-1/2 -right-4 -translate-y-1/2 z-30 w-8 h-16 bg-cosmos-surface border border-white/10 rounded-r-lg flex items-center justify-center hover:bg-white/5 transition-colors"
+            className={cn(
+              'absolute top-1/2 -right-4 -translate-y-1/2 z-30 w-8 h-16 bg-cosmos-surface border border-white/10 rounded-r-lg flex items-center justify-center hover:bg-white/5 transition-all duration-300',
+              uiHidden && 'opacity-0 pointer-events-none'
+            )}
             aria-label={sidebarOpen ? 'Close sidebar' : 'Open sidebar'}
           >
             {sidebarOpen ? (
@@ -543,8 +549,7 @@ export function SkyMapViewer({
             ref={containerRef}
             id="aladin-lite-div"
             data-testid="aladin-container"
-            className="absolute inset-0 bg-cosmos-void"
-            style={{ minHeight: '400px' }}
+            className="absolute inset-0 w-full h-full bg-cosmos-void"
           />
 
           {/* Loading overlay */}
@@ -583,7 +588,10 @@ export function SkyMapViewer({
           )}
 
           {/* Zoom Controls */}
-          <div className="absolute bottom-6 right-6 z-20 flex flex-col gap-2">
+          <div className={cn(
+            'absolute bottom-6 right-6 z-20 flex flex-col gap-2 transition-all duration-300',
+            uiHidden && 'opacity-0 pointer-events-none'
+          )}>
             <div className="glass-panel rounded-lg p-1 flex flex-col gap-1">
               <Button
                 variant="ghost"
@@ -613,7 +621,10 @@ export function SkyMapViewer({
           </div>
 
           {/* Info Badge */}
-          <div className="absolute top-4 right-4 z-20">
+          <div className={cn(
+            'absolute top-4 right-4 z-20 transition-all duration-300',
+            uiHidden && 'opacity-0 pointer-events-none'
+          )}>
             <div className="glass-panel rounded-lg px-3 py-2 flex items-center gap-2 text-xs">
               <div
                 className="w-2 h-2 rounded-full"
@@ -622,6 +633,29 @@ export function SkyMapViewer({
               <span className="text-gray-300">{currentSurvey.name}</span>
             </div>
           </div>
+
+          {/* Hide/Show UI Toggle */}
+          <button
+            type="button"
+            onClick={() => {
+              setUiHidden(!uiHidden)
+              if (!uiHidden) setSidebarOpen(false)
+            }}
+            className={cn(
+              'absolute z-30 transition-all duration-300 glass-panel rounded-lg p-2 hover:bg-white/10',
+              uiHidden
+                ? 'bottom-6 right-6 opacity-50 hover:opacity-100'
+                : 'top-4 right-36'
+            )}
+            aria-label={uiHidden ? 'Show controls' : 'Hide controls'}
+            title={uiHidden ? 'Show controls' : 'Hide controls'}
+          >
+            {uiHidden ? (
+              <Eye className="w-4 h-4 text-gray-300" />
+            ) : (
+              <EyeOff className="w-4 h-4 text-gray-300" />
+            )}
+          </button>
 
           {/* Accessibility Description */}
           <div className="sr-only" aria-live="polite">
