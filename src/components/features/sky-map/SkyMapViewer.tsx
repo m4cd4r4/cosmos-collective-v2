@@ -543,8 +543,7 @@ export function SkyMapViewer({
             ref={containerRef}
             id="aladin-lite-div"
             data-testid="aladin-container"
-            className="absolute inset-0 bg-cosmos-void"
-            style={{ minHeight: '400px' }}
+            className="absolute inset-0 w-full h-full bg-cosmos-void"
           />
 
           {/* Loading overlay */}
