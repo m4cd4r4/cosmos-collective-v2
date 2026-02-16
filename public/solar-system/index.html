@@ -1870,13 +1870,61 @@
             e.target.textContent = isPaused ? 'Resume' : 'Pause';
         });
         document.getElementById('reset-view').addEventListener('click', () => {
+            // Camera
             cameraRotation = { x: 0.3, y: 0.7 };
             cameraDistance = 140;
-            followTarget = 'sun';
-            document.getElementById('follow-target').value = 'sun';
             cameraTarget = { x: 0, y: 0, z: sun.position.z };
             cameraMode = 'free';
             document.getElementById('camera-mode').value = 'free';
+            followTarget = 'sun';
+            document.getElementById('follow-target').value = 'sun';
+
+            // Sliders
+            currentSunSpeed = 2.047 * 2.047;
+            document.getElementById('sun-speed').value = 2.047;
+            document.getElementById('sun-speed-val').textContent = '4.19';
+
+            orbitSpeedMultiplier = 1.114 * 1.114;
+            document.getElementById('orbit-speed').value = 1.114;
+            document.getElementById('orbit-speed-val').textContent = '1.24';
+
+            const defaultTrailLen = 800;
+            planets.forEach(p => p.maxTrailLength = defaultTrailLen);
+            sunTrailMaxLength = Math.round(defaultTrailLen * 2.5);
+            document.getElementById('trail-length').value = defaultTrailLen;
+            document.getElementById('trail-length-val').textContent = defaultTrailLen;
+
+            trailOpacity = 0.7;
+            document.getElementById('trail-opacity').value = 0.7;
+            document.getElementById('trail-opacity-val').textContent = '0.70';
+
+            daysPerSecond = 49;
+            document.getElementById('time-speed').value = 49;
+            document.getElementById('time-speed-val').textContent = '49';
+
+            // Toggles
+            showLabels = true;
+            document.getElementById('show-labels').checked = true;
+            showMoons = false;
+            document.getElementById('show-moons').checked = false;
+            allMoons.forEach(moon => {
+                const key = 'moon_' + moon.name;
+                const old = trailLines.get(key);
+                if (old) { scene.remove(old); old.geometry.dispose(); old.material.dispose(); trailLines.delete(key); }
+                moon.trail = [];
+            });
+            showGrid = true;
+            document.getElementById('show-grid').checked = true;
+            if (referenceGrid) referenceGrid.visible = true;
+            showParticles = false;
+            document.getElementById('show-particles').checked = false;
+
+            // Unpause if paused
+            if (isPaused) {
+                isPaused = false;
+                document.getElementById('toggle-pause').textContent = 'Pause';
+            }
+
             updateCameraPosition();
         });
         document.getElementById('show-labels').addEventListener('change', (e) => { showLabels = e.target.checked; });
