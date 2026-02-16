@@ -537,13 +537,13 @@
         <h3>&#x26A1; Solar Vortex</h3>
 
         <div class="control-group">
-            <label>Sun Speed: <span id="sun-speed-val">0.09</span>x</label>
-            <input type="range" id="sun-speed" min="0" max="5" step="0.001" value="0.3">
+            <label>Sun Speed: <span id="sun-speed-val">4.19</span>x</label>
+            <input type="range" id="sun-speed" min="0" max="5" step="0.001" value="2.047">
         </div>
 
         <div class="control-group">
-            <label>Orbital Speed: <span id="orbit-speed-val">0.04</span>x</label>
-            <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="0.2">
+            <label>Orbital Speed: <span id="orbit-speed-val">1.24</span>x</label>
+            <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="1.114">
         </div>
 
         <div class="control-group">
@@ -557,8 +557,8 @@
         </div>
 
         <div class="control-group">
-            <label>Time Speed: <span id="time-speed-val">15</span> days/sec</label>
-            <input type="range" id="time-speed" min="1" max="100" step="1" value="15">
+            <label>Time Speed: <span id="time-speed-val">49</span> days/sec</label>
+            <input type="range" id="time-speed" min="1" max="100" step="1" value="49">
         </div>
 
         <div class="control-group">
@@ -579,8 +579,8 @@
 
         <div class="toggle-section">
             <label class="checkbox-label"><input type="checkbox" id="show-labels" checked><span>Show Planet Labels</span></label>
-            <label class="checkbox-label"><input type="checkbox" id="show-moons" checked><span>Show Moons</span></label>
-            <label class="checkbox-label"><input type="checkbox" id="show-grid"><span>Show Reference Grid</span></label>
+            <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Show Moons</span></label>
+            <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid</span></label>
             <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
             <div style="margin-top:8px;">
                 <label style="display:block; margin-bottom:4px; color:#ccc; font-size:13px;">Follow:</label>
@@ -833,7 +833,7 @@
             gridHelper.material.transparent = true;
             gridHelper.material.opacity = 0.3;
             referenceGrid = gridHelper;
-            referenceGrid.visible = false; // OFF by default
+            referenceGrid.visible = true; // ON by default
             scene.add(gridHelper);
         }
         createReferenceGrid();
@@ -1418,7 +1418,7 @@
         // =====================================================================
         const startDate = new Date('2026-02-04T00:00:00');
         let simulationDays = 0;
-        let daysPerSecond = 15;
+        let daysPerSecond = 49;
 
         function getSimulationDate() {
             const d = new Date(startDate);
@@ -1645,14 +1645,14 @@
         // =====================================================================
         let sunPosition = 0;
         const sunSpeed = 0.5;
-        let orbitSpeedMultiplier = 0.2 * 0.2; // 0.04
+        let orbitSpeedMultiplier = 1.114 * 1.114; // ~1.24 — was 0.04
         let isPaused = false;
-        let currentSunSpeed = 0.3 * 0.3; // 0.09
+        let currentSunSpeed = 2.047 * 2.047; // ~4.19 — was 0.09
         let showLabels = true;
-        let showGrid = false;
+        let showGrid = true;
         let followTarget = 'sun'; // 'sun', planet name, 'moon', or 'none'
         let showParticles = false;
-        let showMoons = true;
+        let showMoons = false;
         let trailOpacity = 0.7;
         let elapsedTime = 0;
         let eventsUpdateCounter = 0;
@@ -1783,8 +1783,8 @@
 
         let isDragging = false, isPanning = false;
         let previousMousePosition = { x: 0, y: 0 };
-        let cameraRotation = { x: 0.3, y: 0.7 }; // Better default angle
-        let cameraDistance = 160; // Closer than 200
+        let cameraRotation = { x: 0.3, y: 0.7 };
+        let cameraDistance = 140;
         let cameraTarget = { x: 0, y: 0, z: 0 };
         let cameraMode = 'free';
         let cinematicAngle = 0;
@@ -1871,7 +1871,7 @@
         });
         document.getElementById('reset-view').addEventListener('click', () => {
             cameraRotation = { x: 0.3, y: 0.7 };
-            cameraDistance = 160;
+            cameraDistance = 140;
             followTarget = 'sun';
             document.getElementById('follow-target').value = 'sun';
             cameraTarget = { x: 0, y: 0, z: sun.position.z };
