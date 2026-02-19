@@ -563,14 +563,17 @@
     </style>
 </head>
 <body>
-    <!-- DEBUG: Remove after testing -->
-    <div id="iframe-debug" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:red;color:white;font-size:24px;font-weight:bold;text-align:center;padding:10px;">SOLAR SYSTEM IFRAME LOADED</div>
     <script>
-        // Log iframe state for debugging
-        console.log('[SolarSystem] iframe loaded, window size:', window.innerWidth, 'x', window.innerHeight);
-        console.log('[SolarSystem] parent:', window.parent === window ? 'standalone' : 'embedded in iframe');
-        // Auto-remove debug banner after 10s
-        setTimeout(() => { const d = document.getElementById('iframe-debug'); if (d) d.remove(); }, 10000);
+        // Unregister any service worker that might interfere with texture loading
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(r => {
+                    r.unregister();
+                    console.log('[SolarSystem] Unregistered service worker:', r.scope);
+                });
+            });
+        }
+        console.log('[SolarSystem] Init start, window:', window.innerWidth, 'x', window.innerHeight);
     </script>
 
     <div id="loading-overlay">
@@ -778,6 +781,7 @@
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.2;
         document.getElementById('canvas-container').appendChild(renderer.domElement);
+        console.log('[SolarSystem] WebGL renderer created, canvas appended. GL context:', renderer.getContext() ? 'OK' : 'MISSING');
 
         // Lighting
         const ambientLight = new THREE.AmbientLight(0x333344, 0.4);
@@ -1752,9 +1756,13 @@
         // MAIN ANIMATION LOOP
         // =====================================================================
         let lastTime = performance.now();
+        let frameCount = 0;
 
         function animate(now) {
             requestAnimationFrame(animate);
+            frameCount++;
+            if (frameCount === 1) console.log('[SolarSystem] First frame rendering');
+            if (frameCount === 60) console.log('[SolarSystem] 60 frames rendered, sun pos:', sun.position.toArray(), 'camera pos:', camera.position.toArray());
 
             const dt = Math.min((now - lastTime) / 1000, 0.05); // Cap at 50ms
             lastTime = now;
@@ -2194,9 +2202,21 @@
         // =====================================================================
         // INIT
         // =====================================================================
+        console.log('[SolarSystem] Starting texture load for', totalTextures, 'textures');
         Promise.all(Object.keys(textureURLs).map(k => loadTextureWithFallback(k))).then(() => {
+            console.log('[SolarSystem] All textures loaded, hiding overlay');
             setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+        }).catch(err => {
+            console.error('[SolarSystem] Texture loading failed:', err);
         });
+
+        // Failsafe: force-hide overlay after 5s no matter what
+        setTimeout(() => {
+            if (loadingOverlay && !loadingOverlay.classList.contains('hidden')) {
+                console.warn('[SolarSystem] Failsafe: forcing overlay hidden after 5s. Textures loaded:', texturesLoaded, '/', totalTextures);
+                loadingOverlay.classList.add('hidden');
+            }
+        }, 5000);
 
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
