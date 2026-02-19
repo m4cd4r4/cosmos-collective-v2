@@ -136,7 +136,6 @@ export function HeroSection() {
         className="absolute inset-0 w-full h-full border-0 z-0"
         loading="eager"
         allow="fullscreen"
-        sandbox="allow-scripts allow-same-origin"
       />
 
       {/* Dismissible Hero Card Overlay - appears after 3.5s delay */}

@@ -33,7 +33,6 @@ export function SolarSystemViewer() {
         className="w-full h-full border-0"
         onLoad={() => setIsLoaded(true)}
         allow="fullscreen"
-        sandbox="allow-scripts allow-same-origin"
       />
 
       {/* Accessibility description */}

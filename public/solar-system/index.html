@@ -732,6 +732,13 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        // Check Three.js loaded
+        if (typeof THREE === 'undefined') {
+            document.querySelector('.loading-text').textContent = 'Failed to load 3D engine';
+            document.querySelector('.loading-subtext').textContent = 'Three.js CDN may be blocked. Try disabling ad blockers.';
+            throw new Error('Three.js failed to load from CDN');
+        }
+
         // =====================================================================
         // SCENE SETUP
         // =====================================================================
@@ -742,12 +749,20 @@
         camera.position.set(100, 80, 120);
         camera.lookAt(0, 0, 0);
 
-        const renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            alpha: true,
-            preserveDrawingBuffer: true,
-            powerPreference: 'high-performance'
-        });
+        let renderer;
+        try {
+            renderer = new THREE.WebGLRenderer({
+                antialias: true,
+                alpha: true,
+                preserveDrawingBuffer: true,
+                powerPreference: 'high-performance'
+            });
+        } catch (e) {
+            document.querySelector('.loading-text').textContent = 'WebGL not available';
+            document.querySelector('.loading-subtext').textContent = 'Your browser may not support 3D rendering.';
+            console.error('WebGL init failed:', e);
+            throw e;
+        }
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
