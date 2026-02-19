@@ -2377,258 +2377,57 @@
             galaxyGroup = new THREE.Group();
             galaxyGroup.position.copy(GALAXY_CENTER);
 
-            // Helper: add a particle layer
-            function addParticles(count, buildFn, size, opts) {
+            // ---- NASA/JPL-Caltech/R. Hurt Milky Way illustration as primary visual ----
+            const imgTex = textureLoader.load('textures/milky_way.jpg');
+            imgTex.minFilter = THREE.LinearFilter;
+            imgTex.magFilter = THREE.LinearFilter;
+            const diskGeo = new THREE.PlaneGeometry(GALAXY_RADIUS * 2.2, GALAXY_RADIUS * 2.2);
+            const diskMat = new THREE.MeshBasicMaterial({
+                map: imgTex, transparent: true, opacity: 0,
+                side: THREE.DoubleSide, depthWrite: false,
+            });
+            const disk = new THREE.Mesh(diskGeo, diskMat);
+            disk.rotation.x = -Math.PI / 2;
+            disk.position.y = -2;
+            galaxyGroup.add(disk);
+
+            // ---- Light sparkle particles on top for 3D depth ----
+            function addParticles(count, buildFn, size) {
                 const geo = new THREE.BufferGeometry();
                 const pos = new Float32Array(count * 3);
                 const col = new Float32Array(count * 3);
                 for (let i = 0; i < count; i++) buildFn(i, pos, col);
                 geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
                 geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-                const mat = new THREE.PointsMaterial({
+                galaxyGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
                     size, vertexColors: true, transparent: true, opacity: 0,
                     blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
-                    ...(opts || {})
-                });
-                galaxyGroup.add(new THREE.Points(geo, mat));
+                })));
             }
 
-            // Spiral arm parameters — dense star layer + diffuse dust layer per arm
-            const arms = [
-                { offset: 0,              count: 30000, dustCount: 20000, width: 45, dustWidth: 70, turns: 2.6 },
-                { offset: Math.PI * 0.5,  count: 30000, dustCount: 20000, width: 45, dustWidth: 70, turns: 2.6 },
-                { offset: Math.PI,        count: 26000, dustCount: 16000, width: 40, dustWidth: 65, turns: 2.4 },
-                { offset: Math.PI * 1.5,  count: 22000, dustCount: 14000, width: 38, dustWidth: 60, turns: 2.3 },
-                // Orion Spur (minor arm)
-                { offset: Math.PI * 0.75, count: 10000, dustCount: 8000,  width: 24, dustWidth: 40, turns: 1.0, rStart: 0.35, rEnd: 0.72 },
-            ];
-
-            arms.forEach(arm => {
-                const rS = arm.rStart || 0.04;
-                const rE = arm.rEnd || 1.0;
-
-                // Dense star layer
-                addParticles(arm.count, (i, pos, col) => {
-                    const t = rS + (i / arm.count) * (rE - rS);
-                    const angle = arm.offset + t * Math.PI * 2 * arm.turns;
-                    const r = t * GALAXY_RADIUS;
-                    const scatter = (Math.random() - 0.5) * arm.width * (0.2 + t * 0.8);
-                    const perp = angle + Math.PI / 2;
-                    pos[i*3]   = Math.cos(angle) * r + Math.cos(perp) * scatter;
-                    pos[i*3+1] = (Math.random() - 0.5) * 6 * (1 - t * 0.4);
-                    pos[i*3+2] = Math.sin(angle) * r + Math.sin(perp) * scatter;
-                    const c = new THREE.Color();
-                    const rnd = Math.random();
-                    if (rnd < 0.35)      c.setHSL(0.6 + Math.random()*0.05, 0.3, 0.5 + Math.random()*0.4); // blue-white hot
-                    else if (rnd < 0.55) c.setHSL(0.15, 0.5, 0.4 + Math.random()*0.35); // warm yellow
-                    else if (rnd < 0.72) c.setHSL(0.08, 0.7, 0.3 + Math.random()*0.25); // orange
-                    else if (rnd < 0.85) c.setHSL(0.0, 0.5, 0.25 + Math.random()*0.2);  // red giants
-                    else                 c.setHSL(0.55, 0.4, 0.6 + Math.random()*0.3);   // bright blue OB
-                    col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-                }, 1.2 + Math.random() * 0.3);
-
-                // Diffuse nebula/dust glow (larger, dimmer, fills gaps)
-                addParticles(arm.dustCount, (i, pos, col) => {
-                    const t = rS + (i / arm.dustCount) * (rE - rS);
-                    const angle = arm.offset + t * Math.PI * 2 * arm.turns;
-                    const r = t * GALAXY_RADIUS;
-                    const scatter = (Math.random() - 0.5) * arm.dustWidth * (0.3 + t * 0.7);
-                    const perp = angle + Math.PI / 2;
-                    pos[i*3]   = Math.cos(angle) * r + Math.cos(perp) * scatter;
-                    pos[i*3+1] = (Math.random() - 0.5) * 10 * (1 - t * 0.3);
-                    pos[i*3+2] = Math.sin(angle) * r + Math.sin(perp) * scatter;
-                    const c = new THREE.Color();
-                    const rnd = Math.random();
-                    if (rnd < 0.4)       c.setHSL(0.6, 0.15, 0.12 + Math.random()*0.1);  // blue haze
-                    else if (rnd < 0.65) c.setHSL(0.08, 0.3, 0.1 + Math.random()*0.08);  // warm haze
-                    else if (rnd < 0.8)  c.setHSL(0.85, 0.4, 0.12 + Math.random()*0.1);  // pink nebula (HII)
-                    else                 c.setHSL(0.12, 0.2, 0.08 + Math.random()*0.06);  // dim dust
-                    col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-                }, 3.5 + Math.random() * 1.5);
-            });
-
-            // Inter-arm diffuse stars (fills the disk so it's not just lines)
-            addParticles(40000, (i, pos, col) => {
-                const r = Math.pow(Math.random(), 0.6) * GALAXY_RADIUS * 0.95;
+            // Sparse bright sparkle stars scattered across the disk
+            addParticles(15000, (i, pos, col) => {
+                const r = Math.pow(Math.random(), 0.5) * GALAXY_RADIUS * 0.95;
                 const theta = Math.random() * Math.PI * 2;
                 pos[i*3]   = Math.cos(theta) * r;
-                pos[i*3+1] = (Math.random()-0.5) * 8 * (1 - r/GALAXY_RADIUS * 0.5);
+                pos[i*3+1] = (Math.random()-0.5) * 6;
                 pos[i*3+2] = Math.sin(theta) * r;
                 const c = new THREE.Color();
-                c.setHSL(0.1 + Math.random()*0.1, 0.3, 0.1 + Math.random()*0.15);
+                c.setHSL(0.6 + Math.random()*0.1, 0.2, 0.6 + Math.random()*0.4);
                 col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
             }, 1.0);
 
-            // Central bulge — very dense, warm core
-            addParticles(25000, (i, pos, col) => {
-                const r = Math.pow(Math.random(), 2.0) * GALAXY_RADIUS * 0.18;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = (Math.random()-0.5) * Math.PI * 0.35;
-                pos[i*3]   = Math.cos(theta) * Math.cos(phi) * r;
-                pos[i*3+1] = Math.sin(phi) * r * 0.35;
-                pos[i*3+2] = Math.sin(theta) * Math.cos(phi) * r;
-                const c = new THREE.Color();
-                const brightness = 0.3 + Math.random() * 0.5;
-                c.setHSL(0.1 + Math.random()*0.06, 0.6, brightness);
-                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 2.0);
-
-            // Core glow (very bright center)
-            addParticles(8000, (i, pos, col) => {
-                const r = Math.pow(Math.random(), 3) * GALAXY_RADIUS * 0.08;
+            // Brighter core sparkles
+            addParticles(5000, (i, pos, col) => {
+                const r = Math.pow(Math.random(), 2.5) * GALAXY_RADIUS * 0.2;
                 const theta = Math.random() * Math.PI * 2;
                 pos[i*3]   = Math.cos(theta) * r;
                 pos[i*3+1] = (Math.random()-0.5) * 3;
                 pos[i*3+2] = Math.sin(theta) * r;
                 const c = new THREE.Color();
-                c.setHSL(0.12, 0.7, 0.6 + Math.random()*0.35);
+                c.setHSL(0.12, 0.5, 0.5 + Math.random()*0.4);
                 col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 4.0);
-
-            // Central bar (barred spiral)
-            addParticles(10000, (i, pos, col) => {
-                const along = (Math.random()-0.5) * GALAXY_RADIUS * 0.32;
-                const perp = (Math.random()-0.5) * GALAXY_RADIUS * 0.07;
-                const barAngle = Math.PI * 0.15;
-                pos[i*3]   = Math.cos(barAngle)*along + Math.sin(barAngle)*perp;
-                pos[i*3+1] = (Math.random()-0.5) * 4;
-                pos[i*3+2] = -Math.sin(barAngle)*along + Math.cos(barAngle)*perp;
-                const c = new THREE.Color();
-                c.setHSL(0.1, 0.55, 0.3 + Math.random()*0.3);
-                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 1.6);
-
-            // Globular cluster halo
-            addParticles(6000, (i, pos, col) => {
-                const r = Math.pow(Math.random(), 0.7) * GALAXY_RADIUS * 1.2;
-                const theta = Math.random() * Math.PI * 2;
-                const phi = (Math.random()-0.5) * Math.PI;
-                pos[i*3]   = Math.cos(theta) * Math.cos(phi) * r;
-                pos[i*3+1] = Math.sin(phi) * r * 0.3;
-                pos[i*3+2] = Math.sin(theta) * Math.cos(phi) * r;
-                const c = new THREE.Color();
-                c.setHSL(0.08, 0.15, 0.1 + Math.random()*0.1);
-                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 0.7);
-
-            // HII region pink nebulae (bright spots along arms)
-            for (let n = 0; n < 25; n++) {
-                const armIdx = Math.floor(Math.random() * 4);
-                const armOff = [0, Math.PI*0.5, Math.PI, Math.PI*1.5][armIdx];
-                const t = 0.2 + Math.random() * 0.6;
-                const angle = armOff + t * Math.PI * 2 * 2.5;
-                const cx = Math.cos(angle) * t * GALAXY_RADIUS;
-                const cz = Math.sin(angle) * t * GALAXY_RADIUS;
-                addParticles(400, (i, pos, col) => {
-                    pos[i*3]   = cx + (Math.random()-0.5) * 18;
-                    pos[i*3+1] = (Math.random()-0.5) * 4;
-                    pos[i*3+2] = cz + (Math.random()-0.5) * 18;
-                    const c = new THREE.Color();
-                    c.setHSL(0.9 + Math.random()*0.1, 0.6, 0.3 + Math.random()*0.3);
-                    col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-                }, 3.0);
-            }
-
-            // ---- Procedural galaxy disk texture (photographic base) ----
-            (function createGalaxyDisk() {
-                const size = 2048;
-                const canvas = document.createElement('canvas');
-                canvas.width = size; canvas.height = size;
-                const ctx = canvas.getContext('2d');
-                const cx = size/2, cy = size/2, maxR = size/2;
-
-                // Black base
-                ctx.fillStyle = '#000';
-                ctx.fillRect(0, 0, size, size);
-
-                // Core glow — warm radial gradient
-                const coreGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, maxR * 0.18);
-                coreGrad.addColorStop(0, 'rgba(255, 240, 200, 0.95)');
-                coreGrad.addColorStop(0.3, 'rgba(255, 200, 120, 0.6)');
-                coreGrad.addColorStop(0.6, 'rgba(180, 130, 80, 0.25)');
-                coreGrad.addColorStop(1, 'rgba(60, 40, 20, 0)');
-                ctx.fillStyle = coreGrad;
-                ctx.fillRect(0, 0, size, size);
-
-                // Draw spiral arms as thick curved strokes with noise
-                function drawArm(offset, armColor, armWidth) {
-                    for (let pass = 0; pass < 3; pass++) {
-                        const width = armWidth * (pass === 0 ? 1.8 : pass === 1 ? 1.0 : 0.4);
-                        const alpha = pass === 0 ? 0.06 : pass === 1 ? 0.1 : 0.15;
-                        ctx.beginPath();
-                        for (let t = 0.05; t < 1.0; t += 0.002) {
-                            const angle = offset + t * Math.PI * 2 * 2.5;
-                            const r = t * maxR * 0.95;
-                            const noiseX = (Math.sin(t*47+pass)*0.5 + Math.sin(t*23)*0.3) * width * 0.15;
-                            const noiseY = (Math.cos(t*31+pass)*0.5 + Math.cos(t*19)*0.3) * width * 0.15;
-                            const x = cx + Math.cos(angle) * r + noiseX;
-                            const y = cy + Math.sin(angle) * r + noiseY;
-                            if (t < 0.052) ctx.moveTo(x, y);
-                            else ctx.lineTo(x, y);
-                        }
-                        ctx.strokeStyle = armColor.replace('ALPHA', alpha);
-                        ctx.lineWidth = width;
-                        ctx.lineCap = 'round';
-                        ctx.stroke();
-                    }
-                }
-
-                drawArm(0,                  'rgba(180, 200, 255, ALPHA)', 55);
-                drawArm(Math.PI * 0.5,      'rgba(180, 200, 255, ALPHA)', 55);
-                drawArm(Math.PI,            'rgba(170, 190, 240, ALPHA)', 48);
-                drawArm(Math.PI * 1.5,      'rgba(170, 190, 240, ALPHA)', 45);
-                // Orion spur
-                for (let t = 0.35; t < 0.72; t += 0.003) {
-                    const angle = Math.PI*0.75 + t * Math.PI * 2 * 1.0;
-                    const r = t * maxR * 0.95;
-                    ctx.beginPath();
-                    ctx.arc(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r, 8 + Math.random()*6, 0, Math.PI*2);
-                    ctx.fillStyle = 'rgba(160, 180, 220, 0.04)';
-                    ctx.fill();
-                }
-
-                // HII region pink spots along arms
-                for (let n = 0; n < 60; n++) {
-                    const armOff = [0, Math.PI*0.5, Math.PI, Math.PI*1.5][Math.floor(Math.random()*4)];
-                    const t = 0.15 + Math.random() * 0.65;
-                    const angle = armOff + t * Math.PI * 2 * 2.5;
-                    const r = t * maxR * 0.95;
-                    const scatter = (Math.random()-0.5) * 30;
-                    const spotR = 4 + Math.random() * 10;
-                    const grad = ctx.createRadialGradient(
-                        cx+Math.cos(angle)*r+scatter, cy+Math.sin(angle)*r+scatter, 0,
-                        cx+Math.cos(angle)*r+scatter, cy+Math.sin(angle)*r+scatter, spotR
-                    );
-                    grad.addColorStop(0, 'rgba(255, 120, 180, 0.25)');
-                    grad.addColorStop(0.5, 'rgba(255, 100, 160, 0.08)');
-                    grad.addColorStop(1, 'rgba(200, 80, 140, 0)');
-                    ctx.fillStyle = grad;
-                    ctx.fillRect(0, 0, size, size);
-                }
-
-                // Overall soft disk glow
-                const diskGrad = ctx.createRadialGradient(cx, cy, maxR*0.1, cx, cy, maxR);
-                diskGrad.addColorStop(0, 'rgba(200, 180, 140, 0.15)');
-                diskGrad.addColorStop(0.4, 'rgba(120, 130, 160, 0.06)');
-                diskGrad.addColorStop(0.8, 'rgba(60, 70, 100, 0.02)');
-                diskGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
-                ctx.fillStyle = diskGrad;
-                ctx.fillRect(0, 0, size, size);
-
-                // Map onto a flat circular plane
-                const tex = new THREE.CanvasTexture(canvas);
-                tex.minFilter = THREE.LinearFilter;
-                const diskGeo = new THREE.CircleGeometry(GALAXY_RADIUS * 1.05, 128);
-                const diskMat = new THREE.MeshBasicMaterial({
-                    map: tex, transparent: true, opacity: 0,
-                    side: THREE.DoubleSide, depthWrite: false,
-                    blending: THREE.AdditiveBlending,
-                });
-                const disk = new THREE.Mesh(diskGeo, diskMat);
-                disk.rotation.x = -Math.PI / 2;
-                disk.position.y = -1; // just below particles
-                galaxyGroup.add(disk);
-            })();
+            }, 1.8);
 
             // "You Are Here" marker
             const markerLocalPos = new THREE.Vector3(
@@ -2638,57 +2437,45 @@
             );
 
             // Pulsing sphere
-            const markerMat = new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0 });
-            galaxyMarker = new THREE.Mesh(new THREE.SphereGeometry(4, 16, 16), markerMat);
+            galaxyMarker = new THREE.Mesh(
+                new THREE.SphereGeometry(5, 16, 16),
+                new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0 })
+            );
             galaxyMarker.position.copy(markerLocalPos);
             galaxyGroup.add(galaxyMarker);
 
             // Glow ring
-            const ringMat = new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0, side: THREE.DoubleSide });
-            galaxyMarkerGlow = new THREE.Mesh(new THREE.RingGeometry(6, 10, 32), ringMat);
+            galaxyMarkerGlow = new THREE.Mesh(
+                new THREE.RingGeometry(7, 12, 32),
+                new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0, side: THREE.DoubleSide })
+            );
             galaxyMarkerGlow.position.copy(markerLocalPos);
             galaxyMarkerGlow.rotation.x = -Math.PI / 2;
             galaxyGroup.add(galaxyMarkerGlow);
 
             // Vertical beam
-            const beamMat = new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0 });
-            const beam = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 50, 8), beamMat);
-            beam.position.set(markerLocalPos.x, markerLocalPos.y + 15, markerLocalPos.z);
+            const beam = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.5, 0.5, 60, 8),
+                new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0 })
+            );
+            beam.position.set(markerLocalPos.x, markerLocalPos.y + 20, markerLocalPos.z);
             galaxyGroup.add(beam);
-
-            // Arm label sprites
-            [
-                { text: 'Perseus Arm', angle: Math.PI * 0.25, r: 0.78 },
-                { text: 'Sagittarius Arm', angle: Math.PI * 0.88, r: 0.52 },
-                { text: 'Scutum-Centaurus', angle: Math.PI * 1.35, r: 0.62 },
-                { text: 'Orion Arm', angle: SUN_GALACTIC_ANGLE + 0.2, r: 0.45 },
-            ].forEach(lbl => {
-                const canvas = document.createElement('canvas');
-                canvas.width = 512; canvas.height = 64;
-                const ctx = canvas.getContext('2d');
-                ctx.font = 'bold 28px sans-serif';
-                ctx.fillStyle = 'rgba(100, 150, 255, 0.8)';
-                ctx.textAlign = 'center';
-                ctx.fillText(lbl.text, 256, 40);
-                const spriteMat = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas), transparent: true, opacity: 0, depthWrite: false });
-                const sprite = new THREE.Sprite(spriteMat);
-                sprite.position.set(Math.cos(lbl.angle)*GALAXY_RADIUS*lbl.r, 18, Math.sin(lbl.angle)*GALAXY_RADIUS*lbl.r);
-                sprite.scale.set(80, 10, 1);
-                galaxyGroup.add(sprite);
-            });
 
             // "You Are Here" label
             const yahCanvas = document.createElement('canvas');
-            yahCanvas.width = 512; yahCanvas.height = 64;
+            yahCanvas.width = 512; yahCanvas.height = 80;
             const yahCtx = yahCanvas.getContext('2d');
-            yahCtx.font = 'bold 32px sans-serif';
+            yahCtx.font = 'bold 36px sans-serif';
             yahCtx.fillStyle = '#ffcc33';
+            yahCtx.strokeStyle = 'rgba(0,0,0,0.8)';
+            yahCtx.lineWidth = 4;
             yahCtx.textAlign = 'center';
-            yahCtx.fillText('\u2600 You Are Here', 256, 40);
+            yahCtx.strokeText('\u2600 You Are Here', 256, 50);
+            yahCtx.fillText('\u2600 You Are Here', 256, 50);
             const yahMat = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(yahCanvas), transparent: true, opacity: 0, depthWrite: false });
             const yahSprite = new THREE.Sprite(yahMat);
-            yahSprite.position.set(markerLocalPos.x, markerLocalPos.y + 42, markerLocalPos.z);
-            yahSprite.scale.set(70, 9, 1);
+            yahSprite.position.set(markerLocalPos.x, markerLocalPos.y + 52, markerLocalPos.z);
+            yahSprite.scale.set(80, 12, 1);
             galaxyGroup.add(yahSprite);
 
             scene.add(galaxyGroup);
