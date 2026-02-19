@@ -10,11 +10,16 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![Website](https://img.shields.io/badge/Website-cosmos--collective.com.au-06b6d4?style=flat-square&logo=vercel)](https://cosmos-collective.com.au)
 
-Cosmos Collective is an interactive platform for exploring the universe through multiple wavelengths of light. From JWST's stunning infrared imagery to Australian radio telescopes scanning for signals across the cosmos, this project bridges the gap between professional astronomy and public engagement through citizen science.
+Cosmos Collective is an interactive platform for exploring the universe through multiple wavelengths of light. From a 3D solar system you can fly through, to JWST's stunning infrared imagery and Australian radio telescopes scanning for signals across the cosmos, this project bridges the gap between professional astronomy and public engagement through citizen science.
 
 ![Cosmos Collective - Interactive Solar System](./public/images/hero-solar-system.png)
 
 ## Features
+
+### Interactive Solar System
+- Real-time 3D solar system with accurate orbital mechanics powered by Three.js
+- Zoom out to view our position in the Milky Way galaxy using NASA/JPL-Caltech imagery
+- Planet dive mode, adjustable simulation speed, and orbital trail visualisation
 
 ### Multi-Wavelength Exploration
 - **JWST Gallery**: Browse infrared observations from the James Webb Space Telescope
