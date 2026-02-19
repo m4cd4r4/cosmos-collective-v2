@@ -51,8 +51,42 @@
             color: #ccc;
             font-size: 13px;
         }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .slider-arrow {
+            background: rgba(100, 150, 255, 0.15);
+            border: 1px solid rgba(100, 150, 255, 0.3);
+            color: #6495ff;
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            padding: 0;
+            margin: 0;
+            flex-shrink: 0;
+            line-height: 1;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .slider-arrow:hover {
+            background: rgba(100, 150, 255, 0.3);
+            border-color: rgba(100, 150, 255, 0.6);
+            transform: none;
+            box-shadow: none;
+        }
+        .slider-arrow:active {
+            background: rgba(100, 150, 255, 0.45);
+            transform: none;
+        }
         input[type="range"] {
-            width: 100%;
+            flex: 1;
+            min-width: 0;
             height: 6px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 3px;
@@ -602,27 +636,47 @@
 
         <div class="control-group">
             <label>Sun Speed: <span id="sun-speed-val">4.19</span>x</label>
-            <input type="range" id="sun-speed" min="0" max="5" step="0.001" value="2.047">
+            <div class="slider-row">
+                <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="-1" aria-label="Decrease sun speed">&#x25C0;</button>
+                <input type="range" id="sun-speed" min="0" max="5" step="0.001" value="2.047">
+                <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="1" aria-label="Increase sun speed">&#x25B6;</button>
+            </div>
         </div>
 
         <div class="control-group">
             <label>Orbital Speed: <span id="orbit-speed-val">1.24</span>x</label>
-            <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="1.114">
+            <div class="slider-row">
+                <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="-1" aria-label="Decrease orbital speed">&#x25C0;</button>
+                <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="1.114">
+                <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="1" aria-label="Increase orbital speed">&#x25B6;</button>
+            </div>
         </div>
 
         <div class="control-group">
             <label>Trail Length: <span id="trail-length-val">800</span></label>
-            <input type="range" id="trail-length" min="100" max="2000" step="50" value="800">
+            <div class="slider-row">
+                <button type="button" class="slider-arrow" data-target="trail-length" data-dir="-1" aria-label="Decrease trail length">&#x25C0;</button>
+                <input type="range" id="trail-length" min="100" max="2000" step="50" value="800">
+                <button type="button" class="slider-arrow" data-target="trail-length" data-dir="1" aria-label="Increase trail length">&#x25B6;</button>
+            </div>
         </div>
 
         <div class="control-group">
             <label>Trail Opacity: <span id="trail-opacity-val">0.7</span></label>
-            <input type="range" id="trail-opacity" min="0.2" max="1" step="0.05" value="0.7">
+            <div class="slider-row">
+                <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="-1" aria-label="Decrease trail opacity">&#x25C0;</button>
+                <input type="range" id="trail-opacity" min="0.2" max="1" step="0.05" value="0.7">
+                <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="1" aria-label="Increase trail opacity">&#x25B6;</button>
+            </div>
         </div>
 
         <div class="control-group">
             <label>Time Speed: <span id="time-speed-val">49</span> days/sec</label>
-            <input type="range" id="time-speed" min="1" max="100" step="1" value="49">
+            <div class="slider-row">
+                <button type="button" class="slider-arrow" data-target="time-speed" data-dir="-1" aria-label="Decrease time speed">&#x25C0;</button>
+                <input type="range" id="time-speed" min="1" max="100" step="1" value="49">
+                <button type="button" class="slider-arrow" data-target="time-speed" data-dir="1" aria-label="Increase time speed">&#x25B6;</button>
+            </div>
         </div>
 
         <div class="control-group">
@@ -1926,6 +1980,27 @@
                 camera.lookAt(tx, ty, tz);
             }
         }
+
+        // =====================================================================
+        // SLIDER ARROW BUTTONS
+        // =====================================================================
+        document.querySelectorAll('.slider-arrow').forEach(btn => {
+            function step() {
+                const slider = document.getElementById(btn.dataset.target);
+                const dir = parseInt(btn.dataset.dir);
+                const step = parseFloat(slider.step) || 1;
+                const min = parseFloat(slider.min);
+                const max = parseFloat(slider.max);
+                const cur = parseFloat(slider.value);
+                slider.value = Math.min(max, Math.max(min, cur + step * dir));
+                slider.dispatchEvent(new Event('input'));
+            }
+            let interval;
+            btn.addEventListener('click', step);
+            btn.addEventListener('mousedown', () => { interval = setInterval(step, 120); });
+            btn.addEventListener('mouseup', () => clearInterval(interval));
+            btn.addEventListener('mouseleave', () => clearInterval(interval));
+        });
 
         // =====================================================================
         // UI CONTROLS
