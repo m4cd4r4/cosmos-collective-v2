@@ -563,6 +563,16 @@
     </style>
 </head>
 <body>
+    <!-- DEBUG: Remove after testing -->
+    <div id="iframe-debug" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:red;color:white;font-size:24px;font-weight:bold;text-align:center;padding:10px;">SOLAR SYSTEM IFRAME LOADED</div>
+    <script>
+        // Log iframe state for debugging
+        console.log('[SolarSystem] iframe loaded, window size:', window.innerWidth, 'x', window.innerHeight);
+        console.log('[SolarSystem] parent:', window.parent === window ? 'standalone' : 'embedded in iframe');
+        // Auto-remove debug banner after 10s
+        setTimeout(() => { const d = document.getElementById('iframe-debug'); if (d) d.remove(); }, 10000);
+    </script>
+
     <div id="loading-overlay">
         <div class="loading-spinner">&#x1F30C;</div>
         <div class="loading-text">Loading Solar System...</div>

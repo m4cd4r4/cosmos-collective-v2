@@ -126,14 +126,15 @@ export function HeroSection() {
 
   return (
     <section
-      className="relative min-h-[90vh] overflow-hidden"
+      className="relative min-h-[90vh] overflow-hidden isolate"
       aria-labelledby="hero-heading"
     >
       {/* Solar System 3D Background (always running) */}
       <iframe
         src="/solar-system/index.html"
         title="Interactive 3D Solar System"
-        className="absolute inset-0 w-full h-full border-0 z-0"
+        className="absolute inset-0 w-full h-full border-0"
+        style={{ zIndex: 1, background: '#000' }}
         loading="eager"
         allow="fullscreen"
       />
