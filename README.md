@@ -6,6 +6,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.4-38bdf8?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
+[![Website](https://img.shields.io/badge/Website-cosmos--collective.com.au-06b6d4?style=flat-square&logo=vercel)](https://cosmos-collective.com.au)
 
 Cosmos Collective is an interactive platform for exploring the universe through multiple wavelengths of light. From JWST's stunning infrared imagery to Australian radio telescopes scanning for signals across the cosmos, this project bridges the gap between professional astronomy and public engagement through citizen science.
 
