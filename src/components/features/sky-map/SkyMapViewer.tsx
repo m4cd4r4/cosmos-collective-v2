@@ -28,7 +28,6 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
-  Sparkles,
 } from 'lucide-react'
 
 // ============================================
@@ -90,6 +89,7 @@ interface SourceOptions {
   name?: string
   popupTitle?: string
   popupDesc?: string
+  [key: string]: unknown
 }
 
 interface MarkerOptions {
@@ -211,6 +211,12 @@ export function SkyMapViewer({
     ra: number
     dec: number
     type?: string
+    id?: string
+    source?: string
+    thumbnail?: string
+    description?: string
+    category?: string
+    instrument?: string
   } | null>(null)
   const [uiHidden, setUiHidden] = useState(false)
   const [showMeteorRadiants, setShowMeteorRadiants] = useState(false)
@@ -302,12 +308,19 @@ export function SkyMapViewer({
 
         aladin.on('objectClicked', (object: unknown) => {
           if (object && typeof object === 'object' && 'data' in object) {
-            const data = (object as { data: { name: string; ra: number; dec: number } }).data
+            const data = (object as { data: Record<string, unknown> }).data
             setSelectedObject({
-              name: data.name,
-              ra: data.ra,
-              dec: data.dec,
+              name: (data.name as string) || 'Unknown',
+              ra: data.ra as number,
+              dec: data.dec as number,
+              id: data.id as string | undefined,
+              source: data.source as string | undefined,
+              thumbnail: data.thumbnail as string | undefined,
+              description: data.description as string | undefined,
+              category: data.category as string | undefined,
+              instrument: data.instrument as string | undefined,
             })
+            if (!sidebarOpen) setSidebarOpen(true)
           }
         })
 
@@ -352,13 +365,27 @@ export function SkyMapViewer({
       onClick: 'showPopup',
     })
 
-    const sources = observations.map((obs) =>
-      window.A.source(obs.coordinates.ra, obs.coordinates.dec, {
+    const sources = observations.map((obs) => {
+      const category = obs.category.replace('-', ' ')
+      const desc = obs.description || obs.analysis?.summary || ''
+      const truncDesc = desc.length > 120 ? desc.slice(0, 120) + '...' : desc
+      return window.A.source(obs.coordinates.ra, obs.coordinates.dec, {
         name: obs.targetName,
-        popupTitle: obs.targetName,
-        popupDesc: `<a href="/explore/${obs.id}" target="_blank">View Details</a>`,
+        popupTitle: `<div style="font-size:14px;font-weight:bold;margin-bottom:4px">${obs.targetName}</div>`,
+        popupDesc: [
+          `<div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${obs.source} · ${category}${obs.instrument ? ' · ' + obs.instrument : ''}</div>`,
+          truncDesc ? `<div style="font-size:12px;color:#ccc;line-height:1.4;margin-bottom:8px">${truncDesc}</div>` : '',
+          `<a href="/explore/${obs.id}" target="_blank" style="color:#d4af37;font-size:12px;text-decoration:none">View full details →</a>`,
+        ].join(''),
+        // Extra fields for sidebar card
+        id: obs.id,
+        source: obs.source,
+        thumbnail: obs.images.thumbnail,
+        description: desc,
+        category,
+        instrument: obs.instrument,
       })
-    )
+    })
 
     catalog.addSources(sources)
     aladin.addCatalog(catalog)
@@ -428,10 +455,18 @@ export function SkyMapViewer({
       const status = isActive ? 'ACTIVE NOW' : isPast ? 'Past' : 'Upcoming'
       const peakFormatted = peak.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
 
+      const statusColor = isActive ? '#22c55e' : isPast ? '#6b7280' : '#f59e0b'
       return window.A.source(shower.radiant.ra, shower.radiant.dec, {
         name: shower.name,
-        popupTitle: `☄️ ${shower.name}`,
-        popupDesc: `<b>Status:</b> ${status}<br/><b>Peak:</b> ${peakFormatted}<br/><b>ZHR:</b> ${shower.zenithalHourlyRate}/hr${shower.parentBody ? `<br/><b>Parent:</b> ${shower.parentBody}` : ''}`,
+        popupTitle: `<div style="font-size:14px;font-weight:bold;margin-bottom:4px">☄️ ${shower.name}</div>`,
+        popupDesc: [
+          `<div style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:bold;color:white;background:${statusColor};margin-bottom:6px">${status}</div>`,
+          `<div style="font-size:12px;color:#ccc;line-height:1.6">`,
+          `<b>Peak:</b> ${peakFormatted}<br/>`,
+          `<b>ZHR:</b> ${shower.zenithalHourlyRate}/hr`,
+          shower.parentBody ? `<br/><b>Parent:</b> ${shower.parentBody}` : '',
+          `</div>`,
+        ].join(''),
       })
     })
 
@@ -528,7 +563,7 @@ export function SkyMapViewer({
               {/* Overlays */}
               <div className="mb-6">
                 <label className="text-xs text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <Sparkles className="w-4 h-4" />
+                  <Layers className="w-4 h-4" />
                   Overlays
                 </label>
                 <div className="space-y-2">
@@ -589,21 +624,54 @@ export function SkyMapViewer({
 
               {/* Selected Object Info */}
               {selectedObject && (
-                <Card className="mt-6" padding="md">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <h4 className="font-semibold text-white">{selectedObject.name}</h4>
-                      <p className="text-xs text-gray-400 font-mono mt-1">
-                        {selectedObject.ra.toFixed(4)}°, {selectedObject.dec.toFixed(4)}°
-                      </p>
+                <Card className="mt-6 overflow-hidden" padding="none">
+                  {/* Thumbnail */}
+                  {selectedObject.thumbnail && (
+                    <div className="relative h-32 overflow-hidden">
+                      <img
+                        src={selectedObject.thumbnail}
+                        alt={selectedObject.name}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-cosmos-depth to-transparent" />
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedObject(null)}
-                      className="text-gray-400 hover:text-white"
-                    >
-                      ×
-                    </button>
+                  )}
+                  <div className="p-4">
+                    <div className="flex items-start justify-between gap-2">
+                      <div>
+                        <h4 className="font-semibold text-white text-sm">{selectedObject.name}</h4>
+                        {selectedObject.source && (
+                          <p className="text-xs text-cosmos-gold mt-0.5">
+                            {selectedObject.source}
+                            {selectedObject.instrument ? ` · ${selectedObject.instrument}` : ''}
+                            {selectedObject.category ? ` · ${selectedObject.category}` : ''}
+                          </p>
+                        )}
+                        <p className="text-xs text-gray-500 font-mono mt-1">
+                          RA {selectedObject.ra.toFixed(4)}° Dec {selectedObject.dec.toFixed(4)}°
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedObject(null)}
+                        className="text-gray-400 hover:text-white text-lg leading-none flex-shrink-0"
+                      >
+                        ×
+                      </button>
+                    </div>
+                    {selectedObject.description && (
+                      <p className="text-xs text-gray-400 mt-2 line-clamp-3 leading-relaxed">
+                        {selectedObject.description}
+                      </p>
+                    )}
+                    {selectedObject.id && (
+                      <a
+                        href={`/explore/${selectedObject.id}`}
+                        className="mt-3 block text-center text-xs font-medium text-cosmos-gold hover:text-white py-2 rounded-lg bg-cosmos-gold/10 hover:bg-cosmos-gold/20 transition-colors"
+                      >
+                        View full details →
+                      </a>
+                    )}
                   </div>
                 </Card>
               )}
