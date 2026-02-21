@@ -59,6 +59,7 @@ out/
 
 # PWA
 public/workbox-*.js
+public/sw.js
 public/sw.js.map
 
 # TypeScript
@@ -70,6 +71,42 @@ coverage/
 .nyc_output
 test-results/
 playwright-report/
+playwright.config.ts
+tests/e2e/
+tests/screenshots/
+
+# Screenshots & analysis artifacts
+screenshots/
+screenshots-analysis/
+test-screenshots/
+
+# Temp reports & analysis files
+ACCESSIBILITY_REPORT.md
+BUNDLE_OPTIMIZATION.md
+COLOR_COMPARISON.md
+COLOR_SYSTEM.md
+COMPREHENSIVE-ANALYSIS-REPORT.md
+COMPREHENSIVE-TEST-REPORT.json
+FIXES-APPLIED.md
+IMPROVEMENT-ROADMAP.md
+WEEK_2_SUMMARY.md
+
+# Temp scripts & one-off files
+analyze-site.js
+capture-social-preview.js
+comprehensive-test.mjs
+image-loader.js
+visual-test.mjs
+test-app.mjs
+check-icon.mjs
+
+# Patches & backups
+*.patch
+*.backup
+temp-*.txt
+
+# PowerShell utility scripts
+*.ps1
 
 # Prisma
 prisma/*.db
