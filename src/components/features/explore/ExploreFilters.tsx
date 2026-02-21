@@ -11,7 +11,6 @@ import { Button } from '@/components/ui/Button'
 import {
   Telescope,
   Radio,
-  Sparkles,
   Sun,
   Atom,
   Filter,
@@ -23,7 +22,7 @@ import type { TelescopeSource, ObjectCategory, WavelengthBand } from '@/types'
 // Filter options
 const sources: { value: TelescopeSource | 'all'; label: string; icon: React.ReactNode }[] = [
   { value: 'all', label: 'All Sources', icon: <Telescope className="w-4 h-4" /> },
-  { value: 'JWST', label: 'JWST', icon: <Sparkles className="w-4 h-4" /> },
+  { value: 'JWST', label: 'JWST', icon: <Telescope className="w-4 h-4" /> },
   { value: 'Hubble', label: 'Hubble', icon: <Telescope className="w-4 h-4" /> },
   { value: 'ASKAP', label: 'ASKAP', icon: <Radio className="w-4 h-4" /> },
   { value: 'MWA', label: 'MWA', icon: <Radio className="w-4 h-4" /> },

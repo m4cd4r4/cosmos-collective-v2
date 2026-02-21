@@ -21,7 +21,6 @@ import {
   ExternalLink,
   ChevronDown,
   ChevronUp,
-  Sparkles,
   Radio,
   Info,
   BookOpen,
@@ -55,7 +54,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
                 )}
               >
                 {observation.source === 'JWST' ? (
-                  <Sparkles className="w-3 h-3" />
+                  <Telescope className="w-3 h-3" />
                 ) : (
                   <Radio className="w-3 h-3" />
                 )}
@@ -101,13 +100,13 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
         </CardContent>
       </Card>
 
-      {/* AI Analysis */}
+      {/* Analysis */}
       {observation.analysis && (
         <Card padding="lg">
           <CardContent>
             <h2 className="flex items-center gap-2 text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">
-              <Sparkles className="w-4 h-4 text-cosmos-gold" />
-              AI Analysis
+              <BookOpen className="w-4 h-4 text-cosmos-gold" />
+              Analysis
             </h2>
 
             <p className="text-gray-300 leading-relaxed">

@@ -7,7 +7,7 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { useRouter, useSearchParams, usePathname } from 'next/navigation'
-import { Search, X, Sparkles } from 'lucide-react'
+import { Search, X } from 'lucide-react'
 import { cn, debounce } from '@/lib/utils'
 
 // Popular search suggestions
@@ -139,7 +139,7 @@ export function ExploreSearch({ initialQuery = '' }: ExploreSearchProps) {
           role="listbox"
         >
           <div className="px-3 py-2 text-xs text-gray-500 flex items-center gap-1">
-            <Sparkles className="w-3 h-3" />
+            <Search className="w-3 h-3" />
             {query ? 'Suggestions' : 'Popular searches'}
           </div>
           {suggestions.map((suggestion) => (

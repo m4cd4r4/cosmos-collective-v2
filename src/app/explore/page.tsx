@@ -45,25 +45,29 @@ export default function ExplorePage({
       <Header />
 
       <main className="flex-1">
-        {/* Page Hero with Jupiter Background */}
+        {/* Compact Hero with integrated search */}
         <PageHero
           title="Explore the Cosmos"
           titleHighlight="Cosmos"
-          description="Browse observations from JWST, Hubble, and Australian radio telescopes. Click any image to view details and analysis."
+          description="Browse observations from JWST, Hubble, and Australian radio telescopes."
           backgroundKey="jupiter"
           size="sm"
           badge={
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-cyan/10 border border-cosmos-cyan/30">
               <Telescope className="w-4 h-4 text-cosmos-cyan" />
-              <span className="text-sm text-cosmos-cyan font-medium">Deep Space Observatory</span>
+              <span className="text-sm text-cosmos-cyan font-medium">61 Observations</span>
             </div>
           }
-        />
-
-        {/* Search and Filters */}
-        <section className="py-6 px-4 md:px-6 lg:px-8 border-b border-white/10 bg-cosmos-surface/30">
-          <div className="max-w-7xl mx-auto space-y-4">
+        >
+          {/* Search embedded in hero */}
+          <div className="max-w-2xl">
             <ExploreSearch initialQuery={query} />
+          </div>
+        </PageHero>
+
+        {/* Filters — tight to hero */}
+        <section className="py-4 px-4 md:px-6 lg:px-8 border-b border-white/10 bg-cosmos-surface/30">
+          <div className="max-w-7xl mx-auto">
             <ExploreFilters
               initialSource={source}
               initialCategory={category}
@@ -73,7 +77,7 @@ export default function ExplorePage({
         </section>
 
         {/* Gallery Grid */}
-        <section className="py-8 px-4 md:px-6 lg:px-8">
+        <section className="py-6 px-4 md:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <Suspense fallback={<GallerySkeleton />}>
               <ExploreGallery
