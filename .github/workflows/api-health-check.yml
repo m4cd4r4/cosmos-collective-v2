@@ -1,0 +1,178 @@
+name: API Health Check
+
+on:
+  schedule:
+    # Run daily at 06:00 UTC (14:00 AWST)
+    - cron: '0 6 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check ISS Tracking API
+        id: iss
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://api.wheretheiss.at/v1/satellites/25544")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::ISS API returned $response"
+          fi
+
+      - name: Check NOAA Solar Weather API
+        id: noaa
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::NOAA Solar API returned $response"
+          fi
+
+      - name: Check NASA APOD API (DEMO_KEY)
+        id: apod
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::NASA APOD API returned $response"
+          fi
+
+      - name: Check NASA NEO API (DEMO_KEY)
+        id: neo
+        continue-on-error: true
+        run: |
+          today=$(date +%Y-%m-%d)
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+            "https://api.nasa.gov/neo/rest/v1/feed?start_date=$today&end_date=$today&api_key=DEMO_KEY")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::NASA NEO API returned $response"
+          fi
+
+      - name: Check NASA Images API
+        id: nasa_images
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://images-api.nasa.gov/search?q=jwst&media_type=image&page_size=1")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::NASA Images API returned $response"
+          fi
+
+      - name: Check MAST Archive API
+        id: mast
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+            -X POST "https://mast.stsci.edu/api/v0/invoke" \
+            -H "Content-Type: application/x-www-form-urlencoded" \
+            -d 'request={"service":"Mast.Name.Lookup","params":{"input":"M31"}}')
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::MAST API returned $response"
+          fi
+
+      - name: Check CASDA TAP Service
+        id: casda
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+            "https://casda.csiro.au/votools/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+1+*+FROM+ivoa.obscore&FORMAT=json")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::CASDA TAP returned $response"
+          fi
+
+      - name: Check ALeRCE API
+        id: alerce
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://api.alerce.online/ztf/v1/objects/?classifier=lc_classifier&class_name=SNIa&ndet=1&page_size=1")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::ALeRCE API returned $response"
+          fi
+
+      - name: Check Zooniverse API
+        id: zooniverse
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            -H "Accept: application/vnd.api+json; version=1" \
+            "https://www.zooniverse.org/api/projects/zookeeper/galaxy-zoo")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::Zooniverse API returned $response"
+          fi
+
+      - name: Check Exoplanet Archive TAP
+        id: exoplanet
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 \
+            "https://exoplanetarchive.ipac.caltech.edu/TAP/sync?query=SELECT+TOP+1+pl_name+FROM+ps&format=json")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::Exoplanet Archive returned $response"
+          fi
+
+      - name: Check GCN Circulars API
+        id: gcn
+        continue-on-error: true
+        run: |
+          response=$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 \
+            "https://gcn.nasa.gov/circulars")
+          echo "status=$response" >> $GITHUB_OUTPUT
+          if [ "$response" != "200" ]; then
+            echo "::warning::GCN API returned $response"
+          fi
+
+      - name: Generate Summary
+        if: always()
+        run: |
+          echo "## API Health Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| API | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+
+          declare -A apis
+          apis[ISS]="${{ steps.iss.outputs.status }}"
+          apis[NOAA_Solar]="${{ steps.noaa.outputs.status }}"
+          apis[NASA_APOD]="${{ steps.apod.outputs.status }}"
+          apis[NASA_NEO]="${{ steps.neo.outputs.status }}"
+          apis[NASA_Images]="${{ steps.nasa_images.outputs.status }}"
+          apis[MAST]="${{ steps.mast.outputs.status }}"
+          apis[CASDA]="${{ steps.casda.outputs.status }}"
+          apis[ALeRCE]="${{ steps.alerce.outputs.status }}"
+          apis[Zooniverse]="${{ steps.zooniverse.outputs.status }}"
+          apis[Exoplanet]="${{ steps.exoplanet.outputs.status }}"
+          apis[GCN]="${{ steps.gcn.outputs.status }}"
+
+          failed=0
+          for api in "${!apis[@]}"; do
+            status="${apis[$api]}"
+            if [ "$status" = "200" ]; then
+              echo "| $api | :white_check_mark: $status |" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "| $api | :x: $status |" >> $GITHUB_STEP_SUMMARY
+              failed=$((failed + 1))
+            fi
+          done
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "_Run at: $(date -u '+%Y-%m-%d %H:%M UTC')_" >> $GITHUB_STEP_SUMMARY
+
+          if [ "$failed" -gt 3 ]; then
+            echo "::error::$failed APIs are down — more than 3 failures detected"
+            exit 1
+          fi
