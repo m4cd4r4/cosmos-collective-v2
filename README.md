@@ -10,90 +10,101 @@
 [![License](https://img.shields.io/badge/License-MIT-green?style=flat-square)](LICENSE)
 [![Website](https://img.shields.io/badge/Website-cosmos--collective.com.au-06b6d4?style=flat-square&logo=vercel)](https://cosmos-collective.com.au)
 
-Cosmos Collective is an interactive platform for exploring the universe through multiple wavelengths of light. From a 3D solar system you can fly through, to JWST's stunning infrared imagery and Australian radio telescopes scanning for signals across the cosmos, this project bridges the gap between professional astronomy and public engagement through citizen science.
+Cosmos Collective is an interactive platform for exploring the universe through multiple wavelengths of light. Fly through a 3D solar system, browse JWST's infrared imagery with wavelength switching, map 2,600+ Kepler exoplanets, and explore the sky with real-time data from 11 space agencies.
 
 ![Cosmos Collective - Interactive Solar System](./public/images/hero-solar-system.png)
 
-## Features
+## Interactive Apps
 
-### Interactive Solar System
+### JWST Explorer (`/jwst`)
+- 3-column interactive viewer for 14 curated James Webb Space Telescope observations
+- **Wavelength switching**: Toggle between NIRCam and MIRI infrared views
+- **Feature annotations**: Bounding box overlays on Carina Nebula, Pillars of Creation, Stephan's Quintet
+- Scientific analysis, coordinates, instrument filters, and external links
+- Categories: nebulae, galaxies, deep fields, solar system objects
+
+### Kepler Exoplanet Explorer (`/kepler`)
+- Interactive star field of 2,600+ confirmed exoplanets from the NASA Exoplanet Archive
+- Three view modes: Sky Map, Galaxy View, HR Diagram
+- Filter by planet size, stellar temperature, orbital period, habitable zone
+- Orbital diagrams for selected systems with planet properties
+
+### Interactive Solar System (`/solar-system`)
 - Real-time 3D solar system with accurate orbital mechanics powered by Three.js
 - Zoom out to view our position in the Milky Way galaxy using NASA/JPL-Caltech imagery
 - Planet dive mode, adjustable simulation speed, and orbital trail visualisation
 
-### Multi-Wavelength Exploration
-- **JWST Gallery**: Browse infrared observations from the James Webb Space Telescope
-- **Hubble Gallery**: Classic optical imagery including nebulae, galaxies, and star clusters
-- **Australian Radio Telescopes**: Access data from ASKAP, MWA, and Parkes (10+ observations)
-- **Multi-Spectrum Comparison**: View the same object across different wavelengths
-
-### Interactive Sky Map
+### Interactive Sky Map (`/sky-map`)
 - Pan and zoom across the entire celestial sphere using Aladin Lite
-- Search by object name, coordinates, or constellation
+- Rich popup cards for JWST/Hubble observations with thumbnails and metadata
+- Meteor shower radiant overlays with seasonal filtering
 - Layer radio, infrared, optical, and X-ray survey data
-- Quick navigation to popular deep sky objects
+- Search by object name, coordinates, or constellation
 
-### Real-Time Events & ISS Cameras
-- Live feed of astronomical events (meteor showers, asteroids, solar activity)
-- ISS tracking with real-time orbital position
-- **ISS Live Cameras** - Watch Earth from space via 3 NASA YouTube streams
-- Space weather alerts and notifications
+## Additional Features
 
-### Citizen Science (In development)
-- Contribute to real astronomical research
-- Galaxy classification tasks with real NASA imagery
-- Radio source matching for SKA pathfinder science
-- 12 classification tasks across 6 Zooniverse-style projects
-- Track your contributions and earn badges
+### Deep Space Observatory (`/observatory`)
+- Aitoff-projection sky chart of 33 JWST + Hubble observations
+- Three view modes: Sky Map, Distance, Timeline
+- Filter by telescope, category, wavelength, and distance
 
-### SKA (Square Kilometre Array) Showcase
-- Learn about the world's largest radio telescope
-- Links to SKAO and CSIRO resources
-- Understand how SKA will revolutionise astronomy
+### Explore Gallery (`/explore`)
+- Browse all observations with search, category, and wavelength filters
+- "View in Sky Map" deep links for spatial context
+- Detailed observation pages with analysis and external references
 
-### Accessibility First
-- WCAG 2.1 AA compliant with dedicated [Accessibility page](/accessibility)
-- Screen reader optimised with ARIA labels
-- Full keyboard navigation throughout
-- High contrast colour palette
-- Reduced motion support
-- Semantic HTML structure
+### Real-Time Events (`/events`)
+- Live astronomical events: meteor showers, asteroids, solar activity
+- ISS tracking with real-time orbital position on a world map
+- NASA Astronomy Picture of the Day with expandable explanation
+- Near-Earth Object approach diagrams and solar activity gauge
 
-## Recently Added
+### SKA Showcase
+- Interactive timeline of the Square Kilometre Array project
+- Comparison bars: current vs. SKA capability metrics
+- Live data counter showing SKA's projected throughput
 
-- **Expanded Event Calendar** - 50+ astronomical events including lunar phases, eclipses, planetary conjunctions, and rocket launches
-- **Smart Banner Filtering** - Live events banner prioritizes ongoing and high-severity events
-- **Responsive Event Cards** - All event cards now clickable with external references
-- **Show More Pagination** - Events page loads progressively to avoid overwhelming users
-- **Scroll-to Event** - Click banner events to jump directly to that event on the events page
+### Australian Telescopes
+- Interactive Australia map with 5 telescope markers (ASKAP, MWA, Parkes, ATCA, SKA-Low)
+- Murchison cluster grouping with detail cards
+- CASDA live data integration for ASKAP observations
 
 ## Architecture
 
 ```
-cosmos-collective/v2/
+cosmos-collective-v2/
 ├── src/
 │   ├── app/                    # Next.js App Router
-│   │   ├── api/               # API routes
-│   │   ├── explore/           # Observation browser
-│   │   ├── sky-map/           # Interactive sky map
+│   │   ├── jwst/              # JWST Explorer
+│   │   ├── kepler/            # Kepler Exoplanet Explorer
+│   │   ├── solar-system/      # 3D Solar System
+│   │   ├── sky-map/           # Interactive Sky Map
+│   │   ├── observatory/       # Deep Space Observatory
+│   │   ├── explore/           # Observation gallery
 │   │   ├── events/            # Live events
-│   │   ├── citizen-science/   # Classification tasks
 │   │   ├── devlog/            # Technical blog
-│   │   └── dashboard/         # User dashboard
+│   │   └── api/               # API routes
 │   ├── components/
 │   │   ├── ui/                # Base UI components
 │   │   ├── features/          # Feature-specific components
-│   │   ├── layout/            # Layout components
+│   │   │   ├── jwst/          # JWST viewer
+│   │   │   ├── kepler/        # Kepler viewer + canvas
+│   │   │   ├── observatory/   # Observatory viewer
+│   │   │   ├── explore/       # Gallery + filters
+│   │   │   ├── sky-map/       # Aladin Lite integration
+│   │   │   ├── events/        # Event components
+│   │   │   └── dashboard/     # User dashboard
+│   │   ├── layout/            # Header, Footer, navigation
 │   │   └── accessibility/     # A11y components
 │   ├── services/              # API integrations
-│   │   ├── mast-api.ts        # STScI MAST API
+│   │   ├── mast-api.ts        # STScI MAST API (JWST + Hubble)
 │   │   ├── australian-telescopes.ts
 │   │   └── real-time-events.ts
-│   ├── store/                 # Zustand state management
 │   ├── hooks/                 # Custom React hooks
 │   ├── lib/                   # Utilities
 │   └── types/                 # TypeScript definitions
-├── public/                    # Static assets
+├── public/
+│   └── solar-system/          # Three.js solar system (standalone)
 └── ...config files
 ```
 
@@ -125,7 +136,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ### Environment Variables
 
-See `.env.example` for all available configuration options. At minimum, you'll need:
+See `.env.example` for all available configuration options. At minimum:
 
 - `NEXTAUTH_SECRET`: Generate with `openssl rand -base64 32`
 - `NEXT_PUBLIC_NASA_API_KEY`: Get free at [api.nasa.gov](https://api.nasa.gov/)
@@ -135,10 +146,11 @@ See `.env.example` for all available configuration options. At minimum, you'll n
 | Source | Data Type | Access |
 |--------|-----------|--------|
 | [STScI MAST](https://mast.stsci.edu/) | JWST, Hubble observations | Public API |
+| [NASA Exoplanet Archive](https://exoplanetarchive.ipac.caltech.edu/) | Kepler exoplanets | Public TAP |
 | [CSIRO CASDA](https://casda.csiro.au/) | ASKAP radio data | Public TAP |
-| [NASA APIs](https://api.nasa.gov/) | APOD, NEO, Mars Rovers | Free API key |
-| [Zooniverse](https://www.zooniverse.org/) | Citizen science projects | Public API |
+| [NASA APIs](https://api.nasa.gov/) | APOD, NEO, ISS position | Free API key |
 | [NOAA SWPC](https://www.swpc.noaa.gov/) | Space weather | Public |
+| [Aladin Lite](https://aladin.cds.unistra.fr/) | Sky survey imagery | Public |
 
 ## Design System
 
@@ -147,8 +159,8 @@ See `.env.example` for all available configuration options. At minimum, you'll n
 | Colour | Hex | Usage |
 |-------|-----|-------|
 | Void | `#030014` | Primary background |
-| Stellar Cyan | `#06b6d4` | Primary accent, radio waves |
-| Solar Gold | `#f59e0b` | Secondary accent, visible light |
+| Solar Gold | `#d4af37` | Primary accent, JWST theme |
+| Stellar Cyan | `#06b6d4` | Secondary accent, radio waves |
 | Aurora Purple | `#a855f7` | Tertiary, UV representation |
 | Nebula Pink | `#ec4899` | Highlights, infrared |
 
@@ -158,33 +170,13 @@ See `.env.example` for all available configuration options. At minimum, you'll n
 - **Body**: Inter - Body text and UI
 - **Mono**: JetBrains Mono - Code and data
 
-## Testing
-
-```bash
-# Run unit tests
-npm run test
-
-# Run with coverage
-npm run test:coverage
-
-# Type checking
-npm run type-check
-
-# Linting
-npm run lint
-```
-
 ## Deployment
 
 ### Vercel (Recommended)
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/m4cd4r4/cosmos-collective-v2)
 
-**Live Demo**: [cosmos-collective.com.au](https://cosmos-collective.com.au)
-
-### Other Platforms
-
-The app can be deployed to any platform supporting Next.js:
+**Live**: [cosmos-collective.com.au](https://cosmos-collective.com.au)
 
 ```bash
 # Build for production
@@ -196,7 +188,7 @@ npm run start
 
 ## Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+Contributions are welcome!
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
@@ -208,8 +200,8 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 - [Technical Devlog](https://cosmos-collective.com.au/devlog) - Implementation details and decisions
 - [SKA Observatory](https://www.skao.int/) - Learn about the Square Kilometre Array
-- [CSIRO ATNF](https://www.atnf.csiro.au/) - Australia Telescope National Facility
 - [STScI](https://www.stsci.edu/) - Space Telescope Science Institute
+- [CSIRO ATNF](https://www.atnf.csiro.au/) - Australia Telescope National Facility
 
 ## License
 
@@ -217,14 +209,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- **NASA/ESA/CSA/STScI** - JWST imagery and data
+- **NASA/ESA/CSA/STScI** - JWST and Hubble imagery and data
+- **NASA Exoplanet Archive** - Kepler mission data
 - **CSIRO** - Australian radio telescope data
-- **Zooniverse** - Citizen science platform
-- **Open source community** - For the amazing tools and libraries
+- **CDS Strasbourg** - Aladin Lite sky viewer
+- **Open source community** - For the tools and libraries
 
 ---
 
 <p align="center">
-  <a href="https://cosmos-collective.com.au">Live Site</a> •
-  <a href="https://cosmos-collective.com.au/devlog">Devlog</a> •
+  <a href="https://cosmos-collective.com.au">Live Site</a> &bull;
+  <a href="https://cosmos-collective.com.au/devlog">Devlog</a>
 </p>
