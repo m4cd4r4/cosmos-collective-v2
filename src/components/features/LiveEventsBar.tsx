@@ -5,12 +5,12 @@
  * Static ticker with auto-rotating priority events
  */
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import Link from 'next/link'
-import { getUpcomingEvents } from '@/services/real-time-events'
+import { getUpcomingEvents, getISSPosition, getSolarWeather } from '@/services/real-time-events'
 import type { AstronomicalEvent } from '@/types'
 import { cn, getRelativeTime } from '@/lib/utils'
-import { Radio, AlertCircle, Star, Rocket, Sun, Sparkles, Moon, Globe, Zap, ChevronRight } from 'lucide-react'
+import { Radio, AlertCircle, Star, Rocket, Sun, Sparkles, Moon, Globe, Zap, ChevronRight, Satellite } from 'lucide-react'
 
 // ============================================
 // Event Type Icons
@@ -25,6 +25,7 @@ const eventIcons: Record<string, React.ReactNode> = {
   lunar: <Moon className="w-3.5 h-3.5" />,
   eclipse: <Sun className="w-3.5 h-3.5" />,
   conjunction: <Star className="w-3.5 h-3.5" />,
+  iss: <Satellite className="w-3.5 h-3.5" />,
   default: <Radio className="w-3.5 h-3.5" />,
 }
 
@@ -45,6 +46,23 @@ const severityOrder: Record<string, number> = {
 }
 
 const MAX_BANNER_EVENTS = 6
+
+// Simple lat/lon to region name mapper
+function getRegionName(lat: number, lon: number): string {
+  if (lat > 60) return 'the Arctic'
+  if (lat < -60) return 'Antarctica'
+  if (lat > 15 && lat < 55 && lon > -130 && lon < -60) return 'North America'
+  if (lat > -60 && lat < 15 && lon > -90 && lon < -30) return 'South America'
+  if (lat > 35 && lon > -15 && lon < 45) return 'Europe'
+  if (lat > -40 && lat < 35 && lon > -20 && lon < 55) return 'Africa'
+  if (lat > 10 && lon > 45 && lon < 150) return 'Asia'
+  if (lat > -50 && lat < -10 && lon > 110 && lon < 160) return 'Australia'
+  if (lat > -10 && lat < 30 && lon > 90 && lon < 150) return 'Southeast Asia'
+  if (lon > 160 || lon < -150) return 'the Pacific Ocean'
+  if (lon > -60 && lon < -10 && lat > 0 && lat < 40) return 'the Atlantic Ocean'
+  if (lon > 20 && lon < 120 && lat > -40 && lat < 10) return 'the Indian Ocean'
+  return 'the open ocean'
+}
 
 function getPriorityEvents(events: AstronomicalEvent[]): AstronomicalEvent[] {
   const priorityEvents = events.filter(
@@ -72,17 +90,94 @@ export function LiveEventsBar() {
   const [isLoading, setIsLoading] = useState(true)
   const [activeIndex, setActiveIndex] = useState(0)
 
+  const issIntervalRef = useRef<ReturnType<typeof setInterval>>()
+
   useEffect(() => {
-    const loadEvents = () => {
+    const loadEvents = async () => {
+      // Static calendar events
       const upcomingEvents = getUpcomingEvents(50)
       const priorityEvents = getPriorityEvents(upcomingEvents)
-      setEvents(priorityEvents)
+
+      // Live data (non-blocking)
+      const liveItems: AstronomicalEvent[] = []
+      try {
+        const [issResult, solarResult] = await Promise.allSettled([
+          getISSPosition(),
+          getSolarWeather(),
+        ])
+
+        if (issResult.status === 'fulfilled' && issResult.value.success && issResult.value.data) {
+          const pos = issResult.value.data.position
+          const region = getRegionName(pos.lat, pos.lon)
+          liveItems.push({
+            id: 'iss-live',
+            type: 'iss' as AstronomicalEvent['type'],
+            title: `ISS over ${region}`,
+            description: `${pos.lat.toFixed(1)}°, ${pos.lon.toFixed(1)}° at ${Math.round(pos.alt)}km altitude`,
+            eventTime: new Date().toISOString(),
+            source: 'NASA',
+            severity: 'info',
+            isOngoing: true,
+          })
+        }
+
+        if (solarResult.status === 'fulfilled' && solarResult.value.success && solarResult.value.data) {
+          const solar = solarResult.value.data
+          if (solar.flareLevel !== 'quiet') {
+            liveItems.push({
+              id: 'solar-live',
+              type: 'solar',
+              title: `Solar: ${solar.flareLevel} activity`,
+              description: `X-ray flux: ${solar.currentFlux.toExponential(1)} W/m²`,
+              eventTime: new Date().toISOString(),
+              source: 'NOAA SWPC',
+              severity: solar.flareLevel === 'severe' ? 'rare' : 'notable',
+              isOngoing: true,
+            })
+          }
+        }
+      } catch {
+        // Live data is optional — static events still work
+      }
+
+      setEvents([...liveItems, ...priorityEvents])
       setIsLoading(false)
     }
 
     loadEvents()
     const interval = setInterval(loadEvents, 5 * 60 * 1000)
-    return () => clearInterval(interval)
+
+    // Poll ISS position more frequently
+    issIntervalRef.current = setInterval(async () => {
+      try {
+        const result = await getISSPosition()
+        if (result.success && result.data) {
+          const pos = result.data.position
+          const region = getRegionName(pos.lat, pos.lon)
+          setEvents((prev) => {
+            const updated = prev.filter((e) => e.id !== 'iss-live')
+            updated.unshift({
+              id: 'iss-live',
+              type: 'iss' as AstronomicalEvent['type'],
+              title: `ISS over ${region}`,
+              description: `${pos.lat.toFixed(1)}°, ${pos.lon.toFixed(1)}° at ${Math.round(pos.alt)}km altitude`,
+              eventTime: new Date().toISOString(),
+              source: 'NASA',
+              severity: 'info',
+              isOngoing: true,
+            })
+            return updated
+          })
+        }
+      } catch {
+        // Non-critical
+      }
+    }, 30000)
+
+    return () => {
+      clearInterval(interval)
+      if (issIntervalRef.current) clearInterval(issIntervalRef.current)
+    }
   }, [])
 
   // Auto-rotate through events every 5 seconds
@@ -143,9 +238,15 @@ export function LiveEventsBar() {
           <span className="text-sm text-gray-300 group-hover:text-white transition-colors truncate">
             {activeEvent.title}
           </span>
+          {activeEvent.id.endsWith('-live') && (
+            <span className="flex-shrink-0 relative flex h-1.5 w-1.5 mr-1">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-500" />
+            </span>
+          )}
           {activeEvent.isOngoing && (
             <span className="flex-shrink-0 text-[10px] font-semibold bg-green-500/20 text-green-400 px-1.5 py-0.5 rounded uppercase tracking-wider">
-              Now
+              {activeEvent.id.endsWith('-live') ? 'Live' : 'Now'}
             </span>
           )}
           <span className="flex-shrink-0 text-xs text-gray-500">

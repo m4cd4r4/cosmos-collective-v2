@@ -377,16 +377,25 @@ function EmptyDetail() {
 
 function ObservationDetail({ obs }: { obs: PlottedObservation }) {
   const bandColor = wavelengthToColor(obs.wavelengthBand)
+  const [activeWavelength, setActiveWavelength] = useState(0)
+  const [showFeatures, setShowFeatures] = useState(true)
+  const [hoveredFeature, setHoveredFeature] = useState<string | null>(null)
+
+  const hasWavelengths = obs.images.wavelengthVersions && obs.images.wavelengthVersions.length > 1
+  const hasFeatures = obs.features && obs.features.length > 0
+  const currentImage = hasWavelengths
+    ? obs.images.wavelengthVersions![activeWavelength].url
+    : obs.images.preview
 
   return (
     <>
-      {/* Image */}
+      {/* Image with bounding box overlay */}
       <div
-        className="rounded-lg overflow-hidden border"
+        className="rounded-lg overflow-hidden border relative"
         style={{ borderColor: `${bandColor}33` }}
       >
         <img
-          src={obs.images.preview}
+          src={currentImage}
           alt={obs.targetName}
           className="w-full aspect-square object-cover"
           loading="lazy"
@@ -394,7 +403,96 @@ function ObservationDetail({ obs }: { obs: PlottedObservation }) {
             (e.target as HTMLImageElement).src = '/images/cosmos-placeholder.svg'
           }}
         />
+
+        {/* Feature bounding boxes */}
+        {hasFeatures && showFeatures && (
+          <svg
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            viewBox="0 0 100 100"
+            preserveAspectRatio="none"
+          >
+            {obs.features!.map((f) => (
+              <g key={f.id}>
+                <rect
+                  x={f.boundingBox.x}
+                  y={f.boundingBox.y}
+                  width={f.boundingBox.width}
+                  height={f.boundingBox.height}
+                  fill={hoveredFeature === f.id ? 'rgba(212,175,55,0.15)' : 'rgba(212,175,55,0.05)'}
+                  stroke={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.4)'}
+                  strokeWidth={hoveredFeature === f.id ? 0.6 : 0.3}
+                  rx={0.5}
+                />
+                <text
+                  x={f.boundingBox.x + 1}
+                  y={f.boundingBox.y + 3.5}
+                  fill="#d4af37"
+                  fontSize={2.8}
+                  fontWeight="bold"
+                  opacity={hoveredFeature === f.id ? 1 : 0.7}
+                >
+                  {f.label}
+                </text>
+              </g>
+            ))}
+          </svg>
+        )}
       </div>
+
+      {/* Wavelength Toggle */}
+      {hasWavelengths && (
+        <div className="flex items-center gap-1.5">
+          {obs.images.wavelengthVersions!.map((wv, i) => (
+            <button
+              key={wv.band}
+              onClick={() => setActiveWavelength(i)}
+              className="text-[8px] px-2 py-1 rounded-full border transition-all"
+              style={{
+                color: i === activeWavelength ? '#d4af37' : '#4a5580',
+                borderColor: i === activeWavelength ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.1)',
+                backgroundColor: i === activeWavelength ? 'rgba(212,175,55,0.1)' : 'transparent',
+              }}
+            >
+              {wv.colorMap || wv.band}
+            </button>
+          ))}
+          {hasFeatures && (
+            <button
+              onClick={() => setShowFeatures(!showFeatures)}
+              className="text-[8px] px-2 py-1 rounded-full border transition-all ml-auto"
+              style={{
+                color: showFeatures ? '#d4af37' : '#4a5580',
+                borderColor: showFeatures ? 'rgba(212,175,55,0.5)' : 'rgba(255,255,255,0.1)',
+                backgroundColor: showFeatures ? 'rgba(212,175,55,0.1)' : 'transparent',
+              }}
+            >
+              {showFeatures ? 'Hide' : 'Show'} Features
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Feature list */}
+      {hasFeatures && showFeatures && (
+        <div className="flex flex-wrap gap-1">
+          {obs.features!.map((f) => (
+            <button
+              key={f.id}
+              onMouseEnter={() => setHoveredFeature(f.id)}
+              onMouseLeave={() => setHoveredFeature(null)}
+              className="text-[8px] px-1.5 py-0.5 rounded border transition-all cursor-default"
+              style={{
+                color: hoveredFeature === f.id ? '#d4af37' : '#7a8aaa',
+                borderColor: hoveredFeature === f.id ? 'rgba(212,175,55,0.4)' : 'rgba(255,255,255,0.08)',
+                backgroundColor: hoveredFeature === f.id ? 'rgba(212,175,55,0.08)' : 'transparent',
+              }}
+              title={f.description || f.label}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Title */}
       <div>

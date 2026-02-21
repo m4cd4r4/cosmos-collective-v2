@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
 import { Telescope, Globe, Sparkles, ChevronDown, X, Eye, EyeOff } from 'lucide-react'
+import { useCountUp } from '@/hooks/useCountUp'
 
 // ============================================
 // Planet Hero Images (kept for re-use elsewhere)
@@ -102,11 +103,24 @@ export type PlanetHeroKey = keyof typeof PLANET_HERO_IMAGES
 // ============================================
 
 const stats = [
-  { label: 'JWST Observations', value: '50,000+', icon: '🛰️' },
-  { label: 'Light Years Explored', value: '13B+', icon: '✨' },
-  { label: 'Citizen Scientists', value: '2M+', icon: '👥' },
-  { label: 'Australian Dishes', value: '36', icon: '📡' },
+  { label: 'JWST Observations', target: 50000, suffix: '+', icon: '🛰️' },
+  { label: 'Light Years Explored', target: 13, suffix: 'B+', icon: '✨' },
+  { label: 'Citizen Scientists', target: 2, suffix: 'M+', icon: '👥' },
+  { label: 'Australian Dishes', target: 36, suffix: '', icon: '📡' },
 ]
+
+function CountUpStat({ target, suffix, label, icon, enabled, delay }: {
+  target: number; suffix: string; label: string; icon: string; enabled: boolean; delay: number
+}) {
+  const display = useCountUp({ target, suffix, duration: 2000, delay, enabled })
+  return (
+    <div className="rounded-lg bg-white/8 backdrop-blur-sm p-3 text-center">
+      <span className="text-lg mb-0.5 block" aria-hidden="true">{icon}</span>
+      <div className="text-lg md:text-xl font-bold text-white">{display}</div>
+      <div className="text-2xs md:text-xs text-gray-400">{label}</div>
+    </div>
+  )
+}
 
 // ============================================
 // Hero Section Component
@@ -218,19 +232,16 @@ export function HeroSection() {
 
                 {/* Stats row */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  {stats.map((stat) => (
-                    <div
+                  {stats.map((stat, i) => (
+                    <CountUpStat
                       key={stat.label}
-                      className="rounded-lg bg-white/8 backdrop-blur-sm p-3 text-center"
-                    >
-                      <span className="text-lg mb-0.5 block" aria-hidden="true">
-                        {stat.icon}
-                      </span>
-                      <div className="text-lg md:text-xl font-bold text-white">
-                        {stat.value}
-                      </div>
-                      <div className="text-2xs md:text-xs text-gray-400">{stat.label}</div>
-                    </div>
+                      target={stat.target}
+                      suffix={stat.suffix}
+                      label={stat.label}
+                      icon={stat.icon}
+                      enabled={cardRevealed}
+                      delay={i * 200}
+                    />
                   ))}
                 </div>
 

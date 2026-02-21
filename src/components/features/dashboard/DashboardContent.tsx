@@ -11,6 +11,7 @@ import NextImage from 'next/image'
 import { useCosmosStore } from '@/store/cosmos-store'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
 import { cn, formatDate } from '@/lib/utils'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations, getSKAScienceGoals, getSKATimeline } from '@/services/australian-telescopes'
@@ -446,7 +447,7 @@ export function DashboardContent() {
             </div>
 
             <div className="space-y-6">
-              {/* ISS Tracker */}
+              {/* ISS Tracker with Map */}
               <Card padding="lg">
                 <CardContent>
                   <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
@@ -454,16 +455,22 @@ export function DashboardContent() {
                     ISS Location
                   </h3>
                   {issPosition ? (
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Latitude</span>
-                        <span className="text-white font-mono">{issPosition.lat.toFixed(4)}°</span>
+                    <div className="space-y-3">
+                      <WorldMapSVG
+                        issPosition={issPosition}
+                        width={280}
+                        height={140}
+                        className="w-full rounded-lg bg-white/5 p-1.5"
+                      />
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Lat</span>
+                        <span className="text-white font-mono">{issPosition.lat.toFixed(2)}°</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Longitude</span>
-                        <span className="text-white font-mono">{issPosition.lon.toFixed(4)}°</span>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Lon</span>
+                        <span className="text-white font-mono">{issPosition.lon.toFixed(2)}°</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-3">Updates every 30 seconds</p>
+                      <p className="text-xs text-gray-500">Updates every 30s</p>
                     </div>
                   ) : issError ? (
                     <div className="space-y-2">
