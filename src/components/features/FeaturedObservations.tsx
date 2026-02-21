@@ -1,136 +1,124 @@
 'use client'
 
 /**
- * Featured Observations Component
- * Displays curated JWST and other telescope images
+ * Featured Observations — Observatory Preview
+ * Interactive sky chart preview with CTA to full Deep Space Observatory
  */
 
-import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { getFeaturedJWSTImages } from '@/services/mast-api'
-import { ImageCard } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { cn, formatDate } from '@/lib/utils'
-import type { ObjectCategory } from '@/types'
-import { ArrowRight, Filter } from 'lucide-react'
+import { Aperture, ArrowRight, Sparkles, Layers, SlidersHorizontal, Eye } from 'lucide-react'
 
-// ============================================
-// Category Filters
-// ============================================
+const ObservatoryViewer = dynamic(
+  () =>
+    import('@/components/features/observatory/ObservatoryViewer').then((m) => ({
+      default: m.ObservatoryViewer,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center h-full">
+        <div className="w-8 h-8 rounded-full border-2 border-white/10 border-t-cosmos-gold animate-spin" />
+      </div>
+    ),
+  },
+)
 
-const categories: { value: ObjectCategory | 'all'; label: string; emoji: string }[] = [
-  { value: 'all', label: 'All', emoji: '🌌' },
-  { value: 'nebula', label: 'Nebulae', emoji: '💨' },
-  { value: 'galaxy', label: 'Galaxies', emoji: '🌀' },
-  { value: 'deep-field', label: 'Deep Fields', emoji: '✨' },
-  { value: 'solar-system', label: 'Solar System', emoji: '🪐' },
+const features = [
+  {
+    icon: Sparkles,
+    title: '33 Iconic Observations',
+    description: 'JWST and Hubble highlights plotted on a real Aitoff all-sky projection.',
+  },
+  {
+    icon: SlidersHorizontal,
+    title: 'Multi-Axis Filtering',
+    description: 'Filter by telescope, wavelength band, object category, and distance.',
+  },
+  {
+    icon: Layers,
+    title: 'Three View Modes',
+    description: 'Sky Map, Distance, and Timeline projections for different perspectives.',
+  },
+  {
+    icon: Eye,
+    title: 'Rich Detail Panels',
+    description: 'Scientific context, fun facts, and NASA imagery for every observation.',
+  },
 ]
 
-// ============================================
-// Featured Observations Component
-// ============================================
-
 export function FeaturedObservations() {
-  const [selectedCategory, setSelectedCategory] = useState<ObjectCategory | 'all'>('all')
-  const observations = getFeaturedJWSTImages()
-
-  const filteredObservations =
-    selectedCategory === 'all'
-      ? observations
-      : observations.filter((obs) => obs.category === selectedCategory)
-
   return (
     <div>
       {/* Section Header */}
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
-        <div>
-          <h2
-            id="featured-heading"
-            className="text-3xl md:text-4xl font-display font-bold text-white mb-2"
-          >
-            Featured <span className="text-gradient-stellar">Observations</span>
-          </h2>
-          <p className="text-gray-400 max-w-xl">
-            Explore the universe through the eyes of JWST, Hubble, and other space telescopes.
-            Each image tells a story billions of years in the making.
-          </p>
+      <div className="text-center mb-12">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-4">
+          <Aperture className="w-4 h-4 text-cosmos-gold" />
+          <span className="text-sm text-cosmos-gold font-medium">
+            Interactive Sky Chart
+          </span>
         </div>
-
-        <Link href="/explore">
-          <Button variant="outline" rightIcon={<ArrowRight className="w-4 h-4" />}>
-            View All
-          </Button>
-        </Link>
+        <h2
+          id="featured-heading"
+          className="text-3xl md:text-4xl font-display font-bold text-white mb-4"
+        >
+          Deep Space <span className="text-gradient-stellar">Observatory</span>
+        </h2>
+        <p className="text-gray-400 max-w-2xl mx-auto">
+          Explore 33 iconic JWST and Hubble observations on an interactive
+          celestial sky chart. Click any star to uncover scientific analysis,
+          fun facts, and NASA imagery.
+        </p>
       </div>
 
-      {/* Category Filters */}
-      <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2 scrollbar-hide">
-        <Filter className="w-4 h-4 text-gray-400 flex-shrink-0" aria-hidden="true" />
-        <div role="group" aria-label="Filter by category" className="flex gap-2">
-          {categories.map((category) => (
-            <button
-              key={category.value}
-              onClick={() => setSelectedCategory(category.value)}
-              className={cn(
-                'flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap transition-all duration-200',
-                selectedCategory === category.value
-                  ? 'bg-cosmos-gold/20 text-cosmos-gold border border-cosmos-gold/50'
-                  : 'bg-white/5 text-gray-400 border border-transparent hover:bg-white/10 hover:text-white'
-              )}
-              aria-pressed={selectedCategory === category.value}
+      {/* Preview + Features */}
+      <div className="grid lg:grid-cols-5 gap-8 mb-8">
+        {/* Embedded Preview */}
+        <div className="lg:col-span-3 relative rounded-xl overflow-hidden border border-white/10 aspect-video bg-cosmos-void group">
+          <ObservatoryViewer preview />
+          {/* Overlay link to full experience */}
+          <Link
+            href="/observatory"
+            className="absolute inset-0 z-10 flex items-center justify-center bg-black/0 group-hover:bg-black/40 transition-colors duration-300"
+          >
+            <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 glass-panel rounded-lg px-6 py-3 text-white font-medium flex items-center gap-2">
+              Open Full Observatory <ArrowRight className="w-4 h-4" />
+            </span>
+          </Link>
+        </div>
+
+        {/* Feature Cards */}
+        <div className="lg:col-span-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4">
+          {features.map((feature) => (
+            <div
+              key={feature.title}
+              className="glass-panel rounded-xl p-4 flex items-start gap-3"
             >
-              <span aria-hidden="true">{category.emoji}</span>
-              {category.label}
-            </button>
+              <div className="w-10 h-10 rounded-lg bg-cosmos-gold/10 flex items-center justify-center flex-shrink-0">
+                <feature.icon className="w-5 h-5 text-cosmos-gold" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-white text-sm mb-1">
+                  {feature.title}
+                </h3>
+                <p className="text-xs text-gray-400">{feature.description}</p>
+              </div>
+            </div>
           ))}
         </div>
       </div>
 
-      {/* Observations Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {filteredObservations.map((observation, index) => (
-          <Link
-            key={observation.id}
-            href={`/explore/${observation.id}`}
-            className={cn(
-              'block animate-fade-in',
-              index === 0 && 'sm:col-span-2 sm:row-span-2'
-            )}
-            style={{ animationDelay: `${index * 50}ms` }}
-          >
-            <ImageCard
-              src={observation.images.thumbnail}
-              alt={`${observation.targetName} - ${observation.category} captured by ${observation.source}`}
-              title={observation.targetName}
-              subtitle={`${observation.source} • ${formatDate(observation.observationDate, { month: 'short', year: 'numeric' })}`}
-              badge={observation.wavelengthBand.toUpperCase()}
-              badgeVariant={
-                observation.wavelengthBand === 'infrared'
-                  ? 'gold'
-                  : observation.wavelengthBand === 'radio'
-                    ? 'cyan'
-                    : 'purple'
-              }
-              aspectRatio={index === 0 ? 'square' : 'video'}
-              className="h-full"
-            />
-          </Link>
-        ))}
+      {/* CTA */}
+      <div className="text-center">
+        <Button
+          size="lg"
+          leftIcon={<Aperture className="w-5 h-5" />}
+          asChild
+        >
+          <Link href="/observatory">Launch Deep Space Observatory</Link>
+        </Button>
       </div>
-
-      {/* Empty State */}
-      {filteredObservations.length === 0 && (
-        <div className="text-center py-12">
-          <span className="text-4xl mb-4 block">🔭</span>
-          <h3 className="text-xl font-semibold text-white mb-2">No observations found</h3>
-          <p className="text-gray-400 mb-4">
-            Try selecting a different category to see more cosmic wonders.
-          </p>
-          <Button variant="secondary" onClick={() => setSelectedCategory('all')}>
-            Show All Observations
-          </Button>
-        </div>
-      )}
     </div>
   )
 }

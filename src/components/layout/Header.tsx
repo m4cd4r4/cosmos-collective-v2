@@ -11,6 +11,7 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   Telescope,
+  Aperture,
   Globe,
   Calendar,
   Users,
@@ -30,6 +31,12 @@ const navItems = [
     href: '/explore',
     icon: Telescope,
     description: 'Browse JWST and radio telescope observations',
+  },
+  {
+    label: 'Observatory',
+    href: '/observatory',
+    icon: Aperture,
+    description: 'Interactive sky chart of JWST and Hubble observations',
   },
   {
     label: 'Sky Map',
