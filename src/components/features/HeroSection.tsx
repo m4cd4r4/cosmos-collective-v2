@@ -8,7 +8,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/Button'
-import { Telescope, Globe, Sparkles, ChevronDown, X, Eye, EyeOff } from 'lucide-react'
+import { Telescope, Globe, Sparkles, ChevronDown, X, Eye, EyeOff, Radio } from 'lucide-react'
 import { useCountUp } from '@/hooks/useCountUp'
 
 // ============================================
@@ -103,10 +103,10 @@ export type PlanetHeroKey = keyof typeof PLANET_HERO_IMAGES
 // ============================================
 
 const stats = [
+  { label: 'Live Data Sources', target: 11, suffix: '', icon: '📡' },
+  { label: 'Light Years Deep', target: 13, suffix: 'B+', icon: '✨' },
   { label: 'JWST Observations', target: 50000, suffix: '+', icon: '🛰️' },
-  { label: 'Light Years Explored', target: 13, suffix: 'B+', icon: '✨' },
   { label: 'Citizen Scientists', target: 2, suffix: 'M+', icon: '👥' },
-  { label: 'Australian Dishes', target: 36, suffix: '', icon: '📡' },
 ]
 
 function CountUpStat({ target, suffix, label, icon, enabled, delay }: {
@@ -189,7 +189,7 @@ export function HeroSection() {
                 <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-6">
                   <Sparkles className="w-4 h-4 text-cosmos-gold" />
                   <span className="text-sm text-cosmos-gold font-medium">
-                    Multi-Spectrum Astronomical Explorer
+                    Live Multi-Wavelength Observatory
                   </span>
                 </div>
 
@@ -200,15 +200,15 @@ export function HeroSection() {
                 >
                   <span className="text-white">Explore the</span>
                   <br />
-                  <span className="text-gradient-stellar">Universe</span>
+                  <span className="text-gradient-stellar">Cosmos</span>
                   <br />
-                  <span className="text-white">Together</span>
+                  <span className="text-white">in Real Time</span>
                 </h1>
 
                 {/* Description */}
                 <p className="text-base md:text-lg text-gray-300 max-w-xl mx-auto mb-6">
-                  From JWST&apos;s infrared eyes to Australian radio telescopes,
-                  journey through the cosmos across all wavelengths.
+                  Track the ISS, browse JWST observations, monitor solar weather,
+                  and explore the sky — all powered by live data from 11 space agencies.
                 </p>
 
                 {/* CTA Buttons */}
@@ -218,7 +218,7 @@ export function HeroSection() {
                     leftIcon={<Telescope className="w-5 h-5" />}
                     asChild
                   >
-                    <Link href="/explore">Start Exploring</Link>
+                    <Link href="/observatory">Deep Space Observatory</Link>
                   </Button>
                   <Button
                     variant="outline"
@@ -227,6 +227,14 @@ export function HeroSection() {
                     asChild
                   >
                     <Link href="/sky-map">Open Sky Map</Link>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="lg"
+                    leftIcon={<Radio className="w-5 h-5" />}
+                    asChild
+                  >
+                    <Link href="/events">Live Events</Link>
                   </Button>
                 </div>
 
@@ -247,7 +255,7 @@ export function HeroSection() {
 
                 {/* Dismiss hint */}
                 <p className="text-xs text-gray-500 mt-4">
-                  Click outside or press <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-gray-400">Esc</kbd> to explore the Solar System
+                  Click outside or press <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-gray-400">Esc</kbd> to fly through the 3D Solar System
                 </p>
               </div>
             </div>
