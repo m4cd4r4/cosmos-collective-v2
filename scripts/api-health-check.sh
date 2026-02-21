@@ -134,7 +134,7 @@ remediate() {
       fi
       ;;
 
-    "CASDA TAP")
+    "CASDA")
       # CASDA has scheduled maintenance. Try SIA endpoint as alternative.
       if [ "$status" != "200" ]; then
         local sia_status
@@ -230,17 +230,17 @@ check_api "MAST Archive" \
   'request={"service":"Mast.Name.Lookup","params":{"input":"M31"}}' \
   "application/x-www-form-urlencoded"
 
-# 7. CASDA TAP
-check_api "CASDA TAP" \
-  "https://casda.csiro.au/votools/tap/sync?REQUEST=doQuery&LANG=ADQL&QUERY=SELECT+TOP+1+*+FROM+ivoa.obscore&FORMAT=json"
+# 7. CASDA (availability endpoint rather than full TAP query)
+check_api "CASDA" \
+  "https://casda.csiro.au/votools/tap/availability"
 
 # 8. ALeRCE
 check_api "ALeRCE" \
   "https://api.alerce.online/ztf/v1/objects/?classifier=lc_classifier&class_name=SNIa&ndet=1&page_size=1"
 
-# 9. Zooniverse
+# 9. Zooniverse (projects listing endpoint, no specific project slug needed)
 check_api "Zooniverse" \
-  "https://www.zooniverse.org/api/projects/zookeeper/galaxy-zoo"
+  "https://www.zooniverse.org/api/projects?page_size=1"
 
 # 10. Exoplanet Archive
 check_api "Exoplanet Archive" \
