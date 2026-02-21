@@ -114,10 +114,10 @@ function CountUpStat({ target, suffix, label, icon, enabled, delay }: {
 }) {
   const display = useCountUp({ target, suffix, duration: 2000, delay, enabled })
   return (
-    <div className="rounded-lg bg-white/8 backdrop-blur-sm p-3 text-center">
-      <span className="text-lg mb-0.5 block" aria-hidden="true">{icon}</span>
-      <div className="text-lg md:text-xl font-bold text-white">{display}</div>
-      <div className="text-2xs md:text-xs text-gray-400">{label}</div>
+    <div className="rounded-xl bg-white/8 backdrop-blur-sm p-4 text-center border border-white/5">
+      <span className="text-xl mb-1 block" aria-hidden="true">{icon}</span>
+      <div className="text-xl md:text-2xl font-bold text-white tabular-nums">{display}</div>
+      <div className="text-xs text-gray-400 mt-0.5">{label}</div>
     </div>
   )
 }
@@ -186,9 +186,10 @@ export function HeroSection() {
               {/* Glass card */}
               <div className="glass-panel-strong rounded-2xl p-8 md:p-12 text-center backdrop-blur-md bg-cosmos-void/40 border border-white/10">
                 {/* Badge */}
-                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-6">
-                  <Sparkles className="w-4 h-4 text-cosmos-gold" />
-                  <span className="text-sm text-cosmos-gold font-medium">
+                <div className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-6 overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cosmos-gold/15 to-transparent animate-shimmer bg-[length:200%_100%]" />
+                  <Sparkles className="w-4 h-4 text-cosmos-gold relative z-10" />
+                  <span className="text-sm text-cosmos-gold font-medium relative z-10">
                     Live Multi-Wavelength Observatory
                   </span>
                 </div>
@@ -204,6 +205,11 @@ export function HeroSection() {
                   <br />
                   <span className="text-white">in Real Time</span>
                 </h1>
+
+                {/* Tagline */}
+                <p className="text-lg md:text-xl text-gray-400 font-light tracking-wide mb-4">
+                  Your window into the universe
+                </p>
 
                 {/* Description */}
                 <p className="text-base md:text-lg text-gray-300 max-w-xl mx-auto mb-6">
@@ -239,7 +245,7 @@ export function HeroSection() {
                 </div>
 
                 {/* Stats row */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
                   {stats.map((stat, i) => (
                     <CountUpStat
                       key={stat.label}
@@ -254,9 +260,12 @@ export function HeroSection() {
                 </div>
 
                 {/* Dismiss hint */}
-                <p className="text-xs text-gray-500 mt-4">
-                  Click outside or press <kbd className="px-1.5 py-0.5 rounded bg-white/10 text-gray-400">Esc</kbd> to fly through the 3D Solar System
-                </p>
+                <div className="mt-6 pt-4 border-t border-white/5">
+                  <p className="text-sm text-gray-400 flex items-center justify-center gap-2">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-cosmos-gold/60 animate-pulse" />
+                    Click anywhere or press <kbd className="px-2 py-0.5 rounded-md bg-white/10 border border-white/10 text-gray-300 text-xs font-mono">Esc</kbd> to fly through the Solar System
+                  </p>
+                </div>
               </div>
             </div>
           </div>
