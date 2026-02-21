@@ -19,6 +19,7 @@
         #canvas-container {
             width: 100vw;
             height: 100vh;
+            touch-action: none;
         }
         #controls {
             position: absolute;
@@ -2139,6 +2140,122 @@
             if (diveState === 'none') updateCameraPosition();
         });
 
+        // =====================================================================
+        // TOUCH CONTROLS (mobile orbit, pinch-zoom, two-finger pan)
+        // =====================================================================
+        let touchStartDistance = 0;
+        let touchCount = 0;
+
+        renderer.domElement.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            touchCount = e.touches.length;
+
+            if (touchCount === 1) {
+                // Single finger: orbit (same as mouse drag)
+                if (galaxyViewActive && galaxyTransition?.phase === 'idle-galaxy') {
+                    galaxyDragging = true;
+                    galaxyDragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                    return;
+                }
+                if (diveState !== 'none' && diveState !== 'orbiting') return;
+                isDragging = true;
+                isPanning = false;
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            } else if (touchCount === 2) {
+                // Two fingers: pinch-zoom + pan
+                isDragging = false;
+                const t0 = e.touches[0], t1 = e.touches[1];
+                touchStartDistance = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+                previousMousePosition = {
+                    x: (t0.clientX + t1.clientX) / 2,
+                    y: (t0.clientY + t1.clientY) / 2
+                };
+            }
+        }, { passive: false });
+
+        renderer.domElement.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+
+            if (e.touches.length === 1 && touchCount === 1) {
+                const tx = e.touches[0].clientX, ty = e.touches[0].clientY;
+
+                // Galaxy view orbit
+                if (galaxyDragging && galaxyViewActive) {
+                    const dx = tx - galaxyDragStart.x;
+                    const dy = ty - galaxyDragStart.y;
+                    galaxyCamOrbit.theta -= dx * 0.004;
+                    galaxyCamOrbit.phi = Math.max(0.15, Math.min(Math.PI * 0.48, galaxyCamOrbit.phi - dy * 0.003));
+                    galaxyDragStart = { x: tx, y: ty };
+                    return;
+                }
+
+                if (!isDragging) return;
+                const dx = tx - previousMousePosition.x;
+                const dy = ty - previousMousePosition.y;
+                cameraRotation.y += dx * 0.005;
+                cameraRotation.x += dy * 0.005;
+                cameraRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, cameraRotation.x));
+                if (diveState === 'none') updateCameraPosition();
+                previousMousePosition = { x: tx, y: ty };
+
+            } else if (e.touches.length === 2) {
+                const t0 = e.touches[0], t1 = e.touches[1];
+                const dist = Math.hypot(t1.clientX - t0.clientX, t1.clientY - t0.clientY);
+                const midX = (t0.clientX + t1.clientX) / 2;
+                const midY = (t0.clientY + t1.clientY) / 2;
+
+                // Pinch zoom
+                if (touchStartDistance > 0) {
+                    const scale = touchStartDistance / dist;
+                    if (galaxyViewActive && galaxyTransition?.phase === 'idle-galaxy') {
+                        const zoomDelta = (1 - scale) * 0.5;
+                        galaxyZoom = Math.max(GALAXY_ZOOM_MIN, Math.min(GALAXY_ZOOM_MAX, galaxyZoom + zoomDelta * galaxyZoom));
+                        if (galaxyZoom > 1.5) loadGalaxyHiRes();
+                        updateGalaxyZoomUI();
+                    } else {
+                        cameraDistance *= scale;
+                        cameraDistance = Math.max(5, Math.min(800, cameraDistance));
+                    }
+                    touchStartDistance = dist;
+                }
+
+                // Two-finger pan
+                const dx = midX - previousMousePosition.x;
+                const dy = midY - previousMousePosition.y;
+                if (!galaxyViewActive) {
+                    cameraTarget.x -= dx * 0.15;
+                    cameraTarget.y += dy * 0.15;
+                }
+                if (diveState === 'none') updateCameraPosition();
+                previousMousePosition = { x: midX, y: midY };
+            }
+        }, { passive: false });
+
+        renderer.domElement.addEventListener('touchend', (e) => {
+            if (e.touches.length === 0) {
+                isDragging = false;
+                isPanning = false;
+                galaxyDragging = false;
+                touchStartDistance = 0;
+                touchCount = 0;
+            } else if (e.touches.length === 1) {
+                // Went from 2 fingers to 1: reset to single-finger orbit
+                touchCount = 1;
+                touchStartDistance = 0;
+                isDragging = true;
+                isPanning = false;
+                previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            }
+        });
+
+        renderer.domElement.addEventListener('touchcancel', () => {
+            isDragging = false;
+            isPanning = false;
+            galaxyDragging = false;
+            touchStartDistance = 0;
+            touchCount = 0;
+        });
+
         function updateCameraPosition() {
             const tx = cameraTarget.x, ty = cameraTarget.y, tz = cameraTarget.z;
 
@@ -2184,6 +2301,9 @@
             btn.addEventListener('mousedown', () => { interval = setInterval(step, 120); });
             btn.addEventListener('mouseup', () => clearInterval(interval));
             btn.addEventListener('mouseleave', () => clearInterval(interval));
+            btn.addEventListener('touchstart', (e) => { e.preventDefault(); interval = setInterval(step, 120); }, { passive: false });
+            btn.addEventListener('touchend', () => clearInterval(interval));
+            btn.addEventListener('touchcancel', () => clearInterval(interval));
         });
 
         // =====================================================================
