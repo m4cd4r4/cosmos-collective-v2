@@ -15,7 +15,6 @@ import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
 import { cn, formatDate } from '@/lib/utils'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations, getSKAScienceGoals, getSKATimeline } from '@/services/australian-telescopes'
-import { FEATURED_ZOONIVERSE_PROJECTS } from '@/services/zooniverse-api'
 import { getAllCurrentEvents, getISSPosition, getAstronomyPictureOfTheDay, type APODData } from '@/services/real-time-events'
 import type { AstronomicalEvent, Observation } from '@/types'
 import {
@@ -77,7 +76,7 @@ export function DashboardContent() {
   // Real-time stats
   const stats = {
     totalObservations: allObservations.length,
-    activeProjects: FEATURED_ZOONIVERSE_PROJECTS.length,
+    activeProjects: 0,
     liveEvents: events.length,
     savedFavorites: favorites.length,
   }
@@ -518,54 +517,6 @@ export function DashboardContent() {
         {/* Projects Panel */}
         {activeTab === 'projects' && (
           <div>
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-white mb-2">Active Citizen Science Projects</h2>
-              <p className="text-gray-400">
-                Contribute to real astronomical research through these active projects
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {FEATURED_ZOONIVERSE_PROJECTS.map((project) => (
-                <Card key={project.id} padding="lg" className="group">
-                  <CardContent>
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 rounded-lg bg-cosmos-gold/20 flex items-center justify-center">
-                        <Target className="w-5 h-5 text-cosmos-gold" />
-                      </div>
-                      <span className={cn(
-                        'px-2 py-0.5 rounded text-xs',
-                        project.state === 'live' && 'bg-green-500/20 text-green-400',
-                        project.state === 'paused' && 'bg-yellow-500/20 text-yellow-400',
-                        project.state === 'finished' && 'bg-gray-500/20 text-gray-400'
-                      )}>
-                        {project.state}
-                      </span>
-                    </div>
-
-                    <h3 className="text-white font-semibold mb-2 group-hover:text-cosmos-gold transition-colors">
-                      {project.displayName}
-                    </h3>
-                    <p className="text-sm text-gray-400 line-clamp-2 mb-4">
-                      {project.description}
-                    </p>
-
-                    <div className="flex items-center justify-between text-xs text-gray-500">
-                      <span>{project.classifications_count.toLocaleString()} classifications</span>
-                      <span>{Math.round(project.completeness * 100)}% complete</span>
-                    </div>
-
-                    <Button variant="outline" size="sm" className="w-full mt-4" asChild>
-                      <Link href="/citizen-science">
-                        Contribute
-                        <ChevronRight className="w-4 h-4" />
-                      </Link>
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
             {/* SKA Science Goals */}
             <div className="mt-12">
               <h2 className="text-lg font-semibold text-white mb-6 flex items-center gap-2">
