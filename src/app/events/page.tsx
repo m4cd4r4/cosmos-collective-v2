@@ -11,9 +11,13 @@ import { Footer } from '@/components/layout/Footer'
 import { PageHero } from '@/components/features/PageHero'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
+import { NeoApproachDiagram } from '@/components/features/events/NeoApproachDiagram'
+import { SolarGauge } from '@/components/features/events/SolarGauge'
 import {
   getAllCurrentEvents,
   getISSPosition,
+  getSolarWeather,
   getMeteorShowers,
   getAstronomyPictureOfTheDay,
   type APODData,
@@ -37,6 +41,7 @@ import {
   Sun,
   Rocket,
   ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import { cn, formatDate } from '@/lib/utils'
 
@@ -79,14 +84,17 @@ export default function EventsPage() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
   const [selectedCamera, setSelectedCamera] = useState(ISS_CAMERAS[0])
   const [displayCount, setDisplayCount] = useState(INITIAL_EVENT_COUNT)
+  const [solarData, setSolarData] = useState<{ flareLevel: string; currentFlux: number } | null>(null)
+  const [apodExpanded, setApodExpanded] = useState(false)
 
   const fetchData = async () => {
     setIsLoading(true)
     try {
-      const [eventsResult, apodResult, issResult] = await Promise.allSettled([
+      const [eventsResult, apodResult, issResult, solarResult] = await Promise.allSettled([
         getAllCurrentEvents(),
         getAstronomyPictureOfTheDay(),
         getISSPosition(),
+        getSolarWeather(),
       ])
 
       if (eventsResult.status === 'fulfilled' && eventsResult.value.success) {
@@ -105,6 +113,13 @@ export default function EventsPage() {
         setIssError(false)
       } else {
         setIssError(true)
+      }
+
+      if (solarResult.status === 'fulfilled' && solarResult.value.success && solarResult.value.data) {
+        setSolarData({
+          flareLevel: solarResult.value.data.flareLevel,
+          currentFlux: solarResult.value.data.currentFlux,
+        })
       }
 
       setLastUpdated(new Date())
@@ -538,7 +553,7 @@ export default function EventsPage() {
 
             {/* Sidebar */}
             <div className="space-y-6">
-              {/* ISS Tracker */}
+              {/* ISS Tracker with Map */}
               <Card padding="lg">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2 text-lg">
@@ -548,17 +563,21 @@ export default function EventsPage() {
                 </CardHeader>
                 <CardContent>
                   {issPosition ? (
-                    <div className="space-y-2">
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Latitude</span>
+                    <div className="space-y-3">
+                      <WorldMapSVG
+                        issPosition={issPosition}
+                        className="w-full rounded-lg bg-white/5 p-2"
+                      />
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Lat</span>
                         <span className="text-white font-mono">{issPosition.lat.toFixed(4)}°</span>
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-gray-400">Longitude</span>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-400">Lon</span>
                         <span className="text-white font-mono">{issPosition.lon.toFixed(4)}°</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-3">
-                        Position updates every 30 seconds
+                      <p className="text-xs text-gray-500">
+                        Updates every 30 seconds
                       </p>
                     </div>
                   ) : issError ? (
@@ -581,6 +600,47 @@ export default function EventsPage() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* Solar Weather Gauge */}
+              {solarData && (
+                <Card padding="lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Zap className="w-5 h-5 text-cosmos-gold" />
+                      Solar Activity
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <SolarGauge
+                      flareLevel={solarData.flareLevel}
+                      currentFlux={solarData.currentFlux}
+                    />
+                    <a
+                      href="https://www.swpc.noaa.gov/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-cosmos-gold hover:underline flex items-center gap-1 mt-2"
+                    >
+                      NOAA Space Weather <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* NEO Approach Diagram */}
+              {events.length > 0 && events.some((e) => e.type === 'asteroid') && (
+                <Card padding="lg">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Globe className="w-5 h-5 text-cosmos-gold" />
+                      Near-Earth Objects
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <NeoApproachDiagram events={events} />
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Meteor Showers */}
               <Card padding="lg">
@@ -614,19 +674,19 @@ export default function EventsPage() {
                 </CardContent>
               </Card>
 
-              {/* APOD */}
+              {/* APOD — Enhanced with expandable explanation + video */}
               {apod && (
-                <a
-                  href={`https://apod.nasa.gov/apod/astropix.html`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block"
+                <Card
+                  padding="none"
+                  className="overflow-hidden transition-all duration-200"
                 >
-                  <Card
-                    padding="none"
-                    className="overflow-hidden transition-all duration-200 hover:border-cosmos-gold/50 hover:bg-white/5 cursor-pointer"
-                  >
-                    {apod.media_type === 'image' && (
+                  {apod.media_type === 'image' ? (
+                    <a
+                      href={apod.hdurl || apod.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
                       <div className="relative aspect-video">
                         <img
                           src={apod.url}
@@ -638,19 +698,57 @@ export default function EventsPage() {
                           Today
                         </div>
                       </div>
-                    )}
-                    <div className="p-4">
-                      <h3 className="font-semibold text-white text-sm line-clamp-1">{apod.title}</h3>
-                      <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                        NASA Picture of the Day
-                        <ExternalLink className="w-3 h-3" />
-                      </p>
-                      {apod.copyright && (
-                        <p className="text-xs text-gray-500 mt-1">© {apod.copyright}</p>
-                      )}
+                    </a>
+                  ) : apod.media_type === 'video' ? (
+                    <div className="relative aspect-video bg-cosmos-void">
+                      <iframe
+                        src={apod.url}
+                        title={apod.title}
+                        className="absolute inset-0 w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      />
                     </div>
-                  </Card>
-                </a>
+                  ) : null}
+                  <div className="p-4">
+                    <h3 className="font-semibold text-white text-sm">{apod.title}</h3>
+                    <p className="text-xs text-gray-400 mt-1">
+                      NASA Astronomy Picture of the Day
+                    </p>
+                    {apod.copyright && (
+                      <p className="text-xs text-gray-500 mt-1">© {apod.copyright}</p>
+                    )}
+                    {/* Expandable explanation */}
+                    {apod.explanation && (
+                      <div className="mt-3">
+                        <p className={cn(
+                          'text-xs text-gray-400 leading-relaxed transition-all duration-300',
+                          apodExpanded ? '' : 'line-clamp-3',
+                        )}>
+                          {apod.explanation}
+                        </p>
+                        <button
+                          onClick={() => setApodExpanded(!apodExpanded)}
+                          className="text-xs text-cosmos-gold hover:text-white transition-colors mt-1 flex items-center gap-1"
+                        >
+                          {apodExpanded ? (
+                            <>Show less <ChevronUp className="w-3 h-3" /></>
+                          ) : (
+                            <>Read more <ChevronDown className="w-3 h-3" /></>
+                          )}
+                        </button>
+                      </div>
+                    )}
+                    <a
+                      href="https://apod.nasa.gov/apod/astropix.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-cosmos-gold hover:underline flex items-center gap-1 mt-2"
+                    >
+                      View on NASA <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </Card>
               )}
             </div>
           </div>

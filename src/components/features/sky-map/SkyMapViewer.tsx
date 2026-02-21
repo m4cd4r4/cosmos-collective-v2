@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { cn, formatCoordinates, debounce } from '@/lib/utils'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
+import { getMeteorShowers } from '@/services/real-time-events'
 import type { SkyCoordinates, WavelengthBand } from '@/types'
 import {
   Search,
@@ -27,6 +28,7 @@ import {
   ChevronRight,
   Eye,
   EyeOff,
+  Sparkles,
 } from 'lucide-react'
 
 // ============================================
@@ -68,6 +70,7 @@ interface AladinInstance {
   setFov: (fov: number) => void
   setImageSurvey: (survey: string) => void
   addCatalog: (catalog: AladinCatalog) => void
+  removeCatalog: (catalog: AladinCatalog) => void
   addOverlay: (overlay: unknown) => void
   on: (event: string, callback: (object: unknown) => void) => void
   getSize: () => [number, number]
@@ -210,6 +213,8 @@ export function SkyMapViewer({
     type?: string
   } | null>(null)
   const [uiHidden, setUiHidden] = useState(false)
+  const [showMeteorRadiants, setShowMeteorRadiants] = useState(false)
+  const meteorCatalogRef = useRef<AladinCatalog | null>(null)
 
   // Initialize Aladin with retry logic
   const initializeAladin = useCallback(() => {
@@ -391,6 +396,51 @@ export function SkyMapViewer({
     aladinRef.current?.gotoRaDec(ra, dec)
   }
 
+  // Toggle meteor shower radiants overlay
+  const toggleMeteorRadiants = useCallback(() => {
+    if (!aladinRef.current) return
+
+    if (showMeteorRadiants && meteorCatalogRef.current) {
+      aladinRef.current.removeCatalog(meteorCatalogRef.current)
+      meteorCatalogRef.current = null
+      setShowMeteorRadiants(false)
+      return
+    }
+
+    const showers = getMeteorShowers()
+    const now = new Date()
+
+    const catalog = window.A.catalog({
+      name: 'Meteor Radiants',
+      color: '#ef4444',
+      sourceSize: 14,
+      shape: 'plus',
+      onClick: 'showPopup',
+    })
+
+    const sources = showers.map((shower) => {
+      const peak = new Date(shower.peakDate)
+      const start = new Date(shower.activeStart)
+      const end = new Date(shower.activeEnd)
+      const isActive = now >= start && now <= end
+      const isPast = now > end
+
+      const status = isActive ? 'ACTIVE NOW' : isPast ? 'Past' : 'Upcoming'
+      const peakFormatted = peak.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+
+      return window.A.source(shower.radiant.ra, shower.radiant.dec, {
+        name: shower.name,
+        popupTitle: `☄️ ${shower.name}`,
+        popupDesc: `<b>Status:</b> ${status}<br/><b>Peak:</b> ${peakFormatted}<br/><b>ZHR:</b> ${shower.zenithalHourlyRate}/hr${shower.parentBody ? `<br/><b>Parent:</b> ${shower.parentBody}` : ''}`,
+      })
+    })
+
+    catalog.addSources(sources)
+    aladinRef.current.addCatalog(catalog)
+    meteorCatalogRef.current = catalog
+    setShowMeteorRadiants(true)
+  }, [showMeteorRadiants])
+
   return (
     <>
       {/* Load Aladin Lite v3 - CSS is bundled in the JS */}
@@ -472,6 +522,41 @@ export function SkyMapViewer({
                       </div>
                     </button>
                   ))}
+                </div>
+              </div>
+
+              {/* Overlays */}
+              <div className="mb-6">
+                <label className="text-xs text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                  <Sparkles className="w-4 h-4" />
+                  Overlays
+                </label>
+                <div className="space-y-2">
+                  <button
+                    type="button"
+                    onClick={toggleMeteorRadiants}
+                    className={cn(
+                      'w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all text-sm',
+                      showMeteorRadiants
+                        ? 'bg-red-500/10 border border-red-500/30'
+                        : 'hover:bg-white/5'
+                    )}
+                  >
+                    <span
+                      className={cn(
+                        'w-3 h-3 rounded-full border-2 transition-colors',
+                        showMeteorRadiants ? 'bg-red-500 border-red-500' : 'border-gray-500'
+                      )}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <div className={cn('truncate', showMeteorRadiants ? 'text-red-400' : 'text-white')}>
+                        Meteor Radiants
+                      </div>
+                      <div className="text-xs text-gray-500 truncate">
+                        Annual shower radiant positions
+                      </div>
+                    </div>
+                  </button>
                 </div>
               </div>
 

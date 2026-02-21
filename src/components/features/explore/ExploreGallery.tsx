@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/Button'
 import { cn, formatDate } from '@/lib/utils'
 import { useCosmosStore } from '@/store/cosmos-store'
 import type { Observation, ObjectCategory, WavelengthBand, TelescopeSource } from '@/types'
-import { Heart, Grid, List, SortAsc, SortDesc, Telescope, Loader2 } from 'lucide-react'
+import { Heart, Grid, List, SortAsc, SortDesc, Telescope, Loader2, Compass } from 'lucide-react'
 
 interface ExploreGalleryProps {
   source?: string
@@ -225,34 +225,56 @@ export function ExploreGallery({
                       <span>
                         {formatDate(observation.observationDate)}
                       </span>
+                      {observation.coordinates && observation.coordinates.ra !== 0 && (
+                        <Link
+                          href={`/sky-map?target=${encodeURIComponent(observation.targetName)}`}
+                          onClick={(e) => e.stopPropagation()}
+                          className="flex items-center gap-1 text-cosmos-gold hover:text-white transition-colors"
+                        >
+                          <Compass className="w-3 h-3" />
+                          Sky Map
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </Link>
               )}
 
-              {/* Favorite button */}
-              <button
-                onClick={(e) => {
-                  e.preventDefault()
-                  toggleFavorite(observation.id)
-                }}
-                className={cn(
-                  'absolute top-3 right-3 z-10 p-2 rounded-full transition-all',
-                  'opacity-0 group-hover:opacity-100 focus:opacity-100',
-                  favorites.includes(observation.id)
-                    ? 'bg-red-500/80 text-white'
-                    : 'bg-black/50 text-white hover:bg-black/70'
+              {/* Action buttons */}
+              <div className="absolute top-3 right-3 z-10 flex gap-1.5 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-all">
+                {observation.coordinates && observation.coordinates.ra !== 0 && (
+                  <Link
+                    href={`/sky-map?target=${encodeURIComponent(observation.targetName)}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="p-2 rounded-full bg-black/50 text-cosmos-gold hover:bg-cosmos-gold/30 transition-all"
+                    aria-label="View in Sky Map"
+                    title="View in Sky Map"
+                  >
+                    <Compass className="w-4 h-4" />
+                  </Link>
                 )}
-                aria-label={favorites.includes(observation.id) ? 'Remove from favorites' : 'Add to favorites'}
-                aria-pressed={favorites.includes(observation.id)}
-              >
-                <Heart
+                <button
+                  onClick={(e) => {
+                    e.preventDefault()
+                    toggleFavorite(observation.id)
+                  }}
                   className={cn(
-                    'w-4 h-4',
-                    favorites.includes(observation.id) && 'fill-current'
+                    'p-2 rounded-full transition-all',
+                    favorites.includes(observation.id)
+                      ? 'bg-red-500/80 text-white'
+                      : 'bg-black/50 text-white hover:bg-black/70'
                   )}
-                />
-              </button>
+                  aria-label={favorites.includes(observation.id) ? 'Remove from favorites' : 'Add to favorites'}
+                  aria-pressed={favorites.includes(observation.id)}
+                >
+                  <Heart
+                    className={cn(
+                      'w-4 h-4',
+                      favorites.includes(observation.id) && 'fill-current'
+                    )}
+                  />
+                </button>
+              </div>
             </article>
           ))}
         </div>

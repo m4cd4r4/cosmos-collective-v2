@@ -5,13 +5,15 @@
  * Highlights CSIRO telescopes and their capabilities
  */
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { AUSTRALIAN_TELESCOPES, type AustralianTelescope } from '@/services/australian-telescopes'
+import { AUSTRALIAN_TELESCOPES, getRecentASKAPObservations, type AustralianTelescope } from '@/services/australian-telescopes'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { AustraliaMapSVG } from '@/components/ui/AustraliaMapSVG'
 import { cn } from '@/lib/utils'
-import { Radio, Satellite, MapPin, ExternalLink } from 'lucide-react'
+import type { Observation } from '@/types'
+import { Radio, Satellite, MapPin, ExternalLink, Database, Loader2 } from 'lucide-react'
 
 // ============================================
 // Telescope Showcase Component
@@ -20,8 +22,25 @@ import { Radio, Satellite, MapPin, ExternalLink } from 'lucide-react'
 export function TelescopeShowcase() {
   const [selectedTelescope, setSelectedTelescope] = useState<AustralianTelescope>('askap')
 
+  const [casdaObs, setCasdaObs] = useState<Observation[]>([])
+  const [casdaLoading, setCasdaLoading] = useState(false)
+  const [casdaError, setCasdaError] = useState(false)
+
   const telescopes = Object.entries(AUSTRALIAN_TELESCOPES) as [AustralianTelescope, typeof AUSTRALIAN_TELESCOPES[AustralianTelescope]][]
   const selected = AUSTRALIAN_TELESCOPES[selectedTelescope]
+
+  useEffect(() => {
+    if (selectedTelescope !== 'askap') return
+    setCasdaLoading(true)
+    setCasdaError(false)
+    getRecentASKAPObservations(5)
+      .then((result) => {
+        if (result.success && result.data) setCasdaObs(result.data)
+        else setCasdaError(true)
+      })
+      .catch(() => setCasdaError(true))
+      .finally(() => setCasdaLoading(false))
+  }, [selectedTelescope])
 
   return (
     <div>
@@ -166,12 +185,54 @@ export function TelescopeShowcase() {
         </CardContent>
       </Card>
 
-      {/* Map Placeholder */}
-      <div className="mt-8 text-center">
-        <p className="text-sm text-gray-500">
-          📍 Located in the radio-quiet zone of Western Australia's Murchison region
-        </p>
+      {/* Interactive Australia Map */}
+      <div className="mt-8 flex justify-center">
+        <div className="w-full max-w-md">
+          <AustraliaMapSVG
+            selectedTelescope={selectedTelescope}
+            onSelectTelescope={setSelectedTelescope}
+            className="w-full h-auto"
+          />
+          <p className="text-xs text-gray-500 text-center mt-2">
+            Click a marker to select a telescope
+          </p>
+        </div>
       </div>
+
+      {/* CASDA Live Observations (ASKAP only) */}
+      {selectedTelescope === 'askap' && (
+        <div className="mt-8 max-w-4xl mx-auto">
+          <div className="flex items-center gap-2 mb-4">
+            <Database className="w-4 h-4 text-cosmos-nebula-blue" />
+            <h4 className="text-sm font-semibold text-gray-300 uppercase tracking-wider">
+              Recent CASDA Observations
+            </h4>
+            <span className="text-xs text-gray-500">Live from CSIRO</span>
+          </div>
+          {casdaLoading ? (
+            <div className="flex items-center gap-2 text-gray-400 text-sm py-4">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Querying CASDA archive...
+            </div>
+          ) : casdaError ? (
+            <p className="text-sm text-gray-500 py-4">
+              Unable to reach CASDA archive. Showing cached telescope data above.
+            </p>
+          ) : casdaObs.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {casdaObs.slice(0, 5).map((obs) => (
+                <div key={obs.id} className="glass-panel rounded-lg p-3">
+                  <div className="text-sm font-medium text-white truncate">{obs.targetName}</div>
+                  <div className="text-xs text-gray-400 mt-1">
+                    RA {obs.coordinates.ra.toFixed(2)}° Dec {obs.coordinates.dec.toFixed(2)}°
+                  </div>
+                  <div className="text-xs text-gray-500 mt-0.5">{obs.observationDate}</div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+        </div>
+      )}
     </div>
   )
 }
