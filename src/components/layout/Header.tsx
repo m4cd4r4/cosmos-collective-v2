@@ -11,13 +11,12 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   Telescope,
-  Aperture,
   Globe,
   Calendar,
-  Users,
   BookOpen,
   Home,
   Orbit,
+  Sun,
 } from 'lucide-react'
 
 // ============================================
@@ -32,12 +31,6 @@ const navItems = [
     description: 'Browse JWST and radio telescope observations',
   },
   {
-    label: 'Observatory',
-    href: '/observatory',
-    icon: Aperture,
-    description: 'Interactive sky chart of JWST and Hubble observations',
-  },
-  {
     label: 'Sky Map',
     href: '/sky-map',
     icon: Globe,
@@ -50,16 +43,16 @@ const navItems = [
     description: 'Interactive map of 2,600+ Kepler exoplanets',
   },
   {
+    label: 'Solar System',
+    href: '/solar-system',
+    icon: Sun,
+    description: 'Interactive 3D solar system with real orbital data',
+  },
+  {
     label: 'Live Events',
     href: '/events',
     icon: Calendar,
     description: 'Real-time astronomical events and alerts',
-  },
-  {
-    label: 'Citizen Science',
-    href: '/citizen-science',
-    icon: Users,
-    description: 'Contribute to real astronomy research',
   },
   {
     label: 'Devlog',
@@ -210,8 +203,8 @@ const bottomNavItems = [
   { label: 'Home', href: '/', icon: Home },
   { label: 'Explore', href: '/explore', icon: Telescope },
   { label: 'Sky Map', href: '/sky-map', icon: Globe },
+  { label: 'Solar System', href: '/solar-system', icon: Sun },
   { label: 'Events', href: '/events', icon: Calendar },
-  { label: 'Science', href: '/citizen-science', icon: Users },
 ]
 
 function MobileBottomNav() {

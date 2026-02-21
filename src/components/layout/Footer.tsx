@@ -19,9 +19,10 @@ const footerLinks = {
     { label: 'Sky Map', href: '/sky-map' },
     { label: 'Live Events', href: '/events' },
   ],
-  community: [
-    { label: 'Citizen Science', href: '/citizen-science' },
-    { label: 'Leaderboard', href: '/citizen-science/leaderboard' },
+  interactive: [
+    { label: 'Observatory', href: '/observatory' },
+    { label: 'Solar System', href: '/solar-system' },
+    { label: 'Kepler Exoplanets', href: '/kepler' },
   ],
   learn: [
     { label: 'Devlog', href: '/devlog' },
@@ -42,7 +43,6 @@ const dataCredits = [
   { name: 'NASA', url: 'https://www.nasa.gov/' },
   { name: 'ESA', url: 'https://www.esa.int/' },
   { name: 'CSIRO', url: 'https://www.csiro.au/' },
-  { name: 'Zooniverse', url: 'https://www.zooniverse.org/' },
 ]
 
 // ============================================
@@ -69,7 +69,7 @@ export function Footer() {
             </Link>
             <p className="text-sm text-gray-400 mb-4">
               Exploring the universe together through multi-wavelength astronomy
-              and citizen science.
+              and interactive visualisations.
             </p>
             <div className="flex gap-3">
               <a
@@ -111,9 +111,9 @@ export function Footer() {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4">Community</h3>
+            <h3 className="text-sm font-semibold text-white mb-4">Interactive</h3>
             <ul className="space-y-2">
-              {footerLinks.community.map((link) => (
+              {footerLinks.interactive.map((link) => (
                 <li key={link.href}>
                   {'external' in link && link.external ? (
                     <a

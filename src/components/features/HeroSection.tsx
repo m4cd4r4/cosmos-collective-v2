@@ -106,7 +106,7 @@ const stats = [
   { label: 'Live Data Sources', target: 11, suffix: '', icon: '📡' },
   { label: 'Light Years Deep', target: 13, suffix: 'B+', icon: '✨' },
   { label: 'JWST Observations', target: 50000, suffix: '+', icon: '🛰️' },
-  { label: 'Citizen Scientists', target: 2, suffix: 'M+', icon: '👥' },
+  { label: 'Kepler Exoplanets', target: 2600, suffix: '+', icon: '🪐' },
 ]
 
 function CountUpStat({ target, suffix, label, icon, enabled, delay }: {

@@ -9,7 +9,6 @@ import { HeroSection } from '@/components/features/HeroSection'
 import { FeaturedObservations } from '@/components/features/FeaturedObservations'
 import { LiveEventsBar } from '@/components/features/LiveEventsBar'
 import { TelescopeShowcase } from '@/components/features/TelescopeShowcase'
-import { CitizenSciencePreview } from '@/components/features/CitizenSciencePreview'
 import { SKASection } from '@/components/features/SKASection'
 import { Footer } from '@/components/layout/Footer'
 import { ScrollReveal } from '@/components/ui/ScrollReveal'
@@ -73,17 +72,7 @@ export default function HomePage() {
           </ScrollReveal>
         </section>
 
-        {/* Citizen Science */}
-        <section
-          className="py-16 px-4 md:px-6 lg:px-8 bg-gradient-to-b from-transparent via-cosmos-gold/5 to-transparent"
-          aria-labelledby="citizen-science-heading"
-        >
-          <ScrollReveal className="max-w-7xl mx-auto" delay={0.1}>
-            <Suspense fallback={<SectionSkeleton />}>
-              <CitizenSciencePreview />
-            </Suspense>
-          </ScrollReveal>
-        </section>
+
       </main>
 
       {/* Footer */}
