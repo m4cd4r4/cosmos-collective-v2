@@ -16,6 +16,8 @@ import {
   Users,
   BookOpen,
   Home,
+  Orbit,
+  Aperture,
 } from 'lucide-react'
 
 // ============================================
@@ -34,6 +36,18 @@ const navItems = [
     href: '/sky-map',
     icon: Globe,
     description: 'Interactive celestial coordinate viewer',
+  },
+  {
+    label: 'Observatory',
+    href: '/observatory',
+    icon: Aperture,
+    description: 'Interactive sky chart of JWST and Hubble observations',
+  },
+  {
+    label: 'Kepler',
+    href: '/kepler',
+    icon: Orbit,
+    description: 'Interactive map of 2,600+ Kepler exoplanets',
   },
   {
     label: 'Live Events',

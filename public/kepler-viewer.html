@@ -1,0 +1,1111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kepler Mission — Exoplanet Explorer | Cosmos Collective</title>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: rgba(13, 18, 35, 0.92);
+      --border: rgba(74, 144, 226, 0.15);
+      --border-bright: rgba(74, 144, 226, 0.35);
+      --accent: #4a90e2;
+      --gold: #d4af37;
+      --amber: #ff9a3c;
+      --text: #c8d4f0;
+      --muted: #4a5580;
+      --green: #7fff7f;
+      --hz-green: rgba(100, 200, 120, 0.8);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', 'Courier New', monospace;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── HEADER ─────────────────────────────── */
+    #header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      height: 52px;
+      background: rgba(5, 8, 20, 0.97);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 20;
+    }
+    #header-left { display: flex; align-items: center; gap: 14px; }
+    #header h1 {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #e0e8ff;
+    }
+    .badge {
+      font-size: 9px;
+      background: rgba(74, 144, 226, 0.12);
+      border: 1px solid rgba(74, 144, 226, 0.25);
+      color: var(--accent);
+      padding: 3px 8px;
+      border-radius: 3px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+    .badge.gold {
+      background: rgba(212, 175, 55, 0.1);
+      border-color: rgba(212, 175, 55, 0.25);
+      color: var(--gold);
+    }
+
+    /* ─── STATS BAR ──────────────────────────── */
+    #stats-bar {
+      display: flex;
+      background: rgba(8, 12, 28, 0.9);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .stat {
+      flex: 1;
+      padding: 7px 14px;
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .stat:last-child { border-right: none; }
+    .stat-label { font-size: 8px; text-transform: uppercase; letter-spacing: 0.14em; color: var(--muted); }
+    .stat-value { font-size: 16px; font-weight: 700; color: var(--gold); }
+    .stat-value.blue { color: #7fbfff; }
+    .stat-value.orange { color: var(--amber); }
+    .stat-value.green { color: var(--green); }
+    .stat-value.dim { color: var(--muted); font-size: 13px; }
+
+    /* ─── MAIN LAYOUT ────────────────────────── */
+    #main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 210px 1fr 290px;
+      min-height: 0;
+    }
+
+    /* ─── SIDEBAR ────────────────────────────── */
+    #sidebar {
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      padding: 14px 12px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+    .filter-group { display: flex; flex-direction: column; gap: 8px; }
+    .filter-heading {
+      font-size: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+      padding-bottom: 5px;
+      border-bottom: 1px solid var(--border);
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 5px; }
+    .chip {
+      font-size: 9px;
+      padding: 3px 9px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-family: inherit;
+      letter-spacing: 0.05em;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); }
+    .chip.active {
+      background: rgba(74, 144, 226, 0.18);
+      border-color: var(--accent);
+      color: #a0c8ff;
+    }
+    .slider {
+      width: 100%;
+      accent-color: var(--accent);
+      margin-top: 2px;
+    }
+    .slider-labels {
+      display: flex; justify-content: space-between;
+      font-size: 8px; color: var(--muted); margin-top: 2px;
+    }
+    .search-input {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 5px 9px;
+      color: var(--text);
+      font-size: 10px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: var(--accent); }
+    .view-toggle {
+      display: flex;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .view-btn {
+      flex: 1; padding: 5px 4px;
+      font-size: 8px; text-transform: uppercase; letter-spacing: 0.1em;
+      background: transparent; border: none; color: var(--muted);
+      cursor: pointer; font-family: inherit; transition: all 0.15s;
+    }
+    .view-btn:not(:last-child) { border-right: 1px solid var(--border); }
+    .view-btn.active { background: rgba(74,144,226,0.18); color: #a0c8ff; }
+    .legend-row { display: flex; align-items: center; gap: 7px; font-size: 9px; color: var(--muted); }
+    .legend-dot {
+      width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0;
+      box-shadow: 0 0 6px currentColor;
+    }
+
+    /* ─── CANVAS AREA ────────────────────────── */
+    #canvas-wrap {
+      position: relative;
+      overflow: hidden;
+      background: #050810;
+    }
+    #star-canvas {
+      position: absolute; top: 0; left: 0;
+      cursor: crosshair;
+    }
+    #tooltip {
+      position: absolute; pointer-events: none;
+      background: rgba(5, 8, 30, 0.95);
+      border: 1px solid rgba(74,144,226,0.3);
+      border-radius: 6px; padding: 9px 13px;
+      font-size: 10px; line-height: 1.7;
+      max-width: 210px; z-index: 50;
+      opacity: 0; transition: opacity 0.1s;
+      backdrop-filter: blur(10px);
+    }
+    #tooltip.show { opacity: 1; }
+    .tt-name { font-size: 11px; font-weight: 700; color: #e0e8ff; margin-bottom: 3px; }
+    .tt-row { display: flex; justify-content: space-between; gap: 12px; }
+    .tt-row span:first-child { color: var(--muted); }
+    .tt-hz { color: #7fbf7f; font-size: 9px; margin-top: 3px; }
+
+    #loading {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+      color: var(--muted); font-size: 11px; letter-spacing: 0.1em;
+    }
+    .spin {
+      width: 36px; height: 36px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── DETAIL PANEL ────────────────────────── */
+    #detail-panel {
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      padding: 14px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    #detail-empty {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; color: var(--muted); text-align: center; gap: 12px;
+    }
+    #detail-empty p { font-size: 10px; line-height: 1.8; max-width: 180px; }
+    #detail-content { display: none; flex-direction: column; gap: 14px; }
+
+    .section-title {
+      font-size: 8px; text-transform: uppercase; letter-spacing: 0.18em;
+      color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--border);
+    }
+    .star-name { font-size: 15px; font-weight: 700; color: #e8f0ff; letter-spacing: 0.04em; }
+    .star-meta { font-size: 9px; color: var(--muted); margin-top: 2px; }
+    .prop-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-size: 10px;
+    }
+    .prop-label { color: var(--muted); }
+    .prop-value { color: var(--text); font-weight: 500; }
+    .planet-card {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid var(--border);
+      border-radius: 5px; padding: 9px 11px;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .planet-card:hover {
+      background: rgba(74,144,226,0.06);
+      border-color: rgba(74,144,226,0.3);
+    }
+    .planet-name { font-size: 11px; font-weight: 600; color: #dde8ff; margin-bottom: 4px; }
+    .planet-stats { display: flex; flex-wrap: wrap; gap: 8px; }
+    .ps { font-size: 8px; color: var(--muted); }
+    .ps span { color: var(--text); font-weight: 600; }
+    .hz-badge {
+      font-size: 8px; color: #7fbf7f; margin-top: 3px;
+      display: flex; align-items: center; gap: 4px;
+    }
+    #orbital-wrap {
+      display: flex; justify-content: center;
+      padding: 8px 0;
+    }
+    #orbital-canvas {
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(15,20,50,0.9) 0%, rgba(5,8,20,0.95) 100%);
+      border: 1px solid var(--border);
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─────────────────────────────────── -->
+<div id="header">
+  <div id="header-left">
+    <svg width="30" height="30" viewBox="0 0 30 30" fill="none">
+      <circle cx="15" cy="15" r="9" stroke="#4a90e2" stroke-width="1.2" fill="none" opacity="0.7"/>
+      <circle cx="15" cy="15" r="3.5" fill="#d4af37"/>
+      <line x1="15" y1="2" x2="15" y2="7" stroke="#4a90e2" stroke-width="1.2"/>
+      <line x1="15" y1="23" x2="15" y2="28" stroke="#4a90e2" stroke-width="1.2"/>
+      <line x1="2" y1="15" x2="7" y2="15" stroke="#4a90e2" stroke-width="1.2"/>
+      <line x1="23" y1="15" x2="28" y2="15" stroke="#4a90e2" stroke-width="1.2"/>
+      <circle cx="24" cy="15" r="1.5" fill="#ff9a3c" opacity="0.8"/>
+      <ellipse cx="15" cy="15" rx="11" ry="3.5" stroke="#4a90e2" stroke-width="0.6" fill="none" opacity="0.4"/>
+    </svg>
+    <h1>Kepler Mission</h1>
+    <span class="badge">NASA · 2009–2018</span>
+    <span class="badge gold">Cygnus Field</span>
+  </div>
+  <div style="font-size:9px;color:var(--muted);letter-spacing:0.08em;">
+    Data: NASA Exoplanet Archive · TAP API
+  </div>
+</div>
+
+<!-- ─── STATS BAR ─────────────────────────────── -->
+<div id="stats-bar">
+  <div class="stat"><div class="stat-label">Confirmed Planets</div><div class="stat-value" id="s-planets">—</div></div>
+  <div class="stat"><div class="stat-label">Host Stars</div><div class="stat-value blue" id="s-stars">—</div></div>
+  <div class="stat"><div class="stat-label">Multi-Planet Systems</div><div class="stat-value orange" id="s-multi">—</div></div>
+  <div class="stat"><div class="stat-label">Earth-Sized (≤1.5 R⊕)</div><div class="stat-value green" id="s-earth">—</div></div>
+  <div class="stat"><div class="stat-label">In Habitable Zone</div><div class="stat-value" style="color:#7fbfff" id="s-hz">—</div></div>
+  <div class="stat"><div class="stat-label">Showing</div><div class="stat-value dim" id="s-showing">—</div></div>
+</div>
+
+<!-- ─── MAIN ──────────────────────────────────── -->
+<div id="main">
+
+  <!-- SIDEBAR -->
+  <div id="sidebar">
+    <div class="filter-group">
+      <div class="filter-heading">Search</div>
+      <input class="search-input" id="search" placeholder="Planet or star name…" />
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">View Mode</div>
+      <div class="view-toggle">
+        <button class="view-btn active" data-view="sky">Sky</button>
+        <button class="view-btn" data-view="galaxy">Galaxy</button>
+        <button class="view-btn" data-view="hr">HR Diagram</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">Planet Size</div>
+      <div class="chips">
+        <button class="chip active" data-f="size" data-v="all">All</button>
+        <button class="chip" data-f="size" data-v="earth">Earth</button>
+        <button class="chip" data-f="size" data-v="superearth">Super-Earth</button>
+        <button class="chip" data-f="size" data-v="neptune">Neptune</button>
+        <button class="chip" data-f="size" data-v="jupiter">Jupiter</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">Stellar Temperature</div>
+      <div class="chips">
+        <button class="chip active" data-f="temp" data-v="all">All</button>
+        <button class="chip" data-f="temp" data-v="cool" style="color:#ff8c00">Cool M/K</button>
+        <button class="chip" data-f="temp" data-v="solar" style="color:#ffd700">Sun-like G</button>
+        <button class="chip" data-f="temp" data-v="hot" style="color:#9bb8ff">Hot F/A</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">Max Orbital Period</div>
+      <input type="range" class="slider" id="sl-period" min="1" max="730" value="730">
+      <div class="slider-labels">
+        <span>1 day</span>
+        <span id="sl-period-label">≤ 730 days</span>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">Planet Systems</div>
+      <div class="chips">
+        <button class="chip active" data-f="multi" data-v="all">All Stars</button>
+        <button class="chip" data-f="multi" data-v="multi">Multi-planet only</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">Habitable Zone</div>
+      <div class="chips">
+        <button class="chip active" data-f="hz" data-v="all">All</button>
+        <button class="chip" data-f="hz" data-v="hz">HZ planets only</button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">Discovery Year ≥</div>
+      <input type="range" class="slider" id="sl-year" min="2009" max="2018" value="2009">
+      <div class="slider-labels">
+        <span id="sl-year-label">2009</span><span>2018</span>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">Stellar Temperature</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#9bb8ff;color:#9bb8ff"></div><span>Hot &gt;7000 K (A/F)</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#fff0b0;color:#fff0b0"></div><span>Warm 6000–7000 K (F)</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#ffd700;color:#ffd700"></div><span>Sun-like 5000–6000 K (G)</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#ff8c00;color:#ff8c00"></div><span>Cool 3500–5000 K (K)</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#ff4500;color:#ff4500"></div><span>Red dwarf &lt;3500 K (M)</span></div>
+      <div class="legend-row" style="margin-top:4px">
+        <div style="width:9px;height:9px;border:1px dashed #7fbf7f;border-radius:50%;flex-shrink:0;"></div>
+        <span>Habitable zone planet</span>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <div class="filter-heading">Planet Size Color</div>
+      <div class="legend-row"><div class="legend-dot" style="background:#7fff7f;color:#7fff7f"></div><span>Earth-sized (≤1.25 R⊕)</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#7fd4ff;color:#7fd4ff"></div><span>Super-Earth (≤2 R⊕)</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#7f9fff;color:#7f9fff"></div><span>Neptune-sized (≤6 R⊕)</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#ffaf7f;color:#ffaf7f"></div><span>Jupiter+ (&gt;6 R⊕)</span></div>
+    </div>
+  </div>
+
+  <!-- CANVAS -->
+  <div id="canvas-wrap">
+    <canvas id="star-canvas"></canvas>
+    <div id="tooltip"></div>
+    <div id="loading">
+      <div class="spin"></div>
+      <span>Fetching Kepler data from NASA…</span>
+    </div>
+  </div>
+
+  <!-- DETAIL PANEL -->
+  <div id="detail-panel">
+    <div id="detail-empty">
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <circle cx="26" cy="26" r="18" stroke="rgba(74,144,226,0.2)" stroke-width="1.2"/>
+        <circle cx="26" cy="26" r="5" fill="rgba(74,144,226,0.25)"/>
+        <circle cx="40" cy="26" r="2.5" fill="rgba(74,144,226,0.15)"/>
+        <circle cx="16" cy="26" r="1.8" fill="rgba(74,144,226,0.15)"/>
+        <ellipse cx="26" cy="26" rx="14" ry="5" stroke="rgba(74,144,226,0.12)" stroke-width="0.8" fill="none"/>
+      </svg>
+      <p>Click any star to explore its planetary system and orbital diagram</p>
+    </div>
+    <div id="detail-content"></div>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════
+   KEPLER EXOPLANET EXPLORER
+   Data: NASA Exoplanet Archive TAP API
+   Visualizes 2,600+ confirmed planets across ~2,000 host stars
+   ══════════════════════════════════════════════════ */
+
+const API = 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync';
+const QUERY = `select pl_name,hostname,pl_rade,pl_orbper,pl_eqt,pl_bmasse,pl_insol,pl_orbsmax,st_teff,st_rad,st_mass,st_lum,sy_dist,ra,dec,sy_pnum,disc_year from pscomppars where disc_facility like 'Kepler' order by hostname,pl_orbper`;
+
+// ── State ──────────────────────────────────────────
+const S = {
+  planets: [],
+  stars: [],
+  filtered: [],
+  view: 'sky',
+  filters: { size: 'all', temp: 'all', multi: 'all', hz: 'all', periodMax: 730, yearMin: 2009, search: '' },
+  hover: null,
+  selected: null,
+  twinkle: [],   // per-star phase offsets for animation
+  raf: null,
+  lastRender: 0,
+};
+
+// ── DOM refs ───────────────────────────────────────
+const canvas = document.getElementById('star-canvas');
+const ctx = canvas.getContext('2d');
+const wrap = document.getElementById('canvas-wrap');
+const tip = document.getElementById('tooltip');
+const loading = document.getElementById('loading');
+const detailEmpty = document.getElementById('detail-empty');
+const detailContent = document.getElementById('detail-content');
+
+// ── Temperature → Color ────────────────────────────
+function tColor(t) {
+  if (!t || t <= 0) return '#ffd700';
+  if (t < 2800) return '#ff2200';
+  if (t < 3200) return '#ff3800';
+  if (t < 3700) return '#ff5500';
+  if (t < 4200) return '#ff7700';
+  if (t < 4800) return '#ff9a00';
+  if (t < 5300) return '#ffbe00';
+  if (t < 5800) return '#ffd700';
+  if (t < 6200) return '#ffe870';
+  if (t < 6800) return '#fff4c0';
+  if (t < 8000) return '#e0ecff';
+  if (t < 11000) return '#c0d8ff';
+  return '#9bb8ff';
+}
+function tRGB(t) {
+  const h = tColor(t);
+  return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)];
+}
+
+// ── Planet category ────────────────────────────────
+function pCat(r) {
+  if (!r) return 'unknown';
+  if (r <= 1.25) return 'earth';
+  if (r <= 2.0)  return 'superearth';
+  if (r <= 6.0)  return 'neptune';
+  return 'jupiter';
+}
+const P_COLOR = { earth: '#7fff7f', superearth: '#7fd4ff', neptune: '#7f9fff', jupiter: '#ffaf7f', unknown: '#aaaaaa' };
+
+// ── Habitable zone ─────────────────────────────────
+function isHZ(insol) { return insol != null && insol >= 0.25 && insol <= 1.75; }
+
+// ── Group planets by star ──────────────────────────
+function groupStars(rows) {
+  const map = {};
+  for (const r of rows) {
+    if (!map[r.hostname]) {
+      map[r.hostname] = {
+        name: r.hostname, ra: r.ra, dec: r.dec,
+        teff: r.st_teff, srad: r.st_rad, smass: r.st_mass,
+        slum: r.st_lum, dist: r.sy_dist, pnum: r.sy_pnum,
+        planets: [],
+        color: tColor(r.st_teff),
+        x: 0, y: 0, drawR: 2,
+      };
+    }
+    const pl = {
+      name: r.pl_name, rade: r.pl_rade, period: r.pl_orbper,
+      eqt: r.pl_eqt, mass: r.pl_bmasse, insol: r.pl_insol,
+      smax: r.pl_orbsmax, year: r.disc_year,
+      cat: pCat(r.pl_rade), hz: isHZ(r.pl_insol),
+    };
+    map[r.hostname].planets.push(pl);
+  }
+  return Object.values(map).map(s => ({
+    ...s,
+    hasEarth: s.planets.some(p => p.cat === 'earth'),
+    hasHZ: s.planets.some(p => p.hz),
+    minPeriod: Math.min(...s.planets.map(p => p.period || 9999)),
+    minYear: Math.min(...s.planets.map(p => p.year || 9999)),
+  }));
+}
+
+// ── Coordinate mappings ────────────────────────────
+const KEPLER_RA = 291.0;
+const KEPLER_DEC = 44.5;
+
+function skyXY(ra, dec, W, H) {
+  const cosD = Math.cos(KEPLER_DEC * Math.PI / 180);
+  const dRA = (ra - KEPLER_RA) * cosD;
+  const dDec = dec - KEPLER_DEC;
+  const scale = Math.min(W, H) * 0.38;
+  return { x: W/2 + dRA * (scale / 12), y: H/2 - dDec * (scale / 8) };
+}
+
+function galaxyXY(ra, dec, dist, W, H) {
+  if (!dist) return skyXY(ra, dec, W, H);
+  const ra_r = ra * Math.PI / 180;
+  const dec_r = dec * Math.PI / 180;
+  const x3 = dist * Math.cos(dec_r) * Math.cos(ra_r);
+  const y3 = dist * Math.cos(dec_r) * Math.sin(ra_r);
+  const scale = Math.min(W, H) / 3800;
+  return { x: W/2 + y3 * scale, y: H/2 - x3 * scale };
+}
+
+function hrXY(teff, slum, srad, W, H) {
+  const pad = 55;
+  const t = teff || 5500;
+  // Estimate luminosity if missing: L ∝ R² T⁴
+  let L = slum;
+  if (!L && srad) L = Math.pow(srad, 2) * Math.pow(t / 5778, 4);
+  if (!L) L = 1;
+  const tMin = 2500, tMax = 12000;
+  const lMin = -2.5, lMax = 4;
+  const tx = 1 - (t - tMin) / (tMax - tMin);
+  const ly = (Math.log10(Math.max(L, 0.001)) - lMin) / (lMax - lMin);
+  return {
+    x: pad + Math.max(0, Math.min(1, tx)) * (W - 2*pad),
+    y: (H - pad) - Math.max(0, Math.min(1, ly)) * (H - 2*pad),
+  };
+}
+
+// ── Compute star canvas positions ──────────────────
+function computePos() {
+  const W = canvas.width, H = canvas.height;
+  for (const s of S.stars) {
+    const p = S.view === 'sky'    ? skyXY(s.ra, s.dec, W, H)
+            : S.view === 'galaxy' ? galaxyXY(s.ra, s.dec, s.dist, W, H)
+            :                       hrXY(s.teff, s.slum, s.srad, W, H);
+    s.x = p.x; s.y = p.y;
+    const r = s.srad || 1;
+    s.drawR = Math.max(1.5, Math.min(4.5, 1.5 + Math.log1p(r) * 1.4));
+  }
+}
+
+// ── Filters ────────────────────────────────────────
+function applyFilters() {
+  const f = S.filters;
+  S.filtered = S.stars.filter(s => {
+    if (f.size !== 'all' && !s.planets.some(p => p.cat === f.size)) return false;
+    if (f.temp === 'cool'  && (s.teff == null || s.teff >= 5000)) return false;
+    if (f.temp === 'solar' && (s.teff == null || s.teff < 5000 || s.teff >= 6500)) return false;
+    if (f.temp === 'hot'   && (s.teff == null || s.teff < 6500)) return false;
+    if (f.multi === 'multi' && (s.pnum || s.planets.length) < 2) return false;
+    if (f.hz === 'hz' && !s.hasHZ) return false;
+    if (!s.planets.some(p => !p.period || p.period <= f.periodMax)) return false;
+    if (s.minYear > 0 && s.minYear < f.yearMin) return false;
+    if (f.search) {
+      const q = f.search.toLowerCase();
+      if (!s.name.toLowerCase().includes(q) && !s.planets.some(p => p.name.toLowerCase().includes(q))) return false;
+    }
+    return true;
+  });
+  updateStats();
+}
+
+function updateStats() {
+  if (!S.planets.length) return;
+  const totalPlanets = S.planets.length;
+  const totalStars = S.stars.length;
+  const multiStars = S.stars.filter(s => (s.pnum || s.planets.length) >= 2).length;
+  const earthPlanets = S.planets.filter(p => p.pl_rade != null && p.pl_rade <= 1.5 && p.pl_rade >= 0.5).length;
+  const hzPlanets = S.planets.filter(p => isHZ(p.pl_insol)).length;
+  document.getElementById('s-planets').textContent  = totalPlanets.toLocaleString();
+  document.getElementById('s-stars').textContent    = totalStars.toLocaleString();
+  document.getElementById('s-multi').textContent    = multiStars.toLocaleString();
+  document.getElementById('s-earth').textContent    = earthPlanets.toLocaleString();
+  document.getElementById('s-hz').textContent       = hzPlanets.toLocaleString();
+  document.getElementById('s-showing').textContent  = `${S.filtered.length} / ${totalStars}`;
+}
+
+// ── Background stars (non-Kepler) ──────────────────
+let bgStars = [];
+function genBgStars(n = 600) {
+  bgStars = Array.from({length: n}, () => ({
+    x: Math.random(), y: Math.random(),
+    r: Math.random() * 0.9 + 0.2,
+    a: Math.random() * 0.45 + 0.08,
+    c: ['#fff','#ddf','#ffd','#fdd'][Math.floor(Math.random()*4)],
+  }));
+}
+
+// ── Render ─────────────────────────────────────────
+function render(ts) {
+  const W = canvas.width = wrap.clientWidth;
+  const H = canvas.height = wrap.clientHeight;
+
+  computePos();
+
+  // Background
+  ctx.fillStyle = '#050810';
+  ctx.fillRect(0, 0, W, H);
+
+  // Milky Way haze (Sky view only)
+  if (S.view === 'sky') {
+    const g = ctx.createRadialGradient(W*0.52, H*0.45, 0, W*0.52, H*0.5, H*0.85);
+    g.addColorStop(0,   'rgba(30,35,100,0.14)');
+    g.addColorStop(0.35,'rgba(18,20,65,0.08)');
+    g.addColorStop(1,   'rgba(5,8,25,0)');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // Galaxy view: Milky Way disk line
+  if (S.view === 'galaxy') {
+    // Faint disk haze at ~45° across center
+    ctx.save();
+    ctx.translate(W/2, H/2);
+    ctx.rotate(-0.4);
+    const diskGrad = ctx.createLinearGradient(0, -H*0.1, 0, H*0.1);
+    diskGrad.addColorStop(0,   'rgba(30,40,100,0)');
+    diskGrad.addColorStop(0.5, 'rgba(30,40,100,0.12)');
+    diskGrad.addColorStop(1,   'rgba(30,40,100,0)');
+    ctx.fillStyle = diskGrad;
+    ctx.fillRect(-W, -H*0.1, W*2, H*0.2);
+    ctx.restore();
+  }
+
+  // HR Diagram axes
+  if (S.view === 'hr') drawHRAxes(W, H);
+
+  // Background field stars
+  for (const s of bgStars) {
+    ctx.beginPath();
+    ctx.arc(s.x*W, s.y*H, s.r, 0, Math.PI*2);
+    ctx.fillStyle = s.c;
+    ctx.globalAlpha = s.a;
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Twinkle phase
+  const t = ts * 0.0008;
+
+  // Draw filtered stars
+  for (let i = 0; i < S.filtered.length; i++) {
+    const s = S.filtered[i];
+    const phase = S.twinkle[i % S.twinkle.length] || 0;
+    const twk = 0.8 + 0.2 * Math.sin(t + phase);
+    drawStar(s, s === S.hover, s === S.selected, twk);
+  }
+
+  // Sun marker (Galaxy view)
+  if (S.view === 'galaxy') {
+    const cx = W/2, cy = H/2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 4, 0, Math.PI*2);
+    const sg = ctx.createRadialGradient(cx,cy,0, cx,cy,14);
+    sg.addColorStop(0, 'rgba(255,255,255,0.9)');
+    sg.addColorStop(0.3, 'rgba(255,220,50,0.5)');
+    sg.addColorStop(1, 'rgba(255,220,50,0)');
+    ctx.fillStyle = sg;
+    ctx.fill();
+    ctx.fillStyle = 'rgba(255,220,100,0.7)';
+    ctx.font = '9px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('☉ SUN', cx, cy - 10);
+  }
+
+  // Kepler FOV overlay (Sky view)
+  if (S.view === 'sky') {
+    const cx = W/2, cy = H/2;
+    ctx.beginPath();
+    ctx.arc(cx, cy, Math.min(W,H)*0.41, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(74,144,226,0.07)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(74,144,226,0.04)';
+    ctx.fill();
+    ctx.fillStyle = 'rgba(74,144,226,0.25)';
+    ctx.font = '8px monospace';
+    ctx.textAlign = 'right';
+    ctx.fillText('KEPLER FIELD OF VIEW — CYGNUS', W/2 + Math.min(W,H)*0.41, cy - Math.min(W,H)*0.41 - 5);
+  }
+
+  // Selected star label
+  if (S.selected) {
+    ctx.fillStyle = 'rgba(200,215,255,0.8)';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(S.selected.name, S.selected.x + 12, S.selected.y - 4);
+  }
+
+  S.raf = requestAnimationFrame(render);
+}
+
+function drawStar(s, isHov, isSel, twk) {
+  const { x, y, drawR } = s;
+  const [cr, cg, cb] = tRGB(s.teff);
+  const r = drawR * (isHov || isSel ? 1.5 : 1) * twk;
+  const gR = r * (isHov || isSel ? 11 : 5.5);
+
+  // Outer glow
+  const gl = ctx.createRadialGradient(x,y,0, x,y,gR);
+  gl.addColorStop(0,   `rgba(${cr},${cg},${cb},${0.55*twk})`);
+  gl.addColorStop(0.25,`rgba(${cr},${cg},${cb},${0.18*twk})`);
+  gl.addColorStop(1,   `rgba(${cr},${cg},${cb},0)`);
+  ctx.beginPath();
+  ctx.arc(x, y, gR, 0, Math.PI*2);
+  ctx.fillStyle = gl;
+  ctx.fill();
+
+  // Core
+  const core = ctx.createRadialGradient(x,y,0, x,y,r);
+  core.addColorStop(0,   '#ffffff');
+  core.addColorStop(0.35, `rgba(${cr},${cg},${cb},1)`);
+  core.addColorStop(1,   `rgba(${cr},${cg},${cb},0.85)`);
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI*2);
+  ctx.fillStyle = core;
+  ctx.fill();
+
+  // Selection rings
+  if (isSel) {
+    ctx.beginPath();
+    ctx.arc(x, y, r + 4, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(${cr},${cg},${cb},0.6)`;
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(x, y, r + 9, 0, Math.PI*2);
+    ctx.strokeStyle = `rgba(${cr},${cg},${cb},0.25)`;
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  }
+
+  // Multi-planet halo
+  const np = s.pnum || s.planets.length;
+  if (np >= 3) {
+    ctx.beginPath();
+    ctx.arc(x, y, r * 3, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+    ctx.lineWidth = 0.4;
+    ctx.stroke();
+  }
+
+  // Habitable zone dashed ring
+  if (s.hasHZ) {
+    ctx.beginPath();
+    ctx.arc(x, y, r + (isSel ? 6 : 3), 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(100,200,120,0.45)';
+    ctx.lineWidth = 0.6;
+    ctx.setLineDash([2.5, 2.5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+}
+
+function drawHRAxes(W, H) {
+  const pad = 55;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(74,144,226,0.12)';
+  ctx.lineWidth = 0.5;
+  // Vertical grid
+  const temps = [3000,4000,5000,6000,7000,8000,10000];
+  for (const t of temps) {
+    const x = pad + (1-(t-2500)/(12000-2500))*(W-2*pad);
+    ctx.beginPath();
+    ctx.moveTo(x, pad); ctx.lineTo(x, H-pad);
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(74,144,226,0.45)';
+    ctx.font = '8px monospace'; ctx.textAlign = 'center';
+    ctx.fillText(`${t}K`, x, H-pad+12);
+  }
+  // Spectral types
+  const sp = {A:8500, F:6500, G:5500, K:4200, M:3200};
+  for (const [lbl,t] of Object.entries(sp)) {
+    const x = pad + (1-(t-2500)/(12000-2500))*(W-2*pad);
+    ctx.fillStyle = 'rgba(180,200,255,0.5)';
+    ctx.font = 'bold 10px monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText(lbl, x, pad-8);
+  }
+  // Main sequence label
+  ctx.fillStyle = 'rgba(74,144,226,0.5)';
+  ctx.font = '9px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('← Hotter  |  Stellar Temperature  |  Cooler →', W/2, H-pad+24);
+  ctx.fillText('Hertzsprung–Russell Diagram (Kepler Host Stars)', W/2, pad-20);
+  ctx.restore();
+}
+
+// ── Hit test ───────────────────────────────────────
+function hitTest(mx, my) {
+  let best = null, bestD = 14;
+  for (const s of S.filtered) {
+    const d = Math.hypot(s.x - mx, s.y - my);
+    if (d < bestD) { best = s; bestD = d; }
+  }
+  return best;
+}
+
+// ── Mouse handlers ─────────────────────────────────
+canvas.addEventListener('mousemove', e => {
+  const r = canvas.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top;
+  const hit = hitTest(mx, my);
+  S.hover = hit;
+  canvas.style.cursor = hit ? 'pointer' : 'crosshair';
+  hit ? showTip(e.clientX, e.clientY, hit) : hideTip();
+});
+
+canvas.addEventListener('click', e => {
+  const r = canvas.getBoundingClientRect();
+  const hit = hitTest(e.clientX - r.left, e.clientY - r.top);
+  if (hit) {
+    S.selected = hit;
+    showDetail(hit);
+  } else {
+    S.selected = null;
+    detailEmpty.style.display = 'flex';
+    detailContent.style.display = 'none';
+  }
+});
+
+canvas.addEventListener('mouseleave', hideTip);
+
+// ── Tooltip ────────────────────────────────────────
+function showTip(cx, cy, s) {
+  const t = s.teff ? `${s.teff.toLocaleString()} K` : '—';
+  const d = s.dist ? `${Math.round(s.dist).toLocaleString()} pc` : '—';
+  const n = s.pnum || s.planets.length;
+  tip.innerHTML = `
+    <div class="tt-name">${s.name}</div>
+    <div class="tt-row"><span>Planets</span><span>${n}</span></div>
+    <div class="tt-row"><span>Temperature</span><span style="color:${s.color}">${t}</span></div>
+    <div class="tt-row"><span>Distance</span><span>${d}</span></div>
+    ${s.hasHZ ? '<div class="tt-hz">◎ Habitable zone planet</div>' : ''}
+  `;
+  let lx = cx + 14, ly = cy - 10;
+  if (lx + 220 > window.innerWidth) lx = cx - 230;
+  if (ly + 120 > window.innerHeight) ly = window.innerHeight - 130;
+  tip.style.left = lx + 'px';
+  tip.style.top  = ly + 'px';
+  tip.classList.add('show');
+}
+function hideTip() { tip.classList.remove('show'); }
+
+// ── Detail panel ────────────────────────────────────
+function showDetail(s) {
+  detailEmpty.style.display = 'none';
+  detailContent.style.display = 'flex';
+  detailContent.style.flexDirection = 'column';
+  detailContent.style.gap = '14px';
+
+  const t   = s.teff  ? `${s.teff.toLocaleString()} K`  : '—';
+  const d   = s.dist  ? `${Math.round(s.dist).toLocaleString()} pc (${Math.round(s.dist*3.26).toLocaleString()} ly)` : '—';
+  const rad = s.srad  ? `${s.srad.toFixed(2)} R☉`        : '—';
+  const mss = s.smass ? `${s.smass.toFixed(2)} M☉`        : '—';
+  const n   = s.pnum || s.planets.length;
+  const spectral = s.teff ? (s.teff < 3700 ? 'M' : s.teff < 5200 ? 'K' : s.teff < 6000 ? 'G' : s.teff < 7500 ? 'F' : 'A') : '?';
+
+  detailContent.innerHTML = `
+    <div>
+      <div class="star-name">${s.name}</div>
+      <div class="star-meta">${n} confirmed planet${n!==1?'s':''} · Spectral type ${spectral}</div>
+    </div>
+    <div>
+      <div class="section-title">Host Star Properties</div>
+      <div class="prop-row"><span class="prop-label">Temperature</span><span class="prop-value" style="color:${s.color}">${t}</span></div>
+      <div class="prop-row"><span class="prop-label">Radius</span><span class="prop-value">${rad}</span></div>
+      <div class="prop-row"><span class="prop-label">Mass</span><span class="prop-value">${mss}</span></div>
+      <div class="prop-row"><span class="prop-label">Distance</span><span class="prop-value">${d}</span></div>
+      <div class="prop-row"><span class="prop-label">Coordinates</span><span class="prop-value" style="font-size:9px">${s.ra!=null?s.ra.toFixed(3)+'°, '+s.dec.toFixed(3)+'°':'—'}</span></div>
+    </div>
+    <div>
+      <div class="section-title">Orbital System</div>
+      <div id="orbital-wrap"><canvas id="orbital-canvas" width="220" height="220"></canvas></div>
+    </div>
+    <div>
+      <div class="section-title">Planets (${s.planets.length})</div>
+      <div style="display:flex;flex-direction:column;gap:7px">
+        ${s.planets.map(p => `
+          <div class="planet-card">
+            <div class="planet-name" style="color:${P_COLOR[p.cat]}">${p.name}</div>
+            <div class="planet-stats">
+              ${p.rade   ? `<div class="ps">Radius <span>${p.rade.toFixed(2)} R⊕</span></div>` : ''}
+              ${p.period ? `<div class="ps">Period <span>${p.period.toFixed(1)} d</span></div>` : ''}
+              ${p.eqt    ? `<div class="ps">Temp <span>${Math.round(p.eqt)} K</span></div>` : ''}
+              ${p.mass   ? `<div class="ps">Mass <span>${p.mass.toFixed(1)} M⊕</span></div>` : ''}
+              ${p.insol  ? `<div class="ps">Flux <span>${p.insol.toFixed(2)} S⊕</span></div>` : ''}
+              ${p.year   ? `<div class="ps">Disc. <span>${p.year}</span></div>` : ''}
+            </div>
+            ${p.hz ? '<div class="hz-badge">◎ In habitable zone</div>' : ''}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  setTimeout(() => drawOrbit(s), 20);
+}
+
+// ── Orbital diagram ────────────────────────────────
+function drawOrbit(s) {
+  const oc = document.getElementById('orbital-canvas');
+  if (!oc) return;
+  const ox = oc.getContext('2d');
+  const W = oc.width, H = oc.height;
+  const cx = W/2, cy = H/2;
+
+  ox.fillStyle = '#060a1a';
+  ox.fillRect(0, 0, W, H);
+
+  // Star
+  const [cr,cg,cb] = tRGB(s.teff);
+  const sg = ox.createRadialGradient(cx,cy,0, cx,cy,18);
+  sg.addColorStop(0, '#ffffff');
+  sg.addColorStop(0.4, `rgb(${cr},${cg},${cb})`);
+  sg.addColorStop(1, 'transparent');
+  ox.beginPath();
+  ox.arc(cx, cy, 14, 0, Math.PI*2);
+  ox.fillStyle = sg;
+  ox.fill();
+
+  const sorted = [...s.planets].filter(p => p.period).sort((a,b) => a.period - b.period);
+  if (!sorted.length) return;
+
+  const RMIN = 22, RMAX = cy - 8;
+  const n = sorted.length;
+
+  // Habitable zone shading (rough: 0.4–0.65 of RMAX)
+  const hzIn  = RMIN + 0.38 * (RMAX - RMIN);
+  const hzOut = RMIN + 0.62 * (RMAX - RMIN);
+  ox.beginPath();
+  ox.arc(cx, cy, hzOut, 0, Math.PI*2);
+  ox.arc(cx, cy, hzIn, 0, Math.PI*2, true);
+  ox.fillStyle = 'rgba(80,180,100,0.05)';
+  ox.fill();
+
+  // Orbits and planets
+  sorted.forEach((p, i) => {
+    const orR = RMIN + (i / Math.max(n-1, 1)) * (RMAX - RMIN);
+
+    // Orbit ring
+    ox.beginPath();
+    ox.arc(cx, cy, orR, 0, Math.PI*2);
+    ox.strokeStyle = p.hz ? 'rgba(100,200,120,0.22)' : 'rgba(74,144,226,0.12)';
+    ox.lineWidth = 0.6;
+    ox.stroke();
+
+    // Planet dot
+    const angle = (i / n) * Math.PI * 2 - Math.PI/2;
+    const px = cx + Math.cos(angle) * orR;
+    const py = cy + Math.sin(angle) * orR;
+    const pr = Math.max(2, Math.min(6, (p.rade || 1.5) * 0.85));
+    const pc = P_COLOR[p.cat] || '#aaa';
+
+    const pg = ox.createRadialGradient(px,py,0, px,py,pr*2.5);
+    const [r2,g2,b2] = [parseInt(pc.slice(1,3),16),parseInt(pc.slice(3,5),16),parseInt(pc.slice(5,7),16)];
+    pg.addColorStop(0, '#fff');
+    pg.addColorStop(0.3, pc);
+    pg.addColorStop(1, `rgba(${r2},${g2},${b2},0)`);
+    ox.beginPath();
+    ox.arc(px, py, pr*2.5, 0, Math.PI*2);
+    ox.fillStyle = pg;
+    ox.fill();
+    ox.beginPath();
+    ox.arc(px, py, pr, 0, Math.PI*2);
+    ox.fillStyle = pc;
+    ox.fill();
+  });
+}
+
+// ── Filter setup ────────────────────────────────────
+function setupFilters() {
+  document.querySelectorAll('.chip').forEach(el => {
+    el.addEventListener('click', () => {
+      const f = el.dataset.f, v = el.dataset.v;
+      document.querySelectorAll(`.chip[data-f="${f}"]`).forEach(c => c.classList.remove('active'));
+      el.classList.add('active');
+      S.filters[f] = v;
+      applyFilters();
+    });
+  });
+
+  const ps = document.getElementById('sl-period');
+  ps.addEventListener('input', () => {
+    S.filters.periodMax = +ps.value;
+    document.getElementById('sl-period-label').textContent = `≤ ${ps.value} days`;
+    applyFilters();
+  });
+
+  const ys = document.getElementById('sl-year');
+  ys.addEventListener('input', () => {
+    S.filters.yearMin = +ys.value;
+    document.getElementById('sl-year-label').textContent = ys.value;
+    applyFilters();
+  });
+
+  let t; const si = document.getElementById('search');
+  si.addEventListener('input', () => {
+    clearTimeout(t);
+    t = setTimeout(() => { S.filters.search = si.value.trim(); applyFilters(); }, 220);
+  });
+
+  document.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      S.view = btn.dataset.view;
+    });
+  });
+}
+
+// ── Fetch data ─────────────────────────────────────
+async function fetchData() {
+  const url = `${API}?query=${encodeURIComponent(QUERY)}&format=json`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch(e) {
+    console.warn('NASA API failed, using sample data:', e.message);
+    return sampleData();
+  }
+}
+
+// ── Minimal sample fallback ────────────────────────
+function sampleData() {
+  return [
+    {pl_name:'Kepler-22 b',hostname:'Kepler-22',pl_rade:2.4,pl_orbper:289.9,pl_eqt:262,pl_bmasse:null,pl_insol:1.1,pl_orbsmax:0.849,st_teff:5518,st_rad:0.979,st_mass:0.97,st_lum:0.79,sy_dist:190,ra:290.97,dec:47.88,sy_pnum:1,disc_year:2011},
+    {pl_name:'Kepler-452 b',hostname:'Kepler-452',pl_rade:1.63,pl_orbper:384.8,pl_eqt:265,pl_bmasse:5,pl_insol:1.1,pl_orbsmax:1.046,st_teff:5757,st_rad:1.11,st_mass:1.04,st_lum:1.2,sy_dist:430,ra:292.16,dec:44.32,sy_pnum:1,disc_year:2015},
+    {pl_name:'Kepler-186 b',hostname:'Kepler-186',pl_rade:1.07,pl_orbper:3.887,pl_eqt:null,pl_bmasse:null,pl_insol:null,pl_orbsmax:0.0343,st_teff:3755,st_rad:0.47,st_mass:0.478,st_lum:0.04,sy_dist:151,ra:296.17,dec:43.95,sy_pnum:5,disc_year:2014},
+    {pl_name:'Kepler-186 c',hostname:'Kepler-186',pl_rade:1.25,pl_orbper:7.267,pl_eqt:null,pl_bmasse:null,pl_insol:null,pl_orbsmax:0.0520,st_teff:3755,st_rad:0.47,st_mass:0.478,st_lum:0.04,sy_dist:151,ra:296.17,dec:43.95,sy_pnum:5,disc_year:2014},
+    {pl_name:'Kepler-186 d',hostname:'Kepler-186',pl_rade:1.40,pl_orbper:13.342,pl_eqt:null,pl_bmasse:null,pl_insol:null,pl_orbsmax:0.0781,st_teff:3755,st_rad:0.47,st_mass:0.478,st_lum:0.04,sy_dist:151,ra:296.17,dec:43.95,sy_pnum:5,disc_year:2014},
+    {pl_name:'Kepler-186 e',hostname:'Kepler-186',pl_rade:1.27,pl_orbper:22.407,pl_eqt:null,pl_bmasse:null,pl_insol:null,pl_orbsmax:0.1100,st_teff:3755,st_rad:0.47,st_mass:0.478,st_lum:0.04,sy_dist:151,ra:296.17,dec:43.95,sy_pnum:5,disc_year:2014},
+    {pl_name:'Kepler-186 f',hostname:'Kepler-186',pl_rade:1.17,pl_orbper:129.95,pl_eqt:null,pl_bmasse:null,pl_insol:0.32,pl_orbsmax:0.356,st_teff:3755,st_rad:0.47,st_mass:0.478,st_lum:0.04,sy_dist:151,ra:296.17,dec:43.95,sy_pnum:5,disc_year:2014},
+    {pl_name:'Kepler-442 b',hostname:'Kepler-442',pl_rade:1.34,pl_orbper:112.3,pl_eqt:233,pl_bmasse:null,pl_insol:0.7,pl_orbsmax:0.409,st_teff:4402,st_rad:0.598,st_mass:0.609,st_lum:0.11,sy_dist:342,ra:294.86,dec:39.27,sy_pnum:1,disc_year:2015},
+    {pl_name:'Kepler-62 b',hostname:'Kepler-62',pl_rade:1.31,pl_orbper:5.714,pl_eqt:null,pl_bmasse:null,pl_insol:null,pl_orbsmax:0.0553,st_teff:4925,st_rad:0.64,st_mass:0.69,st_lum:0.22,sy_dist:368,ra:289.31,dec:45.35,sy_pnum:5,disc_year:2013},
+    {pl_name:'Kepler-62 c',hostname:'Kepler-62',pl_rade:0.54,pl_orbper:12.442,pl_eqt:null,pl_bmasse:null,pl_insol:null,pl_orbsmax:0.0929,st_teff:4925,st_rad:0.64,st_mass:0.69,st_lum:0.22,sy_dist:368,ra:289.31,dec:45.35,sy_pnum:5,disc_year:2013},
+    {pl_name:'Kepler-62 d',hostname:'Kepler-62',pl_rade:1.95,pl_orbper:18.164,pl_eqt:null,pl_bmasse:null,pl_insol:null,pl_orbsmax:0.120,st_teff:4925,st_rad:0.64,st_mass:0.69,st_lum:0.22,sy_dist:368,ra:289.31,dec:45.35,sy_pnum:5,disc_year:2013},
+    {pl_name:'Kepler-62 e',hostname:'Kepler-62',pl_rade:1.61,pl_orbper:122.39,pl_eqt:null,pl_bmasse:null,pl_insol:1.2,pl_orbsmax:0.427,st_teff:4925,st_rad:0.64,st_mass:0.69,st_lum:0.22,sy_dist:368,ra:289.31,dec:45.35,sy_pnum:5,disc_year:2013},
+    {pl_name:'Kepler-62 f',hostname:'Kepler-62',pl_rade:1.41,pl_orbper:267.29,pl_eqt:null,pl_bmasse:null,pl_insol:0.41,pl_orbsmax:0.718,st_teff:4925,st_rad:0.64,st_mass:0.69,st_lum:0.22,sy_dist:368,ra:289.31,dec:45.35,sy_pnum:5,disc_year:2013},
+  ];
+}
+
+// ── Init ───────────────────────────────────────────
+async function init() {
+  genBgStars();
+  setupFilters();
+
+  // Start animation loop before data loads
+  S.raf = requestAnimationFrame(render);
+
+  const raw = await fetchData();
+  S.planets = raw;
+  S.stars = groupStars(raw);
+  S.twinkle = S.stars.map(() => Math.random() * Math.PI * 2);
+  applyFilters();
+  loading.style.display = 'none';
+}
+
+init().catch(console.error);
+</script>
+</body>
+</html>
