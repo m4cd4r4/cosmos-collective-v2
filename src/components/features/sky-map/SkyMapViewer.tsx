@@ -221,6 +221,15 @@ export function SkyMapViewer({
   const [uiHidden, setUiHidden] = useState(false)
   const [showMeteorRadiants, setShowMeteorRadiants] = useState(false)
   const meteorCatalogRef = useRef<AladinCatalog | null>(null)
+  const [hoveredObject, setHoveredObject] = useState<{
+    name: string
+    thumbnail: string
+    source?: string
+    category?: string
+    instrument?: string
+    id?: string
+  } | null>(null)
+  const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 })
 
   // Initialize Aladin with retry logic
   const initializeAladin = useCallback(() => {
@@ -320,7 +329,26 @@ export function SkyMapViewer({
               category: data.category as string | undefined,
               instrument: data.instrument as string | undefined,
             })
+            setHoveredObject(null)
             if (!sidebarOpen) setSidebarOpen(true)
+          }
+        })
+
+        aladin.on('objectHovered', (object: unknown) => {
+          if (object && typeof object === 'object' && 'data' in object) {
+            const data = (object as { data: Record<string, unknown> }).data
+            if (data.thumbnail) {
+              setHoveredObject({
+                name: (data.name as string) || 'Unknown',
+                thumbnail: data.thumbnail as string,
+                source: data.source as string | undefined,
+                category: data.category as string | undefined,
+                instrument: data.instrument as string | undefined,
+                id: data.id as string | undefined,
+              })
+            }
+          } else {
+            setHoveredObject(null)
           }
         })
 
@@ -697,7 +725,14 @@ export function SkyMapViewer({
         </aside>
 
         {/* Map Container */}
-        <div className="flex-1 relative">
+        <div
+          className="flex-1 relative"
+          onMouseMove={(e) => {
+            if (hoveredObject) {
+              setHoverPos({ x: e.clientX, y: e.clientY })
+            }
+          }}
+        >
           <div
             ref={containerRef}
             id="aladin-lite-div"
@@ -817,6 +852,43 @@ export function SkyMapViewer({
             Declination {currentCoords?.dec.toFixed(2)} degrees.
             Use search to find objects. Click and drag to pan, scroll to zoom.
           </div>
+
+          {/* Hover Preview Popup */}
+          {hoveredObject && (
+            <div
+              className="fixed z-50 pointer-events-none animate-fade-in"
+              style={{
+                left: Math.min(hoverPos.x + 16, window.innerWidth - 310),
+                top: Math.max(8, hoverPos.y - 120),
+                maxWidth: 320,
+              }}
+            >
+              <div className="rounded-xl overflow-hidden border border-white/15 shadow-2xl shadow-black/60 backdrop-blur-md bg-cosmos-void/80">
+                <div className="relative w-72 h-44 overflow-hidden">
+                  <img
+                    src={hoveredObject.thumbnail}
+                    alt={hoveredObject.name}
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void/90 via-transparent to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-3">
+                    <h4 className="font-display font-bold text-white text-sm drop-shadow-lg">
+                      {hoveredObject.name}
+                    </h4>
+                    <p className="text-xs text-cosmos-gold mt-0.5 drop-shadow-lg">
+                      {hoveredObject.source}
+                      {hoveredObject.instrument ? ` · ${hoveredObject.instrument}` : ''}
+                      {hoveredObject.category ? ` · ${hoveredObject.category}` : ''}
+                    </p>
+                  </div>
+                </div>
+                <div className="px-3 py-2 flex items-center justify-between">
+                  <span className="text-[10px] text-gray-500 uppercase tracking-wider">Click for details</span>
+                  <span className="text-[10px] text-cosmos-gold">→</span>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </>
