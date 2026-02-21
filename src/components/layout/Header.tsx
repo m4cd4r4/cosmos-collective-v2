@@ -17,6 +17,7 @@ import {
   Home,
   Orbit,
   Sun,
+  Hexagon,
 } from 'lucide-react'
 
 // ============================================
@@ -41,6 +42,12 @@ const navItems = [
     href: '/kepler',
     icon: Orbit,
     description: 'Interactive map of 2,600+ Kepler exoplanets',
+  },
+  {
+    label: 'JWST',
+    href: '/jwst',
+    icon: Hexagon,
+    description: 'James Webb Space Telescope observation explorer',
   },
   {
     label: 'Solar System',
