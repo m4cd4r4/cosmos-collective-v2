@@ -189,7 +189,7 @@ interface SkyMapViewerProps {
 export function SkyMapViewer({
   initialRa,
   initialDec,
-  initialFov = 60,
+  initialFov = 1.5,
   initialTarget,
 }: SkyMapViewerProps) {
   const router = useRouter()
@@ -273,7 +273,7 @@ export function SkyMapViewer({
 
     try {
       // Set initial target
-      let targetStr = 'galactic center'
+      let targetStr = '05 41 03.87 -02 26 30.5' // Horsehead Nebula region (B33)
       if (initialRa !== undefined && initialDec !== undefined) {
         targetStr = `${initialRa} ${initialDec}`
       } else if (initialTarget) {
@@ -444,8 +444,8 @@ export function SkyMapViewer({
   const zoomIn = () => aladinRef.current?.increaseZoom()
   const zoomOut = () => aladinRef.current?.decreaseZoom()
   const goHome = () => {
-    aladinRef.current?.gotoObject('galactic center')
-    aladinRef.current?.setFov(60)
+    aladinRef.current?.gotoRaDec(85.2661, -2.4418) // Horsehead Nebula region (B33)
+    aladinRef.current?.setFov(1.5)
   }
   const goToCoords = (ra: number, dec: number) => {
     aladinRef.current?.gotoRaDec(ra, dec)

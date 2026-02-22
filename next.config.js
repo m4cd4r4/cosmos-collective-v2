@@ -3,6 +3,8 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
+  // Exclude Next.js App Router internal files that are not publicly served as static assets
+  buildExcludes: [/app-build-manifest\.json$/, /middleware-manifest\.json$/, /middleware-build-manifest\.js$/],
   runtimeCaching: [
     {
       urlPattern: /^https:\/\/www\.nasa\.gov\/wp-content\/uploads\/.*/i,

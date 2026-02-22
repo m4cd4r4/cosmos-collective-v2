@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import type { Observation, DetectedFeature, ObjectCategory, JWSTInstrument } from '@/types'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
 import { ExternalLink, MapPin, Calendar, Ruler, Star, Layers, Search, ChevronRight, Maximize2, Info } from 'lucide-react'
@@ -51,6 +51,8 @@ export function JWSTViewer() {
   const [hoveredFeature, setHoveredFeature] = useState<string | null>(null)
   const [showFeatures, setShowFeatures] = useState(true)
   const [fullscreen, setFullscreen] = useState(false)
+  const [imgLoaded, setImgLoaded] = useState(false)
+  const [imgError, setImgError] = useState(false)
 
   // ── Derived data ─────────────────────────────────────────────────────────
 
@@ -108,6 +110,20 @@ export function JWSTViewer() {
     }
     return selected.images.preview
   }, [selected, activeWavelength])
+
+  // In production route through the image proxy for reliability; reset load state on URL change
+  const proxiedImageUrl = useMemo(() => {
+    if (!currentImageUrl) return ''
+    if (process.env.NODE_ENV === 'production') {
+      return `/api/image-proxy?url=${encodeURIComponent(currentImageUrl)}`
+    }
+    return currentImageUrl
+  }, [currentImageUrl])
+
+  useEffect(() => {
+    setImgLoaded(false)
+    setImgError(false)
+  }, [proxiedImageUrl])
 
   return (
     <div className="flex flex-col h-full bg-[#0a0e1a] text-[#c8d4f0] font-mono text-sm select-none overflow-hidden">
@@ -242,11 +258,27 @@ export function JWSTViewer() {
         <div className={`relative overflow-hidden bg-black flex flex-col ${fullscreen ? 'fixed inset-0 z-50' : ''}`}>
           {/* Image container */}
           <div className="flex-1 relative flex items-center justify-center overflow-hidden">
+            {/* Loading state */}
+            {!imgLoaded && !imgError && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none">
+                <div className="w-8 h-8 rounded-full border border-[rgba(212,175,55,0.2)] border-t-[#d4af37] animate-spin" />
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Loading image…</span>
+              </div>
+            )}
+            {/* Error state */}
+            {imgError && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none">
+                <span className="text-4xl opacity-30">🔭</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Image unavailable</span>
+              </div>
+            )}
             <img
-              src={currentImageUrl}
+              src={proxiedImageUrl}
               alt={selected.targetName}
-              className="max-w-full max-h-full object-contain"
+              className={`max-w-full max-h-full object-contain transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
               draggable={false}
+              onLoad={() => setImgLoaded(true)}
+              onError={() => { setImgLoaded(false); setImgError(true) }}
             />
 
             {/* Feature bounding boxes */}
