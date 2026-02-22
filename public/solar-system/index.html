@@ -1624,7 +1624,9 @@
                     if (old) { scene.remove(old); old.geometry.dispose(); old.material.dispose(); }
 
                     if (moon.trail.length > 2) {
-                        const points = moon.trail.map(p => new THREE.Vector3(p.x, p.y, p.z));
+                        const rawPts = moon.trail.map(p => new THREE.Vector3(p.x, p.y, p.z));
+                        const curve = new THREE.CatmullRomCurve3(rawPts);
+                        const points = curve.getPoints(Math.min(rawPts.length * 6, 1200));
                         const geo = new THREE.BufferGeometry().setFromPoints(points);
                         const mat = new THREE.LineBasicMaterial({
                             color: moon.mesh.material.color,
