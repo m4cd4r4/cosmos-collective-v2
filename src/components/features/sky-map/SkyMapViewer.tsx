@@ -198,6 +198,7 @@ export function SkyMapViewer({
   const aladinRef = useRef<AladinInstance | null>(null)
   const retryCountRef = useRef(0)
   const maxRetries = 50 // 5 seconds max wait (50 * 100ms)
+  const mousePosRef = useRef({ x: 0, y: 0 })
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
@@ -273,7 +274,7 @@ export function SkyMapViewer({
 
     try {
       // Set initial target
-      let targetStr = '05 41 03.87 -02 26 30.5' // Horsehead Nebula region (B33)
+      let targetStr = '05 41 00.00 -02 27 28.8' // Horsehead Nebula region (B33/IC 434)
       if (initialRa !== undefined && initialDec !== undefined) {
         targetStr = `${initialRa} ${initialDec}`
       } else if (initialTarget) {
@@ -284,7 +285,7 @@ export function SkyMapViewer({
         survey: 'P/DSS2/color',
         fov: initialFov,
         target: targetStr,
-        cooFrame: 'J2000',
+        cooFrame: 'GAL',
         showReticle: true,
         showZoomControl: false,
         showFullscreenControl: false,
@@ -338,6 +339,8 @@ export function SkyMapViewer({
           if (object && typeof object === 'object' && 'data' in object) {
             const data = (object as { data: Record<string, unknown> }).data
             if (data.thumbnail) {
+              // Snapshot cursor position at hover time so the popup stays pinned
+              setHoverPos({ ...mousePosRef.current })
               setHoveredObject({
                 name: (data.name as string) || 'Unknown',
                 thumbnail: data.thumbnail as string,
@@ -444,7 +447,7 @@ export function SkyMapViewer({
   const zoomIn = () => aladinRef.current?.increaseZoom()
   const zoomOut = () => aladinRef.current?.decreaseZoom()
   const goHome = () => {
-    aladinRef.current?.gotoRaDec(85.2661, -2.4418) // Horsehead Nebula region (B33)
+    aladinRef.current?.gotoRaDec(85.25, -2.4580) // Horsehead Nebula region (B33/IC 434)
     aladinRef.current?.setFov(1.5)
   }
   const goToCoords = (ra: number, dec: number) => {
@@ -727,11 +730,7 @@ export function SkyMapViewer({
         {/* Map Container */}
         <div
           className="flex-1 relative"
-          onMouseMove={(e) => {
-            if (hoveredObject) {
-              setHoverPos({ x: e.clientX, y: e.clientY })
-            }
-          }}
+          onMouseMove={(e) => { mousePosRef.current = { x: e.clientX, y: e.clientY } }}
         >
           <div
             ref={containerRef}
@@ -853,17 +852,26 @@ export function SkyMapViewer({
             Use search to find objects. Click and drag to pan, scroll to zoom.
           </div>
 
-          {/* Hover Preview Popup */}
+          {/* Hover Preview Popup — pinned at hover position, interactive */}
           {hoveredObject && (
             <div
-              className="fixed z-50 pointer-events-none animate-fade-in"
+              className="fixed z-50 animate-fade-in"
               style={{
                 left: Math.min(hoverPos.x + 16, window.innerWidth - 310),
                 top: Math.max(8, hoverPos.y - 120),
                 maxWidth: 320,
               }}
             >
-              <div className="rounded-xl overflow-hidden border border-white/15 shadow-2xl shadow-black/60 backdrop-blur-md bg-cosmos-void/80">
+              <div className="rounded-xl overflow-hidden border border-white/15 shadow-2xl shadow-black/60 backdrop-blur-md bg-cosmos-void/90">
+                {/* Close button */}
+                <button
+                  type="button"
+                  onClick={() => setHoveredObject(null)}
+                  className="absolute top-2 right-2 z-10 w-6 h-6 rounded-full bg-black/60 flex items-center justify-center text-white/60 hover:text-white hover:bg-black/80 transition-colors"
+                  aria-label="Dismiss"
+                >
+                  ×
+                </button>
                 <div className="relative w-72 h-44 overflow-hidden">
                   <img
                     src={hoveredObject.thumbnail}
@@ -882,10 +890,21 @@ export function SkyMapViewer({
                     </p>
                   </div>
                 </div>
-                <div className="px-3 py-2 flex items-center justify-between">
-                  <span className="text-[10px] text-gray-500 uppercase tracking-wider">Click for details</span>
-                  <span className="text-[10px] text-cosmos-gold">→</span>
-                </div>
+                {hoveredObject.id ? (
+                  <a
+                    href={`/explore/${hoveredObject.id}`}
+                    className="px-3 py-2 flex items-center justify-between hover:bg-white/5 transition-colors cursor-pointer"
+                    onClick={() => setHoveredObject(null)}
+                  >
+                    <span className="text-[10px] text-gray-400 uppercase tracking-wider">View full details</span>
+                    <span className="text-[10px] text-cosmos-gold">→</span>
+                  </a>
+                ) : (
+                  <div className="px-3 py-2 flex items-center justify-between">
+                    <span className="text-[10px] text-gray-500 uppercase tracking-wider">Click for details</span>
+                    <span className="text-[10px] text-cosmos-gold">→</span>
+                  </div>
+                )}
               </div>
             </div>
           )}
