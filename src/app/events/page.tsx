@@ -242,126 +242,107 @@ export default function EventsPage() {
   ).slice(0, 3)
 
   return (
-    <div className="min-h-screen relative">
+    <div className="min-h-screen bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
 
-      {/* Page Hero with Saturn Background */}
-      <PageHero
-        title="Live Events"
-        titleHighlight="Events"
-        description="Real-time astronomical events, meteor showers, asteroid approaches, and space weather alerts."
-        backgroundKey="saturnRings"
-        size="sm"
-        badge={
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30">
-            <Calendar className="w-4 h-4 text-cosmos-gold" />
-            <span className="text-sm text-cosmos-gold font-medium">Live Updates</span>
+      {/* ── App Header Strip ──────────────────────────────────────────────── */}
+      <div className="bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] px-5 h-[52px] flex items-center justify-between shrink-0">
+        <div className="flex items-center gap-3">
+          <Calendar className="w-4 h-4 text-[#d4af37]" />
+          <span className="text-base font-bold tracking-[0.15em] uppercase text-[#e0e8ff]">Live Events</span>
+          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-500/20 border border-red-500/30">
+            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+            <span className="text-[9px] uppercase tracking-[0.15em] text-red-400">Live</span>
           </div>
-        }
-      >
-        <div className="flex items-center gap-3 mt-4">
+          <span className="hidden sm:inline text-[9px] uppercase tracking-[0.12em] text-[#4a5580] border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
+            Astronomical · Space Weather · ISS
+          </span>
+        </div>
+        <div className="flex items-center gap-3">
           {lastUpdated && (
-            <span className="text-sm text-gray-400">
-              Updated {formatDate(lastUpdated.toISOString(), { hour: 'numeric', minute: 'numeric' })}
+            <span className="text-[10px] text-[#4a5580] uppercase tracking-wider hidden sm:block">
+              {formatDate(lastUpdated.toISOString(), { hour: 'numeric', minute: 'numeric' })}
             </span>
           )}
-          <Button
-            variant="outline"
-            size="sm"
+          <button
+            type="button"
             onClick={fetchData}
             disabled={isLoading}
-            leftIcon={isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[rgba(212,175,55,0.2)] text-[#d4af37] text-[10px] uppercase tracking-wider hover:bg-[rgba(212,175,55,0.08)] transition-colors disabled:opacity-40"
           >
+            {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
             Refresh
-          </Button>
+          </button>
         </div>
-      </PageHero>
+      </div>
 
-      <main className="relative z-10 pb-24 lg:pb-16">
-        <div className="container mx-auto px-4 pt-8">
+      {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
+      <div className="bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.08)] flex shrink-0">
+        {[
+          { label: 'Active Events', value: isLoading ? '—' : String(events.length), color: '#d4af37' },
+          { label: 'ISS Altitude', value: '~408 km', color: '#4a90e2' },
+          { label: 'Solar Activity', value: solarData ? solarData.flareLevel : '—', color: '#f59e0b' },
+          { label: 'Next Shower', value: upcomingShowers[0]?.name ?? '—', color: '#e040fb' },
+        ].map(({ label, value, color }) => (
+          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
+            <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
+            <span className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
+          </div>
+        ))}
+      </div>
 
-          {/* ISS Live Cameras Section - Featured at top */}
-          <section className="mb-12">
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
-              <div>
-                <h2 className="text-2xl font-display font-bold text-white flex items-center gap-3">
-                  <Video className="w-6 h-6 text-cosmos-gold" />
-                  ISS Live Cameras
-                </h2>
-                <p className="text-gray-400 mt-1">
-                  Watch Earth from space in real-time from the International Space Station
-                </p>
+      <main className="px-4 sm:px-5 py-5 max-w-7xl mx-auto pb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5">
+          {/* ── LEFT ─────────────────────────────────────────────────────── */}
+          <div className="space-y-5">
+
+            {/* ISS Live Feed */}
+            <section className="rounded-xl border border-[rgba(212,175,55,0.15)] overflow-hidden bg-[rgba(8,12,28,0.7)]">
+              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Video className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">ISS Live Feed</span>
+                  <span className="text-[9px] text-[#4a5580]">· Earth from 408 km altitude</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-500/20 border border-red-500/30">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-[9px] uppercase tracking-[0.12em] text-red-400">Live</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/20 border border-red-500/30 text-red-400 text-sm">
-                  <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                  LIVE
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-              {/* Camera Selector */}
-              <div className="space-y-3 order-2 lg:order-1">
-                <h3 className="text-sm font-medium text-gray-400 uppercase tracking-wide">
-                  Select Camera
-                </h3>
-                {ISS_CAMERAS.map((camera) => (
-                  <button
-                    key={camera.id}
-                    type="button"
-                    onClick={() => setSelectedCamera(camera)}
-                    className={cn(
-                      'w-full p-4 rounded-xl text-left transition-all',
-                      selectedCamera.id === camera.id
-                        ? 'bg-cosmos-gold/20 border border-cosmos-gold/50'
-                        : 'glass-panel hover:bg-white/5 border border-transparent'
-                    )}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={cn(
-                        'w-10 h-10 rounded-lg flex items-center justify-center',
+              <div className="grid grid-cols-1 lg:grid-cols-[160px_1fr]">
+                {/* Camera selector */}
+                <div className="border-b lg:border-b-0 lg:border-r border-[rgba(212,175,55,0.08)] p-3 space-y-1.5">
+                  <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Cameras</div>
+                  {ISS_CAMERAS.map((camera) => (
+                    <button
+                      key={camera.id}
+                      type="button"
+                      onClick={() => setSelectedCamera(camera)}
+                      className={cn(
+                        'w-full p-2.5 rounded-lg text-left transition-all',
                         selectedCamera.id === camera.id
-                          ? 'bg-cosmos-gold/30'
-                          : 'bg-white/10'
-                      )}>
-                        <Eye className={cn(
-                          'w-5 h-5',
-                          selectedCamera.id === camera.id ? 'text-cosmos-gold' : 'text-gray-400'
-                        )} />
+                          ? 'bg-[rgba(212,175,55,0.1)] border border-[rgba(212,175,55,0.25)] text-[#d4af37]'
+                          : 'border border-transparent hover:bg-white/[0.03] text-[#8090b0]'
+                      )}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Eye className="w-3.5 h-3.5 shrink-0" />
+                        <div>
+                          <div className="text-[11px] font-semibold">{camera.name}</div>
+                          <div className="text-[9px] opacity-60 mt-0.5 line-clamp-1">{camera.description}</div>
+                        </div>
                       </div>
-                      <div>
-                        <h4 className={cn(
-                          'font-medium',
-                          selectedCamera.id === camera.id ? 'text-cosmos-gold' : 'text-white'
-                        )}>
-                          {camera.name}
-                        </h4>
-                        <p className="text-xs text-gray-400 mt-0.5 line-clamp-1">
-                          {camera.description}
-                        </p>
-                      </div>
+                    </button>
+                  ))}
+                  <div className="mt-3 p-2.5 rounded border border-[rgba(212,175,55,0.08)] bg-[rgba(212,175,55,0.02)]">
+                    <div className="text-[9px] text-[#4a5580] leading-relaxed">
+                      Dark/blue screen = ISS in night orbit (16 day/night cycles per 24h).
                     </div>
-                  </button>
-                ))}
-
-                <Card className="mt-4" padding="md">
-                  <CardContent>
-                    <h4 className="text-sm font-medium text-white mb-2">About the Feed</h4>
-                    <p className="text-xs text-gray-400">
-                      When the ISS is in darkness or switching between cameras,
-                      you may see a blue or black screen. This is normal - the station
-                      orbits Earth every 90 minutes, experiencing sunrise and sunset
-                      16 times per day.
-                    </p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Video Player */}
-              <div className="lg:col-span-3 order-1 lg:order-2">
-                <Card padding="none" className="overflow-hidden">
-                  <div className="relative aspect-video bg-cosmos-void">
+                  </div>
+                </div>
+                {/* Video */}
+                <div>
+                  <div className="relative aspect-video bg-black">
                     <iframe
                       src={getEmbedUrl(selectedCamera.videoId)}
                       title={selectedCamera.name}
@@ -370,387 +351,219 @@ export default function EventsPage() {
                       allowFullScreen
                     />
                   </div>
-                  <div className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                      <h3 className="font-semibold text-white">{selectedCamera.name}</h3>
-                      <p className="text-sm text-gray-400">{selectedCamera.description}</p>
-                    </div>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      asChild
-                    >
-                      <a
-                        href={selectedCamera.directUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Open in YouTube
-                        <ExternalLink className="w-4 h-4" />
+                  <div className="px-4 py-2.5 border-t border-[rgba(212,175,55,0.08)] flex items-center justify-between flex-wrap gap-2">
+                    <span className="text-[11px] text-[#8090b0]">{selectedCamera.name}</span>
+                    <div className="flex items-center gap-4 text-[10px]">
+                      <span className="text-[#4a5580]"><span className="text-[#d4af37] font-bold">~27,600</span> km/h</span>
+                      <span className="text-[#4a5580]"><span className="text-[#d4af37] font-bold">~408</span> km alt</span>
+                      <span className="text-[#4a5580]"><span className="text-[#e040fb] font-bold">92</span> min/orbit</span>
+                      <a href={selectedCamera.directUrl} target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-1 text-[#d4af37] hover:text-[#e0c060] transition-colors">
+                        YouTube <ExternalLink className="w-3 h-3" />
                       </a>
-                    </Button>
+                    </div>
                   </div>
-                </Card>
-
-                {/* Additional Info */}
-                <div className="grid grid-cols-3 gap-4 mt-4">
-                  <Card padding="md" className="text-center">
-                    <CardContent>
-                      <div className="text-lg sm:text-2xl font-bold text-cosmos-gold">~27,600</div>
-                      <div className="text-[10px] sm:text-xs text-gray-400">km/h orbital speed</div>
-                    </CardContent>
-                  </Card>
-                  <Card padding="md" className="text-center">
-                    <CardContent>
-                      <div className="text-lg sm:text-2xl font-bold text-cosmos-gold">~408</div>
-                      <div className="text-[10px] sm:text-xs text-gray-400">km altitude</div>
-                    </CardContent>
-                  </Card>
-                  <Card padding="md" className="text-center">
-                    <CardContent>
-                      <div className="text-lg sm:text-2xl font-bold text-cosmos-hydrogen">92</div>
-                      <div className="text-[10px] sm:text-xs text-gray-400">min per orbit</div>
-                    </CardContent>
-                  </Card>
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
 
-          {/* Main Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Events List */}
-            <div className="lg:col-span-2 space-y-4">
-              <h2 className="text-xl font-semibold text-white flex items-center gap-2">
-                <AlertTriangle className="w-5 h-5 text-cosmos-gold" />
-                Current & Upcoming Events
-              </h2>
+            <section>
+              <div className="flex items-center gap-2 mb-3">
+                <AlertTriangle className="w-3.5 h-3.5 text-[#d4af37]" />
+                <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">Current &amp; Upcoming Events</span>
+                {!isLoading && <span className="text-[10px] text-[#4a5580]">({events.length})</span>}
+              </div>
 
               {isLoading ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="w-8 h-8 text-cosmos-gold animate-spin" />
+                <div className="flex items-center justify-center py-12 rounded-xl border border-[rgba(212,175,55,0.08)]">
+                  <Loader2 className="w-6 h-6 text-[#d4af37] animate-spin" />
                 </div>
               ) : events.length > 0 ? (
-                <div className="space-y-4">
+                <div className="rounded-xl border border-[rgba(212,175,55,0.15)] overflow-hidden bg-[rgba(8,12,28,0.7)] divide-y divide-[rgba(212,175,55,0.06)]">
                   {events.slice(0, displayCount).map((event) => {
                     const Icon = getEventIcon(event.type)
-                    const primaryUrl = event.references?.[0]?.url
-                    const CardWrapper = primaryUrl ? 'a' : 'div'
-                    const cardProps = primaryUrl ? {
-                      href: primaryUrl,
-                      target: '_blank',
-                      rel: 'noopener noreferrer',
-                    } : {}
-
+                    const severityColor = event.severity === 'rare' || event.severity === 'once-in-lifetime'
+                      ? '#e040fb'
+                      : event.severity === 'significant' || event.severity === 'notable'
+                        ? '#d4af37'
+                        : '#4a5580'
                     return (
-                      <Card
-                        key={event.id}
-                        id={event.id}
-                        variant="default"
-                        padding="none"
-                        className={cn(
-                          'overflow-hidden transition-all duration-300',
-                          primaryUrl && 'hover:border-cosmos-gold/50 hover:bg-white/5 cursor-pointer'
-                        )}
-                      >
-                        <CardWrapper {...cardProps} className="block">
-                          <div className="flex">
-                            {/* Event Thumbnail */}
-                            <div className="relative w-24 sm:w-32 flex-shrink-0">
-                              <img
-                                src={getEventThumbnail(event.type)}
-                                alt=""
-                                className="w-full h-full object-cover"
-                              />
-                              <div className="absolute inset-0 bg-gradient-to-r from-transparent to-cosmos-depth/90" />
-                              <div className={cn(
-                                'absolute bottom-2 left-2 w-8 h-8 rounded-lg flex items-center justify-center',
-                                getSeverityColor(event.severity)
-                              )}>
-                                <Icon className="w-4 h-4" />
-                              </div>
-                            </div>
-
-                            {/* Event Content */}
-                            <CardContent className="flex-1 p-4">
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <h3 className="font-semibold text-white line-clamp-1">{event.title}</h3>
-                                  <p className="text-sm text-gray-400 mt-1 line-clamp-2">{event.description}</p>
-                                </div>
-                                <span className={cn(
-                                  'px-2 py-0.5 rounded-full text-xs font-medium border flex-shrink-0',
-                                  getSeverityColor(event.severity)
-                                )}>
-                                  {event.severity}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-4 mt-3 text-xs text-gray-500">
-                                <span>
-                                  {formatDate(event.eventTime, { month: 'short', day: 'numeric', year: 'numeric' })}
-                                </span>
-                                <span>Source: {event.source}</span>
-                                {event.isOngoing && (
-                                  <span className="text-cosmos-gold">Ongoing</span>
-                                )}
-                              </div>
-                              {/* All reference links */}
-                              {event.references && event.references.length > 0 && (
-                                <div className="flex flex-wrap gap-3 mt-3">
-                                  {event.references.map((ref, idx) => (
-                                    <span
-                                      key={idx}
-                                      className="inline-flex items-center gap-1 text-xs text-cosmos-gold"
-                                      onClick={(e) => e.stopPropagation()}
-                                    >
-                                      <a
-                                        href={ref.url}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="hover:underline"
-                                      >
-                                        {ref.label}
-                                      </a>
-                                      <ExternalLink className="w-3 h-3" />
-                                    </span>
-                                  ))}
-                                </div>
-                              )}
-                            </CardContent>
+                      <div key={event.id} id={event.id} className="flex items-start gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors">
+                        <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
+                          <img src={getEventThumbnail(event.type)} alt="" className="w-full h-full object-cover" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                          <div className="absolute bottom-1 left-1 w-6 h-6 rounded flex items-center justify-center" style={{ background: `${severityColor}25` }}>
+                            <Icon className="w-3.5 h-3.5" style={{ color: severityColor }} />
                           </div>
-                        </CardWrapper>
-                      </Card>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start gap-2 flex-wrap">
+                            <span className="text-[12px] text-[#c8d4f0] font-semibold flex-1">{event.title}</span>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              {event.isOngoing && (
+                                <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-500/20 border border-red-500/30 text-red-400">Live</span>
+                              )}
+                              <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: `${severityColor}15`, color: severityColor, border: `1px solid ${severityColor}30` }}>
+                                {event.severity}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-[11px] text-[#4a5580] mt-0.5 line-clamp-2">{event.description}</p>
+                          <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
+                            <span className="text-[10px] text-[#4a5580]">{formatDate(event.eventTime, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                            <span className="text-[#4a5580]">·</span>
+                            <span className="text-[10px] text-[#4a5580]">{event.source}</span>
+                            {event.references?.map((ref, idx) => (
+                              <a key={idx} href={ref.url} target="_blank" rel="noopener noreferrer"
+                                className="flex items-center gap-0.5 text-[10px] text-[#d4af37] hover:underline"
+                                onClick={(e) => e.stopPropagation()}>
+                                {ref.label} <ExternalLink className="w-2.5 h-2.5" />
+                              </a>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
                     )
                   })}
-
-                  {/* Show More Button */}
                   {displayCount < events.length && (
-                    <div className="flex justify-center pt-4">
-                      <Button
-                        variant="outline"
-                        size="lg"
-                        onClick={() => setDisplayCount((c) => c + LOAD_MORE_COUNT)}
-                        leftIcon={<ChevronDown className="w-4 h-4" />}
-                        className="w-full sm:w-auto"
-                      >
-                        Show More Events ({events.length - displayCount} remaining)
-                      </Button>
-                    </div>
+                    <button type="button" onClick={() => setDisplayCount((c) => c + LOAD_MORE_COUNT)}
+                      className="w-full py-2.5 text-[10px] uppercase tracking-[0.15em] text-[#d4af37] hover:bg-[rgba(212,175,55,0.05)] transition-colors flex items-center justify-center gap-2">
+                      <ChevronDown className="w-3.5 h-3.5" />
+                      Show {events.length - displayCount} more events
+                    </button>
                   )}
                 </div>
               ) : (
-                <Card className="text-center" padding="xl">
-                  <CardContent>
-                    <Sparkles className="w-12 h-12 text-gray-500 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-white mb-2">No Active Events</h3>
-                    <p className="text-gray-400">
-                      Check back later for upcoming astronomical events
-                    </p>
-                  </CardContent>
-                </Card>
+                <div className="text-center py-12 rounded-xl border border-[rgba(212,175,55,0.08)]">
+                  <Sparkles className="w-8 h-8 text-[#4a5580] mx-auto mb-3" />
+                  <p className="text-[12px] text-[#4a5580]">No active events — check back soon</p>
+                </div>
               )}
-            </div>
+            </section>
+          </div>
 
-            {/* Sidebar */}
-            <div className="space-y-6">
-              {/* ISS Tracker with Map */}
-              <Card padding="lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Satellite className="w-5 h-5 text-cosmos-gold" />
-                    ISS Position
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {issPosition ? (
-                    <div className="space-y-3">
-                      <WorldMapSVG
-                        issPosition={issPosition}
-                        className="w-full rounded-lg bg-white/5 p-2"
-                      />
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Lat</span>
-                        <span className="text-white font-mono">{issPosition.lat.toFixed(4)}°</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-gray-400">Lon</span>
-                        <span className="text-white font-mono">{issPosition.lon.toFixed(4)}°</span>
-                      </div>
-                      <p className="text-xs text-gray-500">
-                        Updates every 30 seconds
+          {/* ── RIGHT: Sidebar ────────────────────────────────────────── */}
+          <div className="space-y-4">
+
+            {/* ISS Position */}
+            <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+                <Satellite className="w-3.5 h-3.5 text-[#d4af37]" />
+                <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">ISS Position</span>
+              </div>
+              <div className="p-3">
+                {issPosition ? (
+                  <div className="space-y-2">
+                    <WorldMapSVG issPosition={issPosition} className="w-full rounded bg-white/5 p-1" />
+                    <div className="grid grid-cols-2 gap-x-4 text-[11px]">
+                      <div className="flex justify-between"><span className="text-[#4a5580]">Lat</span><span className="text-[#c8d4f0]">{issPosition.lat.toFixed(2)}°</span></div>
+                      <div className="flex justify-between"><span className="text-[#4a5580]">Lon</span><span className="text-[#c8d4f0]">{issPosition.lon.toFixed(2)}°</span></div>
+                    </div>
+                    <p className="text-[9px] text-[#4a5580]">↻ Updates every 30 seconds</p>
+                  </div>
+                ) : issError ? (
+                  <div className="py-2 space-y-1.5">
+                    <p className="text-[11px] text-[#4a5580]">Tracking unavailable</p>
+                    <a href="https://spotthestation.nasa.gov/" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#d4af37] hover:underline">NASA Spot the Station →</a>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 py-2 text-[11px] text-[#4a5580]">
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />Loading…
+                  </div>
+                )}
+              </div>
+            </section>
+
+            {/* Solar Activity */}
+            {solarData && (
+              <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+                  <Zap className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">Solar Activity</span>
+                </div>
+                <div className="p-3">
+                  <SolarGauge flareLevel={solarData.flareLevel} currentFlux={solarData.currentFlux} />
+                  <a href="https://www.swpc.noaa.gov/" target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#d4af37] hover:underline flex items-center gap-1 mt-2">
+                    NOAA Space Weather <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+              </section>
+            )}
+
+            {/* NEO Approach */}
+            {events.some((e) => e.type === 'asteroid') && (
+              <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+                  <Globe className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">Near-Earth Objects</span>
+                </div>
+                <div className="p-3"><NeoApproachDiagram events={events} /></div>
+              </section>
+            )}
+
+            {/* Meteor Showers */}
+            <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
+              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+                <Star className="w-3.5 h-3.5 text-[#d4af37]" />
+                <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">Upcoming Showers</span>
+              </div>
+              <div className="divide-y divide-[rgba(212,175,55,0.06)]">
+                {upcomingShowers.map((shower) => (
+                  <a key={shower.name} href="https://www.imo.net/resources/calendar/" target="_blank" rel="noopener noreferrer"
+                    className="flex items-center justify-between px-4 py-2.5 hover:bg-white/[0.02] transition-colors group">
+                    <div>
+                      <div className="text-[11px] text-[#c8d4f0] group-hover:text-[#d4af37] transition-colors">{shower.name}</div>
+                      <div className="text-[9px] text-[#4a5580] mt-0.5">Peak: {formatDate(shower.peakDate, { month: 'short', day: 'numeric' })}</div>
+                    </div>
+                    <span className="text-[11px] font-bold text-[#d4af37]">{shower.zenithalHourlyRate}/hr</span>
+                  </a>
+                ))}
+              </div>
+            </section>
+
+            {/* APOD */}
+            {apod && (
+              <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
+                <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">Astronomy Picture</span>
+                  </div>
+                  <span className="text-[9px] text-[#d4af37] px-1.5 py-0.5 rounded border border-[rgba(212,175,55,0.2)]">Today</span>
+                </div>
+                {apod.media_type === 'image' ? (
+                  <a href={apod.hdurl || apod.url} target="_blank" rel="noopener noreferrer" className="block">
+                    <div className="relative aspect-video">
+                      <img src={apod.url} alt={apod.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] to-transparent" />
+                    </div>
+                  </a>
+                ) : apod.media_type === 'video' ? (
+                  <div className="relative aspect-video">
+                    <iframe src={apod.url} title={apod.title} className="absolute inset-0 w-full h-full"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                  </div>
+                ) : null}
+                <div className="px-4 py-3">
+                  <div className="text-[11px] text-[#c8d4f0]">{apod.title}</div>
+                  {apod.copyright && <div className="text-[9px] text-[#4a5580] mt-0.5">© {apod.copyright}</div>}
+                  {apod.explanation && (
+                    <div className="mt-2">
+                      <p className={cn('text-[10px] text-[#4a5580] leading-relaxed', apodExpanded ? '' : 'line-clamp-3')}>
+                        {apod.explanation}
                       </p>
-                    </div>
-                  ) : issError ? (
-                    <div className="space-y-2">
-                      <p className="text-gray-400 text-sm">ISS tracking temporarily unavailable</p>
-                      <a
-                        href="https://spotthestation.nasa.gov/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-xs text-cosmos-gold hover:underline"
-                      >
-                        View on NASA Spot the Station →
-                      </a>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2 text-gray-400 text-sm">
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                      Loading ISS position...
+                      <button onClick={() => setApodExpanded(!apodExpanded)} className="text-[9px] text-[#d4af37] hover:text-white mt-1 flex items-center gap-1 transition-colors">
+                        {apodExpanded ? <>Less <ChevronUp className="w-2.5 h-2.5" /></> : <>More <ChevronDown className="w-2.5 h-2.5" /></>}
+                      </button>
                     </div>
                   )}
-                </CardContent>
-              </Card>
-
-              {/* Solar Weather Gauge */}
-              {solarData && (
-                <Card padding="lg">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <Zap className="w-5 h-5 text-cosmos-gold" />
-                      Solar Activity
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <SolarGauge
-                      flareLevel={solarData.flareLevel}
-                      currentFlux={solarData.currentFlux}
-                    />
-                    <a
-                      href="https://www.swpc.noaa.gov/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-cosmos-gold hover:underline flex items-center gap-1 mt-2"
-                    >
-                      NOAA Space Weather <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* NEO Approach Diagram */}
-              {events.length > 0 && events.some((e) => e.type === 'asteroid') && (
-                <Card padding="lg">
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <Globe className="w-5 h-5 text-cosmos-gold" />
-                      Near-Earth Objects
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <NeoApproachDiagram events={events} />
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Meteor Showers */}
-              <Card padding="lg">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <Star className="w-5 h-5 text-cosmos-gold" />
-                    Upcoming Meteor Showers
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3">
-                    {upcomingShowers.map((shower) => (
-                      <a
-                        key={shower.name}
-                        href="https://www.imo.net/resources/calendar/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="block p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer group"
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-white group-hover:text-cosmos-gold transition-colors">{shower.name}</span>
-                          <span className="text-xs text-cosmos-gold">{shower.zenithalHourlyRate}/hr</span>
-                        </div>
-                        <p className="text-xs text-gray-400 mt-1 flex items-center gap-1">
-                          Peak: {formatDate(shower.peakDate, { month: 'short', day: 'numeric' })}
-                          <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </p>
-                      </a>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* APOD — Enhanced with expandable explanation + video */}
-              {apod && (
-                <Card
-                  padding="none"
-                  className="overflow-hidden transition-all duration-200"
-                >
-                  {apod.media_type === 'image' ? (
-                    <a
-                      href={apod.hdurl || apod.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block"
-                    >
-                      <div className="relative aspect-video">
-                        <img
-                          src={apod.url}
-                          alt={apod.title}
-                          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-cosmos-void to-transparent" />
-                        <div className="absolute top-2 right-2 px-2 py-1 rounded-full bg-cosmos-gold/20 border border-cosmos-gold/50 text-cosmos-gold text-xs font-medium">
-                          Today
-                        </div>
-                      </div>
-                    </a>
-                  ) : apod.media_type === 'video' ? (
-                    <div className="relative aspect-video bg-cosmos-void">
-                      <iframe
-                        src={apod.url}
-                        title={apod.title}
-                        className="absolute inset-0 w-full h-full"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowFullScreen
-                      />
-                    </div>
-                  ) : null}
-                  <div className="p-4">
-                    <h3 className="font-semibold text-white text-sm">{apod.title}</h3>
-                    <p className="text-xs text-gray-400 mt-1">
-                      NASA Astronomy Picture of the Day
-                    </p>
-                    {apod.copyright && (
-                      <p className="text-xs text-gray-500 mt-1">© {apod.copyright}</p>
-                    )}
-                    {/* Expandable explanation */}
-                    {apod.explanation && (
-                      <div className="mt-3">
-                        <p className={cn(
-                          'text-xs text-gray-400 leading-relaxed transition-all duration-300',
-                          apodExpanded ? '' : 'line-clamp-3',
-                        )}>
-                          {apod.explanation}
-                        </p>
-                        <button
-                          onClick={() => setApodExpanded(!apodExpanded)}
-                          className="text-xs text-cosmos-gold hover:text-white transition-colors mt-1 flex items-center gap-1"
-                        >
-                          {apodExpanded ? (
-                            <>Show less <ChevronUp className="w-3 h-3" /></>
-                          ) : (
-                            <>Read more <ChevronDown className="w-3 h-3" /></>
-                          )}
-                        </button>
-                      </div>
-                    )}
-                    <a
-                      href="https://apod.nasa.gov/apod/astropix.html"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-xs text-cosmos-gold hover:underline flex items-center gap-1 mt-2"
-                    >
-                      View on NASA <ExternalLink className="w-3 h-3" />
-                    </a>
-                  </div>
-                </Card>
-              )}
-            </div>
+                  <a href="https://apod.nasa.gov/apod/astropix.html" target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#d4af37] hover:underline flex items-center gap-0.5 mt-2">
+                    NASA APOD <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                </div>
+              </section>
+            )}
           </div>
         </div>
       </main>
