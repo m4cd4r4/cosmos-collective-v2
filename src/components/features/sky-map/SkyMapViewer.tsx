@@ -319,10 +319,12 @@ export function SkyMapViewer({
         aladin.on('objectClicked', (object: unknown) => {
           if (object && typeof object === 'object' && 'data' in object) {
             const data = (object as { data: Record<string, unknown> }).data
+            const raRaw = typeof data.ra === 'number' ? data.ra : parseFloat(data.ra as string)
+            const decRaw = typeof data.dec === 'number' ? data.dec : parseFloat(data.dec as string)
             setSelectedObject({
               name: (data.name as string) || 'Unknown',
-              ra: data.ra as number,
-              dec: data.dec as number,
+              ra: isNaN(raRaw) ? 0 : raRaw,
+              dec: isNaN(decRaw) ? 0 : decRaw,
               id: data.id as string | undefined,
               source: data.source as string | undefined,
               thumbnail: data.thumbnail as string | undefined,
@@ -679,7 +681,7 @@ export function SkyMapViewer({
                           </p>
                         )}
                         <p className="text-xs text-gray-500 font-mono mt-1">
-                          RA {selectedObject.ra.toFixed(4)}° Dec {selectedObject.dec.toFixed(4)}°
+                          RA {selectedObject.ra?.toFixed(4) ?? '—'}° Dec {selectedObject.dec?.toFixed(4) ?? '—'}°
                         </p>
                       </div>
                       <button
