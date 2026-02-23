@@ -150,5 +150,4 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Enable edge runtime for faster response
-export const runtime = 'edge'
+// Node.js runtime required (Buffer usage for ETag + placeholder)
