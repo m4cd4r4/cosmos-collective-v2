@@ -26,10 +26,10 @@ import {
 
 const navItems = [
   {
-    label: 'Explore',
-    href: '/explore',
-    icon: Telescope,
-    description: 'Browse JWST and radio telescope observations',
+    label: 'Solar System',
+    href: '/solar-system',
+    icon: Sun,
+    description: 'Interactive 3D solar system with real orbital data',
   },
   {
     label: 'Sky Map',
@@ -50,10 +50,10 @@ const navItems = [
     description: 'James Webb Space Telescope observation explorer',
   },
   {
-    label: 'Solar System',
-    href: '/solar-system',
-    icon: Sun,
-    description: 'Interactive 3D solar system with real orbital data',
+    label: 'Explore',
+    href: '/explore',
+    icon: Telescope,
+    description: 'Browse JWST and radio telescope observations',
   },
   {
     label: 'Live Events',
@@ -208,9 +208,9 @@ function DesktopNav() {
 // Bottom nav items (subset of main nav for mobile)
 const bottomNavItems = [
   { label: 'Home', href: '/', icon: Home },
-  { label: 'Explore', href: '/explore', icon: Telescope },
-  { label: 'Sky Map', href: '/sky-map', icon: Globe },
   { label: 'Solar System', href: '/solar-system', icon: Sun },
+  { label: 'Sky Map', href: '/sky-map', icon: Globe },
+  { label: 'Explore', href: '/explore', icon: Telescope },
   { label: 'Events', href: '/events', icon: Calendar },
 ]
 

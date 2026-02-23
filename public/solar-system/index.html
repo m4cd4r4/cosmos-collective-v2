@@ -2605,7 +2605,7 @@
         // Scene presets
         (function() {
             const PRESETS = {
-                vortex:       { mode: 'side',      sunSpeed: 4.19, orbitSpeed: 1.24, trailLength: 800,  showMoons: false },
+                vortex:       { mode: 'side',      sunSpeed: 4.19, orbitSpeed: 1.24, trailLength: 800,  showMoons: false, camDist: 220, camRot: { x: 0.18, y: 0.7 } },
                 cinema:       { mode: 'cinematic', sunSpeed: 2.50, orbitSpeed: 0.50, trailLength: 1200, showMoons: false },
                 overview:     { mode: 'orbital',   sunSpeed: 3.00, orbitSpeed: 0.80, trailLength: 600,  showMoons: false },
                 'moon-watch': { mode: 'free',       sunSpeed: 1.50, orbitSpeed: 0.12, trailLength: 400,  showMoons: true  },
@@ -2617,6 +2617,8 @@
                     // Camera
                     cameraMode = p.mode;
                     cinematicAngle = cameraRotation.y;
+                    if (p.camDist) cameraDistance = p.camDist;
+                    if (p.camRot) cameraRotation = { ...p.camRot };
                     document.getElementById('camera-mode').value = p.mode;
                     document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === p.mode));
                     // Sun speed
@@ -3092,7 +3094,8 @@
         }
 
         function toggleGalaxyView() {
-            if (galaxyTransition) return; // already transitioning
+            // Allow toggling when idle in galaxy, block only during active transitions
+            if (galaxyTransition && galaxyTransition.phase !== 'idle-galaxy') return;
 
             if (!galaxyGroup) createGalaxy();
 
@@ -3100,6 +3103,13 @@
                 // ZOOM OUT to galaxy
                 galaxyViewActive = true;
                 galaxyGroup.visible = true;
+                // Hide planet meshes and rings so they don't bleed through
+                planets.forEach(p => { if (p.mesh) p.mesh.visible = false; });
+                if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = false;
+                document.querySelectorAll('.planet-label').forEach(l => l.style.display = 'none');
+                // Hide dive HUD in case user entered galaxy mid-dive
+                document.getElementById('dive-hud').classList.remove('visible');
+                document.getElementById('dive-altitude').classList.remove('visible');
                 const savedCam = {
                     px: camera.position.x, py: camera.position.y, pz: camera.position.z,
                     tx: cameraTarget.x, ty: cameraTarget.y, tz: cameraTarget.z,
@@ -3250,6 +3260,9 @@
                     // Restore solar system fully
                     galaxyViewActive = false;
                     galaxyGroup.visible = false;
+                    // Restore planet meshes and rings
+                    planets.forEach(p => { if (p.mesh) p.mesh.visible = true; });
+                    if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = true;
                     setSolarSystemOpacity(1);
                     camera.fov = 60;
                     camera.updateProjectionMatrix();
