@@ -2909,6 +2909,19 @@
             galaxyGroup.add(galaxyDisk);
 
             // ---- Light sparkle particles on top for 3D depth ----
+            // Circular soft-glow texture so points render as circles, not squares
+            const _starCanvas = document.createElement('canvas');
+            _starCanvas.width = 64; _starCanvas.height = 64;
+            const _starCtx = _starCanvas.getContext('2d');
+            const _starGrad = _starCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            _starGrad.addColorStop(0,   'rgba(255,255,255,1)');
+            _starGrad.addColorStop(0.3, 'rgba(255,255,255,0.85)');
+            _starGrad.addColorStop(0.7, 'rgba(255,255,255,0.25)');
+            _starGrad.addColorStop(1,   'rgba(255,255,255,0)');
+            _starCtx.fillStyle = _starGrad;
+            _starCtx.fillRect(0, 0, 64, 64);
+            const _starTex = new THREE.CanvasTexture(_starCanvas);
+
             function addParticles(count, buildFn, size) {
                 const geo = new THREE.BufferGeometry();
                 const pos = new Float32Array(count * 3);
@@ -2919,6 +2932,7 @@
                 galaxyGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
                     size, vertexColors: true, transparent: true, opacity: 0,
                     blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
+                    map: _starTex, alphaTest: 0.01,
                 })));
             }
 
@@ -3096,15 +3110,15 @@
             if (!galaxyGroup) return;
             galaxyGroup.traverse(child => {
                 if (child.material && child.material.opacity !== undefined) {
-                    // Arm labels: fade in at zoom >= 1.5
+                    // Arm labels: fade in from zoom >= 0.8 (visible at overview)
                     if (child.userData?.isArmLabel) {
-                        const armOp = galaxyZoom >= 1.5 ? Math.min(opacity, (galaxyZoom - 1.5) / 0.5) : 0;
+                        const armOp = galaxyZoom >= 0.8 ? Math.min(opacity, (galaxyZoom - 0.8) / 0.4) : 0;
                         child.material.opacity = armOp;
                         return;
                     }
-                    // Feature markers: fade in at zoom >= 2.0
+                    // Feature markers: fade in from zoom >= 1.0
                     if (child.userData?.isFeature) {
-                        const featOp = galaxyZoom >= 2.0 ? Math.min(opacity, (galaxyZoom - 2.0) / 0.5) : 0;
+                        const featOp = galaxyZoom >= 1.0 ? Math.min(opacity, (galaxyZoom - 1.0) / 0.5) : 0;
                         child.material.opacity = featOp;
                         return;
                     }
@@ -3285,6 +3299,7 @@
                     galaxyCamDist = 480;
                     galaxyLookOffset = { x: 0, z: 0 };
                     galaxyTransition = { phase: 'idle-galaxy', savedCamera: savedCam };
+                    loadGalaxyHiRes(); // load hi-res texture as soon as galaxy is fully visible
                     document.getElementById('galaxy-info').style.display = 'block';
                     requestAnimationFrame(() => document.getElementById('galaxy-info').classList.add('visible'));
                     document.getElementById('galaxy-return-btn').style.display = 'block';

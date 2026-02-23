@@ -99,7 +99,7 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
       )}
 
       {/* ── MAIN ────────────────────────────────────────────────────── */}
-      <div className={`flex-1 min-h-0 ${preview ? '' : 'grid grid-cols-[210px_1fr_290px]'}`}>
+      <div className={`flex-1 min-h-0 ${preview ? 'flex' : 'grid grid-cols-[210px_1fr_290px]'}`}>
 
         {/* SIDEBAR */}
         {!preview && (
@@ -209,7 +209,7 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
         )}
 
         {/* CANVAS */}
-        <div className="relative overflow-hidden bg-[#050810]">
+        <div className={`relative overflow-hidden bg-[#050810] ${preview ? 'flex-1 min-h-0' : ''}`}>
           <ObservatoryCanvas
             observations={observations}
             filtered={filtered}
