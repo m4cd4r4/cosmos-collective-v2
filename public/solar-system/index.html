@@ -426,6 +426,120 @@
         }
 
         /* ============================================================= */
+        /* UI HIDE / SHOW TOGGLE                                          */
+        /* ============================================================= */
+        #ui-toggle-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: rgba(10, 10, 25, 0.85);
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 500;
+            backdrop-filter: blur(10px);
+            transition: background 0.2s, border-color 0.2s, transform 0.15s, box-shadow 0.2s;
+            color: #d4af37;
+            padding: 0;
+            margin: 0;
+            line-height: 1;
+        }
+        #ui-toggle-btn:hover {
+            background: rgba(212, 175, 55, 0.15);
+            border-color: rgba(212, 175, 55, 0.7);
+            transform: scale(1.08);
+            box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
+        }
+        body.ui-hidden #controls,
+        body.ui-hidden #stats,
+        body.ui-hidden #events,
+        body.ui-hidden #bottom-left-btns,
+        body.ui-hidden #earth-date-counter,
+        body.ui-hidden #accuracy-panel,
+        body.ui-hidden #science-panel {
+            display: none !important;
+        }
+
+        /* ============================================================= */
+        /* CAMERA MODE BUTTON GROUP                                       */
+        /* ============================================================= */
+        .cam-mode-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .cam-btn {
+            flex: 1 1 calc(33% - 4px);
+            min-width: 58px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            color: #999;
+            padding: 6px 4px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            text-align: center;
+            margin: 0;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+            line-height: 1.4;
+        }
+        .cam-btn:hover {
+            background: rgba(100, 150, 255, 0.12);
+            border-color: rgba(100, 150, 255, 0.45);
+            color: #ccc;
+            transform: none;
+            box-shadow: none;
+        }
+        .cam-btn.active {
+            background: rgba(100, 150, 255, 0.2);
+            border-color: rgba(100, 150, 255, 0.65);
+            color: #6495ff;
+            font-weight: 600;
+        }
+
+        /* ============================================================= */
+        /* SCENE PRESETS                                                  */
+        /* ============================================================= */
+        .preset-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            margin-top: 6px;
+        }
+        .preset-btn {
+            background: rgba(212, 175, 55, 0.06);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            color: #999;
+            padding: 7px 6px;
+            border-radius: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            text-align: center;
+            margin: 0;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
+            line-height: 1.4;
+        }
+        .preset-btn:hover {
+            background: rgba(212, 175, 55, 0.14);
+            border-color: rgba(212, 175, 55, 0.5);
+            color: #d4af37;
+            transform: none;
+            box-shadow: none;
+        }
+        .preset-btn.active {
+            background: rgba(212, 175, 55, 0.2);
+            border-color: rgba(212, 175, 55, 0.65);
+            color: #d4af37;
+            font-weight: 600;
+        }
+
+        /* ============================================================= */
         /* MOBILE TOGGLE BUTTONS                                          */
         /* ============================================================= */
         #mobile-controls-toggle,
@@ -804,14 +918,32 @@
         </div>
 
         <div class="control-group">
+            <label>Presets:</label>
+            <div class="preset-group">
+                <button type="button" class="preset-btn" data-preset="vortex" title="Side vortex, fast orbit">⚡ Vortex</button>
+                <button type="button" class="preset-btn" data-preset="cinema" title="Cinematic sweep, slow &amp; smooth">🎬 Cinema</button>
+                <button type="button" class="preset-btn" data-preset="overview" title="Top-down overview, medium speed">🔭 Overview</button>
+                <button type="button" class="preset-btn" data-preset="moon-watch" title="Slow orbit — ideal for watching moons">🌙 Moon Watch</button>
+            </div>
+        </div>
+
+        <div class="control-group">
             <label>Camera Mode:</label>
-            <select id="camera-mode" style="width:100%; padding:6px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(100,150,255,0.3); border-radius:6px; font-size:13px; margin-top:4px;">
-                <option value="free" style="background:#1a1a2e;color:#fff;">Free Camera</option>
-                <option value="cinematic" style="background:#1a1a2e;color:#fff;">Cinematic (Auto-Rotate)</option>
-                <option value="orbital" style="background:#1a1a2e;color:#fff;">Orbital (Top-Down)</option>
-                <option value="side" style="background:#1a1a2e;color:#fff;">Side View (Vortex)</option>
-                <option value="chase" style="background:#1a1a2e;color:#fff;">Chase Cam (Behind Sun)</option>
+            <div class="cam-mode-group">
+                <button type="button" class="cam-btn active" data-mode="free">Free</button>
+                <button type="button" class="cam-btn" data-mode="cinematic">Cinema</button>
+                <button type="button" class="cam-btn" data-mode="orbital">Top-Down</button>
+                <button type="button" class="cam-btn" data-mode="side">Vortex</button>
+                <button type="button" class="cam-btn" data-mode="chase">Chase</button>
+            </div>
+            <select id="camera-mode" style="display:none;">
+                <option value="free">Free Camera</option>
+                <option value="cinematic">Cinematic (Auto-Rotate)</option>
+                <option value="orbital">Orbital (Top-Down)</option>
+                <option value="side">Side View (Vortex)</option>
+                <option value="chase">Chase Cam (Behind Sun)</option>
             </select>
+            <p style="font-size:10px; color:#555; margin:5px 0 0; line-height:1.4;">Drag canvas to rotate — switches to Free mode</p>
         </div>
 
         <div class="control-group">
@@ -950,6 +1082,11 @@
         <div class="dive-subtitle" id="dive-subtitle">LOW EARTH ORBIT</div>
     </div>
     <div id="dive-altitude"></div>
+
+    <!-- UI hide/show toggle — bottom right, always visible -->
+    <button type="button" id="ui-toggle-btn" title="Hide controls" aria-label="Toggle UI visibility">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -2100,6 +2237,13 @@
                 return;
             }
             if (diveState !== 'none' && diveState !== 'orbiting') return;
+            // Dragging always switches to Free so rotation is responsive
+            if (cameraMode !== 'free' && cameraMode !== 'dive') {
+                cameraMode = 'free';
+                document.getElementById('camera-mode').value = 'free';
+                document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'free'));
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            }
             isDragging = true;
             isPanning = e.shiftKey;
             previousMousePosition = { x: e.clientX, y: e.clientY };
@@ -2160,6 +2304,13 @@
                     return;
                 }
                 if (diveState !== 'none' && diveState !== 'orbiting') return;
+                // Dragging always switches to Free so rotation is responsive
+                if (cameraMode !== 'free' && cameraMode !== 'dive') {
+                    cameraMode = 'free';
+                    document.getElementById('camera-mode').value = 'free';
+                    document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'free'));
+                    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                }
                 isDragging = true;
                 isPanning = false;
                 previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -2346,6 +2497,8 @@
             cameraTarget = { x: 0, y: 0, z: sun.position.z };
             cameraMode = 'free';
             document.getElementById('camera-mode').value = 'free';
+            document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'free'));
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
             followTarget = 'sun';
             document.getElementById('follow-target').value = 'sun';
 
@@ -2437,6 +2590,73 @@
             updateDiveButtonText();
         });
         document.getElementById('camera-mode').addEventListener('change', (e) => { cameraMode = e.target.value; cinematicAngle = cameraRotation.y; });
+
+        // Camera mode button group
+        document.querySelectorAll('.cam-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                cameraMode = btn.dataset.mode;
+                cinematicAngle = cameraRotation.y;
+                document.getElementById('camera-mode').value = btn.dataset.mode;
+                document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b === btn));
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            });
+        });
+
+        // Scene presets
+        (function() {
+            const PRESETS = {
+                vortex:       { mode: 'side',      sunSpeed: 4.19, orbitSpeed: 1.24, trailLength: 800,  showMoons: false },
+                cinema:       { mode: 'cinematic', sunSpeed: 2.50, orbitSpeed: 0.50, trailLength: 1200, showMoons: false },
+                overview:     { mode: 'orbital',   sunSpeed: 3.00, orbitSpeed: 0.80, trailLength: 600,  showMoons: false },
+                'moon-watch': { mode: 'free',       sunSpeed: 1.50, orbitSpeed: 0.12, trailLength: 400,  showMoons: true  },
+            };
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const p = PRESETS[btn.dataset.preset];
+                    if (!p) return;
+                    // Camera
+                    cameraMode = p.mode;
+                    cinematicAngle = cameraRotation.y;
+                    document.getElementById('camera-mode').value = p.mode;
+                    document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === p.mode));
+                    // Sun speed
+                    currentSunSpeed = p.sunSpeed;
+                    document.getElementById('sun-speed').value = Math.sqrt(p.sunSpeed);
+                    document.getElementById('sun-speed-val').textContent = p.sunSpeed.toFixed(2);
+                    // Orbit speed
+                    orbitSpeedMultiplier = p.orbitSpeed;
+                    document.getElementById('orbit-speed').value = Math.sqrt(p.orbitSpeed);
+                    document.getElementById('orbit-speed-val').textContent = p.orbitSpeed.toFixed(2);
+                    // Trail length
+                    document.getElementById('trail-length').value = p.trailLength;
+                    document.getElementById('trail-length-val').textContent = p.trailLength;
+                    planets.forEach(pp => pp.maxTrailLength = p.trailLength);
+                    sunTrailMaxLength = Math.round(p.trailLength * 2.5);
+                    // Show moons
+                    showMoons = p.showMoons;
+                    document.getElementById('show-moons').checked = p.showMoons;
+                    document.getElementById('show-moons').dispatchEvent(new Event('change'));
+                    // Active state
+                    document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b === btn));
+                });
+            });
+        })();
+
+        // UI hide/show toggle
+        (function() {
+            const btn = document.getElementById('ui-toggle-btn');
+            let hidden = false;
+            const eyeOpen   = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+            const eyeClosed = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+            btn.innerHTML = eyeOpen;
+            btn.addEventListener('click', () => {
+                hidden = !hidden;
+                document.body.classList.toggle('ui-hidden', hidden);
+                btn.innerHTML = hidden ? eyeClosed : eyeOpen;
+                btn.title = hidden ? 'Show controls' : 'Hide controls';
+            });
+        })();
+
         document.getElementById('show-particles').addEventListener('change', (e) => {
             showParticles = e.target.checked;
             if (showParticles && !coronaParticles) createCoronaParticles();
