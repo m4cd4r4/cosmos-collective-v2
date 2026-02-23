@@ -5,7 +5,7 @@
  * Real-time astronomical events, meteor showers, and space weather
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { Header } from '@/components/layout/Header'
 import { Footer } from '@/components/layout/Footer'
 import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
@@ -63,9 +63,23 @@ const ISS_CAMERAS = [
 ]
 
 // Build embed URL with autoplay (muted, as required by browsers)
+// enablejsapi=1 allows the YouTube iframe API to report errors and state changes
 const getEmbedUrl = (videoId: string, autoplay: boolean = true) => {
-  const params = autoplay ? 'autoplay=1&mute=1&rel=0' : 'rel=0'
+  const params = autoplay ? 'autoplay=1&mute=1&rel=0&enablejsapi=1' : 'rel=0&enablejsapi=1'
   return `https://www.youtube.com/embed/${videoId}?${params}`
+}
+
+// Check if a YouTube video is accessible via oEmbed (detects deleted/private streams)
+async function checkYouTubeAvailable(videoId: string): Promise<boolean> {
+  try {
+    const res = await fetch(
+      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+      { signal: AbortSignal.timeout(5000) }
+    )
+    return res.ok
+  } catch {
+    return false
+  }
 }
 
 // Pagination constants
@@ -83,6 +97,12 @@ export default function EventsPage() {
   const [displayCount, setDisplayCount] = useState(INITIAL_EVENT_COUNT)
   const [solarData, setSolarData] = useState<{ flareLevel: string; currentFlux: number } | null>(null)
   const [apodExpanded, setApodExpanded] = useState(false)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+  const ytReadyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const switchToCamera2 = useCallback(() => {
+    setSelectedCamera(prev => prev.id === 'iss-live-1' ? ISS_CAMERAS[1] : prev)
+  }, [])
 
   const fetchData = async () => {
     setIsLoading(true)
@@ -145,6 +165,47 @@ export default function EventsPage() {
 
     return () => clearInterval(issInterval)
   }, [])
+
+  // Auto-fallback: if Camera 1 is unavailable on load, silently switch to Camera 2
+  useEffect(() => {
+    let cancelled = false
+
+    // 1. oEmbed quick-check (catches deleted/private streams)
+    checkYouTubeAvailable(ISS_CAMERAS[0].videoId).then(available => {
+      if (!available && !cancelled) switchToCamera2()
+    })
+
+    // 2. YouTube iframe API error listener (catches offline live streams)
+    function handleYTMessage(event: MessageEvent) {
+      if (event.origin !== 'https://www.youtube.com') return
+      try {
+        const data = JSON.parse(event.data as string)
+        // onError: immediately switch
+        if (data.event === 'onError') {
+          if (!cancelled) switchToCamera2()
+        }
+        // onReady: start a timeout — if player stays unstarted for 8s, switch
+        if (data.event === 'onReady') {
+          ytReadyTimeoutRef.current = setTimeout(() => {
+            if (!cancelled) switchToCamera2()
+          }, 8000)
+        }
+        // onStateChange 1 (playing) or 3 (buffering): cancel the timeout — stream is working
+        if (data.event === 'onStateChange' && (data.info === 1 || data.info === 3)) {
+          if (ytReadyTimeoutRef.current) clearTimeout(ytReadyTimeoutRef.current)
+        }
+      } catch {
+        // Not a YouTube postMessage — ignore
+      }
+    }
+
+    window.addEventListener('message', handleYTMessage)
+    return () => {
+      cancelled = true
+      window.removeEventListener('message', handleYTMessage)
+      if (ytReadyTimeoutRef.current) clearTimeout(ytReadyTimeoutRef.current)
+    }
+  }, [switchToCamera2])
 
   // Scroll to specific event if hash is present in URL
   useEffect(() => {
@@ -341,6 +402,7 @@ export default function EventsPage() {
                 <div>
                   <div className="relative aspect-video bg-black">
                     <iframe
+                      ref={iframeRef}
                       src={getEmbedUrl(selectedCamera.videoId)}
                       title={selectedCamera.name}
                       className="absolute inset-0 w-full h-full"
