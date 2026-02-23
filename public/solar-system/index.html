@@ -956,6 +956,7 @@
             <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Show Moons</span></label>
             <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid</span></label>
             <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
+            <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits"><span>Elliptical Orbits</span></label>
             <div style="margin-top:8px;">
                 <label style="display:block; margin-bottom:4px; color:#ccc; font-size:13px;">Follow:</label>
                 <select id="follow-target" style="width:100%; padding:6px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(100,150,255,0.3); border-radius:6px; font-size:13px;">
@@ -1066,7 +1067,7 @@
             <strong style="color:#f80;">Scaled for visualization:</strong><br>
             &bull; Planet sizes (Jupiter should be 11x Earth, shown ~2.5x)<br>
             &bull; Distances (real spacing would make inner planets invisible)<br>
-            &bull; Orbits are circular (real orbits are slightly elliptical)<br>
+            &bull; Orbits circular by default — enable <em>Elliptical Orbits</em> for real eccentricities (Kepler&apos;s 2nd law)<br>
             &bull; All orbits coplanar (real system has slight inclinations)<br>
             &bull; Vortex helix ratio greatly exaggerated for visual drama
         </div>
@@ -1282,25 +1283,25 @@
         // PLANETS DATA
         // =====================================================================
         const planetsData = [
-            { name: 'Mercury', radius: 0.4, distance: 8, speed: 4.09, orbitalPeriod: 88, color: 0x8c7853, emissive: 0x4a3c2a, texture: 'mercury', realRadiusScale: 0.383, moons: [] },
-            { name: 'Venus', radius: 0.9, distance: 12, speed: 1.62, orbitalPeriod: 225, color: 0xffc649, emissive: 0x7f6324, texture: 'venus_atmo', realRadiusScale: 0.949, moons: [] },
-            { name: 'Earth', radius: 1, distance: 16, speed: 1.0, orbitalPeriod: 365, color: 0x4a90e2, emissive: 0x254871, texture: 'earth', realRadiusScale: 1.0,
-              moons: [{ name: 'Moon', radius: 0.27, distance: 2.5, speed: 13.4, color: 0xaaaaaa, texture: 'moon' }]
+            { name: 'Mercury', radius: 0.4, distance: 8, speed: 4.09, ecc: 0.206, orbitalPeriod: 88, color: 0x8c7853, emissive: 0x4a3c2a, texture: 'mercury', realRadiusScale: 0.383, moons: [] },
+            { name: 'Venus', radius: 0.9, distance: 12, speed: 1.62, ecc: 0.007, orbitalPeriod: 225, color: 0xffc649, emissive: 0x7f6324, texture: 'venus_atmo', realRadiusScale: 0.949, moons: [] },
+            { name: 'Earth', radius: 1, distance: 16, speed: 1.0, ecc: 0.017, orbitalPeriod: 365, color: 0x4a90e2, emissive: 0x254871, texture: 'earth', realRadiusScale: 1.0,
+              moons: [{ name: 'Moon', radius: 0.27, distance: 2.5, speed: 13.4, ecc: 0.055, color: 0xaaaaaa, texture: 'moon' }]
             },
-            { name: 'Mars', radius: 0.5, distance: 20, speed: 0.53, orbitalPeriod: 687, color: 0xe27b58, emissive: 0x713d2c, texture: 'mars', realRadiusScale: 0.532,
-              moons: [{ name: 'Phobos', radius: 0.12, distance: 1.2, speed: 365, color: 0x7a6a5a }, { name: 'Deimos', radius: 0.1, distance: 1.8, speed: 182, color: 0x8a7a6a }]
+            { name: 'Mars', radius: 0.5, distance: 20, speed: 0.53, ecc: 0.093, orbitalPeriod: 687, color: 0xe27b58, emissive: 0x713d2c, texture: 'mars', realRadiusScale: 0.532,
+              moons: [{ name: 'Phobos', radius: 0.12, distance: 1.2, speed: 365, ecc: 0.015, color: 0x7a6a5a }, { name: 'Deimos', radius: 0.1, distance: 1.8, speed: 182, ecc: 0.0002, color: 0x8a7a6a }]
             },
-            { name: 'Jupiter', radius: 2.5, distance: 32, speed: 0.08, orbitalPeriod: 4333, color: 0xc88b3a, emissive: 0x64451d, texture: 'jupiter', realRadiusScale: 10.97,
-              moons: [{ name: 'Io', radius: 0.28, distance: 4, speed: 85, color: 0xffdd66 }, { name: 'Europa', radius: 0.24, distance: 5, speed: 52, color: 0xddddff }, { name: 'Ganymede', radius: 0.32, distance: 6.5, speed: 33, color: 0xccccaa }, { name: 'Callisto', radius: 0.3, distance: 8, speed: 21, color: 0x888888 }]
+            { name: 'Jupiter', radius: 2.5, distance: 32, speed: 0.08, ecc: 0.049, orbitalPeriod: 4333, color: 0xc88b3a, emissive: 0x64451d, texture: 'jupiter', realRadiusScale: 10.97,
+              moons: [{ name: 'Io', radius: 0.28, distance: 4, speed: 85, ecc: 0.004, color: 0xffdd66 }, { name: 'Europa', radius: 0.24, distance: 5, speed: 52, ecc: 0.009, color: 0xddddff }, { name: 'Ganymede', radius: 0.32, distance: 6.5, speed: 33, ecc: 0.001, color: 0xccccaa }, { name: 'Callisto', radius: 0.3, distance: 8, speed: 21, ecc: 0.007, color: 0x888888 }]
             },
-            { name: 'Saturn', radius: 2.2, distance: 44, speed: 0.03, orbitalPeriod: 10759, color: 0xfad5a5, emissive: 0x7d6a52, texture: 'saturn', realRadiusScale: 9.14,
-              moons: [{ name: 'Titan', radius: 0.4, distance: 6, speed: 22, color: 0xffbb88 }, { name: 'Rhea', radius: 0.2, distance: 4.5, speed: 40, color: 0xaaaaaa }, { name: 'Iapetus', radius: 0.18, distance: 8, speed: 13, color: 0x666666 }]
+            { name: 'Saturn', radius: 2.2, distance: 44, speed: 0.03, ecc: 0.057, orbitalPeriod: 10759, color: 0xfad5a5, emissive: 0x7d6a52, texture: 'saturn', realRadiusScale: 9.14,
+              moons: [{ name: 'Titan', radius: 0.4, distance: 6, speed: 22, ecc: 0.029, color: 0xffbb88 }, { name: 'Rhea', radius: 0.2, distance: 4.5, speed: 40, ecc: 0.001, color: 0xaaaaaa }, { name: 'Iapetus', radius: 0.18, distance: 8, speed: 13, ecc: 0.029, color: 0x666666 }]
             },
-            { name: 'Uranus', radius: 1.6, distance: 56, speed: 0.01, orbitalPeriod: 30687, color: 0x4fd0e7, emissive: 0x276873, texture: 'uranus', realRadiusScale: 3.98,
-              moons: [{ name: 'Titania', radius: 0.22, distance: 4, speed: 40, color: 0xbbccdd }, { name: 'Oberon', radius: 0.2, distance: 5, speed: 32, color: 0x99aabb }]
+            { name: 'Uranus', radius: 1.6, distance: 56, speed: 0.01, ecc: 0.046, orbitalPeriod: 30687, color: 0x4fd0e7, emissive: 0x276873, texture: 'uranus', realRadiusScale: 3.98,
+              moons: [{ name: 'Titania', radius: 0.22, distance: 4, speed: 40, ecc: 0.001, color: 0xbbccdd }, { name: 'Oberon', radius: 0.2, distance: 5, speed: 32, ecc: 0.001, color: 0x99aabb }]
             },
-            { name: 'Neptune', radius: 1.5, distance: 68, speed: 0.006, orbitalPeriod: 60190, color: 0x4166f5, emissive: 0x20337a, texture: 'neptune', realRadiusScale: 3.86,
-              moons: [{ name: 'Triton', radius: 0.26, distance: 4.5, speed: 60, color: 0xeeffff }]
+            { name: 'Neptune', radius: 1.5, distance: 68, speed: 0.006, ecc: 0.010, orbitalPeriod: 60190, color: 0x4166f5, emissive: 0x20337a, texture: 'neptune', realRadiusScale: 3.86,
+              moons: [{ name: 'Triton', radius: 0.26, distance: 4.5, speed: 60, ecc: 0.000016, color: 0xeeffff }]
             }
         ];
 
@@ -1599,7 +1600,9 @@
                 mesh, cloudsMesh, atmosphereMesh, venusAtmo, marsAtmo, gasGiantAtmo,
                 distance: data.distance,
                 speed: data.speed,
+                ecc: data.ecc || 0,
                 angle: Math.random() * Math.PI * 2,
+                meanAnomaly: Math.random() * Math.PI * 2,
                 trail: [],
                 maxTrailLength: 800,
                 name: data.name,
@@ -1646,7 +1649,9 @@
                 const moon = {
                     mesh, parent: planet,
                     distance: data.distance, speed: data.speed,
+                    ecc: data.ecc || 0,
                     angle: Math.random() * Math.PI * 2,
+                    meanAnomaly: Math.random() * Math.PI * 2,
                     trail: [], maxTrailLength: 200, name: data.name
                 };
                 scene.add(mesh);
@@ -2127,10 +2132,21 @@
                 simulationDays += daysPerSecond * dt * Math.max(currentSunSpeed, 0.01) * Math.max(orbitSpeedMultiplier, 0.01);
 
                 planets.forEach(planet => {
-                    planet.angle += planet.speed * 0.01 * orbitSpeedMultiplier;
-                    const x = Math.cos(planet.angle) * planet.distance;
-                    const y = Math.sin(planet.angle) * planet.distance;
+                    let x, y;
                     const z = sun.position.z;
+                    const step = planet.speed * 0.01 * orbitSpeedMultiplier;
+                    if (ellipticalOrbits && planet.ecc > 0) {
+                        planet.meanAnomaly += step;
+                        const E = solveKepler(planet.meanAnomaly, planet.ecc);
+                        const a = planet.distance;
+                        const b = a * Math.sqrt(1 - planet.ecc * planet.ecc);
+                        x = a * (Math.cos(E) - planet.ecc);
+                        y = b * Math.sin(E);
+                    } else {
+                        planet.angle += step;
+                        x = Math.cos(planet.angle) * planet.distance;
+                        y = Math.sin(planet.angle) * planet.distance;
+                    }
                     planet.mesh.position.set(x, y, z);
                     planet.mesh.rotation.y += 0.008;
 
@@ -2142,11 +2158,22 @@
 
                     if (showMoons) {
                         planet.moons.forEach(moon => {
-                            const step = moon.speed * 0.01 * orbitSpeedMultiplier;
-                            moon.angle += step;
+                            const mStep = moon.speed * 0.01 * orbitSpeedMultiplier;
+                            let mx, my;
+                            if (ellipticalOrbits && moon.ecc > 0) {
+                                moon.meanAnomaly += mStep;
+                                const E = solveKepler(moon.meanAnomaly, moon.ecc);
+                                const a = moon.distance;
+                                const b = a * Math.sqrt(1 - moon.ecc * moon.ecc);
+                                mx = planet.mesh.position.x + a * (Math.cos(E) - moon.ecc);
+                                my = planet.mesh.position.y + b * Math.sin(E);
+                            } else {
+                                moon.angle += mStep;
+                                mx = planet.mesh.position.x + Math.cos(moon.angle) * moon.distance;
+                                my = planet.mesh.position.y + Math.sin(moon.angle) * moon.distance;
+                            }
                             moon.mesh.position.set(
-                                planet.mesh.position.x + Math.cos(moon.angle) * moon.distance,
-                                planet.mesh.position.y + Math.sin(moon.angle) * moon.distance,
+                                mx, my,
                                 planet.mesh.position.z
                             );
                             moon.mesh.rotation.y += 0.02;
@@ -2219,6 +2246,29 @@
             const planet = planets.find(p => p.name.toLowerCase() === followTarget);
             if (planet) return planet.mesh.position;
             return sun.position;
+        }
+
+        // =====================================================================
+        // ELLIPTICAL ORBIT ENGINE (Kepler's equation — Newton's method)
+        // =====================================================================
+        let ellipticalOrbits = false;
+
+        // Solve Kepler's equation M = E - e*sin(E) for eccentric anomaly E
+        // Returns E such that planet positions obey Kepler's second law
+        function solveKepler(M, e) {
+            let E = M;
+            for (let i = 0; i < 6; i++) {
+                E = E - (E - e * Math.sin(E) - M) / (1 - e * Math.cos(E));
+            }
+            return E;
+        }
+
+        // Clear all planet + moon trails (called when toggling orbit mode)
+        function clearAllTrails() {
+            planets.forEach(p => {
+                p.trail = [];
+                p.moons.forEach(m => { m.trail = []; });
+            });
         }
 
         let isDragging = false, isPanning = false;
@@ -2663,6 +2713,15 @@
             showParticles = e.target.checked;
             if (showParticles && !coronaParticles) createCoronaParticles();
             else if (!showParticles && coronaParticles) { scene.remove(coronaParticles); coronaParticles = null; }
+        });
+        document.getElementById('elliptical-orbits').addEventListener('change', (e) => {
+            ellipticalOrbits = e.target.checked;
+            // Sync meanAnomaly/angle so planets don't teleport on toggle
+            planets.forEach(p => {
+                p.meanAnomaly = p.angle;
+                p.moons.forEach(m => { m.meanAnomaly = m.angle; });
+            });
+            clearAllTrails();
         });
 
         // Planet dive button
