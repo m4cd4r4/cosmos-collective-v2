@@ -1112,7 +1112,7 @@
         try {
             renderer = new THREE.WebGLRenderer({
                 antialias: true,
-                alpha: true,
+                alpha: false,
                 preserveDrawingBuffer: true,
                 powerPreference: 'high-performance'
             });
@@ -1124,6 +1124,7 @@
         }
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setClearColor(0x000000, 1); // Solid black — ensures screenshots/video have correct background
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.2;
         document.getElementById('canvas-container').appendChild(renderer.domElement);
