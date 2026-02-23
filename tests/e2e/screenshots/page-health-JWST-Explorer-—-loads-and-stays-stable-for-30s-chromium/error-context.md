@@ -1,0 +1,826 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - banner [ref=e6]:
+      - generic [ref=e8]:
+        - link "Cosmos Collective - Home" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e24]:
+            - generic [ref=e25]: Cosmos
+            - generic [ref=e26]: Collective
+        - navigation "Main navigation" [ref=e27]:
+          - link "Explore" [ref=e28] [cursor=pointer]:
+            - /url: /explore
+            - img [ref=e29]
+            - text: Explore
+          - link "Sky Map" [ref=e37] [cursor=pointer]:
+            - /url: /sky-map
+            - img [ref=e38]
+            - text: Sky Map
+          - link "Kepler" [ref=e41] [cursor=pointer]:
+            - /url: /kepler
+            - img [ref=e42]
+            - text: Kepler
+          - link "JWST" [ref=e48] [cursor=pointer]:
+            - /url: /jwst
+            - img [ref=e49]
+            - text: JWST
+          - link "Solar System" [ref=e51] [cursor=pointer]:
+            - /url: /solar-system
+            - img [ref=e52]
+            - text: Solar System
+          - link "Live Events" [ref=e58] [cursor=pointer]:
+            - /url: /events
+            - img [ref=e59]
+            - text: Live Events
+          - link "Devlog" [ref=e61] [cursor=pointer]:
+            - /url: /devlog
+            - img [ref=e62]
+            - text: Devlog
+    - main "JWST Explorer" [ref=e64]:
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - img [ref=e68]
+            - generic [ref=e76]: James Webb Space Telescope
+            - generic [ref=e77]: L2 Orbit · 1.5M km
+            - generic [ref=e78]: Launched Dec 2021
+          - generic [ref=e79]: "Data: NASA/ESA/CSA/STScI"
+        - generic [ref=e80]:
+          - generic [ref=e81]:
+            - generic [ref=e82]: "85"
+            - generic [ref=e83]: JWST Observations
+          - generic [ref=e84]:
+            - generic [ref=e85]: "23"
+            - generic [ref=e86]: Nebulae
+          - generic [ref=e87]:
+            - generic [ref=e88]: "44"
+            - generic [ref=e89]: Galaxies & Deep Fields
+          - generic [ref=e90]:
+            - generic [ref=e91]: "12"
+            - generic [ref=e92]: Solar System
+          - generic [ref=e93]:
+            - generic [ref=e94]: 85 / 85
+            - generic [ref=e95]: Showing
+        - generic [ref=e96]:
+          - complementary [ref=e97]:
+            - generic [ref=e99]:
+              - img [ref=e100]
+              - textbox "Search targets…" [ref=e103]
+            - generic [ref=e104]:
+              - generic [ref=e105]: Category
+              - generic [ref=e106]:
+                - button "All" [ref=e107] [cursor=pointer]
+                - button "Deep Fields" [ref=e108] [cursor=pointer]
+                - button "Galaxies" [ref=e109] [cursor=pointer]
+                - button "Nebulae" [ref=e110] [cursor=pointer]
+                - button "Other" [ref=e111] [cursor=pointer]
+                - button "Solar System" [ref=e112] [cursor=pointer]
+            - generic [ref=e113]:
+              - generic [ref=e114]: Instrument
+              - generic [ref=e115]:
+                - button "All" [ref=e116] [cursor=pointer]
+                - button "NIRCam" [ref=e117] [cursor=pointer]
+                - button "MIRI" [ref=e118] [cursor=pointer]
+                - button "NIRSpec" [ref=e119] [cursor=pointer]
+            - generic [ref=e121]:
+              - button "Carina Nebula (Cosmic Cliffs) NIRCam · Nebulae" [ref=e122] [cursor=pointer]:
+                - generic [ref=e124]:
+                  - generic [ref=e125]: Carina Nebula (Cosmic Cliffs)
+                  - generic [ref=e126]:
+                    - text: NIRCam
+                    - generic [ref=e128]: ·
+                    - text: Nebulae
+              - button "SMACS 0723 (Webb's First Deep Field) NIRCam · Deep Fields" [ref=e129] [cursor=pointer]:
+                - generic [ref=e131]:
+                  - generic [ref=e132]: SMACS 0723 (Webb's First Deep Field)
+                  - generic [ref=e133]:
+                    - text: NIRCam
+                    - generic [ref=e135]: ·
+                    - text: Deep Fields
+              - button "Stephan's Quintet NIRCam · Galaxies" [ref=e136] [cursor=pointer]:
+                - generic [ref=e138]:
+                  - generic [ref=e139]: Stephan's Quintet
+                  - generic [ref=e140]:
+                    - text: NIRCam
+                    - generic [ref=e142]: ·
+                    - text: Galaxies
+              - button "Southern Ring Nebula NIRCam · Nebulae" [ref=e143] [cursor=pointer]:
+                - generic [ref=e145]:
+                  - generic [ref=e146]: Southern Ring Nebula
+                  - generic [ref=e147]:
+                    - text: NIRCam
+                    - generic [ref=e149]: ·
+                    - text: Nebulae
+              - button "Pillars of Creation NIRCam · Nebulae" [ref=e150] [cursor=pointer]:
+                - generic [ref=e152]:
+                  - generic [ref=e153]: Pillars of Creation
+                  - generic [ref=e154]:
+                    - text: NIRCam
+                    - generic [ref=e156]: ·
+                    - text: Nebulae
+              - button "Jupiter NIRCam · Solar System" [ref=e157] [cursor=pointer]:
+                - generic [ref=e159]:
+                  - generic [ref=e160]: Jupiter
+                  - generic [ref=e161]:
+                    - text: NIRCam
+                    - generic [ref=e163]: ·
+                    - text: Solar System
+              - button "Tarantula Nebula NIRCam · Nebulae" [ref=e164] [cursor=pointer]:
+                - generic [ref=e166]:
+                  - generic [ref=e167]: Tarantula Nebula
+                  - generic [ref=e168]:
+                    - text: NIRCam
+                    - generic [ref=e170]: ·
+                    - text: Nebulae
+              - button "Cartwheel Galaxy NIRCam · Galaxies" [ref=e171] [cursor=pointer]:
+                - generic [ref=e173]:
+                  - generic [ref=e174]: Cartwheel Galaxy
+                  - generic [ref=e175]:
+                    - text: NIRCam
+                    - generic [ref=e177]: ·
+                    - text: Galaxies
+              - button "Phantom Galaxy MIRI · Galaxies" [ref=e178] [cursor=pointer]:
+                - generic [ref=e180]:
+                  - generic [ref=e181]: Phantom Galaxy
+                  - generic [ref=e182]:
+                    - text: MIRI
+                    - generic [ref=e184]: ·
+                    - text: Galaxies
+              - button "Neptune NIRCam · Solar System" [ref=e185] [cursor=pointer]:
+                - generic [ref=e187]:
+                  - generic [ref=e188]: Neptune
+                  - generic [ref=e189]:
+                    - text: NIRCam
+                    - generic [ref=e191]: ·
+                    - text: Solar System
+              - button "Uranus NIRCam · Solar System" [ref=e192] [cursor=pointer]:
+                - generic [ref=e194]:
+                  - generic [ref=e195]: Uranus
+                  - generic [ref=e196]:
+                    - text: NIRCam
+                    - generic [ref=e198]: ·
+                    - text: Solar System
+              - button "Saturn NIRCam · Solar System" [ref=e199] [cursor=pointer]:
+                - generic [ref=e201]:
+                  - generic [ref=e202]: Saturn
+                  - generic [ref=e203]:
+                    - text: NIRCam
+                    - generic [ref=e205]: ·
+                    - text: Solar System
+              - button "Mars NIRCam · Solar System" [ref=e206] [cursor=pointer]:
+                - generic [ref=e208]:
+                  - generic [ref=e209]: Mars
+                  - generic [ref=e210]:
+                    - text: NIRCam
+                    - generic [ref=e212]: ·
+                    - text: Solar System
+              - button "Rho Ophiuchi Cloud Complex NIRCam · Nebulae" [ref=e213] [cursor=pointer]:
+                - generic [ref=e215]:
+                  - generic [ref=e216]: Rho Ophiuchi Cloud Complex
+                  - generic [ref=e217]:
+                    - text: NIRCam
+                    - generic [ref=e219]: ·
+                    - text: Nebulae
+              - button "Ring Nebula NIRCam · Nebulae" [ref=e220] [cursor=pointer]:
+                - generic [ref=e222]:
+                  - generic [ref=e223]: Ring Nebula
+                  - generic [ref=e224]:
+                    - text: NIRCam
+                    - generic [ref=e226]: ·
+                    - text: Nebulae
+              - button "Crab Nebula NIRCam · Nebulae" [ref=e227] [cursor=pointer]:
+                - generic [ref=e229]:
+                  - generic [ref=e230]: Crab Nebula
+                  - generic [ref=e231]:
+                    - text: NIRCam
+                    - generic [ref=e233]: ·
+                    - text: Nebulae
+              - button "Orion Nebula NIRCam · Nebulae" [ref=e234] [cursor=pointer]:
+                - generic [ref=e236]:
+                  - generic [ref=e237]: Orion Nebula
+                  - generic [ref=e238]:
+                    - text: NIRCam
+                    - generic [ref=e240]: ·
+                    - text: Nebulae
+              - button "Horsehead Nebula NIRCam · Nebulae" [ref=e241] [cursor=pointer]:
+                - generic [ref=e243]:
+                  - generic [ref=e244]: Horsehead Nebula
+                  - generic [ref=e245]:
+                    - text: NIRCam
+                    - generic [ref=e247]: ·
+                    - text: Nebulae
+              - button "SN 1987A NIRCam · Nebulae" [ref=e248] [cursor=pointer]:
+                - generic [ref=e250]:
+                  - generic [ref=e251]: SN 1987A
+                  - generic [ref=e252]:
+                    - text: NIRCam
+                    - generic [ref=e254]: ·
+                    - text: Nebulae
+              - button "Cassiopeia A MIRI · Nebulae" [ref=e255] [cursor=pointer]:
+                - generic [ref=e257]:
+                  - generic [ref=e258]: Cassiopeia A
+                  - generic [ref=e259]:
+                    - text: MIRI
+                    - generic [ref=e261]: ·
+                    - text: Nebulae
+              - button "Eta Carinae NIRCam · Nebulae" [ref=e262] [cursor=pointer]:
+                - generic [ref=e264]:
+                  - generic [ref=e265]: Eta Carinae
+                  - generic [ref=e266]:
+                    - text: NIRCam
+                    - generic [ref=e268]: ·
+                    - text: Nebulae
+              - button "Butterfly Nebula NIRCam · Nebulae" [ref=e269] [cursor=pointer]:
+                - generic [ref=e271]:
+                  - generic [ref=e272]: Butterfly Nebula
+                  - generic [ref=e273]:
+                    - text: NIRCam
+                    - generic [ref=e275]: ·
+                    - text: Nebulae
+              - button "NGC 346 NIRCam · Nebulae" [ref=e276] [cursor=pointer]:
+                - generic [ref=e278]:
+                  - generic [ref=e279]: NGC 346
+                  - generic [ref=e280]:
+                    - text: NIRCam
+                    - generic [ref=e282]: ·
+                    - text: Nebulae
+              - button "L1527 Protostar NIRCam · Nebulae" [ref=e283] [cursor=pointer]:
+                - generic [ref=e285]:
+                  - generic [ref=e286]: L1527 Protostar
+                  - generic [ref=e287]:
+                    - text: NIRCam
+                    - generic [ref=e289]: ·
+                    - text: Nebulae
+              - button "WR 140 MIRI · Nebulae" [ref=e290] [cursor=pointer]:
+                - generic [ref=e292]:
+                  - generic [ref=e293]: WR 140
+                  - generic [ref=e294]:
+                    - text: MIRI
+                    - generic [ref=e296]: ·
+                    - text: Nebulae
+              - button "NGC 3603 NIRCam · Nebulae" [ref=e297] [cursor=pointer]:
+                - generic [ref=e299]:
+                  - generic [ref=e300]: NGC 3603
+                  - generic [ref=e301]:
+                    - text: NIRCam
+                    - generic [ref=e303]: ·
+                    - text: Nebulae
+              - button "Omega Nebula NIRCam · Nebulae" [ref=e304] [cursor=pointer]:
+                - generic [ref=e306]:
+                  - generic [ref=e307]: Omega Nebula
+                  - generic [ref=e308]:
+                    - text: NIRCam
+                    - generic [ref=e310]: ·
+                    - text: Nebulae
+              - button "NGC 1333 NIRCam · Nebulae" [ref=e311] [cursor=pointer]:
+                - generic [ref=e313]:
+                  - generic [ref=e314]: NGC 1333
+                  - generic [ref=e315]:
+                    - text: NIRCam
+                    - generic [ref=e317]: ·
+                    - text: Nebulae
+              - button "Veil Nebula MIRI · Nebulae" [ref=e318] [cursor=pointer]:
+                - generic [ref=e320]:
+                  - generic [ref=e321]: Veil Nebula
+                  - generic [ref=e322]:
+                    - text: MIRI
+                    - generic [ref=e324]: ·
+                    - text: Nebulae
+              - button "HH 46/47 NIRCam · Nebulae" [ref=e325] [cursor=pointer]:
+                - generic [ref=e327]:
+                  - generic [ref=e328]: HH 46/47
+                  - generic [ref=e329]:
+                    - text: NIRCam
+                    - generic [ref=e331]: ·
+                    - text: Nebulae
+              - button "NGC 604 NIRCam · Nebulae" [ref=e332] [cursor=pointer]:
+                - generic [ref=e334]:
+                  - generic [ref=e335]: NGC 604
+                  - generic [ref=e336]:
+                    - text: NIRCam
+                    - generic [ref=e338]: ·
+                    - text: Nebulae
+              - button "NGC 1365 MIRI · Galaxies" [ref=e339] [cursor=pointer]:
+                - generic [ref=e341]:
+                  - generic [ref=e342]: NGC 1365
+                  - generic [ref=e343]:
+                    - text: MIRI
+                    - generic [ref=e345]: ·
+                    - text: Galaxies
+              - button "NGC 7469 NIRSpec · Galaxies" [ref=e346] [cursor=pointer]:
+                - generic [ref=e348]:
+                  - generic [ref=e349]: NGC 7469
+                  - generic [ref=e350]:
+                    - text: NIRSpec
+                    - generic [ref=e352]: ·
+                    - text: Galaxies
+              - button "IC 5332 MIRI · Galaxies" [ref=e353] [cursor=pointer]:
+                - generic [ref=e355]:
+                  - generic [ref=e356]: IC 5332
+                  - generic [ref=e357]:
+                    - text: MIRI
+                    - generic [ref=e359]: ·
+                    - text: Galaxies
+              - button "NGC 3351 MIRI · Galaxies" [ref=e360] [cursor=pointer]:
+                - generic [ref=e362]:
+                  - generic [ref=e363]: NGC 3351
+                  - generic [ref=e364]:
+                    - text: MIRI
+                    - generic [ref=e366]: ·
+                    - text: Galaxies
+              - button "NGC 3627 MIRI · Galaxies" [ref=e367] [cursor=pointer]:
+                - generic [ref=e369]:
+                  - generic [ref=e370]: NGC 3627
+                  - generic [ref=e371]:
+                    - text: MIRI
+                    - generic [ref=e373]: ·
+                    - text: Galaxies
+              - button "NGC 4254 MIRI · Galaxies" [ref=e374] [cursor=pointer]:
+                - generic [ref=e376]:
+                  - generic [ref=e377]: NGC 4254
+                  - generic [ref=e378]:
+                    - text: MIRI
+                    - generic [ref=e380]: ·
+                    - text: Galaxies
+              - button "NGC 4321 MIRI · Galaxies" [ref=e381] [cursor=pointer]:
+                - generic [ref=e383]:
+                  - generic [ref=e384]: NGC 4321
+                  - generic [ref=e385]:
+                    - text: MIRI
+                    - generic [ref=e387]: ·
+                    - text: Galaxies
+              - button "NGC 5068 MIRI · Galaxies" [ref=e388] [cursor=pointer]:
+                - generic [ref=e390]:
+                  - generic [ref=e391]: NGC 5068
+                  - generic [ref=e392]:
+                    - text: MIRI
+                    - generic [ref=e394]: ·
+                    - text: Galaxies
+              - button "NGC 1300 MIRI · Galaxies" [ref=e395] [cursor=pointer]:
+                - generic [ref=e397]:
+                  - generic [ref=e398]: NGC 1300
+                  - generic [ref=e399]:
+                    - text: MIRI
+                    - generic [ref=e401]: ·
+                    - text: Galaxies
+              - button "NGC 1512 MIRI · Galaxies" [ref=e402] [cursor=pointer]:
+                - generic [ref=e404]:
+                  - generic [ref=e405]: NGC 1512
+                  - generic [ref=e406]:
+                    - text: MIRI
+                    - generic [ref=e408]: ·
+                    - text: Galaxies
+              - button "NGC 1566 MIRI · Galaxies" [ref=e409] [cursor=pointer]:
+                - generic [ref=e411]:
+                  - generic [ref=e412]: NGC 1566
+                  - generic [ref=e413]:
+                    - text: MIRI
+                    - generic [ref=e415]: ·
+                    - text: Galaxies
+              - button "NGC 1672 MIRI · Galaxies" [ref=e416] [cursor=pointer]:
+                - generic [ref=e418]:
+                  - generic [ref=e419]: NGC 1672
+                  - generic [ref=e420]:
+                    - text: MIRI
+                    - generic [ref=e422]: ·
+                    - text: Galaxies
+              - button "Whirlpool Galaxy MIRI · Galaxies" [ref=e423] [cursor=pointer]:
+                - generic [ref=e425]:
+                  - generic [ref=e426]: Whirlpool Galaxy
+                  - generic [ref=e427]:
+                    - text: MIRI
+                    - generic [ref=e429]: ·
+                    - text: Galaxies
+              - button "Centaurus A MIRI · Galaxies" [ref=e430] [cursor=pointer]:
+                - generic [ref=e432]:
+                  - generic [ref=e433]: Centaurus A
+                  - generic [ref=e434]:
+                    - text: MIRI
+                    - generic [ref=e436]: ·
+                    - text: Galaxies
+              - button "Bode's Galaxy MIRI · Galaxies" [ref=e437] [cursor=pointer]:
+                - generic [ref=e439]:
+                  - generic [ref=e440]: Bode's Galaxy
+                  - generic [ref=e441]:
+                    - text: MIRI
+                    - generic [ref=e443]: ·
+                    - text: Galaxies
+              - button "Cigar Galaxy NIRCam · Galaxies" [ref=e444] [cursor=pointer]:
+                - generic [ref=e446]:
+                  - generic [ref=e447]: Cigar Galaxy
+                  - generic [ref=e448]:
+                    - text: NIRCam
+                    - generic [ref=e450]: ·
+                    - text: Galaxies
+              - button "Triangulum Galaxy MIRI · Galaxies" [ref=e451] [cursor=pointer]:
+                - generic [ref=e453]:
+                  - generic [ref=e454]: Triangulum Galaxy
+                  - generic [ref=e455]:
+                    - text: MIRI
+                    - generic [ref=e457]: ·
+                    - text: Galaxies
+              - button "Sculptor Galaxy MIRI · Galaxies" [ref=e458] [cursor=pointer]:
+                - generic [ref=e460]:
+                  - generic [ref=e461]: Sculptor Galaxy
+                  - generic [ref=e462]:
+                    - text: MIRI
+                    - generic [ref=e464]: ·
+                    - text: Galaxies
+              - button "Arp 220 NIRSpec · Galaxies" [ref=e465] [cursor=pointer]:
+                - generic [ref=e467]:
+                  - generic [ref=e468]: Arp 220
+                  - generic [ref=e469]:
+                    - text: NIRSpec
+                    - generic [ref=e471]: ·
+                    - text: Galaxies
+              - button "Whale Galaxy MIRI · Galaxies" [ref=e472] [cursor=pointer]:
+                - generic [ref=e474]:
+                  - generic [ref=e475]: Whale Galaxy
+                  - generic [ref=e476]:
+                    - text: MIRI
+                    - generic [ref=e478]: ·
+                    - text: Galaxies
+              - button "NGC 891 MIRI · Galaxies" [ref=e479] [cursor=pointer]:
+                - generic [ref=e481]:
+                  - generic [ref=e482]: NGC 891
+                  - generic [ref=e483]:
+                    - text: MIRI
+                    - generic [ref=e485]: ·
+                    - text: Galaxies
+              - button "Black Eye Galaxy MIRI · Galaxies" [ref=e486] [cursor=pointer]:
+                - generic [ref=e488]:
+                  - generic [ref=e489]: Black Eye Galaxy
+                  - generic [ref=e490]:
+                    - text: MIRI
+                    - generic [ref=e492]: ·
+                    - text: Galaxies
+              - button "Fireworks Galaxy MIRI · Galaxies" [ref=e493] [cursor=pointer]:
+                - generic [ref=e495]:
+                  - generic [ref=e496]: Fireworks Galaxy
+                  - generic [ref=e497]:
+                    - text: MIRI
+                    - generic [ref=e499]: ·
+                    - text: Galaxies
+              - button "NGC 2903 MIRI · Galaxies" [ref=e500] [cursor=pointer]:
+                - generic [ref=e502]:
+                  - generic [ref=e503]: NGC 2903
+                  - generic [ref=e504]:
+                    - text: MIRI
+                    - generic [ref=e506]: ·
+                    - text: Galaxies
+              - button "NGC 1087 MIRI · Galaxies" [ref=e507] [cursor=pointer]:
+                - generic [ref=e509]:
+                  - generic [ref=e510]: NGC 1087
+                  - generic [ref=e511]:
+                    - text: MIRI
+                    - generic [ref=e513]: ·
+                    - text: Galaxies
+              - button "NGC 4535 MIRI · Galaxies" [ref=e514] [cursor=pointer]:
+                - generic [ref=e516]:
+                  - generic [ref=e517]: NGC 4535
+                  - generic [ref=e518]:
+                    - text: MIRI
+                    - generic [ref=e520]: ·
+                    - text: Galaxies
+              - button "NGC 1385 MIRI · Galaxies" [ref=e521] [cursor=pointer]:
+                - generic [ref=e523]:
+                  - generic [ref=e524]: NGC 1385
+                  - generic [ref=e525]:
+                    - text: MIRI
+                    - generic [ref=e527]: ·
+                    - text: Galaxies
+              - button "NGC 1433 MIRI · Galaxies" [ref=e528] [cursor=pointer]:
+                - generic [ref=e530]:
+                  - generic [ref=e531]: NGC 1433
+                  - generic [ref=e532]:
+                    - text: MIRI
+                    - generic [ref=e534]: ·
+                    - text: Galaxies
+              - button "NGC 2835 MIRI · Galaxies" [ref=e535] [cursor=pointer]:
+                - generic [ref=e537]:
+                  - generic [ref=e538]: NGC 2835
+                  - generic [ref=e539]:
+                    - text: MIRI
+                    - generic [ref=e541]: ·
+                    - text: Galaxies
+              - button "NGC 7496 MIRI · Galaxies" [ref=e542] [cursor=pointer]:
+                - generic [ref=e544]:
+                  - generic [ref=e545]: NGC 7496
+                  - generic [ref=e546]:
+                    - text: MIRI
+                    - generic [ref=e548]: ·
+                    - text: Galaxies
+              - button "NGC 4303 MIRI · Galaxies" [ref=e549] [cursor=pointer]:
+                - generic [ref=e551]:
+                  - generic [ref=e552]: NGC 4303
+                  - generic [ref=e553]:
+                    - text: MIRI
+                    - generic [ref=e555]: ·
+                    - text: Galaxies
+              - button "NGC 1559 MIRI · Galaxies" [ref=e556] [cursor=pointer]:
+                - generic [ref=e558]:
+                  - generic [ref=e559]: NGC 1559
+                  - generic [ref=e560]:
+                    - text: MIRI
+                    - generic [ref=e562]: ·
+                    - text: Galaxies
+              - button "IC 342 MIRI · Galaxies" [ref=e563] [cursor=pointer]:
+                - generic [ref=e565]:
+                  - generic [ref=e566]: IC 342
+                  - generic [ref=e567]:
+                    - text: MIRI
+                    - generic [ref=e569]: ·
+                    - text: Galaxies
+              - button "NGC 1068 MIRI · Galaxies" [ref=e570] [cursor=pointer]:
+                - generic [ref=e572]:
+                  - generic [ref=e573]: NGC 1068
+                  - generic [ref=e574]:
+                    - text: MIRI
+                    - generic [ref=e576]: ·
+                    - text: Galaxies
+              - button "CEERS Deep Field NIRCam · Deep Fields" [ref=e577] [cursor=pointer]:
+                - generic [ref=e579]:
+                  - generic [ref=e580]: CEERS Deep Field
+                  - generic [ref=e581]:
+                    - text: NIRCam
+                    - generic [ref=e583]: ·
+                    - text: Deep Fields
+              - button "JADES Deep Field NIRCam · Deep Fields" [ref=e584] [cursor=pointer]:
+                - generic [ref=e586]:
+                  - generic [ref=e587]: JADES Deep Field
+                  - generic [ref=e588]:
+                    - text: NIRCam
+                    - generic [ref=e590]: ·
+                    - text: Deep Fields
+              - button "COSMOS-Web Field NIRCam · Deep Fields" [ref=e591] [cursor=pointer]:
+                - generic [ref=e593]:
+                  - generic [ref=e594]: COSMOS-Web Field
+                  - generic [ref=e595]:
+                    - text: NIRCam
+                    - generic [ref=e597]: ·
+                    - text: Deep Fields
+              - button "Pandora's Cluster NIRCam · Deep Fields" [ref=e598] [cursor=pointer]:
+                - generic [ref=e600]:
+                  - generic [ref=e601]: Pandora's Cluster
+                  - generic [ref=e602]:
+                    - text: NIRCam
+                    - generic [ref=e604]: ·
+                    - text: Deep Fields
+              - button "MACS J0416.1-2403 NIRCam · Deep Fields" [ref=e605] [cursor=pointer]:
+                - generic [ref=e607]:
+                  - generic [ref=e608]: MACS J0416.1-2403
+                  - generic [ref=e609]:
+                    - text: NIRCam
+                    - generic [ref=e611]: ·
+                    - text: Deep Fields
+              - button "GLASS-JWST Deep Field NIRCam · Deep Fields" [ref=e612] [cursor=pointer]:
+                - generic [ref=e614]:
+                  - generic [ref=e615]: GLASS-JWST Deep Field
+                  - generic [ref=e616]:
+                    - text: NIRCam
+                    - generic [ref=e618]: ·
+                    - text: Deep Fields
+              - button "Europa NIRCam · Solar System" [ref=e619] [cursor=pointer]:
+                - generic [ref=e621]:
+                  - generic [ref=e622]: Europa
+                  - generic [ref=e623]:
+                    - text: NIRCam
+                    - generic [ref=e625]: ·
+                    - text: Solar System
+              - button "Titan NIRCam · Solar System" [ref=e626] [cursor=pointer]:
+                - generic [ref=e628]:
+                  - generic [ref=e629]: Titan
+                  - generic [ref=e630]:
+                    - text: NIRCam
+                    - generic [ref=e632]: ·
+                    - text: Solar System
+              - button "Enceladus NIRSpec · Solar System" [ref=e633] [cursor=pointer]:
+                - generic [ref=e635]:
+                  - generic [ref=e636]: Enceladus
+                  - generic [ref=e637]:
+                    - text: NIRSpec
+                    - generic [ref=e639]: ·
+                    - text: Solar System
+              - button "Didymos/Dimorphos (DART Impact) NIRCam · Solar System" [ref=e640] [cursor=pointer]:
+                - generic [ref=e642]:
+                  - generic [ref=e643]: Didymos/Dimorphos (DART Impact)
+                  - generic [ref=e644]:
+                    - text: NIRCam
+                    - generic [ref=e646]: ·
+                    - text: Solar System
+              - button "Comet 238P/Read NIRSpec · Solar System" [ref=e647] [cursor=pointer]:
+                - generic [ref=e649]:
+                  - generic [ref=e650]: Comet 238P/Read
+                  - generic [ref=e651]:
+                    - text: NIRSpec
+                    - generic [ref=e653]: ·
+                    - text: Solar System
+              - button "Io NIRCam · Solar System" [ref=e654] [cursor=pointer]:
+                - generic [ref=e656]:
+                  - generic [ref=e657]: Io
+                  - generic [ref=e658]:
+                    - text: NIRCam
+                    - generic [ref=e660]: ·
+                    - text: Solar System
+              - button "Ganymede NIRCam · Solar System" [ref=e661] [cursor=pointer]:
+                - generic [ref=e663]:
+                  - generic [ref=e664]: Ganymede
+                  - generic [ref=e665]:
+                    - text: NIRCam
+                    - generic [ref=e667]: ·
+                    - text: Solar System
+              - button "TRAPPIST-1 System MIRI · Other" [ref=e668] [cursor=pointer]:
+                - generic [ref=e670]:
+                  - generic [ref=e671]: TRAPPIST-1 System
+                  - generic [ref=e672]:
+                    - text: MIRI
+                    - generic [ref=e674]: ·
+                    - text: Other
+              - button "WASP-39 b NIRSpec · Other" [ref=e675] [cursor=pointer]:
+                - generic [ref=e677]:
+                  - generic [ref=e678]: WASP-39 b
+                  - generic [ref=e679]:
+                    - text: NIRSpec
+                    - generic [ref=e681]: ·
+                    - text: Other
+              - button "HIP 65426 b NIRCam · Other" [ref=e682] [cursor=pointer]:
+                - generic [ref=e684]:
+                  - generic [ref=e685]: HIP 65426 b
+                  - generic [ref=e686]:
+                    - text: NIRCam
+                    - generic [ref=e688]: ·
+                    - text: Other
+              - button "VHS 1256 b NIRSpec · Other" [ref=e689] [cursor=pointer]:
+                - generic [ref=e691]:
+                  - generic [ref=e692]: VHS 1256 b
+                  - generic [ref=e693]:
+                    - text: NIRSpec
+                    - generic [ref=e695]: ·
+                    - text: Other
+              - button "LHS 475 b NIRSpec · Other" [ref=e696] [cursor=pointer]:
+                - generic [ref=e698]:
+                  - generic [ref=e699]: LHS 475 b
+                  - generic [ref=e700]:
+                    - text: NIRSpec
+                    - generic [ref=e702]: ·
+                    - text: Other
+              - button "Fomalhaut Debris Disc MIRI · Other" [ref=e703] [cursor=pointer]:
+                - generic [ref=e705]:
+                  - generic [ref=e706]: Fomalhaut Debris Disc
+                  - generic [ref=e707]:
+                    - text: MIRI
+                    - generic [ref=e709]: ·
+                    - text: Other
+              - button "WR 124 MIRI · Nebulae" [ref=e710] [cursor=pointer]:
+                - generic [ref=e712]:
+                  - generic [ref=e713]: WR 124
+                  - generic [ref=e714]:
+                    - text: MIRI
+                    - generic [ref=e716]: ·
+                    - text: Nebulae
+            - generic [ref=e717]:
+              - generic [ref=e718]: Instruments
+              - generic [ref=e719]:
+                - generic [ref=e721]: NIRCam
+                - generic [ref=e722]: 0.6–5 μm
+              - generic [ref=e723]:
+                - generic [ref=e725]: MIRI
+                - generic [ref=e726]: 5–28 μm
+              - generic [ref=e727]:
+                - generic [ref=e729]: NIRSpec
+                - generic [ref=e730]: 0.6–5.3 μm
+              - generic [ref=e731]:
+                - generic [ref=e733]: NIRISS
+                - generic [ref=e734]: 0.6–5 μm
+          - generic [ref=e735]:
+            - generic [ref=e736]:
+              - img "Carina Nebula (Cosmic Cliffs)" [ref=e737]
+              - img:
+                - generic:
+                  - generic: Cosmic Cliffs
+                - generic:
+                  - generic: Protostellar Jets
+              - generic [ref=e740]:
+                - button "Hide Features" [ref=e741] [cursor=pointer]:
+                  - img [ref=e742]
+                  - text: Hide Features
+                - button [ref=e746] [cursor=pointer]:
+                  - img [ref=e747]
+              - generic [ref=e752]:
+                - generic [ref=e753]: Carina Nebula (Cosmic Cliffs)
+                - generic [ref=e754]: The "Cosmic Cliffs" of the Carina Nebula reveal baby stars and structures previously hidden.
+            - generic [ref=e755]:
+              - generic [ref=e756]: Wavelength
+              - button "NIRCam" [ref=e757] [cursor=pointer]
+              - button "MIRI" [ref=e758] [cursor=pointer]
+              - generic [ref=e759]: 0.6–5 μm
+          - complementary [ref=e760]:
+            - generic [ref=e761]:
+              - heading "Carina Nebula (Cosmic Cliffs)" [level=2] [ref=e762]
+              - generic [ref=e763]: NGC 3324 · Cosmic Cliffs
+              - generic [ref=e764]:
+                - generic [ref=e765]:
+                  - generic [ref=e766]:
+                    - img [ref=e767]
+                    - text: Category
+                  - generic [ref=e769]: Nebulae
+                - generic [ref=e770]:
+                  - generic [ref=e771]:
+                    - img [ref=e772]
+                    - text: Instrument
+                  - generic [ref=e776]: NIRCam
+                - generic [ref=e777]:
+                  - generic [ref=e778]:
+                    - img [ref=e779]
+                    - text: Observed
+                  - generic [ref=e781]: Jul 12, 2022
+                - generic [ref=e782]:
+                  - generic [ref=e783]:
+                    - img [ref=e784]
+                    - text: Constellation
+                  - generic [ref=e787]: Carina
+                - generic [ref=e788]:
+                  - generic [ref=e789]:
+                    - img [ref=e790]
+                    - text: Distance
+                  - generic [ref=e796]: 7.6K ly
+              - generic [ref=e797]:
+                - generic [ref=e798]: Coordinates (J2000)
+                - generic [ref=e799]:
+                  - generic [ref=e800]:
+                    - text: "RA:"
+                    - generic [ref=e801]: 160.9625°
+                  - generic [ref=e802]:
+                    - text: "Dec:"
+                    - generic [ref=e803]: "-59.2744°"
+              - generic [ref=e804]:
+                - generic [ref=e805]: Filters Used
+                - generic [ref=e806]:
+                  - generic [ref=e807]: F090W
+                  - generic [ref=e808]: F187N
+                  - generic [ref=e809]: F200W
+                  - generic [ref=e810]: F335M
+                  - generic [ref=e811]: F444W
+            - generic [ref=e812]:
+              - generic [ref=e813]: Detected Features (2)
+              - generic [ref=e814]:
+                - generic [ref=e815]:
+                  - generic [ref=e816]:
+                    - generic [ref=e817]: Cosmic Cliffs
+                    - generic [ref=e818]: 98%
+                  - paragraph [ref=e819]: Wall of gas and dust sculpted by stellar winds
+                - generic [ref=e820]:
+                  - generic [ref=e821]:
+                    - generic [ref=e822]: Protostellar Jets
+                    - generic [ref=e823]: 85%
+                  - paragraph [ref=e824]: Jets from newly forming stars
+            - generic [ref=e825]:
+              - generic [ref=e826]: Analysis
+              - paragraph [ref=e827]: Star-forming region in the Carina Nebula showing dramatic structures carved by stellar radiation.
+              - generic [ref=e828]: Scientific Context
+              - paragraph [ref=e829]: This region is actively forming stars. The "cliffs" are walls of gas and dust being eroded by radiation from hot young stars.
+              - generic [ref=e830]: Key Features
+              - list [ref=e831]:
+                - listitem [ref=e832]:
+                  - img [ref=e833]
+                  - text: Star-forming pillars
+                - listitem [ref=e835]:
+                  - img [ref=e836]
+                  - text: Protostellar jets
+                - listitem [ref=e838]:
+                  - img [ref=e839]
+                  - text: Ionization fronts
+                - listitem [ref=e841]:
+                  - img [ref=e842]
+                  - text: Young stellar objects
+              - generic [ref=e844]: Fun Facts
+              - list [ref=e845]:
+                - listitem [ref=e846]:
+                  - generic [ref=e847]: ★
+                  - text: The tallest peaks are about 7 light-years high
+                - listitem [ref=e848]:
+                  - generic [ref=e849]: ★
+                  - text: Some stars in this image are only 50,000-100,000 years old
+            - generic [ref=e850]:
+              - generic [ref=e851]: External Links
+              - link "NASA Feature" [ref=e853] [cursor=pointer]:
+                - /url: https://www.nasa.gov/image-feature/goddard/2022/nasa-s-webb-reveals-cosmic-cliffs-glittering-landscape-of-star-birth
+                - img [ref=e854]
+                - text: NASA Feature
+              - link "View in Sky Map" [ref=e858] [cursor=pointer]:
+                - /url: /sky-map?ra=160.9625&dec=-59.2744&fov=0.5
+                - img [ref=e859]
+                - text: View in Sky Map
+              - link "Full Details" [ref=e862] [cursor=pointer]:
+                - /url: /explore/jwst-carina-nebula
+                - img [ref=e863]
+                - text: Full Details
+  - region "Notifications"
+  - alert [ref=e866]
+```

@@ -1,0 +1,141 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - banner [ref=e6]:
+      - generic [ref=e8]:
+        - link "Cosmos Collective - Home" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e24]:
+            - generic [ref=e25]: Cosmos
+            - generic [ref=e26]: Collective
+        - navigation "Main navigation" [ref=e27]:
+          - link "Explore" [ref=e28] [cursor=pointer]:
+            - /url: /explore
+            - img [ref=e29]
+            - text: Explore
+          - link "Sky Map" [ref=e37] [cursor=pointer]:
+            - /url: /sky-map
+            - img [ref=e38]
+            - text: Sky Map
+          - link "Kepler" [ref=e41] [cursor=pointer]:
+            - /url: /kepler
+            - img [ref=e42]
+            - text: Kepler
+          - link "JWST" [ref=e48] [cursor=pointer]:
+            - /url: /jwst
+            - img [ref=e49]
+            - text: JWST
+          - link "Solar System" [ref=e51] [cursor=pointer]:
+            - /url: /solar-system
+            - img [ref=e52]
+            - text: Solar System
+          - link "Live Events" [ref=e58] [cursor=pointer]:
+            - /url: /events
+            - img [ref=e59]
+            - text: Live Events
+          - link "Devlog" [ref=e61] [cursor=pointer]:
+            - /url: /devlog
+            - img [ref=e62]
+            - text: Devlog
+    - main "Kepler Exoplanet Explorer" [ref=e64]:
+      - generic [ref=e65]:
+        - generic [ref=e66]:
+          - generic [ref=e67]:
+            - img [ref=e68]
+            - generic [ref=e73]: Kepler Mission
+            - generic [ref=e74]: NASA · 2009–2018
+            - generic [ref=e75]: Cygnus Field
+          - generic [ref=e76]: "Data: NASA Exoplanet Archive · TAP API"
+        - generic [ref=e77]:
+          - generic [ref=e78]:
+            - generic [ref=e79]: Confirmed Planets
+            - generic [ref=e80]: 2,783
+          - generic [ref=e81]:
+            - generic [ref=e82]: Host Stars
+            - generic [ref=e83]: 1,982
+          - generic [ref=e84]:
+            - generic [ref=e85]: Multi-Planet Systems
+            - generic [ref=e86]: "531"
+          - generic [ref=e87]:
+            - generic [ref=e88]: Earth-Sized (≤1.5 R⊕)
+            - generic [ref=e89]: "711"
+          - generic [ref=e90]:
+            - generic [ref=e91]: In Habitable Zone
+            - generic [ref=e92]: "67"
+          - generic [ref=e93]:
+            - generic [ref=e94]: Showing
+            - generic [ref=e95]: 1975 / 1982
+        - generic [ref=e96]:
+          - complementary [ref=e97]:
+            - generic [ref=e98]:
+              - generic [ref=e99]: Search
+              - textbox "Planet or star name…" [ref=e100]
+            - generic [ref=e101]:
+              - generic [ref=e102]: View Mode
+              - generic [ref=e103]:
+                - button "Sky" [ref=e104] [cursor=pointer]
+                - button "Galaxy" [ref=e105] [cursor=pointer]
+                - button "HR Diagram" [ref=e106] [cursor=pointer]
+            - generic [ref=e107]:
+              - generic [ref=e108]: Planet Size
+              - generic [ref=e109]:
+                - button "All" [ref=e110] [cursor=pointer]
+                - button "Earth" [ref=e111] [cursor=pointer]
+                - button "Super-Earth" [ref=e112] [cursor=pointer]
+                - button "Neptune" [ref=e113] [cursor=pointer]
+                - button "Jupiter" [ref=e114] [cursor=pointer]
+            - generic [ref=e115]:
+              - generic [ref=e116]: Stellar Temperature
+              - generic [ref=e117]:
+                - button "All" [ref=e118] [cursor=pointer]
+                - button "Cool M/K" [ref=e119] [cursor=pointer]
+                - button "Sun-like G" [ref=e120] [cursor=pointer]
+                - button "Hot F/A" [ref=e121] [cursor=pointer]
+            - generic [ref=e122]:
+              - generic [ref=e123]: Max Orbital Period
+              - slider [ref=e124]: "730"
+              - generic [ref=e125]:
+                - generic [ref=e126]: 1 day
+                - generic [ref=e127]: ≤ 730 days
+            - generic [ref=e128]:
+              - generic [ref=e129]: Planet Systems
+              - generic [ref=e130]:
+                - button "All Stars" [ref=e131] [cursor=pointer]
+                - button "Multi-planet only" [ref=e132] [cursor=pointer]
+            - generic [ref=e133]:
+              - generic [ref=e134]: Habitable Zone
+              - generic [ref=e135]:
+                - button "All" [ref=e136] [cursor=pointer]
+                - button "HZ planets only" [ref=e137] [cursor=pointer]
+            - generic [ref=e138]:
+              - generic [ref=e139]: Discovery Year ≥ 2009
+              - slider [ref=e140]: "2009"
+              - generic [ref=e141]:
+                - generic [ref=e142]: "2009"
+                - generic [ref=e143]: "2018"
+            - generic [ref=e144]:
+              - generic [ref=e145]: Temperature Color
+              - generic [ref=e148]: Hot >7000 K (A/F)
+              - generic [ref=e151]: Warm 6000–7000 K (F)
+              - generic [ref=e154]: Sun-like 5000–6000 K (G)
+              - generic [ref=e157]: Cool 3500–5000 K (K)
+              - generic [ref=e160]: Red dwarf <3500 K (M)
+              - generic [ref=e163]: Habitable zone planet
+            - generic [ref=e164]:
+              - generic [ref=e165]: Planet Size Color
+              - generic [ref=e168]: Earth ≤1.25 R⊕
+              - generic [ref=e171]: Super-Earth ≤2 R⊕
+              - generic [ref=e174]: Neptune ≤6 R⊕
+              - generic [ref=e177]: Jupiter +
+          - complementary [ref=e180]:
+            - generic [ref=e181]:
+              - img [ref=e182]
+              - paragraph [ref=e188]: Click any star to explore its planetary system and orbital diagram
+  - region "Notifications"
+  - alert [ref=e190]
+```

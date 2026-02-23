@@ -60,7 +60,6 @@ export default function PrivacyPage() {
               <ul className="list-disc list-inside text-gray-300 mb-6 space-y-2">
                 <li>Your favourited observations</li>
                 <li>Display preferences (view mode, sort order)</li>
-                <li>Citizen science session statistics</li>
               </ul>
               <p className="text-gray-300 mb-6">
                 This data never leaves your browser and can be cleared at any time through your browser settings.

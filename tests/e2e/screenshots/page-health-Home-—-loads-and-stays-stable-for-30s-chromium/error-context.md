@@ -1,0 +1,582 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to main content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - generic [ref=e5]:
+    - banner [ref=e6]:
+      - generic [ref=e8]:
+        - link "Cosmos Collective - Home" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e24]:
+            - generic [ref=e25]: Cosmos
+            - generic [ref=e26]: Collective
+        - navigation "Main navigation" [ref=e27]:
+          - link "Explore" [ref=e28] [cursor=pointer]:
+            - /url: /explore
+            - img [ref=e29]
+            - text: Explore
+          - link "Sky Map" [ref=e37] [cursor=pointer]:
+            - /url: /sky-map
+            - img [ref=e38]
+            - text: Sky Map
+          - link "Kepler" [ref=e41] [cursor=pointer]:
+            - /url: /kepler
+            - img [ref=e42]
+            - text: Kepler
+          - link "JWST" [ref=e48] [cursor=pointer]:
+            - /url: /jwst
+            - img [ref=e49]
+            - text: JWST
+          - link "Solar System" [ref=e51] [cursor=pointer]:
+            - /url: /solar-system
+            - img [ref=e52]
+            - text: Solar System
+          - link "Live Events" [ref=e58] [cursor=pointer]:
+            - /url: /events
+            - img [ref=e59]
+            - text: Live Events
+          - link "Devlog" [ref=e61] [cursor=pointer]:
+            - /url: /devlog
+            - img [ref=e62]
+            - text: Devlog
+    - main [ref=e67]:
+      - region [ref=e68]:
+        - iframe [ref=e69]:
+          - generic [active] [ref=f1e1]:
+            - generic:
+              - generic: 🌌
+              - generic: Loading Solar System...
+              - generic: Loading textures... 16/16
+            - generic:
+              - generic: Earth Date
+              - generic: "08 : 03 : 2027"
+            - generic [ref=f1e4]:
+              - heading "⚡ Solar Vortex" [level=3] [ref=f1e5]
+              - generic [ref=f1e6]:
+                - generic [ref=f1e7]: "Sun Speed: 4.19x"
+                - generic [ref=f1e8]:
+                  - button "Decrease sun speed" [ref=f1e9] [cursor=pointer]: ◀
+                  - slider [ref=f1e10]: "2.047"
+                  - button "Increase sun speed" [ref=f1e11] [cursor=pointer]: ▶
+              - generic [ref=f1e12]:
+                - generic [ref=f1e13]: "Orbital Speed: 1.24x"
+                - generic [ref=f1e14]:
+                  - button "Decrease orbital speed" [ref=f1e15] [cursor=pointer]: ◀
+                  - slider [ref=f1e16]: "1.114"
+                  - button "Increase orbital speed" [ref=f1e17] [cursor=pointer]: ▶
+              - generic [ref=f1e18]:
+                - generic [ref=f1e19]: "Trail Length: 800"
+                - generic [ref=f1e20]:
+                  - button "Decrease trail length" [ref=f1e21] [cursor=pointer]: ◀
+                  - slider [ref=f1e22]: "800"
+                  - button "Increase trail length" [ref=f1e23] [cursor=pointer]: ▶
+              - generic [ref=f1e24]:
+                - generic [ref=f1e25]: "Trail Opacity: 0.7"
+                - generic [ref=f1e26]:
+                  - button "Decrease trail opacity" [ref=f1e27] [cursor=pointer]: ◀
+                  - slider [ref=f1e28]: "0.7"
+                  - button "Increase trail opacity" [ref=f1e29] [cursor=pointer]: ▶
+              - generic [ref=f1e30]:
+                - generic [ref=f1e31]: "Time Speed: 49 days/sec"
+                - generic [ref=f1e32]:
+                  - button "Decrease time speed" [ref=f1e33] [cursor=pointer]: ◀
+                  - slider [ref=f1e34]: "49"
+                  - button "Increase time speed" [ref=f1e35] [cursor=pointer]: ▶
+              - generic [ref=f1e36]:
+                - generic [ref=f1e37]: "Camera Mode:"
+                - combobox [ref=f1e38]:
+                  - option "Free Camera" [selected]
+                  - option "Cinematic (Auto-Rotate)"
+                  - option "Orbital (Top-Down)"
+                  - option "Side View (Vortex)"
+                  - option "Chase Cam (Behind Sun)"
+              - generic [ref=f1e39]:
+                - button "Pause" [ref=f1e40] [cursor=pointer]
+                - button "Reset View" [ref=f1e41] [cursor=pointer]
+              - generic [ref=f1e42]:
+                - generic [ref=f1e43] [cursor=pointer]:
+                  - checkbox "Show Planet Labels" [checked] [ref=f1e44]
+                  - generic [ref=f1e45]: Show Planet Labels
+                - generic [ref=f1e46] [cursor=pointer]:
+                  - checkbox "Show Moons" [ref=f1e47]
+                  - generic [ref=f1e48]: Show Moons
+                - generic [ref=f1e49] [cursor=pointer]:
+                  - checkbox "Show Reference Grid" [checked] [ref=f1e50]
+                  - generic [ref=f1e51]: Show Reference Grid
+                - generic [ref=f1e52] [cursor=pointer]:
+                  - checkbox "Sun Corona Particles" [ref=f1e53]
+                  - generic [ref=f1e54]: Sun Corona Particles
+                - generic [ref=f1e55]:
+                  - generic [ref=f1e56]: "Follow:"
+                  - combobox [ref=f1e57]:
+                    - option "Sun (default)" [selected]
+                    - option "Mercury"
+                    - option "Venus"
+                    - option "Earth"
+                    - option "Moon"
+                    - option "Mars"
+                    - option "Jupiter"
+                    - option "Saturn"
+                    - option "Uranus"
+                    - option "Neptune"
+                    - option "None (free cam)"
+              - generic [ref=f1e58]:
+                - generic [ref=f1e59]: "Actions:"
+                - button "Dive Into Earth" [ref=f1e60] [cursor=pointer]
+                - button "Screenshot" [ref=f1e61] [cursor=pointer]
+                - button "Record" [ref=f1e62] [cursor=pointer]
+              - generic [ref=f1e63]:
+                - text: "🖱️ Drag: Rotate | Scroll: Zoom"
+                - text: "Hold Shift: Pan | Click label: Info"
+            - generic [ref=f1e64]:
+              - heading "📊 Statistics" [level=4] [ref=f1e65]
+              - generic [ref=f1e66]: "Distance: 16.3 AU"
+              - generic [ref=f1e67]: "Sim Time: 2s"
+              - generic [ref=f1e68]: "Date: Mar 8, 2027"
+              - generic [ref=f1e69]: "Planets: 8"
+              - generic [ref=f1e70]: "Moons: 16"
+              - generic [ref=f1e71]: "Camera: 140"
+            - generic [ref=f1e72]:
+              - heading "🌍 Planetary Events" [level=4] [ref=f1e73]
+              - generic [ref=f1e74]:
+                - generic [ref=f1e75]:
+                  - generic [ref=f1e76]: 🔗 Mercury ⚡ Saturn
+                  - generic [ref=f1e77]: Conjunction • Nov 30, 2026
+                  - generic [ref=f1e78]: "1 days • Current: 6.4°"
+                - generic [ref=f1e79]:
+                  - generic [ref=f1e80]: 🔗 Venus ⚡ Jupiter
+                  - generic [ref=f1e81]: Conjunction • Dec 5, 2026
+                  - generic [ref=f1e82]: "7 days • Current: 10.8°"
+                - generic [ref=f1e83]:
+                  - generic [ref=f1e84]: 🔗 Mercury ⚡ Mars
+                  - generic [ref=f1e85]: Conjunction • Dec 8, 2026
+                  - generic [ref=f1e86]: "10 days • Current: 35.8°"
+                - generic [ref=f1e87]:
+                  - generic [ref=f1e88]: ↔️ Mercury ⟷ Uranus
+                  - generic [ref=f1e89]: Opposition • Dec 9, 2026
+                  - generic [ref=f1e90]: "11 days • Current: 134.9°"
+                - generic [ref=f1e91]:
+                  - generic [ref=f1e92]: 🔗 Mercury ⚡ Neptune
+                  - generic [ref=f1e93]: Conjunction • Dec 11, 2026
+                  - generic [ref=f1e94]: "12 days • Current: 50.2°"
+                - generic [ref=f1e95]:
+                  - generic [ref=f1e96]: ↔️ Venus ⟷ Earth
+                  - generic [ref=f1e97]: Opposition • Dec 16, 2026
+                  - generic [ref=f1e98]: "18 days • Current: 168.9°"
+                - generic [ref=f1e99]:
+                  - generic [ref=f1e100]: 🔗 Venus ⚡ Neptune
+                  - generic [ref=f1e101]: Conjunction • Dec 18, 2026
+                  - generic [ref=f1e102]: "19 days • Current: 31.4°"
+                - generic [ref=f1e103]:
+                  - generic [ref=f1e104]: ↔️ Mercury ⟷ Jupiter
+                  - generic [ref=f1e105]: Opposition • Dec 20, 2026
+                  - generic [ref=f1e106]: "21 days • Current: 92.4°"
+            - generic [ref=f1e107]:
+              - button "Planet Info" [ref=f1e108] [cursor=pointer]
+              - button "True Scale" [ref=f1e109] [cursor=pointer]
+              - button "Accuracy" [ref=f1e110] [cursor=pointer]
+              - button "🌌 Galaxy View" [ref=f1e111] [cursor=pointer]
+            - generic:
+              - heading "EARTH" [level=2]
+              - generic: LOW EARTH ORBIT
+            - generic [ref=f1e112] [cursor=pointer]: Mercury
+            - generic [ref=f1e113] [cursor=pointer]: Venus
+            - generic [ref=f1e114] [cursor=pointer]: Earth
+            - generic [ref=f1e115] [cursor=pointer]: Mars
+            - generic [ref=f1e116] [cursor=pointer]: Jupiter
+            - generic [ref=f1e117] [cursor=pointer]: Saturn
+            - generic [ref=f1e118] [cursor=pointer]: Uranus
+            - generic [ref=f1e119] [cursor=pointer]: Neptune
+        - button "Scroll to content" [ref=e71] [cursor=pointer]:
+          - img [ref=e72]
+        - button "Hide controls" [ref=e74] [cursor=pointer]:
+          - img [ref=e75]
+      - region "Deep Space Observatory" [ref=e80]:
+        - generic [ref=e82]:
+          - generic [ref=e83]:
+            - generic [ref=e84]:
+              - img [ref=e85]
+              - generic [ref=e91]: Interactive Sky Chart
+            - heading "Deep Space Observatory" [level=2] [ref=e92]
+            - paragraph [ref=e93]: JWST and Hubble highlights on an interactive celestial sky chart — filter by telescope, wavelength, and distance. Click any object for scientific context, fun facts, and NASA imagery.
+          - generic [ref=e94]:
+            - generic [ref=e95]:
+              - generic [ref=e96]:
+                - generic [ref=e97]:
+                  - generic [ref=e98]:
+                    - img [ref=e99]
+                    - generic [ref=e105]: Deep Space Observatory
+                    - generic [ref=e106]: JWST
+                    - generic [ref=e107]: Hubble
+                  - generic [ref=e108]: "Data: NASA / STScI · 103 observations"
+                - generic [ref=e110]: Deep Space Observatory showing 103 observations in sky view
+              - link "Open Full Observatory" [ref=e111] [cursor=pointer]:
+                - /url: /observatory
+                - generic [ref=e112]:
+                  - text: Open Full Observatory
+                  - img [ref=e113]
+            - generic [ref=e115]:
+              - generic [ref=e116]:
+                - img [ref=e118]
+                - generic [ref=e120]:
+                  - heading "JWST & Hubble Highlights" [level=3] [ref=e121]
+                  - paragraph [ref=e122]: Landmark observations plotted on a real Aitoff all-sky projection — updated as the catalogue grows.
+              - generic [ref=e123]:
+                - img [ref=e125]
+                - generic [ref=e126]:
+                  - heading "Multi-Axis Filtering" [level=3] [ref=e127]
+                  - paragraph [ref=e128]: Filter by telescope, wavelength band, object category, and distance.
+              - generic [ref=e129]:
+                - img [ref=e131]
+                - generic [ref=e135]:
+                  - heading "Three View Modes" [level=3] [ref=e136]
+                  - paragraph [ref=e137]: Sky Map, Distance, and Timeline projections for different perspectives.
+              - generic [ref=e138]:
+                - img [ref=e140]
+                - generic [ref=e143]:
+                  - heading "Rich Detail Panels" [level=3] [ref=e144]
+                  - paragraph [ref=e145]: Scientific context, fun facts, and NASA imagery for every observation.
+          - generic [ref=e146]:
+            - img [ref=e148]
+            - link "Launch Deep Space Observatory" [ref=e154] [cursor=pointer]:
+              - /url: /observatory
+      - region "World-Class Telescopes" [ref=e155]:
+        - generic [ref=e157]:
+          - generic [ref=e158]:
+            - generic [ref=e159]:
+              - generic [ref=e160]: 🇦🇺
+              - generic [ref=e161]: Australian Radio Astronomy
+            - heading "World-Class Telescopes" [level=2] [ref=e162]
+            - paragraph [ref=e163]: Australia hosts some of the world's most advanced radio telescopes, including precursors to the revolutionary Square Kilometre Array.
+          - generic [ref=e164]:
+            - button "ASKAP" [pressed] [ref=e165] [cursor=pointer]:
+              - img [ref=e166]
+              - text: ASKAP
+            - button "MWA" [ref=e172] [cursor=pointer]:
+              - img [ref=e173]
+              - text: MWA
+            - button "Parkes" [ref=e179] [cursor=pointer]:
+              - img [ref=e180]
+              - text: Parkes
+            - button "ATCA" [ref=e186] [cursor=pointer]:
+              - img [ref=e187]
+              - text: ATCA
+            - button "SKA" [ref=e193] [cursor=pointer]:
+              - img [ref=e194]
+              - text: SKA
+          - generic [ref=e202]:
+            - generic [ref=e203]:
+              - generic [ref=e204]:
+                - img [ref=e206]
+                - generic [ref=e212]:
+                  - heading "ASKAP" [level=3] [ref=e213]
+                  - paragraph [ref=e214]: Australian Square Kilometre Array Pathfinder
+              - paragraph [ref=e215]: A precursor to SKA-Low, ASKAP uses phased array feeds for wide-field radio imaging.
+              - generic [ref=e216]:
+                - generic [ref=e217]:
+                  - img [ref=e218]
+                  - generic [ref=e221]:
+                    - generic [ref=e222]: Location
+                    - generic [ref=e223]: Murchison Radio-astronomy Observatory, Western Australia
+                - generic [ref=e224]:
+                  - img [ref=e225]
+                  - generic [ref=e231]:
+                    - generic [ref=e232]: Wavelength Range
+                    - generic [ref=e233]: 70cm - 3cm (700 MHz - 1.8 GHz)
+                - generic [ref=e234]:
+                  - img [ref=e235]
+                  - generic [ref=e241]:
+                    - generic [ref=e242]: Configuration
+                    - generic [ref=e243]: 36 × 12m dishes
+            - generic [ref=e244]:
+              - heading "Key Science Projects" [level=4] [ref=e245]
+              - list [ref=e246]:
+                - listitem [ref=e247]: WALLABY (HI survey)
+                - listitem [ref=e249]: EMU (Evolutionary Map of the Universe)
+                - listitem [ref=e251]: VAST (Variables and Slow Transients)
+              - generic [ref=e253]:
+                - link "Learn More" [ref=e254] [cursor=pointer]:
+                  - /url: https://www.csiro.au/en/about/facilities-collections/atnf/the-australian-ska-pathfinder
+                - img [ref=e256]
+                - link "View Observations" [ref=e260] [cursor=pointer]:
+                  - /url: /explore?source=ASKAP
+          - generic [ref=e262]:
+            - img "Map of Australia showing radio telescope locations" [ref=e263]:
+              - generic [ref=e267]: Murchison
+              - button "Select ASKAP" [ref=e268] [cursor=pointer]:
+                - generic [ref=e274]: ASKAP
+              - button "Select MWA" [ref=e275] [cursor=pointer]:
+                - generic [ref=e278]: MWA
+              - button "Select SKA-Low" [ref=e279] [cursor=pointer]:
+                - generic [ref=e282]: SKA
+              - button "Select Parkes" [ref=e283] [cursor=pointer]:
+                - generic [ref=e286]: Parkes
+              - button "Select ATCA" [ref=e287] [cursor=pointer]:
+                - generic [ref=e290]: ATCA
+              - generic [ref=e291]: WA
+              - generic [ref=e292]: NSW
+            - paragraph [ref=e293]: Click a marker to select a telescope
+          - generic [ref=e294]:
+            - generic [ref=e295]:
+              - img [ref=e296]
+              - heading "Recent CASDA Observations" [level=4] [ref=e300]
+              - generic [ref=e301]: Live from CSIRO
+            - paragraph [ref=e302]: Unable to reach CASDA archive. Showing cached telescope data above.
+      - region "Square Kilometre Array" [ref=e303]:
+        - generic [ref=e305]:
+          - generic [ref=e306]:
+            - generic [ref=e307]:
+              - generic [ref=e308]: 🔭
+              - generic [ref=e309]: The Future of Radio Astronomy
+            - heading "Square Kilometre Array" [level=2] [ref=e310]
+            - paragraph [ref=e311]: The world's largest and most sensitive radio telescope, currently under construction in Australia and South Africa. It will revolutionise our understanding of the universe.
+          - generic [ref=e312]:
+            - generic [ref=e314] [cursor=pointer]:
+              - generic [ref=e315]: 🌌
+              - heading "Dark Energy & Dark Matter" [level=3] [ref=e316]
+              - paragraph [ref=e317]: Mapping the distribution of hydrogen across the universe to understand cosmic acceleration.
+              - generic [ref=e318]: Precise measurements of the expansion history of the universe
+            - generic [ref=e320] [cursor=pointer]:
+              - generic [ref=e321]: 🧲
+              - heading "Cosmic Magnetism" [level=3] [ref=e322]
+              - paragraph [ref=e323]: Understanding the origin and evolution of magnetic fields in the universe.
+              - generic [ref=e324]: First detailed maps of intergalactic magnetic fields
+            - generic [ref=e326] [cursor=pointer]:
+              - generic [ref=e327]: 💫
+              - heading "Gravity & Pulsars" [level=3] [ref=e328]
+              - paragraph [ref=e329]: Using pulsars as natural gravitational wave detectors and to test general relativity.
+              - generic [ref=e330]: Detection of gravitational waves from supermassive black hole mergers
+            - generic [ref=e332] [cursor=pointer]:
+              - generic [ref=e333]: 🌅
+              - heading "Cosmic Dawn & Epoch of Reionization" [level=3] [ref=e334]
+              - paragraph [ref=e335]: Observing the first stars and galaxies that lit up the universe.
+              - generic [ref=e336]: Direct observation of the first billion years of cosmic history
+            - generic [ref=e338] [cursor=pointer]:
+              - generic [ref=e339]: 👽
+              - heading "Search for Extraterrestrial Intelligence" [level=3] [ref=e340]
+              - paragraph [ref=e341]: The most comprehensive search for technosignatures in history.
+              - generic [ref=e342]: Survey of millions of star systems for artificial signals
+            - generic [ref=e344] [cursor=pointer]:
+              - generic [ref=e345]: 💥
+              - heading "Transient Radio Sky" [level=3] [ref=e346]
+              - paragraph [ref=e347]: Monitoring the sky for fast radio bursts, supernovae, and other explosive events.
+              - generic [ref=e348]: Real-time detection and localization of cosmic explosions
+          - generic [ref=e349]:
+            - generic [ref=e351]:
+              - heading "Construction Timeline" [level=3] [ref=e352]
+              - generic [ref=e356]:
+                - generic [ref=e357]:
+                  - img [ref=e359]
+                  - generic [ref=e362]: "2012"
+                  - paragraph [ref=e363]: Site selection - Australia and South Africa chosen
+                - generic [ref=e364]:
+                  - img [ref=e366]
+                  - generic [ref=e369]: "2018"
+                  - paragraph [ref=e370]: SKA Observatory established
+                - generic [ref=e371]:
+                  - img [ref=e373]
+                  - generic [ref=e376]: "2021"
+                  - paragraph [ref=e377]: Construction approved
+                - generic [ref=e378]:
+                  - img [ref=e380]
+                  - generic [ref=e383]: "2022"
+                  - paragraph [ref=e384]: Construction begins
+                - generic [ref=e385]:
+                  - img [ref=e388]
+                  - generic [ref=e392]: "2024"
+                  - paragraph [ref=e393]: First antennas deployed at SKA-Low (Australia)
+                  - generic [ref=e394]: Now
+                - generic [ref=e395]:
+                  - img [ref=e397]
+                  - generic [ref=e399]: "2027"
+                  - paragraph [ref=e400]: Expected first light observations
+                - generic [ref=e401]:
+                  - img [ref=e403]
+                  - generic [ref=e405]: "2028"
+                  - paragraph [ref=e406]: Early science operations begin
+                - generic [ref=e407]:
+                  - img [ref=e409]
+                  - generic [ref=e411]: "2030"
+                  - paragraph [ref=e412]: Full array completion
+            - generic [ref=e414]:
+              - heading "SKA vs Current Telescopes" [level=3] [ref=e415]
+              - generic [ref=e416]:
+                - generic [ref=e417]:
+                  - generic [ref=e418]: Sensitivity
+                  - generic [ref=e419]:
+                    - generic [ref=e421]:
+                      - generic [ref=e422]: Current
+                      - generic [ref=e423]: Current largest radio telescopes
+                    - generic [ref=e426]:
+                      - generic [ref=e427]: SKA
+                      - generic [ref=e428]: 50x more sensitive
+                  - paragraph [ref=e430]: SKA will be able to detect signals 50 times fainter than current telescopes
+                - generic [ref=e431]:
+                  - generic [ref=e432]: Survey Speed
+                  - generic [ref=e433]:
+                    - generic [ref=e435]:
+                      - generic [ref=e436]: Current
+                      - generic [ref=e437]: Years to survey the sky
+                    - generic [ref=e440]:
+                      - generic [ref=e441]: SKA
+                      - generic [ref=e442]: Days to weeks
+                  - paragraph [ref=e444]: SKA will survey the entire sky millions of times faster
+                - generic [ref=e445]:
+                  - generic [ref=e446]: Resolution
+                  - generic [ref=e447]:
+                    - generic [ref=e449]:
+                      - generic [ref=e450]: Current
+                      - generic [ref=e451]: Arcsecond resolution
+                    - generic [ref=e454]:
+                      - generic [ref=e455]: SKA
+                      - generic [ref=e456]: Milliarcsecond resolution
+                  - paragraph [ref=e458]: Able to see details 50 times smaller
+                - generic [ref=e459]:
+                  - generic [ref=e460]: Data Rate
+                  - generic [ref=e461]:
+                    - generic [ref=e463]:
+                      - generic [ref=e464]: Current
+                      - generic [ref=e465]: Gigabytes per second
+                    - generic [ref=e468]:
+                      - generic [ref=e469]: SKA
+                      - generic [ref=e470]: 710 petabytes per day (raw)
+                  - paragraph [ref=e472]: More data than the entire internet traffic combined
+                - generic [ref=e473]:
+                  - generic [ref=e474]: Baselines
+                  - generic [ref=e475]:
+                    - generic [ref=e477]:
+                      - generic [ref=e478]: Current
+                      - generic [ref=e479]: Hundreds of kilometers
+                    - generic [ref=e482]:
+                      - generic [ref=e483]: SKA
+                      - generic [ref=e484]: Up to 3,000 km
+                  - paragraph [ref=e486]: Creates a virtual telescope thousands of kilometers wide
+          - generic [ref=e487]:
+            - generic [ref=e488]: 💾
+            - heading "The Data Challenge" [level=3] [ref=e489]
+            - paragraph [ref=e490]: SKA will generate 710 petabytes of raw data per day — more than the entire global internet traffic. Processing this data requires revolutionary high-performance computing infrastructure.
+            - generic [ref=e491]:
+              - generic [ref=e492]: Simulated data since page load
+              - generic [ref=e493]: 0.023 PB
+            - generic [ref=e494]:
+              - link "Visit SKA Observatory" [ref=e495] [cursor=pointer]:
+                - /url: https://www.skao.int/
+              - img [ref=e497]
+    - contentinfo [ref=e501]:
+      - generic [ref=e503]:
+        - generic [ref=e504]:
+          - link "Cosmos Collective" [ref=e505] [cursor=pointer]:
+            - /url: /
+            - generic [ref=e506]: Cosmos
+            - generic [ref=e507]: Collective
+          - paragraph [ref=e508]: Exploring the universe together through multi-wavelength astronomy and interactive visualisations.
+          - generic [ref=e509]:
+            - link "GitHub" [ref=e510] [cursor=pointer]:
+              - /url: https://github.com/m4cd4r4
+              - img [ref=e511]
+            - link "Support on Ko-fi" [ref=e514] [cursor=pointer]:
+              - /url: https://ko-fi.com/m4cd4r4
+              - img [ref=e515]
+        - generic [ref=e517]:
+          - heading "Explore" [level=3] [ref=e518]
+          - list [ref=e519]:
+            - listitem [ref=e520]:
+              - link "JWST Gallery" [ref=e521] [cursor=pointer]:
+                - /url: /explore?source=JWST
+            - listitem [ref=e522]:
+              - link "Australian Telescopes" [ref=e523] [cursor=pointer]:
+                - /url: /explore?source=ASKAP
+            - listitem [ref=e524]:
+              - link "Sky Map" [ref=e525] [cursor=pointer]:
+                - /url: /sky-map
+            - listitem [ref=e526]:
+              - link "Live Events" [ref=e527] [cursor=pointer]:
+                - /url: /events
+        - generic [ref=e528]:
+          - heading "Interactive" [level=3] [ref=e529]
+          - list [ref=e530]:
+            - listitem [ref=e531]:
+              - link "Observatory" [ref=e532] [cursor=pointer]:
+                - /url: /observatory
+            - listitem [ref=e533]:
+              - link "Solar System" [ref=e534] [cursor=pointer]:
+                - /url: /solar-system
+            - listitem [ref=e535]:
+              - link "Kepler Exoplanets" [ref=e536] [cursor=pointer]:
+                - /url: /kepler
+        - generic [ref=e537]:
+          - heading "Learn" [level=3] [ref=e538]
+          - list [ref=e539]:
+            - listitem [ref=e540]:
+              - link "Devlog" [ref=e541] [cursor=pointer]:
+                - /url: /devlog
+            - listitem [ref=e542]:
+              - link "About SKA" [ref=e543] [cursor=pointer]:
+                - /url: https://www.skao.int/
+                - text: About SKA
+                - img [ref=e544]
+            - listitem [ref=e548]:
+              - link "CSIRO Astronomy" [ref=e549] [cursor=pointer]:
+                - /url: https://www.csiro.au/en/about/facilities-collections/atnf
+                - text: CSIRO Astronomy
+                - img [ref=e550]
+            - listitem [ref=e554]:
+              - link "NASA JWST" [ref=e555] [cursor=pointer]:
+                - /url: https://webb.nasa.gov/
+                - text: NASA JWST
+                - img [ref=e556]
+        - generic [ref=e560]:
+          - heading "Legal" [level=3] [ref=e561]
+          - list [ref=e562]:
+            - listitem [ref=e563]:
+              - link "Privacy Policy" [ref=e564] [cursor=pointer]:
+                - /url: /privacy
+            - listitem [ref=e565]:
+              - link "Terms of Use" [ref=e566] [cursor=pointer]:
+                - /url: /terms
+            - listitem [ref=e567]:
+              - link "Accessibility" [ref=e568] [cursor=pointer]:
+                - /url: /accessibility
+            - listitem [ref=e569]:
+              - link "Credits" [ref=e570] [cursor=pointer]:
+                - /url: /credits
+      - generic [ref=e573]:
+        - generic [ref=e574]: "Data provided by:"
+        - generic [ref=e575]:
+          - link "STScI/MAST" [ref=e576] [cursor=pointer]:
+            - /url: https://mast.stsci.edu/
+          - text: •
+        - generic [ref=e577]:
+          - link "NASA" [ref=e578] [cursor=pointer]:
+            - /url: https://www.nasa.gov/
+          - text: •
+        - generic [ref=e579]:
+          - link "ESA" [ref=e580] [cursor=pointer]:
+            - /url: https://www.esa.int/
+          - text: •
+        - link "CSIRO" [ref=e582] [cursor=pointer]:
+          - /url: https://www.csiro.au/
+      - generic [ref=e585]:
+        - generic [ref=e586]:
+          - generic [ref=e587]: © 2026 Cosmos Collective
+          - generic [ref=e588]: •
+          - generic [ref=e589]:
+            - text: Built by
+            - link "m4cd4r4" [ref=e590] [cursor=pointer]:
+              - /url: https://github.com/m4cd4r4
+        - generic [ref=e591]:
+          - link "Available for hire" [ref=e592] [cursor=pointer]:
+            - /url: https://github.com/m4cd4r4
+            - img [ref=e593]
+            - generic [ref=e596]: Available for hire
+          - generic [ref=e597]: •
+          - link "Accessibility" [ref=e598] [cursor=pointer]:
+            - /url: /accessibility
+            - img [ref=e599]
+            - generic [ref=e605]: Accessibility
+  - region "Notifications"
+  - alert [ref=e607]
+```
