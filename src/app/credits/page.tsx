@@ -53,11 +53,6 @@ const dataSources = [
     description: 'Aladin Lite sky map viewer and SIMBAD astronomical database.',
   },
   {
-    name: 'Zooniverse',
-    url: 'https://www.zooniverse.org/',
-    description: 'Citizen science platform and project data for galaxy classification.',
-  },
-  {
     name: 'Where Is The ISS',
     url: 'https://wheretheiss.at/',
     description: 'Real-time International Space Station tracking API.',
@@ -272,10 +267,6 @@ export default function CreditsPage() {
                   To the scientists, engineers, and teams behind the James Webb Space Telescope,
                   Hubble Space Telescope, and ground-based observatories around the world who
                   make these incredible observations possible.
-                </p>
-                <p>
-                  To the Zooniverse team and the millions of citizen scientists who contribute
-                  to astronomical research through volunteer classification.
                 </p>
                 <p>
                   To the open source community for building and maintaining the tools that

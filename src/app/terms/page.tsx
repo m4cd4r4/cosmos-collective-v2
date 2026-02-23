@@ -48,8 +48,8 @@ export default function TermsPage() {
               </p>
               <ul className="list-disc list-inside text-gray-300 mb-6 space-y-2">
                 <li>Browse and explore astronomical data and imagery</li>
-                <li>Use the interactive sky map and visualisation tools</li>
-                <li>Participate in citizen science classification activities</li>
+                <li>Use the interactive sky map, JWST Explorer, Kepler Explorer, and visualisation tools</li>
+                <li>Access the live events tracker, ISS feed, and real-time space weather data</li>
                 <li>Access educational content about astronomy and telescopes</li>
               </ul>
 
@@ -73,23 +73,7 @@ export default function TermsPage() {
               </p>
               <p className="text-gray-300 mb-6">
                 <strong>Third-party content:</strong> Some features embed content from third parties
-                (YouTube, Zooniverse, CDS). These are subject to their respective terms of service.
-              </p>
-
-              <h2 className="text-xl font-semibold text-white mb-4">Citizen Science Contributions</h2>
-              <p className="text-gray-300 mb-6">
-                Classification activities on this platform are demonstrations of citizen science workflows.
-                For official contributions to astronomical research, we encourage you to participate directly
-                on{' '}
-                <a
-                  href="https://www.zooniverse.org/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-cosmos-gold hover:underline"
-                >
-                  Zooniverse
-                </a>
-                .
+                (YouTube, CDS Aladin Lite). These are subject to their respective terms of service.
               </p>
 
               <h2 className="text-xl font-semibold text-white mb-4">Disclaimer</h2>

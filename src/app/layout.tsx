@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     template: '%s | Cosmos Collective',
   },
   description:
-    'Explore the universe through JWST, Australian radio telescopes, and citizen science. A multi-wavelength journey through space featuring real-time events, interactive sky maps, and community contributions.',
+    'Explore the universe through JWST, Australian radio telescopes, and real-time space data. A multi-wavelength journey through space featuring live events, interactive sky maps, and exoplanet exploration.',
   keywords: [
     'JWST',
     'James Webb Space Telescope',
@@ -63,7 +63,6 @@ export const metadata: Metadata = {
     'ASKAP',
     'SKA',
     'radio astronomy',
-    'citizen science',
     'galaxies',
     'nebulae',
     'exoplanets',
@@ -84,7 +83,7 @@ export const metadata: Metadata = {
     siteName: 'Cosmos Collective',
     title: 'Cosmos Collective | Multi-Spectrum Astronomical Explorer',
     description:
-      'Explore the universe through JWST, Australian radio telescopes, and citizen science.',
+      'Explore the universe through JWST, Australian radio telescopes, and real-time space data.',
     images: [
       {
         url: '/og-image.png',
@@ -98,7 +97,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Cosmos Collective | Multi-Spectrum Astronomical Explorer',
     description:
-      'Explore the universe through JWST, Australian radio telescopes, and citizen science.',
+      'Explore the universe through JWST, Australian radio telescopes, and real-time space data.',
     images: ['/og-image.png'],
   },
   icons: {
@@ -153,8 +152,6 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://www.nasa.gov" />
         <link rel="dns-prefetch" href="https://apod.nasa.gov" />
         <link rel="dns-prefetch" href="https://casda.csiro.au" />
-        <link rel="dns-prefetch" href="https://www.zooniverse.org" />
-        <link rel="dns-prefetch" href="https://panoptes-uploads.zooniverse.org" />
 
         {/* Color scheme for system UI */}
         <meta name="color-scheme" content="dark" />
@@ -176,7 +173,7 @@ export default function RootLayout({
               '@type': 'WebSite',
               name: 'Cosmos Collective',
               url: 'https://cosmos-collective.com.au',
-              description: 'Multi-spectrum astronomical data exploration platform featuring JWST, Australian radio telescopes, and citizen science.',
+              description: 'Multi-spectrum astronomical data exploration platform featuring JWST, Kepler exoplanet data, Australian radio telescopes, and real-time space events.',
               potentialAction: {
                 '@type': 'SearchAction',
                 target: {
@@ -210,8 +207,8 @@ export default function RootLayout({
                 },
                 {
                   '@type': 'Thing',
-                  name: 'Citizen Science',
-                  sameAs: 'https://www.zooniverse.org'
+                  name: 'Exoplanet Research',
+                  sameAs: 'https://exoplanetarchive.ipac.caltech.edu'
                 }
               ]
             }),

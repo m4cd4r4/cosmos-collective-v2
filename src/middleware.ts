@@ -23,7 +23,7 @@ export function middleware(request: NextRequest) {
     "style-src 'self' 'unsafe-inline' https://aladin.cds.unistra.fr https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob: https: http:",
-    "connect-src 'self' data: blob: https://images-api.nasa.gov https://images-assets.nasa.gov https://mast.stsci.edu https://api.nasa.gov https://www.nasa.gov https://apod.nasa.gov https://casda.csiro.au https://www.zooniverse.org https://panoptes-uploads.zooniverse.org https://*.unistra.fr https://irsa.ipac.caltech.edu https://healpix.ias.u-psud.fr https://skies.esac.esa.int https://www.google-analytics.com",
+    "connect-src 'self' data: blob: https://images-api.nasa.gov https://images-assets.nasa.gov https://mast.stsci.edu https://api.nasa.gov https://www.nasa.gov https://apod.nasa.gov https://casda.csiro.au https://www.zooniverse.org https://panoptes-uploads.zooniverse.org https://*.unistra.fr https://irsa.ipac.caltech.edu https://healpix.ias.u-psud.fr https://skies.esac.esa.int https://www.google-analytics.com https://api.wheretheiss.at https://services.swpc.noaa.gov https://exoplanetarchive.ipac.caltech.edu https://tle.ivanstanojevic.me",
     "frame-src 'self' https://www.youtube.com",
     "worker-src 'self' blob:",
     "object-src 'none'",
