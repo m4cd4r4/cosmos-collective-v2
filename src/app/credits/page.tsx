@@ -129,26 +129,15 @@ export default function CreditsPage() {
 
       <main className="flex-1 py-12">
         <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-8">
-          {/* Back link */}
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
+          <Link href="/" className="inline-flex items-center gap-1.5 text-[#4a5580] hover:text-[#c8d4f0] text-[11px] font-mono uppercase tracking-wider transition-colors mb-6">
+            <ArrowLeft className="w-3 h-3" /> Back to Home
           </Link>
 
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="w-16 h-16 rounded-2xl bg-cosmos-hydrogen/20 flex items-center justify-center mx-auto mb-6">
-              <Heart className="w-8 h-8 text-cosmos-hydrogen" />
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-[rgba(212,175,55,0.12)]">
+            <div className="w-8 h-8 rounded flex items-center justify-center bg-[rgba(224,64,251,0.1)] border border-[rgba(224,64,251,0.2)]">
+              <Heart className="w-4 h-4 text-[#e040fb]" />
             </div>
-            <h1 className="text-4xl font-display font-bold text-white mb-4">
-              Credits & Acknowledgments
-            </h1>
-            <p className="text-gray-400">
-              Cosmos Collective is built upon the incredible work of many organisations and open source projects.
-            </p>
+            <h1 className="text-xl font-bold tracking-wide text-[#e0e8ff]">Credits & Acknowledgments</h1>
           </div>
 
           {/* Data Sources */}

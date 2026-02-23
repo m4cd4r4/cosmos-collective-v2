@@ -28,8 +28,8 @@ const ObservatoryViewer = dynamic(
 const features = [
   {
     icon: Sparkles,
-    title: '33 Iconic Observations',
-    description: 'JWST and Hubble highlights plotted on a real Aitoff all-sky projection.',
+    title: 'JWST & Hubble Highlights',
+    description: 'Landmark observations plotted on a real Aitoff all-sky projection — updated as the catalogue grows.',
   },
   {
     icon: SlidersHorizontal,
@@ -66,8 +66,8 @@ export function FeaturedObservations() {
           Deep Space <span className="text-gradient-stellar">Observatory</span>
         </h2>
         <p className="text-gray-400 max-w-2xl mx-auto">
-          Explore 33 iconic JWST and Hubble observations on an interactive
-          celestial sky chart. Click any star to uncover scientific analysis,
+          JWST and Hubble highlights on an interactive celestial sky chart — filter by
+          telescope, wavelength, and distance. Click any object for scientific context,
           fun facts, and NASA imagery.
         </p>
       </div>

@@ -65,27 +65,15 @@ export default function AccessibilityPage() {
 
       <main className="flex-1 py-12">
         <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-8">
-          {/* Back link */}
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
+          <Link href="/" className="inline-flex items-center gap-1.5 text-[#4a5580] hover:text-[#c8d4f0] text-[11px] font-mono uppercase tracking-wider transition-colors mb-6">
+            <ArrowLeft className="w-3 h-3" /> Back to Home
           </Link>
 
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="w-16 h-16 rounded-2xl bg-cosmos-gold/20 flex items-center justify-center mx-auto mb-6">
-              <Accessibility className="w-8 h-8 text-cosmos-gold" />
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-[rgba(212,175,55,0.12)]">
+            <div className="w-8 h-8 rounded flex items-center justify-center bg-[rgba(212,175,55,0.1)] border border-[rgba(212,175,55,0.2)]">
+              <Accessibility className="w-4 h-4 text-[#d4af37]" />
             </div>
-            <h1 className="text-4xl font-display font-bold text-white mb-4">
-              Accessibility
-            </h1>
-            <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-              We believe the wonders of the universe should be accessible to everyone.
-              Our commitment to accessibility is fundamental to our mission.
-            </p>
+            <h1 className="text-xl font-bold tracking-wide text-[#e0e8ff]">Accessibility</h1>
           </div>
 
           {/* Commitment Statement */}
@@ -93,6 +81,7 @@ export default function AccessibilityPage() {
             <CardContent>
               <h2 className="text-xl font-semibold text-white mb-4">Our Commitment</h2>
               <p className="text-gray-300 mb-4">
+                We believe the wonders of the universe should be accessible to everyone.
                 Cosmos Collective is committed to ensuring digital accessibility for people with disabilities.
                 We are continually improving the user experience for everyone and applying the relevant
                 accessibility standards.

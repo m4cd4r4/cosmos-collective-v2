@@ -19,28 +19,18 @@ export default function PrivacyPage() {
     <div className="min-h-screen flex flex-col bg-cosmos-void">
       <Header />
 
-      <main className="flex-1 py-12">
+      <main className="flex-1 py-10">
         <div className="max-w-4xl mx-auto px-4 md:px-6 lg:px-8">
-          {/* Back link */}
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors mb-8"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Home
+          <Link href="/" className="inline-flex items-center gap-1.5 text-[#4a5580] hover:text-[#c8d4f0] text-[11px] font-mono uppercase tracking-wider transition-colors mb-6">
+            <ArrowLeft className="w-3 h-3" /> Back to Home
           </Link>
 
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="w-16 h-16 rounded-2xl bg-cosmos-nebula-blue/20 flex items-center justify-center mx-auto mb-6">
-              <Shield className="w-8 h-8 text-cosmos-nebula-blue" />
+          <div className="flex items-center gap-3 mb-8 pb-4 border-b border-[rgba(212,175,55,0.12)]">
+            <div className="w-8 h-8 rounded flex items-center justify-center bg-[rgba(74,144,226,0.12)] border border-[rgba(74,144,226,0.2)]">
+              <Shield className="w-4 h-4 text-[#4a90e2]" />
             </div>
-            <h1 className="text-4xl font-display font-bold text-white mb-4">
-              Privacy Policy
-            </h1>
-            <p className="text-gray-400">
-              Last updated: December 7, 2025
-            </p>
+            <h1 className="text-xl font-bold tracking-wide text-[#e0e8ff]">Privacy Policy</h1>
+            <span className="ml-auto text-[10px] uppercase tracking-wider text-[#4a5580] font-mono">Last updated: Dec 7, 2025</span>
           </div>
 
           {/* Content */}
