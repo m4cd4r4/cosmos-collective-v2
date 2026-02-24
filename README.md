@@ -12,7 +12,7 @@
 
 Cosmos Collective is an interactive platform for exploring the universe through multiple wavelengths of light. Fly through a 3D solar system, browse JWST's infrared imagery with wavelength switching, map 2,600+ Kepler exoplanets, and explore the sky with real-time data from 11 space agencies.
 
-![Cosmos Collective - Interactive Solar System](./public/images/hero-solar-system.png)
+![Cosmos Collective - Interactive Solar System](./public/images/solar-system-demo-optimized.gif)
 
 ## Interactive Apps
 
