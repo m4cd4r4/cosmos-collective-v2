@@ -832,6 +832,261 @@
                 max-height: 70vh;
             }
         }
+
+        /* ============================================================= */
+        /* COLLAPSIBLE CONTROL SECTIONS                                   */
+        /* ============================================================= */
+        .ctrl-section {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            margin-top: 10px;
+            padding-top: 8px;
+        }
+        .ctrl-section:first-child {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+        .ctrl-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            padding: 4px 0;
+            user-select: none;
+        }
+        .ctrl-section-header:hover .ctrl-section-label {
+            color: #6495ff;
+        }
+        .ctrl-section-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #777;
+            transition: color 0.15s;
+        }
+        .ctrl-section-chevron {
+            font-size: 10px;
+            color: #555;
+            transition: transform 0.25s ease;
+        }
+        .ctrl-section.collapsed .ctrl-section-chevron {
+            transform: rotate(-90deg);
+        }
+        .ctrl-section-body {
+            overflow: hidden;
+            max-height: 600px;
+            transition: max-height 0.35s ease, opacity 0.25s ease;
+            opacity: 1;
+        }
+        .ctrl-section.collapsed .ctrl-section-body {
+            max-height: 0;
+            opacity: 0;
+        }
+        /* "More Options" hint — visible only when collapsed */
+        .ctrl-section-hint {
+            color: #6495ff;
+            font-weight: 700;
+        }
+        .ctrl-section-hint-detail {
+            color: #666;
+            font-weight: 400;
+            font-size: 10px;
+            letter-spacing: 0.3px;
+            text-transform: none;
+        }
+        /* When expanded, revert to plain section title */
+        .ctrl-section:not(.collapsed) .ctrl-section-hint {
+            color: #777;
+        }
+        .ctrl-section:not(.collapsed) .ctrl-section-hint-detail {
+            display: none;
+        }
+        /* Subtle pulse on the chevron when collapsed to draw attention */
+        .ctrl-section.collapsed .ctrl-section-chevron {
+            animation: hint-pulse 2s ease-in-out 3;
+        }
+        @keyframes hint-pulse {
+            0%, 100% { color: #555; }
+            50% { color: #6495ff; }
+        }
+
+        /* ============================================================= */
+        /* GUIDED DEMO TOUR                                               */
+        /* ============================================================= */
+
+        /* Spotlight cutout — positioned over target element */
+        #tour-spotlight {
+            position: fixed;
+            z-index: 9001;
+            border-radius: 8px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55);
+            pointer-events: none;
+            transition: top 0.5s ease, left 0.5s ease, width 0.5s ease, height 0.5s ease;
+            border: 2px solid rgba(100, 150, 255, 0.6);
+            animation: tour-spotlight-pulse 2s ease-in-out infinite;
+        }
+        @keyframes tour-spotlight-pulse {
+            0%, 100% { border-color: rgba(100, 150, 255, 0.6); box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55), 0 0 15px rgba(100, 150, 255, 0.3); }
+            50% { border-color: rgba(100, 150, 255, 0.9); box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55), 0 0 25px rgba(100, 150, 255, 0.5); }
+        }
+
+        /* Tooltip card */
+        #tour-tooltip {
+            position: fixed;
+            z-index: 9002;
+            background: rgba(10, 10, 25, 0.95);
+            border: 1px solid rgba(100, 150, 255, 0.4);
+            border-radius: 12px;
+            backdrop-filter: blur(12px);
+            padding: 18px 20px;
+            max-width: 340px;
+            min-width: 260px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            pointer-events: auto;
+            font-size: 13px;
+            color: #ddd;
+            line-height: 1.6;
+        }
+        #tour-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Tooltip arrow */
+        #tour-tooltip::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: rgba(10, 10, 25, 0.95);
+            border: 1px solid rgba(100, 150, 255, 0.4);
+            transform: rotate(45deg);
+        }
+        #tour-tooltip.arrow-bottom::before {
+            bottom: -7px;
+            left: 50%;
+            margin-left: -6px;
+            border-top: none;
+            border-left: none;
+        }
+        #tour-tooltip.arrow-top::before {
+            top: -7px;
+            left: 50%;
+            margin-left: -6px;
+            border-bottom: none;
+            border-right: none;
+        }
+        #tour-tooltip.arrow-left::before {
+            left: -7px;
+            top: 50%;
+            margin-top: -6px;
+            border-top: none;
+            border-right: none;
+        }
+        #tour-tooltip.arrow-right::before {
+            right: -7px;
+            top: 50%;
+            margin-top: -6px;
+            border-bottom: none;
+            border-left: none;
+        }
+
+        /* Tooltip header */
+        .tour-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .tour-title {
+            color: #6495ff;
+            font-weight: 600;
+            font-size: 15px;
+            text-shadow: 0 0 8px rgba(100, 150, 255, 0.3);
+        }
+        .tour-step-counter {
+            color: #888;
+            font-size: 11px;
+            background: rgba(100, 150, 255, 0.1);
+            padding: 2px 8px;
+            border-radius: 10px;
+            border: 1px solid rgba(100, 150, 255, 0.2);
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+        .tour-body {
+            margin-bottom: 14px;
+            min-height: 40px;
+        }
+        .tour-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .tour-btn {
+            font-size: 12px;
+            padding: 7px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.15s, background 0.2s;
+            margin: 0;
+        }
+        .tour-btn:hover {
+            transform: translateY(-1px);
+        }
+        .tour-btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+        }
+        .tour-btn-skip {
+            background: rgba(255, 255, 255, 0.08);
+            color: #999;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+        .tour-btn-end {
+            background: linear-gradient(135deg, #ff6b35 0%, #d63384 100%);
+            color: #fff;
+        }
+
+        /* Progress dots */
+        .tour-progress {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        .tour-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            transition: background 0.3s;
+        }
+        .tour-dot.active { background: #6495ff; }
+        .tour-dot.completed { background: rgba(100, 150, 255, 0.4); }
+
+        /* Center mode for steps with no UI target */
+        #tour-tooltip.center-mode {
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+        }
+        #tour-tooltip.center-mode.visible {
+            transform: translate(-50%, -50%) !important;
+        }
+        #tour-tooltip.center-mode::before { display: none; }
+
+        /* Demo button active state */
+        #start-demo-tour.touring {
+            background: linear-gradient(135deg, #ea4444 0%, #a22222 100%) !important;
+        }
     </style>
 </head>
 <body>
@@ -872,92 +1127,112 @@
     <div id="controls">
         <h3>&#x26A1; Solar Vortex</h3>
 
-        <div class="control-group">
-            <label>Sun Speed: <span id="sun-speed-val">4.19</span>x</label>
-            <div class="slider-row">
-                <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="-1" aria-label="Decrease sun speed">&#x25C0;</button>
-                <input type="range" id="sun-speed" min="0" max="5" step="0.001" value="2.047">
-                <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="1" aria-label="Increase sun speed">&#x25B6;</button>
+        <!-- Presets & Camera — always visible, most used -->
+        <div class="ctrl-section" id="section-presets">
+            <div class="control-group">
+                <label>Presets:</label>
+                <div class="preset-group">
+                    <button type="button" class="preset-btn" data-preset="vortex" title="Side vortex, fast orbit">⚡ Vortex</button>
+                    <button type="button" class="preset-btn" data-preset="cinema" title="Cinematic sweep, slow &amp; smooth">🎬 Cinema</button>
+                    <button type="button" class="preset-btn" data-preset="overview" title="Top-down overview, medium speed">🔭 Overview</button>
+                    <button type="button" class="preset-btn" data-preset="moon-watch" title="Slow orbit — ideal for watching moons">🌙 Moon Watch</button>
+                </div>
+            </div>
+            <div class="control-group">
+                <label>Camera Mode:</label>
+                <div class="cam-mode-group">
+                    <button type="button" class="cam-btn active" data-mode="free">Free</button>
+                    <button type="button" class="cam-btn" data-mode="cinematic">Cinema</button>
+                    <button type="button" class="cam-btn" data-mode="orbital">Top-Down</button>
+                    <button type="button" class="cam-btn" data-mode="side">Vortex</button>
+                    <button type="button" class="cam-btn" data-mode="chase">Chase</button>
+                </div>
+                <select id="camera-mode" style="display:none;">
+                    <option value="free">Free Camera</option>
+                    <option value="cinematic">Cinematic (Auto-Rotate)</option>
+                    <option value="orbital">Orbital (Top-Down)</option>
+                    <option value="side">Side View (Vortex)</option>
+                    <option value="chase">Chase Cam (Behind Sun)</option>
+                </select>
+                <p style="font-size:10px; color:#555; margin:5px 0 0; line-height:1.4;">Drag canvas to rotate — switches to Free mode</p>
+            </div>
+            <div class="control-group">
+                <button id="toggle-pause">Pause</button>
+                <button id="reset-view">Reset View</button>
             </div>
         </div>
 
-        <div class="control-group">
-            <label>Orbital Speed: <span id="orbit-speed-val">1.24</span>x</label>
-            <div class="slider-row">
-                <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="-1" aria-label="Decrease orbital speed">&#x25C0;</button>
-                <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="1.114">
-                <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="1" aria-label="Increase orbital speed">&#x25B6;</button>
+        <!-- Simulation — collapsible, open by default -->
+        <div class="ctrl-section" id="section-simulation">
+            <div class="ctrl-section-header" data-section="section-simulation">
+                <span class="ctrl-section-label">Simulation</span>
+                <span class="ctrl-section-chevron">&#x25BC;</span>
+            </div>
+            <div class="ctrl-section-body">
+                <div class="control-group">
+                    <label>Sun Speed: <span id="sun-speed-val">4.19</span>x</label>
+                    <div class="slider-row">
+                        <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="-1" aria-label="Decrease sun speed">&#x25C0;</button>
+                        <input type="range" id="sun-speed" min="0" max="5" step="0.001" value="2.047">
+                        <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="1" aria-label="Increase sun speed">&#x25B6;</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Orbital Speed: <span id="orbit-speed-val">1.24</span>x</label>
+                    <div class="slider-row">
+                        <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="-1" aria-label="Decrease orbital speed">&#x25C0;</button>
+                        <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="1.114">
+                        <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="1" aria-label="Increase orbital speed">&#x25B6;</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Time Speed: <span id="time-speed-val">49</span> days/sec</label>
+                    <div class="slider-row">
+                        <button type="button" class="slider-arrow" data-target="time-speed" data-dir="-1" aria-label="Decrease time speed">&#x25C0;</button>
+                        <input type="range" id="time-speed" min="1" max="100" step="1" value="49">
+                        <button type="button" class="slider-arrow" data-target="time-speed" data-dir="1" aria-label="Increase time speed">&#x25B6;</button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="control-group">
-            <label>Trail Length: <span id="trail-length-val">800</span></label>
-            <div class="slider-row">
-                <button type="button" class="slider-arrow" data-target="trail-length" data-dir="-1" aria-label="Decrease trail length">&#x25C0;</button>
-                <input type="range" id="trail-length" min="100" max="2000" step="50" value="800">
-                <button type="button" class="slider-arrow" data-target="trail-length" data-dir="1" aria-label="Increase trail length">&#x25B6;</button>
+        <!-- Visuals — collapsible, closed by default -->
+        <div class="ctrl-section collapsed" id="section-visuals">
+            <div class="ctrl-section-header" data-section="section-visuals">
+                <span class="ctrl-section-label">
+                    <span class="ctrl-section-hint">More Options</span>
+                    <span class="ctrl-section-hint-detail"> — trails, moons, effects</span>
+                </span>
+                <span class="ctrl-section-chevron">&#x25BC;</span>
+            </div>
+            <div class="ctrl-section-body">
+                <div class="control-group">
+                    <label>Trail Length: <span id="trail-length-val">800</span></label>
+                    <div class="slider-row">
+                        <button type="button" class="slider-arrow" data-target="trail-length" data-dir="-1" aria-label="Decrease trail length">&#x25C0;</button>
+                        <input type="range" id="trail-length" min="100" max="2000" step="50" value="800">
+                        <button type="button" class="slider-arrow" data-target="trail-length" data-dir="1" aria-label="Increase trail length">&#x25B6;</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Trail Opacity: <span id="trail-opacity-val">0.7</span></label>
+                    <div class="slider-row">
+                        <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="-1" aria-label="Decrease trail opacity">&#x25C0;</button>
+                        <input type="range" id="trail-opacity" min="0.2" max="1" step="0.05" value="0.7">
+                        <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="1" aria-label="Increase trail opacity">&#x25B6;</button>
+                    </div>
+                </div>
+                <label class="checkbox-label"><input type="checkbox" id="show-labels" checked><span>Show Planet Labels</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Show Moons</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits"><span>Elliptical Orbits</span></label>
             </div>
         </div>
 
-        <div class="control-group">
-            <label>Trail Opacity: <span id="trail-opacity-val">0.7</span></label>
-            <div class="slider-row">
-                <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="-1" aria-label="Decrease trail opacity">&#x25C0;</button>
-                <input type="range" id="trail-opacity" min="0.2" max="1" step="0.05" value="0.7">
-                <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="1" aria-label="Increase trail opacity">&#x25B6;</button>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label>Time Speed: <span id="time-speed-val">49</span> days/sec</label>
-            <div class="slider-row">
-                <button type="button" class="slider-arrow" data-target="time-speed" data-dir="-1" aria-label="Decrease time speed">&#x25C0;</button>
-                <input type="range" id="time-speed" min="1" max="100" step="1" value="49">
-                <button type="button" class="slider-arrow" data-target="time-speed" data-dir="1" aria-label="Increase time speed">&#x25B6;</button>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label>Presets:</label>
-            <div class="preset-group">
-                <button type="button" class="preset-btn" data-preset="vortex" title="Side vortex, fast orbit">⚡ Vortex</button>
-                <button type="button" class="preset-btn" data-preset="cinema" title="Cinematic sweep, slow &amp; smooth">🎬 Cinema</button>
-                <button type="button" class="preset-btn" data-preset="overview" title="Top-down overview, medium speed">🔭 Overview</button>
-                <button type="button" class="preset-btn" data-preset="moon-watch" title="Slow orbit — ideal for watching moons">🌙 Moon Watch</button>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label>Camera Mode:</label>
-            <div class="cam-mode-group">
-                <button type="button" class="cam-btn active" data-mode="free">Free</button>
-                <button type="button" class="cam-btn" data-mode="cinematic">Cinema</button>
-                <button type="button" class="cam-btn" data-mode="orbital">Top-Down</button>
-                <button type="button" class="cam-btn" data-mode="side">Vortex</button>
-                <button type="button" class="cam-btn" data-mode="chase">Chase</button>
-            </div>
-            <select id="camera-mode" style="display:none;">
-                <option value="free">Free Camera</option>
-                <option value="cinematic">Cinematic (Auto-Rotate)</option>
-                <option value="orbital">Orbital (Top-Down)</option>
-                <option value="side">Side View (Vortex)</option>
-                <option value="chase">Chase Cam (Behind Sun)</option>
-            </select>
-            <p style="font-size:10px; color:#555; margin:5px 0 0; line-height:1.4;">Drag canvas to rotate — switches to Free mode</p>
-        </div>
-
-        <div class="control-group">
-            <button id="toggle-pause">Pause</button>
-            <button id="reset-view">Reset View</button>
-        </div>
-
-        <div class="toggle-section">
-            <label class="checkbox-label"><input type="checkbox" id="show-labels" checked><span>Show Planet Labels</span></label>
-            <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Show Moons</span></label>
-            <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid</span></label>
-            <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
-            <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits"><span>Elliptical Orbits</span></label>
-            <div style="margin-top:8px;">
+        <!-- Follow & Actions — always visible -->
+        <div class="ctrl-section" id="section-actions">
+            <div style="margin-top:4px;">
                 <label style="display:block; margin-bottom:4px; color:#ccc; font-size:13px;">Follow:</label>
                 <select id="follow-target" style="width:100%; padding:6px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(100,150,255,0.3); border-radius:6px; font-size:13px;">
                     <option value="sun" style="background:#1a1a2e;color:#fff;" selected>Sun (default)</option>
@@ -973,15 +1248,13 @@
                     <option value="none" style="background:#1a1a2e;color:#fff;">None (free cam)</option>
                 </select>
             </div>
-        </div>
-
-        <div class="toggle-section">
-            <label style="display:block; margin-bottom:8px; color:#ccc; font-size:13px;">Actions:</label>
-            <button id="planet-dive-btn" title="Dive into orbit around the selected planet">Dive Into Earth</button>
-            <button id="export-screenshot" style="font-size:12px; padding:7px 12px;">Screenshot</button>
-            <button id="export-video-start" style="font-size:12px; padding:7px 12px;">Record</button>
-            <button id="export-video-stop" style="font-size:12px; padding:7px 12px; display:none; background:linear-gradient(135deg, #ea4444 0%, #a22222 100%);">Stop Rec</button>
-            <div id="recording-indicator" style="display:none; margin-top:6px; color:#ff4444; font-size:11px; animation: blink 1s infinite;">Recording...</div>
+            <div style="margin-top:8px;">
+                <button id="planet-dive-btn" title="Dive into orbit around the selected planet">Dive Into Earth</button>
+                <button id="export-screenshot" style="font-size:12px; padding:7px 12px;">Screenshot</button>
+                <button id="export-video-start" style="font-size:12px; padding:7px 12px;">Record</button>
+                <button id="export-video-stop" style="font-size:12px; padding:7px 12px; display:none; background:linear-gradient(135deg, #ea4444 0%, #a22222 100%);">Stop Rec</button>
+                <div id="recording-indicator" style="display:none; margin-top:6px; color:#ff4444; font-size:11px; animation: blink 1s infinite;">Recording...</div>
+            </div>
         </div>
 
         <div class="info">
@@ -1020,6 +1293,7 @@
         <button id="toggle-scale" style="font-size:11px; padding:8px 14px; opacity:0.8;">True Scale</button>
         <button id="toggle-accuracy" style="font-size:11px; padding:8px 14px; opacity:0.8;">Accuracy</button>
         <button id="toggle-galaxy" style="font-size:11px; padding:8px 14px; opacity:0.8; background:linear-gradient(135deg, #1a237e 0%, #4a148c 100%);">&#x1F30C; Galaxy View</button>
+        <button id="start-demo-tour" style="font-size:11px; padding:8px 14px; opacity:0.8; background:linear-gradient(135deg, #ff6b35 0%, #d63384 100%);">&#x1F3AC; Tour</button>
     </div>
 
     <!-- Galaxy View overlay elements -->
@@ -1088,6 +1362,21 @@
     <button type="button" id="ui-toggle-btn" title="Hide controls" aria-label="Toggle UI visibility">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
     </button>
+
+    <!-- Guided Demo Tour overlay elements -->
+    <div id="tour-spotlight" style="display:none;"></div>
+    <div id="tour-tooltip" style="display:none;">
+        <div class="tour-header">
+            <span class="tour-title" id="tour-title"></span>
+            <span class="tour-step-counter" id="tour-step-counter"></span>
+        </div>
+        <div class="tour-body" id="tour-body"></div>
+        <div class="tour-buttons">
+            <button type="button" class="tour-btn tour-btn-skip" id="tour-skip-btn">Skip Tour</button>
+            <button type="button" class="tour-btn tour-btn-next" id="tour-next-btn">Next</button>
+        </div>
+        <div class="tour-progress" id="tour-progress"></div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
@@ -2643,10 +2932,25 @@
         document.getElementById('camera-mode').addEventListener('change', (e) => { cameraMode = e.target.value; cinematicAngle = cameraRotation.y; });
 
         // Camera mode button group
+        // Camera mode initial positions — distinct from presets
+        const CAM_MODE_INIT = {
+            free:      null, // no change, user-controlled
+            cinematic: { camRot: { x: 0.15, y: 0 }, camDist: 180 },        // lower angle, closer — preset uses default distance
+            orbital:   { camRot: { x: 1.35, y: 0 }, camDist: 200 },        // steeper top-down, further out
+            side:      { camRot: { x: -0.1, y: 1.2 }, camDist: 160 },      // lower, tighter side — preset uses x:0.18, y:0.7, dist:220
+            chase:     { camRot: { x: 0.05, y: 3.14 }, camDist: 120 },     // behind sun, very close
+        };
         document.querySelectorAll('.cam-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 cameraMode = btn.dataset.mode;
                 cinematicAngle = cameraRotation.y;
+                // Apply distinct initial camera position for this mode
+                const init = CAM_MODE_INIT[btn.dataset.mode];
+                if (init) {
+                    if (init.camRot) cameraRotation = { ...init.camRot };
+                    if (init.camDist) cameraDistance = init.camDist;
+                    cinematicAngle = cameraRotation.y;
+                }
                 document.getElementById('camera-mode').value = btn.dataset.mode;
                 document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b === btn));
                 document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
@@ -3460,6 +3764,647 @@
         updateCameraPosition();
         updateEventsDisplay();
         animate(performance.now());
+
+        // =====================================================================
+        // COLLAPSIBLE CONTROL SECTIONS
+        // =====================================================================
+        (function initCollapsibleSections() {
+            document.querySelectorAll('.ctrl-section-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const section = header.closest('.ctrl-section');
+                    section.classList.toggle('collapsed');
+                    // Update hint text for the Visuals section
+                    const hint = section.querySelector('.ctrl-section-hint');
+                    if (hint) {
+                        hint.textContent = section.classList.contains('collapsed') ? 'More Options' : 'Visuals';
+                    }
+                });
+            });
+        })();
+
+        // =====================================================================
+        // GUIDED DEMO TOUR
+        // =====================================================================
+        (function initGuidedTour() {
+            let tourActive = false;
+            let tourStep = -1;
+            let preTourState = null;
+            let tourAutoTimer = null;
+            let tourSliderAnim = null;
+            let typewriterTimer = null;
+
+            const spotlight = document.getElementById('tour-spotlight');
+            const tooltip = document.getElementById('tour-tooltip');
+            const titleEl = document.getElementById('tour-title');
+            const bodyEl = document.getElementById('tour-body');
+            const counterEl = document.getElementById('tour-step-counter');
+            const progressEl = document.getElementById('tour-progress');
+            const nextBtn = document.getElementById('tour-next-btn');
+            const skipBtn = document.getElementById('tour-skip-btn');
+            const demoBtn = document.getElementById('start-demo-tour');
+
+            // --- Tour Steps ---
+            const TOUR_STEPS = [
+                {
+                    id: 'welcome',
+                    target: null,
+                    title: 'Welcome to Solar Vortex',
+                    text: 'This visualization shows our solar system hurtling through space at 220 km/s. Let me show you the most spectacular views and hidden features!',
+                    position: 'center',
+                    duration: 0,
+                    action: null,
+                    delay: 300,
+                },
+                {
+                    id: 'preset-vortex',
+                    target: '.preset-btn[data-preset="vortex"]',
+                    title: 'Vortex Mode',
+                    text: 'The signature view \u2014 watch the planets spiral through space like a cosmic corkscrew. The Sun drags everything forward while planets orbit around it.',
+                    position: 'right',
+                    duration: 6000,
+                    action: function() {
+                        document.querySelector('.preset-btn[data-preset="vortex"]').click();
+                    },
+                    delay: 500,
+                },
+                {
+                    id: 'preset-cinema',
+                    target: '.preset-btn[data-preset="cinema"]',
+                    title: 'Cinematic View',
+                    text: 'A slow, sweeping camera that auto-rotates around the system. Sit back and enjoy the show.',
+                    position: 'right',
+                    duration: 6000,
+                    action: function() {
+                        document.querySelector('.preset-btn[data-preset="cinema"]').click();
+                    },
+                    delay: 500,
+                },
+                {
+                    id: 'preset-overview',
+                    target: '.preset-btn[data-preset="overview"]',
+                    title: 'Top-Down Overview',
+                    text: 'See the whole system from above \u2014 like a classic textbook diagram, but animated and alive.',
+                    position: 'right',
+                    duration: 5000,
+                    action: function() {
+                        document.querySelector('.preset-btn[data-preset="overview"]').click();
+                    },
+                    delay: 500,
+                },
+                {
+                    id: 'follow-saturn',
+                    target: '#follow-target',
+                    title: 'Follow a Planet',
+                    text: 'The camera can lock onto any planet. Watch as we follow Saturn and its magnificent rings through space.',
+                    position: 'right',
+                    duration: 5000,
+                    action: function() {
+                        var select = document.getElementById('follow-target');
+                        select.value = 'saturn';
+                        select.dispatchEvent(new Event('change'));
+                    },
+                    delay: 500,
+                },
+                {
+                    id: 'preset-moon-watch',
+                    target: '.preset-btn[data-preset="moon-watch"]',
+                    title: 'Moon Watch Mode',
+                    text: 'Slows everything down and reveals the moons. Watch Earth\'s Moon, Jupiter\'s Galilean moons, and Saturn\'s Titan.',
+                    position: 'right',
+                    duration: 6000,
+                    action: function() {
+                        document.querySelector('.preset-btn[data-preset="moon-watch"]').click();
+                        setTimeout(function() {
+                            var select = document.getElementById('follow-target');
+                            select.value = 'earth';
+                            select.dispatchEvent(new Event('change'));
+                        }, 500);
+                    },
+                    delay: 800,
+                },
+                {
+                    id: 'slider-demo',
+                    target: '#sun-speed',
+                    title: 'Fine-Tune the Physics',
+                    text: 'Every slider adjusts the simulation in real time. Watch the Sun speed ramp up \u2014 the vortex helix tightens as the Sun moves faster.',
+                    position: 'right',
+                    duration: 5000,
+                    action: function() {
+                        // Expand the simulation section if collapsed
+                        var simSection = document.getElementById('section-simulation');
+                        if (simSection.classList.contains('collapsed')) {
+                            simSection.classList.remove('collapsed');
+                        }
+                        animateSlider('sun-speed', 5, 2000, function() {
+                            animateSlider('sun-speed', 2.047 * 2.047, 2000);
+                        });
+                    },
+                    delay: 300,
+                    sliderTarget: true,
+                },
+                {
+                    id: 'visual-toggles',
+                    target: '#elliptical-orbits',
+                    title: 'Elliptical Orbits',
+                    text: 'Enable Kepler\'s real orbital shapes. Mercury has the most eccentric orbit \u2014 notice how it speeds up near the Sun.',
+                    position: 'right',
+                    duration: 5000,
+                    action: function() {
+                        // Expand visuals section
+                        var visSection = document.getElementById('section-visuals');
+                        if (visSection.classList.contains('collapsed')) {
+                            visSection.classList.remove('collapsed');
+                        }
+                        var cb = document.getElementById('elliptical-orbits');
+                        if (!cb.checked) {
+                            cb.checked = true;
+                            cb.dispatchEvent(new Event('change'));
+                        }
+                    },
+                    delay: 500,
+                },
+                {
+                    id: 'corona-particles',
+                    target: '#show-particles',
+                    title: 'Sun Corona Particles',
+                    text: 'Turn on the corona particle effect for a fiery, dynamic Sun. These particles simulate the solar wind streaming outward.',
+                    position: 'right',
+                    duration: 4000,
+                    action: function() {
+                        var cb = document.getElementById('show-particles');
+                        if (!cb.checked) {
+                            cb.checked = true;
+                            cb.dispatchEvent(new Event('change'));
+                        }
+                    },
+                    delay: 300,
+                },
+                {
+                    id: 'camera-chase',
+                    target: '.cam-btn[data-mode="chase"]',
+                    title: 'Chase Camera',
+                    text: 'The chase camera follows behind the Sun like a spacecraft. Five camera modes let you find your favorite perspective.',
+                    position: 'right',
+                    duration: 5000,
+                    action: function() {
+                        document.querySelector('.cam-btn[data-mode="chase"]').click();
+                        var select = document.getElementById('follow-target');
+                        select.value = 'sun';
+                        select.dispatchEvent(new Event('change'));
+                    },
+                    delay: 500,
+                },
+                {
+                    id: 'planet-info',
+                    target: '#toggle-science',
+                    title: 'NASA Planet Data',
+                    text: 'Click any planet label for real NASA data \u2014 mass, gravity, temperature, and fun facts.',
+                    position: 'above',
+                    duration: 5000,
+                    action: function() {
+                        document.getElementById('toggle-science').click();
+                    },
+                    delay: 500,
+                },
+                {
+                    id: 'planet-dive',
+                    target: '#planet-dive-btn',
+                    title: 'Dive Into Orbit',
+                    text: 'The most dramatic feature! Watch as we dive into orbit around Jupiter. You can dive into any planet or the Sun.',
+                    position: 'right',
+                    duration: 8000,
+                    action: function() {
+                        // Close science panel if open
+                        var closeBtn = document.getElementById('close-science');
+                        if (closeBtn) closeBtn.click();
+                        // Set follow to Jupiter
+                        var select = document.getElementById('follow-target');
+                        select.value = 'jupiter';
+                        select.dispatchEvent(new Event('change'));
+                        // Wait for dive button text to update, then dive
+                        setTimeout(function() {
+                            if (diveState === 'none') {
+                                document.getElementById('planet-dive-btn').click();
+                            }
+                        }, 400);
+                    },
+                    delay: 1000,
+                },
+                {
+                    id: 'exit-dive',
+                    target: null,
+                    title: 'Returning to Overview',
+                    text: 'Bringing us back for the grand finale...',
+                    position: 'center',
+                    duration: 4000,
+                    action: function() {
+                        if (diveState !== 'none') {
+                            document.getElementById('planet-dive-btn').click();
+                        }
+                    },
+                    delay: 500,
+                },
+                {
+                    id: 'galaxy-view',
+                    target: null,
+                    title: 'Galaxy View \u2014 Grand Finale',
+                    text: 'Zoom out to see where our tiny solar system sits in the Milky Way. A speck in the Orion Arm, orbiting the galactic center every 225 million years.',
+                    position: 'center',
+                    duration: 0,
+                    action: function() {
+                        if (!galaxyViewActive) {
+                            toggleGalaxyView();
+                        }
+                    },
+                    delay: 4000,
+                    isFinalStep: true,
+                },
+            ];
+
+            // --- State Save/Restore ---
+            function saveTourState() {
+                return {
+                    cameraRotation: { x: cameraRotation.x, y: cameraRotation.y },
+                    cameraDistance: cameraDistance,
+                    cameraTarget: { x: cameraTarget.x, y: cameraTarget.y, z: cameraTarget.z },
+                    cameraMode: cameraMode,
+                    cinematicAngle: cinematicAngle,
+                    currentSunSpeed: currentSunSpeed,
+                    orbitSpeedMultiplier: orbitSpeedMultiplier,
+                    followTarget: followTarget,
+                    daysPerSecond: daysPerSecond,
+                    trailOpacity: trailOpacity,
+                    showLabels: showLabels,
+                    showGrid: showGrid,
+                    showMoons: showMoons,
+                    showParticles: showParticles,
+                    ellipticalOrbitsVal: ellipticalOrbits,
+                    isPaused: isPaused,
+                    sunSpeedRaw: document.getElementById('sun-speed').value,
+                    orbitSpeedRaw: document.getElementById('orbit-speed').value,
+                    trailLengthVal: document.getElementById('trail-length').value,
+                    trailOpacityRaw: document.getElementById('trail-opacity').value,
+                    timeSpeedVal: document.getElementById('time-speed').value,
+                };
+            }
+
+            function restoreSolarState(state) {
+                // Camera
+                cameraRotation = { x: state.cameraRotation.x, y: state.cameraRotation.y };
+                cameraDistance = state.cameraDistance;
+                cameraTarget = { x: state.cameraTarget.x, y: state.cameraTarget.y, z: state.cameraTarget.z };
+                cameraMode = state.cameraMode;
+                cinematicAngle = state.cinematicAngle;
+                document.getElementById('camera-mode').value = state.cameraMode;
+                document.querySelectorAll('.cam-btn').forEach(function(b) {
+                    b.classList.toggle('active', b.dataset.mode === state.cameraMode);
+                });
+
+                // Sim values
+                currentSunSpeed = state.currentSunSpeed;
+                orbitSpeedMultiplier = state.orbitSpeedMultiplier;
+                followTarget = state.followTarget;
+                daysPerSecond = state.daysPerSecond;
+                trailOpacity = state.trailOpacity;
+
+                // Sliders
+                document.getElementById('sun-speed').value = state.sunSpeedRaw;
+                document.getElementById('sun-speed-val').textContent = state.currentSunSpeed.toFixed(2);
+                document.getElementById('orbit-speed').value = state.orbitSpeedRaw;
+                document.getElementById('orbit-speed-val').textContent = state.orbitSpeedMultiplier.toFixed(2);
+                document.getElementById('trail-length').value = state.trailLengthVal;
+                document.getElementById('trail-length-val').textContent = state.trailLengthVal;
+                document.getElementById('trail-opacity').value = state.trailOpacityRaw;
+                document.getElementById('trail-opacity-val').textContent = parseFloat(state.trailOpacityRaw).toFixed(1);
+                document.getElementById('time-speed').value = state.timeSpeedVal;
+                document.getElementById('time-speed-val').textContent = parseInt(state.timeSpeedVal);
+                document.getElementById('follow-target').value = state.followTarget;
+
+                // Trail length internal
+                var len = parseInt(state.trailLengthVal);
+                planets.forEach(function(p) { p.maxTrailLength = len; });
+                sunTrailMaxLength = Math.round(len * 2.5);
+
+                // Checkboxes
+                showLabels = state.showLabels;
+                document.getElementById('show-labels').checked = state.showLabels;
+                showGrid = state.showGrid;
+                document.getElementById('show-grid').checked = state.showGrid;
+                if (referenceGrid) referenceGrid.visible = state.showGrid;
+                showMoons = state.showMoons;
+                document.getElementById('show-moons').checked = state.showMoons;
+                document.getElementById('show-moons').dispatchEvent(new Event('change'));
+                showParticles = state.showParticles;
+                document.getElementById('show-particles').checked = state.showParticles;
+                document.getElementById('show-particles').dispatchEvent(new Event('change'));
+                ellipticalOrbits = state.ellipticalOrbitsVal;
+                document.getElementById('elliptical-orbits').checked = state.ellipticalOrbitsVal;
+
+                // Pause state
+                isPaused = state.isPaused;
+                document.getElementById('toggle-pause').textContent = state.isPaused ? 'Resume' : 'Pause';
+
+                // Clear preset active states
+                document.querySelectorAll('.preset-btn').forEach(function(b) { b.classList.remove('active'); });
+
+                updateCameraPosition();
+                updateDiveButtonText();
+            }
+
+            function restoreTourState(state) {
+                // Exit dive first if active
+                if (diveState !== 'none') {
+                    diveState = 'none';
+                    document.getElementById('planet-dive-btn').classList.remove('active');
+                    document.getElementById('dive-hud').classList.remove('visible');
+                    document.getElementById('dive-altitude').classList.remove('visible');
+                }
+
+                // Exit galaxy view if active
+                if (galaxyViewActive) {
+                    toggleGalaxyView();
+                    setTimeout(function() { restoreSolarState(state); }, 4000);
+                    return;
+                }
+
+                restoreSolarState(state);
+            }
+
+            // --- Slider Animation ---
+            function animateSlider(sliderId, targetValue, durationMs, onComplete) {
+                var slider = document.getElementById(sliderId);
+                var isSquared = (sliderId === 'sun-speed' || sliderId === 'orbit-speed');
+                var startRaw = parseFloat(slider.value);
+                var targetRaw = isSquared ? Math.sqrt(targetValue) : targetValue;
+                var startTime = performance.now();
+
+                function tick(now) {
+                    if (!tourActive) return;
+                    var elapsed = now - startTime;
+                    var t = Math.min(1, elapsed / durationMs);
+                    var eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+                    var currentRaw = startRaw + (targetRaw - startRaw) * eased;
+
+                    slider.value = currentRaw;
+                    slider.dispatchEvent(new Event('input'));
+
+                    if (t < 1) {
+                        tourSliderAnim = requestAnimationFrame(tick);
+                    } else {
+                        tourSliderAnim = null;
+                        if (onComplete) onComplete();
+                    }
+                }
+                if (tourSliderAnim) cancelAnimationFrame(tourSliderAnim);
+                tourSliderAnim = requestAnimationFrame(tick);
+            }
+
+            // --- Typewriter Effect ---
+            function typewriterText(element, text, speed) {
+                speed = speed || 20;
+                element.textContent = '';
+                var i = 0;
+                if (typewriterTimer) clearInterval(typewriterTimer);
+                typewriterTimer = setInterval(function() {
+                    if (!tourActive || i >= text.length) {
+                        clearInterval(typewriterTimer);
+                        typewriterTimer = null;
+                        if (tourActive) element.textContent = text;
+                        return;
+                    }
+                    element.textContent += text.charAt(i);
+                    i++;
+                }, speed);
+            }
+
+            // --- Tooltip Positioning ---
+            function positionTooltip(step) {
+                var pos = step.position;
+
+                tooltip.classList.remove('arrow-top', 'arrow-bottom', 'arrow-left', 'arrow-right', 'center-mode');
+
+                if (pos === 'center' || !step.target) {
+                    tooltip.classList.add('center-mode');
+                    spotlight.style.display = 'none';
+                    return;
+                }
+
+                var targetEl = document.querySelector(step.target);
+                if (!targetEl) {
+                    tooltip.classList.add('center-mode');
+                    spotlight.style.display = 'none';
+                    return;
+                }
+
+                var rect = targetEl.getBoundingClientRect();
+                var margin = 16;
+
+                // Position spotlight
+                spotlight.style.display = 'block';
+                spotlight.style.top = (rect.top - 6) + 'px';
+                spotlight.style.left = (rect.left - 6) + 'px';
+                spotlight.style.width = (rect.width + 12) + 'px';
+                spotlight.style.height = (rect.height + 12) + 'px';
+
+                // Show tooltip offscreen briefly to measure
+                tooltip.style.top = '-9999px';
+                tooltip.style.left = '-9999px';
+                tooltip.style.display = 'block';
+                var ttRect = tooltip.getBoundingClientRect();
+                var ttW = ttRect.width;
+                var ttH = ttRect.height;
+                var winW = window.innerWidth;
+                var winH = window.innerHeight;
+
+                var top, left;
+                switch (pos) {
+                    case 'above':
+                        top = rect.top - ttH - margin;
+                        left = rect.left + rect.width / 2 - ttW / 2;
+                        tooltip.classList.add('arrow-bottom');
+                        break;
+                    case 'below':
+                        top = rect.bottom + margin;
+                        left = rect.left + rect.width / 2 - ttW / 2;
+                        tooltip.classList.add('arrow-top');
+                        break;
+                    case 'right':
+                        top = rect.top + rect.height / 2 - ttH / 2;
+                        left = rect.right + margin;
+                        tooltip.classList.add('arrow-left');
+                        break;
+                    case 'left':
+                        top = rect.top + rect.height / 2 - ttH / 2;
+                        left = rect.left - ttW - margin;
+                        tooltip.classList.add('arrow-right');
+                        break;
+                    default:
+                        top = rect.bottom + margin;
+                        left = rect.left;
+                }
+
+                // Clamp to viewport
+                if (left + ttW > winW - 10) left = winW - ttW - 10;
+                if (left < 10) left = 10;
+                if (top + ttH > winH - 10) top = winH - ttH - 10;
+                if (top < 10) top = 10;
+
+                tooltip.style.top = top + 'px';
+                tooltip.style.left = left + 'px';
+            }
+
+            // --- Progress Dots ---
+            function updateProgressDots() {
+                progressEl.innerHTML = '';
+                for (var i = 0; i < TOUR_STEPS.length; i++) {
+                    var dot = document.createElement('div');
+                    dot.className = 'tour-dot';
+                    if (i < tourStep) dot.classList.add('completed');
+                    if (i === tourStep) dot.classList.add('active');
+                    progressEl.appendChild(dot);
+                }
+            }
+
+            // --- Show Step ---
+            function showStep(index) {
+                if (index >= TOUR_STEPS.length) {
+                    endTour();
+                    return;
+                }
+
+                tourStep = index;
+                var step = TOUR_STEPS[index];
+
+                // Clear timers
+                if (tourAutoTimer) { clearTimeout(tourAutoTimer); tourAutoTimer = null; }
+                if (tourSliderAnim) { cancelAnimationFrame(tourSliderAnim); tourSliderAnim = null; }
+                if (typewriterTimer) { clearInterval(typewriterTimer); typewriterTimer = null; }
+
+                // Hide tooltip during transition
+                tooltip.classList.remove('visible');
+
+                // Execute action
+                if (step.action) {
+                    step.action();
+                }
+
+                // After delay, show tooltip
+                setTimeout(function() {
+                    if (!tourActive) return;
+
+                    // Update content
+                    titleEl.textContent = step.title;
+                    counterEl.textContent = (index + 1) + ' of ' + TOUR_STEPS.length;
+                    typewriterText(bodyEl, step.text, 18);
+
+                    // Update buttons
+                    if (step.isFinalStep) {
+                        nextBtn.textContent = 'End Tour';
+                        nextBtn.className = 'tour-btn tour-btn-end';
+                    } else {
+                        nextBtn.textContent = 'Next \u25B6';
+                        nextBtn.className = 'tour-btn tour-btn-next';
+                    }
+
+                    updateProgressDots();
+
+                    // Position and show
+                    tooltip.style.display = 'block';
+                    requestAnimationFrame(function() {
+                        positionTooltip(step);
+                        requestAnimationFrame(function() {
+                            tooltip.classList.add('visible');
+                        });
+                    });
+
+                    // Auto-advance
+                    if (step.duration > 0 && !step.isFinalStep) {
+                        var typeTime = step.text.length * 18;
+                        tourAutoTimer = setTimeout(function() {
+                            if (tourActive) showStep(index + 1);
+                        }, step.duration + Math.min(typeTime, 3000));
+                    }
+                }, step.delay || 500);
+            }
+
+            // --- Start Tour ---
+            function startTour() {
+                if (tourActive) return;
+                if (galaxyViewActive) return;
+                if (diveState !== 'none') return;
+
+                tourActive = true;
+                preTourState = saveTourState();
+
+                // Ensure running
+                if (isPaused) {
+                    isPaused = false;
+                    document.getElementById('toggle-pause').textContent = 'Pause';
+                }
+
+                demoBtn.classList.add('touring');
+                demoBtn.textContent = '\u23F9 Exit Tour';
+
+                showStep(0);
+            }
+
+            // --- End Tour ---
+            function endTour() {
+                tourActive = false;
+                tourStep = -1;
+
+                if (tourAutoTimer) { clearTimeout(tourAutoTimer); tourAutoTimer = null; }
+                if (tourSliderAnim) { cancelAnimationFrame(tourSliderAnim); tourSliderAnim = null; }
+                if (typewriterTimer) { clearInterval(typewriterTimer); typewriterTimer = null; }
+
+                tooltip.classList.remove('visible');
+                spotlight.style.display = 'none';
+                setTimeout(function() {
+                    tooltip.style.display = 'none';
+                }, 400);
+
+                demoBtn.classList.remove('touring');
+                demoBtn.textContent = '\uD83C\uDFAC Tour';
+
+                if (preTourState) {
+                    restoreTourState(preTourState);
+                    preTourState = null;
+                }
+            }
+
+            // --- Event Listeners ---
+            demoBtn.addEventListener('click', function() {
+                if (tourActive) endTour();
+                else startTour();
+            });
+
+            nextBtn.addEventListener('click', function() {
+                if (!tourActive) return;
+                var step = TOUR_STEPS[tourStep];
+                if (step && step.isFinalStep) endTour();
+                else showStep(tourStep + 1);
+            });
+
+            skipBtn.addEventListener('click', function() {
+                endTour();
+            });
+
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (!tourActive) return;
+                if (e.key === 'Escape') {
+                    endTour();
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+                if (e.key === 'ArrowRight') {
+                    var step = TOUR_STEPS[tourStep];
+                    if (step && step.isFinalStep) endTour();
+                    else showStep(tourStep + 1);
+                    e.preventDefault();
+                }
+            });
+        })();
 
         // =====================================================================
         // MOBILE RESPONSIVE TOGGLES
