@@ -2,15 +2,15 @@
 
 /**
  * Live Events Page
- * Real-time astronomical events, meteor showers, and space weather
+ * Sky-event-map hero + gallery cards + real-time data panels
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
 import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
 import { NeoApproachDiagram } from '@/components/features/events/NeoApproachDiagram'
 import { SolarGauge } from '@/components/features/events/SolarGauge'
+import { EventSkyMap, type EventSkyMapHandle } from '@/components/features/events/EventSkyMap'
 import {
   getAllCurrentEvents,
   getISSPosition,
@@ -39,42 +39,38 @@ import {
   Rocket,
   ChevronDown,
   ChevronUp,
+  MapPin,
+  Telescope,
 } from 'lucide-react'
 import { cn, formatDate } from '@/lib/utils'
 
-// ISS Live Camera feeds
-// Note: YouTube stream IDs may change periodically as NASA updates their streams
-// Last updated: December 2025
+// ── ISS Camera feeds ────────────────────────────────────────────────────────
+
 const ISS_CAMERAS = [
   {
     id: 'iss-live-1',
-    name: 'ISS Live Camera 1',
-    description: 'Live views from the International Space Station exterior cameras',
+    name: 'Cam 1',
+    description: 'ISS exterior camera',
     videoId: 'Ni-YkkvH6DQ',
     directUrl: 'https://www.youtube.com/watch?v=Ni-YkkvH6DQ',
   },
   {
     id: 'iss-live-2',
-    name: 'ISS Live Camera 2',
-    description: 'Alternative ISS live stream with Earth views from orbit',
+    name: 'Cam 2',
+    description: 'Earth views from orbit',
     videoId: 'iYmvCUonukw',
     directUrl: 'https://www.youtube.com/watch?v=iYmvCUonukw',
   },
 ]
 
-// Build embed URL with autoplay (muted, as required by browsers)
-// enablejsapi=1 allows the YouTube iframe API to report errors and state changes
-const getEmbedUrl = (videoId: string, autoplay: boolean = true) => {
-  const params = autoplay ? 'autoplay=1&mute=1&rel=0&enablejsapi=1' : 'rel=0&enablejsapi=1'
-  return `https://www.youtube.com/embed/${videoId}?${params}`
-}
+const getEmbedUrl = (videoId: string) =>
+  `https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&enablejsapi=1`
 
-// Check if a YouTube video is accessible via oEmbed (detects deleted/private streams)
 async function checkYouTubeAvailable(videoId: string): Promise<boolean> {
   try {
     const res = await fetch(
       `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
-      { signal: AbortSignal.timeout(5000) }
+      { signal: AbortSignal.timeout(5000) },
     )
     return res.ok
   } catch {
@@ -82,9 +78,59 @@ async function checkYouTubeAvailable(videoId: string): Promise<boolean> {
   }
 }
 
-// Pagination constants
 const INITIAL_EVENT_COUNT = 8
 const LOAD_MORE_COUNT = 8
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+function getSeverityColor(severity: string) {
+  if (severity === 'once-in-lifetime' || severity === 'rare') return '#e040fb'
+  if (severity === 'significant' || severity === 'notable') return '#d4af37'
+  return '#4a5580'
+}
+
+function getEventIcon(type: string) {
+  switch (type) {
+    case 'solar': return Zap
+    case 'asteroid': return Globe
+    case 'meteor-shower': return Star
+    case 'transit': return Radio
+    case 'lunar': return Moon
+    case 'eclipse': return Sun
+    case 'conjunction': return Sparkles
+    case 'launch': return Rocket
+    default: return Sparkles
+  }
+}
+
+function getEventThumbnail(type: string) {
+  switch (type) {
+    case 'solar':
+      return 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000393/GSFC_20171208_Archive_e000393~thumb.jpg'
+    case 'asteroid':
+      return 'https://images-assets.nasa.gov/image/PIA17041/PIA17041~thumb.jpg'
+    case 'meteor-shower':
+      return 'https://images-assets.nasa.gov/image/NHQ201908130001/NHQ201908130001~thumb.jpg'
+    case 'transit':
+      return 'https://images-assets.nasa.gov/image/PIA23172/PIA23172~thumb.jpg'
+    case 'transient':
+      return 'https://images-assets.nasa.gov/image/PIA22085/PIA22085~thumb.jpg'
+    case 'grb':
+      return 'https://images-assets.nasa.gov/image/PIA20051/PIA20051~thumb.jpg'
+    case 'lunar':
+      return 'https://images-assets.nasa.gov/image/PIA12235/PIA12235~thumb.jpg'
+    case 'eclipse':
+      return 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001435/GSFC_20171208_Archive_e001435~thumb.jpg'
+    case 'conjunction':
+      return 'https://images-assets.nasa.gov/image/PIA23962/PIA23962~thumb.jpg'
+    case 'launch':
+      return 'https://images-assets.nasa.gov/image/KSC-20201115-PH-SPX01_0001/KSC-20201115-PH-SPX01_0001~thumb.jpg'
+    default:
+      return 'https://images-assets.nasa.gov/image/PIA17563/PIA17563~thumb.jpg'
+  }
+}
+
+// ── Page ────────────────────────────────────────────────────────────────────
 
 export default function EventsPage() {
   const [events, setEvents] = useState<AstronomicalEvent[]>([])
@@ -97,11 +143,15 @@ export default function EventsPage() {
   const [displayCount, setDisplayCount] = useState(INITIAL_EVENT_COUNT)
   const [solarData, setSolarData] = useState<{ flareLevel: string; currentFlux: number } | null>(null)
   const [apodExpanded, setApodExpanded] = useState(false)
+  const [highlightedEvent, setHighlightedEvent] = useState<string | null>(null)
+
+  const skyMapRef = useRef<EventSkyMapHandle>(null)
+  const skyMapSectionRef = useRef<HTMLElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const ytReadyTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const switchToCamera2 = useCallback(() => {
-    setSelectedCamera(prev => prev.id === 'iss-live-1' ? ISS_CAMERAS[1] : prev)
+    setSelectedCamera((prev) => (prev.id === 'iss-live-1' ? ISS_CAMERAS[1] : prev))
   }, [])
 
   const fetchData = async () => {
@@ -113,32 +163,18 @@ export default function EventsPage() {
         getISSPosition(),
         getSolarWeather(),
       ])
-
-      if (eventsResult.status === 'fulfilled' && eventsResult.value.success) {
+      if (eventsResult.status === 'fulfilled' && eventsResult.value.success)
         setEvents(eventsResult.value.data || [])
-      }
-
-      if (apodResult.status === 'fulfilled' && apodResult.value.success) {
+      if (apodResult.status === 'fulfilled' && apodResult.value.success)
         setApod(apodResult.value.data || null)
-      }
-
       if (issResult.status === 'fulfilled' && issResult.value.success && issResult.value.data) {
-        setIssPosition({
-          lat: issResult.value.data.position.lat,
-          lon: issResult.value.data.position.lon,
-        })
+        setIssPosition({ lat: issResult.value.data.position.lat, lon: issResult.value.data.position.lon })
         setIssError(false)
       } else {
         setIssError(true)
       }
-
-      if (solarResult.status === 'fulfilled' && solarResult.value.success && solarResult.value.data) {
-        setSolarData({
-          flareLevel: solarResult.value.data.flareLevel,
-          currentFlux: solarResult.value.data.currentFlux,
-        })
-      }
-
+      if (solarResult.status === 'fulfilled' && solarResult.value.success && solarResult.value.data)
+        setSolarData({ flareLevel: solarResult.value.data.flareLevel, currentFlux: solarResult.value.data.currentFlux })
       setLastUpdated(new Date())
     } catch (error) {
       console.error('Error fetching events:', error)
@@ -149,56 +185,36 @@ export default function EventsPage() {
 
   useEffect(() => {
     fetchData()
-    // Refresh ISS position every 30 seconds
     const issInterval = setInterval(async () => {
       const result = await getISSPosition()
       if (result.success && result.data) {
-        setIssPosition({
-          lat: result.data.position.lat,
-          lon: result.data.position.lon,
-        })
+        setIssPosition({ lat: result.data.position.lat, lon: result.data.position.lon })
         setIssError(false)
       } else {
         setIssError(true)
       }
     }, 30000)
-
     return () => clearInterval(issInterval)
   }, [])
 
-  // Auto-fallback: if Camera 1 is unavailable on load, silently switch to Camera 2
   useEffect(() => {
     let cancelled = false
-
-    // 1. oEmbed quick-check (catches deleted/private streams)
-    checkYouTubeAvailable(ISS_CAMERAS[0].videoId).then(available => {
-      if (!available && !cancelled) switchToCamera2()
+    checkYouTubeAvailable(ISS_CAMERAS[0].videoId).then((ok) => {
+      if (!ok && !cancelled) switchToCamera2()
     })
-
-    // 2. YouTube iframe API error listener (catches offline live streams)
     function handleYTMessage(event: MessageEvent) {
       if (event.origin !== 'https://www.youtube.com') return
       try {
         const data = JSON.parse(event.data as string)
-        // onError: immediately switch
-        if (data.event === 'onError') {
-          if (!cancelled) switchToCamera2()
-        }
-        // onReady: start a timeout — if player stays unstarted for 8s, switch
+        if (data.event === 'onError' && !cancelled) switchToCamera2()
         if (data.event === 'onReady') {
-          ytReadyTimeoutRef.current = setTimeout(() => {
-            if (!cancelled) switchToCamera2()
-          }, 8000)
+          ytReadyTimeoutRef.current = setTimeout(() => { if (!cancelled) switchToCamera2() }, 8000)
         }
-        // onStateChange 1 (playing) or 3 (buffering): cancel the timeout — stream is working
         if (data.event === 'onStateChange' && (data.info === 1 || data.info === 3)) {
           if (ytReadyTimeoutRef.current) clearTimeout(ytReadyTimeoutRef.current)
         }
-      } catch {
-        // Not a YouTube postMessage — ignore
-      }
+      } catch { /* not a YT message */ }
     }
-
     window.addEventListener('message', handleYTMessage)
     return () => {
       cancelled = true
@@ -207,100 +223,51 @@ export default function EventsPage() {
     }
   }, [switchToCamera2])
 
-  // Scroll to specific event if hash is present in URL
   useEffect(() => {
     if (!isLoading && events.length > 0) {
-      const hash = window.location.hash.slice(1) // Remove the # symbol
+      const hash = window.location.hash.slice(1)
       if (hash) {
-        // Small delay to ensure DOM is ready
         setTimeout(() => {
-          const element = document.getElementById(hash)
-          if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
-            // Add highlight effect
-            element.classList.add('ring-2', 'ring-cosmos-gold', 'ring-offset-2', 'ring-offset-cosmos-void')
-            setTimeout(() => {
-              element.classList.remove('ring-2', 'ring-cosmos-gold', 'ring-offset-2', 'ring-offset-cosmos-void')
-            }, 3000)
+          const el = document.getElementById(hash)
+          if (el) {
+            el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            el.classList.add('ring-2', 'ring-cosmos-gold', 'ring-offset-2', 'ring-offset-cosmos-void')
+            setTimeout(() => el.classList.remove('ring-2', 'ring-cosmos-gold', 'ring-offset-2', 'ring-offset-cosmos-void'), 3000)
           }
         }, 100)
       }
     }
   }, [isLoading, events])
 
-  const getSeverityColor = (severity: string) => {
-    switch (severity) {
-      case 'once-in-lifetime':
-      case 'rare':
-        return 'bg-cosmos-hydrogen/20 text-cosmos-hydrogen border-cosmos-hydrogen/50'
-      case 'significant':
-        return 'bg-cosmos-gold/20 text-cosmos-gold border-cosmos-gold/50'
-      case 'notable':
-        return 'bg-cosmos-gold/20 text-cosmos-gold border-cosmos-gold/50'
-      default:
-        return 'bg-white/10 text-gray-300 border-white/20'
+  const handleLocate = useCallback((event: AstronomicalEvent) => {
+    if (!skyMapRef.current) return
+    if (event.coordinates) {
+      skyMapRef.current.flyTo(event.coordinates.ra, event.coordinates.dec, 20)
+    } else if (event.type === 'conjunction') {
+      const firstBody = event.title.split('-')[0].trim()
+      skyMapRef.current.gotoObject(firstBody)
     }
-  }
+    skyMapSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }, [])
 
-  const getEventIcon = (type: string) => {
-    switch (type) {
-      case 'solar':
-        return Zap
-      case 'asteroid':
-        return Globe
-      case 'meteor-shower':
-        return Star
-      case 'transit':
-        return Radio
-      case 'lunar':
-        return Moon
-      case 'eclipse':
-        return Sun
-      case 'conjunction':
-        return Sparkles
-      case 'launch':
-        return Rocket
-      default:
-        return Sparkles
+  const handleSkyMarkerHover = useCallback((name: string | null) => {
+    if (name) {
+      const matchId = `meteor-${name.toLowerCase().replace(/\s/g, '-')}`
+      setHighlightedEvent(matchId)
+    } else {
+      setHighlightedEvent(null)
     }
-  }
-
-  // Get thumbnail image for event type
-  const getEventThumbnail = (type: string) => {
-    switch (type) {
-      case 'solar':
-        return 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000393/GSFC_20171208_Archive_e000393~thumb.jpg'
-      case 'asteroid':
-        return 'https://images-assets.nasa.gov/image/PIA17041/PIA17041~thumb.jpg'
-      case 'meteor-shower':
-        return 'https://images-assets.nasa.gov/image/NHQ201908130001/NHQ201908130001~thumb.jpg'
-      case 'transit':
-        return 'https://images-assets.nasa.gov/image/PIA23172/PIA23172~thumb.jpg'
-      case 'transient':
-        return 'https://images-assets.nasa.gov/image/PIA22085/PIA22085~thumb.jpg'
-      case 'grb':
-        return 'https://images-assets.nasa.gov/image/PIA20051/PIA20051~thumb.jpg'
-      case 'lunar':
-        return 'https://images-assets.nasa.gov/image/PIA12235/PIA12235~thumb.jpg'
-      case 'eclipse':
-        return 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001435/GSFC_20171208_Archive_e001435~thumb.jpg'
-      case 'conjunction':
-        return 'https://images-assets.nasa.gov/image/PIA23962/PIA23962~thumb.jpg'
-      case 'launch':
-        return 'https://images-assets.nasa.gov/image/KSC-20201115-PH-SPX01_0001/KSC-20201115-PH-SPX01_0001~thumb.jpg'
-      default:
-        return 'https://images-assets.nasa.gov/image/PIA17563/PIA17563~thumb.jpg'
-    }
-  }
+  }, [])
 
   const meteorShowers = getMeteorShowers()
   const now = new Date()
-  const upcomingShowers = meteorShowers.filter(
-    (shower) => new Date(shower.peakDate) >= now
-  ).slice(0, 3)
+  const upcomingShowers = meteorShowers.filter((s) => new Date(s.peakDate) >= now).slice(0, 3)
+
+  const canLocate = (event: AstronomicalEvent) =>
+    !!(event.coordinates || event.type === 'conjunction')
 
   return (
-    <div className="min-h-screen bg-[#0a0e1a] text-[#c8d4f0] font-mono">
+    <div className="h-screen overflow-hidden flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
 
       {/* ── App Header Strip ──────────────────────────────────────────────── */}
@@ -349,89 +316,104 @@ export default function EventsPage() {
         ))}
       </div>
 
-      <main className="px-4 sm:px-5 py-5 max-w-7xl mx-auto pb-16">
+      <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5">
-          {/* ── LEFT ─────────────────────────────────────────────────────── */}
+
+          {/* ── LEFT ────────────────────────────────────────────────────── */}
           <div className="space-y-5">
 
-            {/* ISS Live Feed */}
+            {/* Sky Event Map */}
+            <section
+              ref={skyMapSectionRef}
+              className="rounded-xl border border-[rgba(212,175,55,0.15)] overflow-hidden bg-[rgba(8,12,28,0.7)]"
+            >
+              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Telescope className="w-3.5 h-3.5 text-[#d4af37]" />
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">
+                    Sky Events Map
+                  </span>
+                  <span className="text-[9px] text-[#4a5580]">· Meteor radiant positions</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[9px] text-[#4a5580]">
+                  <MapPin className="w-3 h-3 text-[#d4af37]" />
+                  Hover markers · click Locate on events below
+                </div>
+              </div>
+              <EventSkyMap
+                ref={skyMapRef}
+                className="h-64"
+                onMarkerHover={handleSkyMarkerHover}
+              />
+            </section>
+
+            {/* ISS Live Feed — compact */}
             <section className="rounded-xl border border-[rgba(212,175,55,0.15)] overflow-hidden bg-[rgba(8,12,28,0.7)]">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Video className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">ISS Live Feed</span>
-                  <span className="text-[9px] text-[#4a5580]">· Earth from 408 km altitude</span>
+                  <span className="text-[9px] text-[#4a5580]">· Earth from 408 km</span>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-500/20 border border-red-500/30">
-                  <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-[9px] uppercase tracking-[0.12em] text-red-400">Live</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 lg:grid-cols-[160px_1fr]">
-                {/* Camera selector */}
-                <div className="border-b lg:border-b-0 lg:border-r border-[rgba(212,175,55,0.08)] p-3 space-y-1.5">
-                  <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Cameras</div>
+                <div className="flex items-center gap-1">
                   {ISS_CAMERAS.map((camera) => (
                     <button
                       key={camera.id}
                       type="button"
                       onClick={() => setSelectedCamera(camera)}
                       className={cn(
-                        'w-full p-2.5 rounded-lg text-left transition-all',
+                        'px-2.5 py-0.5 rounded text-[9px] uppercase tracking-wider transition-colors',
                         selectedCamera.id === camera.id
-                          ? 'bg-[rgba(212,175,55,0.1)] border border-[rgba(212,175,55,0.25)] text-[#d4af37]'
-                          : 'border border-transparent hover:bg-white/[0.03] text-[#8090b0]'
+                          ? 'bg-[rgba(212,175,55,0.15)] text-[#d4af37] border border-[rgba(212,175,55,0.3)]'
+                          : 'text-[#4a5580] hover:text-[#c8d4f0]',
                       )}
                     >
-                      <div className="flex items-center gap-2">
-                        <Eye className="w-3.5 h-3.5 shrink-0" />
-                        <div>
-                          <div className="text-[11px] font-semibold">{camera.name}</div>
-                          <div className="text-[9px] opacity-60 mt-0.5 line-clamp-1">{camera.description}</div>
-                        </div>
-                      </div>
+                      {camera.name}
                     </button>
                   ))}
-                  <div className="mt-3 p-2.5 rounded border border-[rgba(212,175,55,0.08)] bg-[rgba(212,175,55,0.02)]">
-                    <div className="text-[9px] text-[#4a5580] leading-relaxed">
-                      Dark/blue screen = ISS in night orbit (16 day/night cycles per 24h).
-                    </div>
-                  </div>
-                </div>
-                {/* Video */}
-                <div>
-                  <div className="relative aspect-video bg-black">
-                    <iframe
-                      ref={iframeRef}
-                      src={getEmbedUrl(selectedCamera.videoId)}
-                      title={selectedCamera.name}
-                      className="absolute inset-0 w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                    />
-                  </div>
-                  <div className="px-4 py-2.5 border-t border-[rgba(212,175,55,0.08)] flex items-center justify-between flex-wrap gap-2">
-                    <span className="text-[11px] text-[#8090b0]">{selectedCamera.name}</span>
-                    <div className="flex items-center gap-4 text-[10px]">
-                      <span className="text-[#4a5580]"><span className="text-[#d4af37] font-bold">~27,600</span> km/h</span>
-                      <span className="text-[#4a5580]"><span className="text-[#d4af37] font-bold">~408</span> km alt</span>
-                      <span className="text-[#4a5580]"><span className="text-[#e040fb] font-bold">92</span> min/orbit</span>
-                      <a href={selectedCamera.directUrl} target="_blank" rel="noopener noreferrer"
-                        className="flex items-center gap-1 text-[#d4af37] hover:text-[#e0c060] transition-colors">
-                        YouTube <ExternalLink className="w-3 h-3" />
-                      </a>
-                    </div>
+                  <div className="flex items-center gap-1 ml-2 px-2 py-0.5 rounded bg-red-500/20 border border-red-500/30">
+                    <span className="w-1 h-1 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-[9px] text-red-400">Live</span>
                   </div>
                 </div>
               </div>
+              <div className="relative aspect-video bg-black">
+                <iframe
+                  ref={iframeRef}
+                  src={getEmbedUrl(selectedCamera.videoId)}
+                  title={selectedCamera.name}
+                  className="absolute inset-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <div className="px-4 py-2 border-t border-[rgba(212,175,55,0.08)] flex items-center justify-between flex-wrap gap-2 text-[10px]">
+                <div className="flex items-center gap-4">
+                  <span className="text-[#4a5580]"><span className="text-[#d4af37] font-bold">~27,600</span> km/h</span>
+                  <span className="text-[#4a5580]"><span className="text-[#d4af37] font-bold">~408</span> km alt</span>
+                  <span className="text-[#4a5580]"><span className="text-[#e040fb] font-bold">92</span> min/orbit</span>
+                </div>
+                <a
+                  href={selectedCamera.directUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1 text-[#d4af37] hover:text-[#e0c060] transition-colors"
+                >
+                  YouTube <ExternalLink className="w-3 h-3" />
+                </a>
+              </div>
             </section>
 
-            {/* Events List */}
+            {/* ── Events Gallery ───────────────────────────────────────── */}
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">Current &amp; Upcoming Events</span>
-                {!isLoading && <span className="text-[10px] text-[#4a5580]">({events.length})</span>}
+                <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">
+                  Current &amp; Upcoming Events
+                </span>
+                {!isLoading && (
+                  <span className="text-[10px] text-[#4a5580]">({events.length})</span>
+                )}
               </div>
 
               {isLoading ? (
@@ -439,60 +421,113 @@ export default function EventsPage() {
                   <Loader2 className="w-6 h-6 text-[#d4af37] animate-spin" />
                 </div>
               ) : events.length > 0 ? (
-                <div className="rounded-xl border border-[rgba(212,175,55,0.15)] overflow-hidden bg-[rgba(8,12,28,0.7)] divide-y divide-[rgba(212,175,55,0.06)]">
-                  {events.slice(0, displayCount).map((event) => {
-                    const Icon = getEventIcon(event.type)
-                    const severityColor = event.severity === 'rare' || event.severity === 'once-in-lifetime'
-                      ? '#e040fb'
-                      : event.severity === 'significant' || event.severity === 'notable'
-                        ? '#d4af37'
-                        : '#4a5580'
-                    return (
-                      <div key={event.id} id={event.id} className="flex items-start gap-3 px-4 py-3 hover:bg-white/[0.02] transition-colors">
-                        <div className="relative w-16 h-16 flex-shrink-0 rounded-lg overflow-hidden">
-                          <img src={getEventThumbnail(event.type)} alt="" className="w-full h-full object-cover" />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                          <div className="absolute bottom-1 left-1 w-6 h-6 rounded flex items-center justify-center" style={{ background: `${severityColor}25` }}>
-                            <Icon className="w-3.5 h-3.5" style={{ color: severityColor }} />
-                          </div>
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start gap-2 flex-wrap">
-                            <span className="text-[12px] text-[#c8d4f0] font-semibold flex-1">{event.title}</span>
-                            <div className="flex items-center gap-1.5 shrink-0">
-                              {event.isOngoing && (
-                                <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-red-500/20 border border-red-500/30 text-red-400">Live</span>
-                              )}
-                              <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded" style={{ background: `${severityColor}15`, color: severityColor, border: `1px solid ${severityColor}30` }}>
+                <>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {events.slice(0, displayCount).map((event) => {
+                      const Icon = getEventIcon(event.type)
+                      const severityColor = getSeverityColor(event.severity)
+                      const isHighlighted = highlightedEvent === event.id
+                      return (
+                        <div
+                          key={event.id}
+                          id={event.id}
+                          className={cn(
+                            'rounded-xl border overflow-hidden bg-[rgba(8,12,28,0.7)] transition-all duration-300 group',
+                            isHighlighted
+                              ? 'border-[rgba(212,175,55,0.5)] shadow-[0_0_16px_rgba(212,175,55,0.15)]'
+                              : 'border-[rgba(212,175,55,0.12)] hover:border-[rgba(212,175,55,0.3)]',
+                          )}
+                        >
+                          {/* Hero image */}
+                          <div className="relative h-32 overflow-hidden">
+                            <img
+                              src={getEventThumbnail(event.type)}
+                              alt=""
+                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                            {event.isOngoing && (
+                              <div className="absolute top-2 left-2 flex items-center gap-1 px-1.5 py-0.5 rounded bg-red-500/80 backdrop-blur-sm">
+                                <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
+                                <span className="text-[8px] text-white uppercase tracking-wider">Live</span>
+                              </div>
+                            )}
+                            <div className="absolute top-2 right-2">
+                              <span
+                                className="text-[8px] uppercase tracking-wider px-1.5 py-0.5 rounded-full"
+                                style={{
+                                  background: `${severityColor}30`,
+                                  color: severityColor,
+                                  border: `1px solid ${severityColor}50`,
+                                }}
+                              >
                                 {event.severity}
                               </span>
                             </div>
+                            <div className="absolute bottom-2 left-2">
+                              <div
+                                className="w-6 h-6 rounded-lg flex items-center justify-center backdrop-blur-sm"
+                                style={{ background: `${severityColor}30`, border: `1px solid ${severityColor}30` }}
+                              >
+                                <Icon className="w-3.5 h-3.5" style={{ color: severityColor }} />
+                              </div>
+                            </div>
                           </div>
-                          <p className="text-[11px] text-[#4a5580] mt-0.5 line-clamp-2">{event.description}</p>
-                          <div className="flex items-center gap-2.5 mt-1.5 flex-wrap">
-                            <span className="text-[10px] text-[#4a5580]">{formatDate(event.eventTime, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
-                            <span className="text-[#4a5580]">·</span>
-                            <span className="text-[10px] text-[#4a5580]">{event.source}</span>
-                            {event.references?.map((ref, idx) => (
-                              <a key={idx} href={ref.url} target="_blank" rel="noopener noreferrer"
-                                className="flex items-center gap-0.5 text-[10px] text-[#d4af37] hover:underline"
-                                onClick={(e) => e.stopPropagation()}>
-                                {ref.label} <ExternalLink className="w-2.5 h-2.5" />
-                              </a>
-                            ))}
+
+                          {/* Content */}
+                          <div className="p-3">
+                            <div className="text-[12px] text-[#c8d4f0] font-semibold line-clamp-1 mb-1">
+                              {event.title}
+                            </div>
+                            <p className="text-[10px] text-[#4a5580] line-clamp-2 leading-relaxed">
+                              {event.description}
+                            </p>
+                            <div className="flex items-center justify-between mt-2.5 gap-2">
+                              <div className="flex items-center gap-2 flex-1 min-w-0">
+                                <span className="text-[9px] text-[#4a5580] whitespace-nowrap">
+                                  {formatDate(event.eventTime, { month: 'short', day: 'numeric', year: 'numeric' })}
+                                </span>
+                                {event.references?.[0] && (
+                                  <a
+                                    href={event.references[0].url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-0.5 text-[9px] text-[#d4af37] hover:underline shrink-0"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {event.references[0].label}
+                                    <ExternalLink className="w-2 h-2" />
+                                  </a>
+                                )}
+                              </div>
+                              {canLocate(event) && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleLocate(event)}
+                                  className="flex items-center gap-1 text-[9px] text-[#d4af37] hover:text-white transition-colors shrink-0 px-2 py-0.5 rounded hover:bg-[rgba(212,175,55,0.1)]"
+                                >
+                                  <MapPin className="w-2.5 h-2.5" />
+                                  Locate
+                                </button>
+                              )}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    )
-                  })}
+                      )
+                    })}
+                  </div>
+
                   {displayCount < events.length && (
-                    <button type="button" onClick={() => setDisplayCount((c) => c + LOAD_MORE_COUNT)}
-                      className="w-full py-2.5 text-[10px] uppercase tracking-[0.15em] text-[#d4af37] hover:bg-[rgba(212,175,55,0.05)] transition-colors flex items-center justify-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setDisplayCount((c) => c + LOAD_MORE_COUNT)}
+                      className="w-full mt-3 py-2.5 text-[10px] uppercase tracking-[0.15em] text-[#d4af37] hover:bg-[rgba(212,175,55,0.05)] rounded-xl border border-[rgba(212,175,55,0.1)] transition-colors flex items-center justify-center gap-2"
+                    >
                       <ChevronDown className="w-3.5 h-3.5" />
                       Show {events.length - displayCount} more events
                     </button>
                   )}
-                </div>
+                </>
               ) : (
                 <div className="text-center py-12 rounded-xl border border-[rgba(212,175,55,0.08)]">
                   <Sparkles className="w-8 h-8 text-[#4a5580] mx-auto mb-3" />
@@ -524,11 +559,13 @@ export default function EventsPage() {
                 ) : issError ? (
                   <div className="py-2 space-y-1.5">
                     <p className="text-[11px] text-[#4a5580]">Tracking unavailable</p>
-                    <a href="https://spotthestation.nasa.gov/" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#d4af37] hover:underline">NASA Spot the Station →</a>
+                    <a href="https://spotthestation.nasa.gov/" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#d4af37] hover:underline">
+                      NASA Spot the Station →
+                    </a>
                   </div>
                 ) : (
                   <div className="flex items-center gap-2 py-2 text-[11px] text-[#4a5580]">
-                    <Loader2 className="w-3.5 h-3.5 animate-spin" />Loading…
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading…
                   </div>
                 )}
               </div>
@@ -569,14 +606,21 @@ export default function EventsPage() {
               </div>
               <div className="divide-y divide-[rgba(212,175,55,0.06)]">
                 {upcomingShowers.map((shower) => (
-                  <a key={shower.name} href="https://www.imo.net/resources/calendar/" target="_blank" rel="noopener noreferrer"
-                    className="flex items-center justify-between px-4 py-2.5 hover:bg-white/[0.02] transition-colors group">
+                  <button
+                    key={shower.name}
+                    type="button"
+                    onClick={() => skyMapRef.current?.flyTo(shower.radiant.ra, shower.radiant.dec, 20)}
+                    className="w-full flex items-center justify-between px-4 py-2.5 hover:bg-white/[0.03] transition-colors group text-left"
+                  >
                     <div>
                       <div className="text-[11px] text-[#c8d4f0] group-hover:text-[#d4af37] transition-colors">{shower.name}</div>
                       <div className="text-[9px] text-[#4a5580] mt-0.5">Peak: {formatDate(shower.peakDate, { month: 'short', day: 'numeric' })}</div>
                     </div>
-                    <span className="text-[11px] font-bold text-[#d4af37]">{shower.zenithalHourlyRate}/hr</span>
-                  </a>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[11px] font-bold text-[#d4af37]">{shower.zenithalHourlyRate}/hr</span>
+                      <MapPin className="w-3 h-3 text-[#4a5580] group-hover:text-[#d4af37] transition-colors" />
+                    </div>
+                  </button>
                 ))}
               </div>
             </section>
@@ -626,8 +670,6 @@ export default function EventsPage() {
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   )
 }

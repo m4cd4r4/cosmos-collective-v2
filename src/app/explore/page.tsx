@@ -6,7 +6,6 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
 import { ExploreGallery } from '@/components/features/explore/ExploreGallery'
 import { ExploreFilters } from '@/components/features/explore/ExploreFilters'
 import { ExploreSearch } from '@/components/features/explore/ExploreSearch'
@@ -48,7 +47,7 @@ export default function ExplorePage({
   const totalCount = jwstCount + hubbleCount + radioCount
 
   return (
-    <div className="min-h-screen bg-[#0a0e1a] text-[#c8d4f0] font-mono">
+    <div className="h-screen overflow-hidden flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
 
       {/* ── App Header Strip ──────────────────────────────────────────────── */}
@@ -85,7 +84,7 @@ export default function ExplorePage({
         ))}
       </div>
 
-      <main className="px-4 sm:px-5 py-5 max-w-7xl mx-auto pb-16">
+      <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-7xl mx-auto w-full">
 
         {/* ── Search + Filters ──────────────────────────────────────────── */}
         <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden mb-5">
@@ -112,7 +111,6 @@ export default function ExplorePage({
         </Suspense>
       </main>
 
-      <Footer />
     </div>
   )
 }

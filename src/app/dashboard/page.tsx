@@ -5,7 +5,6 @@
 
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
 import { Starfield } from '@/components/ui/Starfield'
 import { DashboardContent } from '@/components/features/dashboard/DashboardContent'
 
@@ -16,15 +15,13 @@ export const metadata: Metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen relative">
+    <div className="h-screen overflow-hidden flex flex-col relative">
       <Starfield />
       <Header />
 
-      <main className="relative z-10 pt-20 pb-16">
+      <main className="relative z-10 flex-1 overflow-auto">
         <DashboardContent />
       </main>
-
-      <Footer />
     </div>
   )
 }
