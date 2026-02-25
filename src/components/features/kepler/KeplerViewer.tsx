@@ -1,10 +1,12 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useRef } from 'react'
 import type { StarSystem, ViewMode, KeplerFilters, KeplerPlanetRow } from './types'
 import { PLANET_COLORS, isInHZ, tempToColor, tempToSpectral } from './utils'
 import { StarCanvas } from './StarCanvas'
 import { OrbitalDiagram } from './OrbitalDiagram'
+import { KeplerSkyMap } from './KeplerSkyMap'
+import type { KeplerSkyMapHandle } from './KeplerSkyMap'
 import { useKeplerData } from './useKeplerData'
 
 // ── Default filters ────────────────────────────────────────────────────────
@@ -26,6 +28,7 @@ export function KeplerViewer() {
   const [hovered,  setHovered]        = useState<StarSystem | null>(null)
   const [selected, setSelected]       = useState<StarSystem | null>(null)
   const [tooltip,  setTooltip]        = useState<{ x: number; y: number } | null>(null)
+  const skyMapRef = useRef<KeplerSkyMapHandle>(null)
 
   // ── Filtered stars ───────────────────────────────────────────────────────
   const filtered = useMemo(() => {
@@ -112,18 +115,20 @@ export function KeplerViewer() {
           </FilterGroup>
 
           <FilterGroup title="View Mode">
-            <div className="flex border border-[rgba(74,144,226,0.15)] rounded overflow-hidden">
-              {(['sky', 'galaxy', 'hr'] as ViewMode[]).map(v => (
+            <div className="flex flex-wrap gap-1">
+              {(['sky', 'galaxy', 'hr', 'aladin'] as ViewMode[]).map(v => (
                 <button
                   key={v}
                   onClick={() => setViewMode(v)}
-                  className={`flex-1 py-1.5 text-[10px] uppercase tracking-wider transition-colors border-none ${
+                  className={`flex-1 min-w-[48%] py-1.5 text-[10px] uppercase tracking-wider transition-colors rounded border ${
                     viewMode === v
-                      ? 'bg-[rgba(74,144,226,0.18)] text-[#a0c8ff]'
-                      : 'bg-transparent text-[#4a5580] hover:text-[#4a90e2]'
-                  } ${v !== 'hr' ? 'border-r border-[rgba(74,144,226,0.15)]' : ''}`}
+                      ? v === 'aladin'
+                        ? 'bg-[rgba(212,175,55,0.18)] text-[#d4af37] border-[rgba(212,175,55,0.3)]'
+                        : 'bg-[rgba(74,144,226,0.18)] text-[#a0c8ff] border-[rgba(74,144,226,0.3)]'
+                      : 'bg-transparent text-[#4a5580] border-[rgba(74,144,226,0.15)] hover:text-[#4a90e2] hover:border-[rgba(74,144,226,0.3)]'
+                  }`}
                 >
-                  {v === 'hr' ? 'HR Diagram' : v.charAt(0).toUpperCase() + v.slice(1)}
+                  {v === 'hr' ? 'HR Diagram' : v === 'aladin' ? 'Sky Map' : v.charAt(0).toUpperCase() + v.slice(1)}
                 </button>
               ))}
             </div>
@@ -231,33 +236,41 @@ export function KeplerViewer() {
 
         </aside>
 
-        {/* CANVAS */}
+        {/* CANVAS / SKY MAP */}
         <div className="relative overflow-hidden bg-[#050810]">
-          <StarCanvas
-            stars={stars}
-            filtered={filtered}
-            viewMode={viewMode}
-            hoveredStar={hovered}
-            selectedStar={selected}
-            onHover={(s, e) => {
-              setHovered(s)
-              setTooltip(s && e ? { x: (e as React.MouseEvent).clientX, y: (e as React.MouseEvent).clientY } : null)
-            }}
-            onSelect={s => {
-              setSelected(s)
-            }}
-          />
+          {viewMode === 'aladin' ? (
+            <KeplerSkyMap
+              ref={skyMapRef}
+              className="w-full h-full"
+              selectedStar={selected}
+            />
+          ) : (
+            <StarCanvas
+              stars={stars}
+              filtered={filtered}
+              viewMode={viewMode}
+              hoveredStar={hovered}
+              selectedStar={selected}
+              onHover={(s, e) => {
+                setHovered(s)
+                setTooltip(s && e ? { x: (e as React.MouseEvent).clientX, y: (e as React.MouseEvent).clientY } : null)
+              }}
+              onSelect={s => {
+                setSelected(s)
+              }}
+            />
+          )}
 
           {/* Loading */}
-          {status === 'loading' && (
+          {status === 'loading' && viewMode !== 'aladin' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-[#4a5580] text-sm tracking-wider">
               <div className="w-9 h-9 rounded-full border-2 border-[rgba(74,144,226,0.15)] border-t-[#4a90e2] animate-spin" />
               <span>Fetching Kepler data from NASA…</span>
             </div>
           )}
 
-          {/* Hover Tooltip */}
-          {hovered && tooltip && (
+          {/* Hover Tooltip (canvas modes only) */}
+          {viewMode !== 'aladin' && hovered && tooltip && (
             <div
               className="absolute pointer-events-none z-50 bg-[rgba(4,7,25,0.95)] border border-[rgba(74,144,226,0.3)] rounded-lg px-3 py-2.5 text-xs leading-[1.7] max-w-[230px] backdrop-blur-lg"
               style={{ left: tooltip.x + 14, top: tooltip.y - 10 }}
@@ -279,7 +292,25 @@ export function KeplerViewer() {
           {!selected ? (
             <EmptyDetail />
           ) : (
-            <StarDetail star={selected} />
+            <>
+              <StarDetail star={selected} />
+              {selected.ra != null && (
+                <button
+                  onClick={() => setViewMode('aladin')}
+                  className="flex items-center justify-center gap-2 px-3 py-2 rounded bg-[rgba(212,175,55,0.08)] border border-[rgba(212,175,55,0.2)] text-[11px] text-[#d4af37] hover:bg-[rgba(212,175,55,0.15)] transition-all"
+                >
+                  <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden>
+                    <circle cx="6" cy="6" r="4.5" stroke="currentColor" strokeWidth="1" fill="none"/>
+                    <circle cx="6" cy="6" r="1.5" fill="currentColor"/>
+                    <line x1="6" y1="0.5" x2="6" y2="2.5" stroke="currentColor" strokeWidth="1"/>
+                    <line x1="6" y1="9.5" x2="6" y2="11.5" stroke="currentColor" strokeWidth="1"/>
+                    <line x1="0.5" y1="6" x2="2.5" y2="6" stroke="currentColor" strokeWidth="1"/>
+                    <line x1="9.5" y1="6" x2="11.5" y2="6" stroke="currentColor" strokeWidth="1"/>
+                  </svg>
+                  Locate on Real Sky Map
+                </button>
+              )}
+            </>
           )}
         </aside>
 
