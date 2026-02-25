@@ -7,16 +7,16 @@ import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
 import { ObservationViewer } from '@/components/features/explore/ObservationViewer'
 import { ObservationInfo } from '@/components/features/explore/ObservationInfo'
-import { getFeaturedJWSTImages } from '@/services/mast-api'
+import { getFeaturedJWSTImages, getFeaturedHubbleImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
 
 // Generate static params for featured images
 export function generateStaticParams() {
   const allObservations = [
     ...getFeaturedJWSTImages(),
+    ...getFeaturedHubbleImages(),
     ...getFeaturedRadioObservations(),
   ]
 
@@ -52,6 +52,7 @@ export async function generateMetadata({
 function getObservation(id: string) {
   const allObservations = [
     ...getFeaturedJWSTImages(),
+    ...getFeaturedHubbleImages(),
     ...getFeaturedRadioObservations(),
   ]
 
@@ -77,28 +78,22 @@ export default function ObservationPage({
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="h-screen overflow-hidden flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
 
-      <main className="flex-1 py-8 px-4 md:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          {/* Breadcrumb */}
-          <nav className="mb-6" aria-label="Breadcrumb">
-            <ol className="flex items-center gap-2 text-sm text-gray-400">
-              <li>
-                <a href="/explore" className="hover:text-white transition-colors">
-                  Explore
-                </a>
-              </li>
-              <li aria-hidden="true">/</li>
-              <li className="text-white" aria-current="page">
-                {observation.targetName}
-              </li>
-            </ol>
-          </nav>
+      {/* App Header Strip */}
+      <div className="bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] px-5 h-[52px] flex items-center gap-3 shrink-0">
+        <a href="/explore" className="text-[10px] uppercase tracking-wider text-[#4a5580] hover:text-[#c8d4f0] transition-colors">
+          ← Explore
+        </a>
+        <span className="text-[#3a4560]">/</span>
+        <span className="text-[11px] font-semibold text-[#c8d4f0] truncate">{observation.targetName}</span>
+      </div>
 
+      <main className="flex-1 overflow-auto px-4 md:px-5 py-4">
+        <div className="max-w-7xl mx-auto h-full">
           {/* Main content grid */}
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-5 h-full">
             {/* Image Viewer (2/3 width) */}
             <div className="lg:col-span-2">
               <Suspense fallback={<ViewerSkeleton />}>
@@ -113,8 +108,6 @@ export default function ObservationPage({
           </div>
         </div>
       </main>
-
-      <Footer />
     </div>
   )
 }

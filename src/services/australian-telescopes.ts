@@ -43,13 +43,13 @@ const NASA_RADIO_IMAGES = {
   crabNebula: 'https://images-assets.nasa.gov/image/PIA03606/PIA03606~medium.jpg',
   sn1987a: 'https://images-assets.nasa.gov/image/stsci-h-p1708c-m-2000x2000/stsci-h-p1708c-m-2000x2000~medium.jpg',
   w49b: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e002134/GSFC_20171208_Archive_e002134~medium.jpg',
-  tychoRemnant: 'https://images-assets.nasa.gov/image/PIA11435/PIA11435~medium.jpg',
+  tychoRemnant: 'https://images-assets.nasa.gov/image/PIA11435/PIA11435~small.jpg',
   // Galaxy clusters and cosmic structures
   galaxyCluster: 'https://images-assets.nasa.gov/image/PIA20052/PIA20052~medium.jpg',
   bentJets: 'https://images-assets.nasa.gov/image/PIA13638/PIA13638~medium.jpg',
   blackHoleJets: 'https://images-assets.nasa.gov/image/PIA13168/PIA13168~medium.jpg',
   // Galactic center
-  galacticCenter: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000717/GSFC_20171208_Archive_e000717~medium.jpg',
+  galacticCenter: 'https://images-assets.nasa.gov/image/PIA25449/PIA25449~medium.jpg',
 }
 
 // Australian telescope information

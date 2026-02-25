@@ -6,7 +6,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
-import { Footer } from '@/components/layout/Footer'
 import { getDevlogPosts, type DevlogPost } from '@/lib/devlog'
 import {
   Calendar,
@@ -63,7 +62,7 @@ export default async function DevlogPage() {
   const totalReadTime = posts.reduce((sum, p) => sum + p.readingTime, 0)
 
   return (
-    <div className="min-h-screen bg-[#0a0e1a] text-[#c8d4f0] font-mono">
+    <div className="h-screen overflow-hidden flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
 
       {/* ── App Header Strip ──────────────────────────────────────────── */}
@@ -98,7 +97,7 @@ export default async function DevlogPage() {
         ))}
       </div>
 
-      <main className="px-4 sm:px-5 py-5 max-w-5xl mx-auto pb-16">
+      <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-5xl mx-auto w-full">
 
         {/* Featured (latest) post */}
         {posts[0] && <FeaturedPost post={posts[0]} />}
@@ -131,7 +130,6 @@ export default async function DevlogPage() {
         )}
       </main>
 
-      <Footer />
     </div>
   )
 }

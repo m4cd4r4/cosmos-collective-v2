@@ -491,6 +491,11 @@ export function SkyMapViewer({
       const statusColor = isActive ? '#22c55e' : isPast ? '#6b7280' : '#f59e0b'
       return window.A.source(shower.radiant.ra, shower.radiant.dec, {
         name: shower.name,
+        // thumbnail enables the hover popup card (same style as JWST markers)
+        thumbnail: 'https://images-assets.nasa.gov/image/NHQ201908130001/NHQ201908130001~thumb.jpg',
+        source: isActive ? 'ACTIVE NOW' : status,
+        instrument: `ZHR ${shower.zenithalHourlyRate}/hr`,
+        category: shower.parentBody ? `Parent: ${shower.parentBody}` : 'Meteor shower',
         popupTitle: `<div style="font-size:14px;font-weight:bold;margin-bottom:4px">☄️ ${shower.name}</div>`,
         popupDesc: [
           `<div style="display:inline-block;padding:2px 8px;border-radius:99px;font-size:10px;font-weight:bold;color:white;background:${statusColor};margin-bottom:6px">${status}</div>`,
@@ -854,8 +859,8 @@ export function SkyMapViewer({
             Use search to find objects. Click and drag to pan, scroll to zoom.
           </div>
 
-          {/* Hover Preview Popup — pinned at hover position, interactive */}
-          {hoveredObject && (
+          {/* Hover Preview Popup — only shown when source has a thumbnail */}
+          {hoveredObject && hoveredObject.thumbnail && (
             <div
               className="fixed z-50 animate-fade-in"
               style={{

@@ -10,14 +10,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
-  Telescope,
   Globe,
-  Calendar,
-  BookOpen,
   Home,
   Orbit,
   Sun,
   Hexagon,
+  LayoutDashboard,
+  Calendar,
+  BookMarked,
 } from 'lucide-react'
 
 // ============================================
@@ -25,6 +25,12 @@ import {
 // ============================================
 
 const navItems = [
+  {
+    label: 'Mission Control',
+    href: '/mission-control',
+    icon: BookMarked,
+    description: 'Hub for Explore, Live Events, Devlog, Observatory and more',
+  },
   {
     label: 'Solar System',
     href: '/solar-system',
@@ -49,24 +55,6 @@ const navItems = [
     icon: Hexagon,
     description: 'James Webb Space Telescope observation explorer',
   },
-  {
-    label: 'Explore',
-    href: '/explore',
-    icon: Telescope,
-    description: 'Browse JWST and radio telescope observations',
-  },
-  {
-    label: 'Live Events',
-    href: '/events',
-    icon: Calendar,
-    description: 'Real-time astronomical events and alerts',
-  },
-  {
-    label: 'Devlog',
-    href: '/devlog',
-    icon: BookOpen,
-    description: 'Technical blog and project updates',
-  },
 ]
 
 // ============================================
@@ -76,9 +64,9 @@ const navItems = [
 function Logo() {
   return (
     <Link
-      href="/"
+      href="/solar-system"
       className="flex items-center gap-2.5 group"
-      aria-label="Cosmos Collective - Home"
+      aria-label="Cosmos Collective - Solar System"
     >
       {/* Logo Icon — Armillary Sphere */}
       <div className="relative w-10 h-10">
@@ -208,9 +196,9 @@ function DesktopNav() {
 // Bottom nav items (subset of main nav for mobile)
 const bottomNavItems = [
   { label: 'Home', href: '/', icon: Home },
-  { label: 'Solar System', href: '/solar-system', icon: Sun },
+  { label: 'Mission', href: '/mission-control', icon: BookMarked },
+  { label: 'Solar Sys', href: '/solar-system', icon: Sun },
   { label: 'Sky Map', href: '/sky-map', icon: Globe },
-  { label: 'Explore', href: '/explore', icon: Telescope },
   { label: 'Events', href: '/events', icon: Calendar },
 ]
 

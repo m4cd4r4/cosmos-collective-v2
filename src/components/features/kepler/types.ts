@@ -55,7 +55,7 @@ export interface StarSystem {
   drawR: number
 }
 
-export type ViewMode = 'sky' | 'galaxy' | 'hr'
+export type ViewMode = 'sky' | 'galaxy' | 'hr' | 'aladin'
 
 export interface KeplerFilters {
   size: 'all' | PlanetCategory
