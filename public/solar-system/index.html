@@ -1502,6 +1502,25 @@
         }
 
         // =====================================================================
+        // ROUND POINT TEXTURE — makes PointsMaterial render as soft circles
+        // not WebGL squares. Shared across starfield, corona, and asteroids.
+        // =====================================================================
+        function createRoundPointTexture() {
+            const c = document.createElement('canvas');
+            c.width = 64; c.height = 64;
+            const ctx = c.getContext('2d');
+            const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+            grad.addColorStop(0,   'rgba(255,255,255,1.0)');
+            grad.addColorStop(0.35,'rgba(255,255,255,0.85)');
+            grad.addColorStop(0.7, 'rgba(255,255,255,0.25)');
+            grad.addColorStop(1.0, 'rgba(255,255,255,0.0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 64, 64);
+            return new THREE.CanvasTexture(c);
+        }
+        const roundPointTex = createRoundPointTexture();
+
+        // =====================================================================
         // STARFIELD - multi-layer depth
         // =====================================================================
         function createStarfield() {
@@ -1532,7 +1551,9 @@
                     opacity: 0.85,
                     sizeAttenuation: true,
                     blending: THREE.AdditiveBlending,
-                    depthWrite: false
+                    depthWrite: false,
+                    map: roundPointTex,
+                    alphaTest: 0.01
                 });
                 scene.add(new THREE.Points(geo, mat));
             });
@@ -1646,7 +1667,7 @@
                 velocities.push({ x: (Math.random()-0.5)*0.02, y: (Math.random()-0.5)*0.02, z: (Math.random()-0.5)*0.02 });
             }
             geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const mat = new THREE.PointsMaterial({ color: 0xffaa00, size: 0.3, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false });
+            const mat = new THREE.PointsMaterial({ color: 0xffaa00, size: 0.45, transparent: true, opacity: 0.6, blending: THREE.AdditiveBlending, depthWrite: false, map: roundPointTex, alphaTest: 0.01 });
             coronaParticles = new THREE.Points(geo, mat);
             coronaParticles.userData.velocities = velocities;
             scene.add(coronaParticles);
@@ -2001,6 +2022,52 @@
         const trailLines = new Map();
         const sunTrail = [];
         let sunTrailMaxLength = 2000;
+
+        // =====================================================================
+        // STATIC ORBIT RINGS — shows the orbit path shape (ellipse or circle)
+        // These flat rings sit in the orbital XY plane and follow the Sun's Z.
+        // When elliptical mode is on, each ring is drawn as a true ellipse with
+        // the Sun at the focus (periapsis is visibly closer, apoapsis farther).
+        // =====================================================================
+        const orbitRingLines = new Map();
+
+        function createOrbitRings() {
+            orbitRingLines.forEach(line => {
+                scene.remove(line);
+                line.geometry.dispose();
+                line.material.dispose();
+            });
+            orbitRingLines.clear();
+
+            const segs = 256;
+            planets.forEach(planet => {
+                const pd = planetsData.find(d => d.name === planet.name);
+                const a = planet.distance;
+                const e = ellipticalOrbits ? planet.ecc : 0;
+                const b = a * Math.sqrt(1 - e * e);
+                // Shift the ellipse centre so the Sun sits at the near focus
+                const offsetX = ellipticalOrbits ? -a * e : 0;
+
+                const pts = [];
+                for (let i = 0; i <= segs; i++) {
+                    const t = (i / segs) * Math.PI * 2;
+                    pts.push(new THREE.Vector3(offsetX + a * Math.cos(t), b * Math.sin(t), 0));
+                }
+
+                const geo = new THREE.BufferGeometry().setFromPoints(pts);
+                const mat = new THREE.LineBasicMaterial({
+                    color: pd ? pd.color : 0x4488ff,
+                    transparent: true,
+                    opacity: 0.22,
+                    depthWrite: false
+                });
+                const line = new THREE.Line(geo, mat);
+                line.position.z = sun.position.z;
+                orbitRingLines.set(planet.name, line);
+                scene.add(line);
+            });
+        }
+        createOrbitRings();
 
         function updateTrails() {
             // Sun trail — shows the vortex forward path
@@ -2494,6 +2561,8 @@
 
                 updateTrails();
                 updateCorona();
+                // Keep orbit rings in the same plane as the Sun
+                orbitRingLines.forEach(line => { line.position.z = sun.position.z; });
                 elapsedTime += dt;
 
                 eventsUpdateCounter++;
@@ -3027,6 +3096,8 @@
                 p.moons.forEach(m => { m.meanAnomaly = m.angle; });
             });
             clearAllTrails();
+            // Redraw orbit rings as ellipses or circles to match mode
+            createOrbitRings();
         });
 
         // Planet dive button
