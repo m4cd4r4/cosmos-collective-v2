@@ -26,6 +26,9 @@ interface HoveredMarker {
   name: string
   thumbnail: string
   category: string
+  description?: string
+  constellation?: string
+  distanceLightYears?: number
 }
 
 // ── Public handle ──────────────────────────────────────────────────────────
@@ -113,11 +116,18 @@ export const JWSTSkyMap = forwardRef<
     for (const [category, obs] of Object.entries(groups)) {
       const color = JWST_CATEGORY_COLORS[category] ?? JWST_CATEGORY_COLORS.other
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      const catalog = window.A.catalog({
+      const catalog = (window.A.catalog as any)({
         name: CATEGORY_LABELS[category] ?? category,
         color,
         sourceSize: 14,
         shape: 'circle',
+        // Show the target name as a floating label beside each marker
+        displayLabel: true,
+        labelColumn: 'name',
+        labelColor: color,
+        labelFont: '10px Courier New, monospace',
+        // Suppress Aladin's built-in click popup — we use our own
+        onClick: null,
       })
 
       for (const o of obs) {
@@ -127,6 +137,9 @@ export const JWSTSkyMap = forwardRef<
           name: o.targetName,
           thumbnail: o.images.thumbnail,
           category,
+          description: o.description ?? '',
+          constellation: o.coordinates.constellation ?? '',
+          distanceLightYears: o.distanceLightYears ?? 0,
         })
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         catalog.addSources([source])
@@ -135,7 +148,7 @@ export const JWSTSkyMap = forwardRef<
       aladin.addCatalog(catalog)
     }
 
-    // Hover handler
+    // Hover handler — fills our custom thumbnail popup
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     aladin.on('objectHovered', (obj: unknown) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -146,6 +159,9 @@ export const JWSTSkyMap = forwardRef<
           name: String(src.data.name ?? ''),
           thumbnail: String(src.data.thumbnail),
           category: String(src.data.category ?? ''),
+          description: src.data.description ? String(src.data.description) : undefined,
+          constellation: src.data.constellation ? String(src.data.constellation) : undefined,
+          distanceLightYears: src.data.distanceLightYears ? Number(src.data.distanceLightYears) : undefined,
         })
         setHoverPos({ x: mousePosRef.current.x, y: mousePosRef.current.y })
       } else {
@@ -153,7 +169,7 @@ export const JWSTSkyMap = forwardRef<
       }
     })
 
-    // Click handler
+    // Click handler — fire our callback + suppress Aladin's default popup
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     aladin.on('objectClicked', (obj: unknown) => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -161,6 +177,9 @@ export const JWSTSkyMap = forwardRef<
       if (src?.data?.obsId) {
         onMarkerClick?.(String(src.data.obsId))
       }
+      // Hide Aladin's built-in popup if it appears despite onClick: null
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      try { aladinRef.current?.popup?.hide?.() } catch { /* no-op */ }
     })
 
     // If there's already a selected observation, fly to it
@@ -258,32 +277,58 @@ export const JWSTSkyMap = forwardRef<
         <div
           className="fixed z-50 pointer-events-none"
           style={{
-            left: Math.min(hoverPos.x + 14, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 228),
-            top: Math.max(8, hoverPos.y - 120),
+            left: Math.min(hoverPos.x + 14, (typeof window !== 'undefined' ? window.innerWidth : 1200) - 240),
+            top: Math.max(8, hoverPos.y - 140),
           }}
         >
-          <div className="rounded-xl overflow-hidden border border-white/15 shadow-2xl shadow-black/60 backdrop-blur-md bg-[#07090f]/90 w-52">
-            <div className="relative h-28">
+          <div className="rounded-xl overflow-hidden border border-white/15 shadow-2xl shadow-black/60 backdrop-blur-md bg-[#07090f]/95 w-[230px]">
+            {/* Image */}
+            <div className="relative h-32">
               <img
                 src={hoveredMarker.thumbnail}
                 alt={hoveredMarker.name}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#07090f]/90 to-transparent" />
-              <div className="absolute bottom-0 left-0 right-0 p-2.5">
-                <div className="text-white text-xs font-bold drop-shadow-lg">
-                  🔭 {hoveredMarker.name}
+              <div className="absolute inset-0 bg-gradient-to-t from-[#07090f] via-[#07090f]/30 to-transparent" />
+              {/* Category badge */}
+              <div
+                className="absolute top-2 right-2 text-[8px] px-1.5 py-0.5 rounded uppercase tracking-widest font-bold backdrop-blur-sm"
+                style={{
+                  background: `${JWST_CATEGORY_COLORS[hoveredMarker.category] ?? '#d4af37'}22`,
+                  color: JWST_CATEGORY_COLORS[hoveredMarker.category] ?? '#d4af37',
+                  border: `1px solid ${JWST_CATEGORY_COLORS[hoveredMarker.category] ?? '#d4af37'}55`,
+                }}
+              >
+                {CATEGORY_LABELS[hoveredMarker.category] ?? hoveredMarker.category}
+              </div>
+              {/* Name */}
+              <div className="absolute bottom-2 left-2.5 right-2.5">
+                <div className="text-white text-[12px] font-bold leading-tight drop-shadow-lg">
+                  {hoveredMarker.name}
                 </div>
-                <div
-                  className="text-[9px] mt-0.5 drop-shadow-lg"
-                  style={{ color: JWST_CATEGORY_COLORS[hoveredMarker.category] ?? '#d4af37' }}
-                >
-                  {CATEGORY_LABELS[hoveredMarker.category] ?? hoveredMarker.category} · JWST
-                </div>
+                {hoveredMarker.constellation && (
+                  <div className="text-white/50 text-[9px] mt-0.5">
+                    {hoveredMarker.constellation}
+                  </div>
+                )}
               </div>
             </div>
-            <div className="px-3 py-1.5 text-[9px] text-[#4a5580] uppercase tracking-[0.12em]">
-              Click to explore
+            {/* Details */}
+            <div className="px-3 py-2 space-y-1.5">
+              {hoveredMarker.description && (
+                <p className="text-[10px] text-[#8090b0] leading-relaxed line-clamp-2">
+                  {hoveredMarker.description}
+                </p>
+              )}
+              {hoveredMarker.distanceLightYears && hoveredMarker.distanceLightYears > 0 && (
+                <div className="flex items-center justify-between text-[9px]">
+                  <span className="text-[#4a5580] uppercase tracking-wider">Distance</span>
+                  <span className="text-[#8090b0]">{formatDistance(hoveredMarker.distanceLightYears)}</span>
+                </div>
+              )}
+              <div className="text-[9px] text-[#d4af37] uppercase tracking-[0.12em] pt-0.5 border-t border-white/5">
+                Click to explore →
+              </div>
             </div>
           </div>
         </div>
@@ -293,3 +338,12 @@ export const JWSTSkyMap = forwardRef<
 })
 
 JWSTSkyMap.displayName = 'JWSTSkyMap'
+
+// ── Helpers ─────────────────────────────────────────────────────────────────
+
+function formatDistance(ly: number): string {
+  if (ly >= 1_000_000_000) return `${(ly / 1_000_000_000).toFixed(1)}B ly`
+  if (ly >= 1_000_000) return `${(ly / 1_000_000).toFixed(0)}M ly`
+  if (ly >= 1_000) return `${(ly / 1_000).toFixed(1)}K ly`
+  return `${ly.toLocaleString()} ly`
+}
