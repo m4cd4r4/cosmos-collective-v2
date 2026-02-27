@@ -36,6 +36,16 @@
       "Bash(dir:*)"
     ],
     "deny": [],
-    "ask": []
+    "ask": [],
+    "disabledMcpServers": [
+      "gemini",
+      "pencil",
+      "gmail",
+      "google-cloud",
+      "hostinger-api",
+      "portpilot",
+      "stitch",
+      "contractclarity"
+    ]
   }
 }
