@@ -39,6 +39,8 @@ import {
   Loader2,
   ExternalLink,
   Image,
+  Maximize2,
+  X,
 } from 'lucide-react'
 
 // ============================================
@@ -65,6 +67,7 @@ export function DashboardContent() {
   const [apod, setApod] = useState<APODData | null>(null)
   const [issPosition, setIssPosition] = useState<{ lat: number; lon: number } | null>(null)
   const [issError, setIssError] = useState(false)
+  const [issModalOpen, setIssModalOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
   // Get all observations
@@ -443,18 +446,35 @@ export function DashboardContent() {
               {/* ISS Tracker with Map */}
               <Card padding="lg">
                 <CardContent>
-                  <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
-                    <Satellite className="w-5 h-5 text-cosmos-gold" />
-                    ISS Location
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                      <Satellite className="w-5 h-5 text-cosmos-gold" />
+                      ISS Location
+                    </h3>
+                    {issPosition && (
+                      <button
+                        onClick={() => setIssModalOpen(true)}
+                        className="p-1.5 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-cosmos-gold"
+                        aria-label="Expand ISS tracker"
+                        title="Expand"
+                      >
+                        <Maximize2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                   {issPosition ? (
                     <div className="space-y-3">
-                      <WorldMapSVG
-                        issPosition={issPosition}
-                        width={280}
-                        height={140}
-                        className="w-full rounded-lg bg-white/5 p-1.5"
-                      />
+                      <button
+                        onClick={() => setIssModalOpen(true)}
+                        className="w-full cursor-pointer rounded-lg hover:ring-1 hover:ring-cosmos-gold/20 transition-all"
+                      >
+                        <WorldMapSVG
+                          issPosition={issPosition}
+                          width={280}
+                          height={140}
+                          className="w-full rounded-lg bg-white/5 p-1.5"
+                        />
+                      </button>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-400">Lat</span>
                         <span className="text-white font-mono">{issPosition.lat.toFixed(2)}°</span>
@@ -485,6 +505,94 @@ export function DashboardContent() {
                   )}
                 </CardContent>
               </Card>
+
+              {/* ISS Expanded Modal */}
+              {issModalOpen && issPosition && (
+                <div
+                  className="fixed inset-0 z-50 flex items-center justify-center p-4"
+                  role="dialog"
+                  aria-label="ISS Tracker expanded view"
+                >
+                  {/* Backdrop */}
+                  <div
+                    className="absolute inset-0 bg-black/70 backdrop-blur-sm"
+                    onClick={() => setIssModalOpen(false)}
+                    onKeyDown={(e) => { if (e.key === 'Escape') setIssModalOpen(false) }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label="Close modal"
+                  />
+
+                  {/* Modal content */}
+                  <div className="relative w-full max-w-3xl rounded-2xl border border-white/10 bg-cosmos-void/95 backdrop-blur-xl shadow-2xl overflow-hidden z-10">
+                    {/* Header */}
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg bg-cosmos-gold/10 flex items-center justify-center">
+                          <Satellite className="w-4 h-4 text-cosmos-gold" />
+                        </div>
+                        <div>
+                          <h2 className="text-lg font-semibold text-white">International Space Station</h2>
+                          <p className="text-xs text-gray-400">Real-time orbital position · Updates every 30s</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setIssModalOpen(false)}
+                        className="p-2 rounded-lg hover:bg-white/10 transition-colors text-gray-400 hover:text-white"
+                        aria-label="Close"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    {/* Large map */}
+                    <div className="px-6 pt-5 pb-3">
+                      <WorldMapSVG
+                        issPosition={issPosition}
+                        width={720}
+                        height={360}
+                        className="w-full rounded-xl bg-white/[0.03] border border-white/5 p-2"
+                      />
+                    </div>
+
+                    {/* Stats row */}
+                    <div className="px-6 pb-5 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="rounded-xl bg-white/5 border border-white/5 p-3 text-center">
+                        <div className="text-xs text-gray-400 mb-1">Latitude</div>
+                        <div className="text-lg font-bold text-white font-mono">{issPosition.lat.toFixed(4)}°</div>
+                      </div>
+                      <div className="rounded-xl bg-white/5 border border-white/5 p-3 text-center">
+                        <div className="text-xs text-gray-400 mb-1">Longitude</div>
+                        <div className="text-lg font-bold text-white font-mono">{issPosition.lon.toFixed(4)}°</div>
+                      </div>
+                      <div className="rounded-xl bg-white/5 border border-white/5 p-3 text-center">
+                        <div className="text-xs text-gray-400 mb-1">Altitude</div>
+                        <div className="text-lg font-bold text-cosmos-gold font-mono">~408 km</div>
+                      </div>
+                      <div className="rounded-xl bg-white/5 border border-white/5 p-3 text-center">
+                        <div className="text-xs text-gray-400 mb-1">Speed</div>
+                        <div className="text-lg font-bold text-cosmos-gold font-mono">~27,600 km/h</div>
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-6 py-3 border-t border-white/5 flex items-center justify-between">
+                      <p className="text-xs text-gray-500">
+                        Orbits Earth every ~92 minutes · Crew of 7
+                      </p>
+                      <a
+                        href="https://spotthestation.nasa.gov/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-xs text-cosmos-gold hover:underline flex items-center gap-1"
+                      >
+                        NASA Spot the Station
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Event Types Legend */}
               <Card padding="lg">
