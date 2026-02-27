@@ -73,12 +73,13 @@ export const JWSTSkyMap = forwardRef<
   const aladinRef = useRef<any>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const mousePosRef = useRef({ x: 0, y: 0 })
+  const isFirstRender = useRef(true)
   const [isLoaded, setIsLoaded] = useState(false)
   const [hoveredMarker, setHoveredMarker] = useState<HoveredMarker | null>(null)
   const [hoverPos, setHoverPos] = useState({ x: 0, y: 0 })
 
   useImperativeHandle(ref, () => ({
-    flyTo(ra, dec, fov = 0.5) {
+    flyTo(ra, dec, fov = 5) {
       if (!aladinRef.current) return
       aladinRef.current.gotoRaDec(ra, dec)
       aladinRef.current.setFov(fov)
@@ -182,14 +183,7 @@ export const JWSTSkyMap = forwardRef<
       try { aladinRef.current?.popup?.hide?.() } catch { /* no-op */ }
     })
 
-    // If there's already a selected observation, fly to it
-    if (selectedObsId) {
-      const target = observations.find(o => o.id === selectedObsId)
-      if (target) {
-        aladin.gotoRaDec(target.coordinates.ra, target.coordinates.dec)
-        aladin.setFov(1.5)
-      }
-    }
+    // On first load keep the wide galactic overview — don't zoom to the default selection
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onMarkerClick])
 
@@ -200,8 +194,9 @@ export const JWSTSkyMap = forwardRef<
     return () => clearTimeout(timer)
   }, [initAladin])
 
-  // Fly to newly selected observation
+  // Fly to newly selected observation — skip on first render so initial load shows the wide overview
   useEffect(() => {
+    if (isFirstRender.current) { isFirstRender.current = false; return }
     if (!selectedObsId || !aladinRef.current) return
     const observations = getFeaturedJWSTImages()
     const obs = observations.find(o => o.id === selectedObsId)
@@ -209,7 +204,7 @@ export const JWSTSkyMap = forwardRef<
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       aladinRef.current.gotoRaDec(obs.coordinates.ra, obs.coordinates.dec)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      aladinRef.current.setFov(1.5)
+      aladinRef.current.setFov(5)
     }
   }, [selectedObsId])
 

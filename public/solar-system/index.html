@@ -1473,9 +1473,25 @@
             loadingPromises[name] = new Promise((resolve) => {
                 const url = textureURLs[name];
                 if (!url) { resolve(null); return; }
+
+                // Per-texture 5s timeout — handles stalled connections on mobile
+                let settled = false;
+                const timeoutId = setTimeout(() => {
+                    if (settled) return;
+                    settled = true;
+                    console.warn('[SolarSystem] Texture timeout, using procedural fallback:', name);
+                    textureCache[name] = createProceduralTexture(name);
+                    texturesLoaded++;
+                    updateLoadingProgress();
+                    resolve(textureCache[name]);
+                }, 5000);
+
                 textureLoader.load(
                     url,
                     (texture) => {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timeoutId);
                         texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                         textureCache[name] = texture;
                         texturesLoaded++;
@@ -1485,6 +1501,9 @@
                     },
                     undefined,
                     () => {
+                        if (settled) return;
+                        settled = true;
+                        clearTimeout(timeoutId);
                         textureCache[name] = createProceduralTexture(name);
                         texturesLoaded++;
                         updateLoadingProgress();

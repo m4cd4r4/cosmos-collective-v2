@@ -83,7 +83,7 @@ export default function HomePage() {
             {/* Hero card */}
             <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
               <div
-                className="relative max-w-3xl mx-4 pointer-events-auto animate-[fade-in_1.5s_ease-out]"
+                className="relative w-full max-w-[340px] sm:max-w-xl md:max-w-3xl mx-4 pointer-events-auto animate-[fade-in_1.5s_ease-out]"
                 onClick={(e) => e.stopPropagation()}
               >
                 {/* Close button */}
@@ -96,12 +96,12 @@ export default function HomePage() {
                 </button>
 
                 {/* Glass card */}
-                <div className="glass-panel-strong rounded-2xl p-8 md:p-12 text-center backdrop-blur-md bg-cosmos-void/40 border border-white/10">
+                <div className="glass-panel-strong rounded-2xl p-5 sm:p-8 md:p-12 text-center backdrop-blur-md bg-cosmos-void/40 border border-white/10">
                   {/* Badge */}
-                  <div className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-6 overflow-hidden">
+                  <div className="relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-cosmos-gold/10 border border-cosmos-gold/30 mb-4 overflow-hidden">
                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-cosmos-gold/15 to-transparent animate-shimmer bg-[length:200%_100%]" />
-                    <Sparkles className="w-4 h-4 text-cosmos-gold relative z-10" />
-                    <span className="text-sm text-cosmos-gold font-medium relative z-10">
+                    <Sparkles className="w-3.5 h-3.5 text-cosmos-gold relative z-10" />
+                    <span className="text-xs sm:text-sm text-cosmos-gold font-medium relative z-10">
                       Live Multi-Wavelength Observatory
                     </span>
                   </div>
@@ -109,7 +109,7 @@ export default function HomePage() {
                   {/* Heading */}
                   <h1
                     id="hero-heading"
-                    className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-4"
+                    className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold mb-3 sm:mb-4"
                   >
                     <span className="text-white">Explore the</span>
                     <br />
@@ -119,31 +119,31 @@ export default function HomePage() {
                   </h1>
 
                   {/* Tagline */}
-                  <p className="text-lg md:text-xl text-gray-400 font-light tracking-wide mb-4">
+                  <p className="text-sm sm:text-lg md:text-xl text-gray-400 font-light tracking-wide mb-3 sm:mb-4">
                     Your window into the universe
                   </p>
 
-                  {/* Description */}
-                  <p className="text-base md:text-lg text-gray-300 max-w-xl mx-auto mb-6">
+                  {/* Description — hidden on small mobile to save space */}
+                  <p className="hidden sm:block text-base md:text-lg text-gray-300 max-w-xl mx-auto mb-6">
                     Track the ISS, browse JWST observations, monitor solar weather,
                     and explore the sky — all powered by live data from 11 space agencies.
                   </p>
 
                   {/* CTA Buttons */}
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6">
-                    <Button size="lg" leftIcon={<Telescope className="w-5 h-5" />} asChild>
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-4 sm:mb-6">
+                    <Button size="lg" leftIcon={<Telescope className="w-4 h-4 sm:w-5 sm:h-5" />} asChild>
                       <Link href="/observatory">Deep Space Observatory</Link>
                     </Button>
-                    <Button variant="outline" size="lg" leftIcon={<Globe className="w-5 h-5" />} asChild>
+                    <Button variant="outline" size="lg" leftIcon={<Globe className="w-4 h-4 sm:w-5 sm:h-5" />} asChild>
                       <Link href="/sky-map">Open Sky Map</Link>
                     </Button>
-                    <Button variant="outline" size="lg" leftIcon={<Radio className="w-5 h-5" />} asChild>
+                    <Button variant="outline" size="lg" leftIcon={<Radio className="w-4 h-4 sm:w-5 sm:h-5" />} asChild>
                       <Link href="/events">Live Events</Link>
                     </Button>
                   </div>
 
                   {/* Stats */}
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mt-1 sm:mt-2">
                     {stats.map((stat, i) => (
                       <CountUpStat
                         key={stat.label}
@@ -157,8 +157,8 @@ export default function HomePage() {
                     ))}
                   </div>
 
-                  {/* Dismiss hint */}
-                  <div className="mt-6 pt-4 border-t border-white/5">
+                  {/* Dismiss hint — hidden on mobile to save space */}
+                  <div className="hidden sm:block mt-6 pt-4 border-t border-white/5">
                     <p className="text-sm text-gray-400 flex items-center justify-center gap-2">
                       <span className="inline-block w-1.5 h-1.5 rounded-full bg-cosmos-gold/60 animate-pulse" />
                       Click anywhere or press{' '}

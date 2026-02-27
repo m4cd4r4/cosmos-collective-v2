@@ -196,10 +196,10 @@ function DesktopNav() {
 // Bottom nav items (subset of main nav for mobile)
 const bottomNavItems = [
   { label: 'Home', href: '/', icon: Home },
-  { label: 'Mission', href: '/mission-control', icon: BookMarked },
   { label: 'Solar Sys', href: '/solar-system', icon: Sun },
   { label: 'Sky Map', href: '/sky-map', icon: Globe },
-  { label: 'Events', href: '/events', icon: Calendar },
+  { label: 'Kepler', href: '/kepler', icon: Orbit },
+  { label: 'JWST', href: '/jwst', icon: Hexagon },
 ]
 
 function MobileBottomNav() {
