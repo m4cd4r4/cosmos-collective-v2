@@ -193,6 +193,7 @@ const config: Config = {
         'scale-in': 'scale-in 0.3s ease-out',
         'shimmer': 'shimmer 2s linear infinite',
         'page-enter': 'page-enter 0.4s ease-out both',
+        'fab-panel-enter': 'fab-panel-enter 0.25s ease-out both',
       },
 
       keyframes: {
@@ -235,6 +236,10 @@ const config: Config = {
         'page-enter': {
           '0%': { opacity: '0', transform: 'translateY(6px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        'fab-panel-enter': {
+          '0%': { opacity: '0', transform: 'scale(0.92) translateY(12px)' },
+          '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
         },
       },
 
