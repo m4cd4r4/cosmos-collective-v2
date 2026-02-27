@@ -11,7 +11,6 @@ export type {
   DetectedFeature,
   AIAnalysis,
   AstronomicalEvent,
-  ClassificationTask,
   UserStats,
   SearchFilters,
   ApiResponse,

@@ -90,13 +90,6 @@
       "description": "Interactive celestial map",
       "url": "/sky-map",
       "icons": [{ "src": "/icons/shortcut-skymap.png", "sizes": "96x96" }]
-    },
-    {
-      "name": "Citizen Science",
-      "short_name": "Classify",
-      "description": "Help classify astronomical data",
-      "url": "/citizen-science",
-      "icons": [{ "src": "/icons/shortcut-classify.png", "sizes": "96x96" }]
     }
   ],
   "related_applications": [],

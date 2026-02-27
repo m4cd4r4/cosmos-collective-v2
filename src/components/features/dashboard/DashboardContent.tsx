@@ -274,12 +274,6 @@ export function DashboardContent() {
 
                 <div className="space-y-3">
                   <QuickActionLink
-                    href="/citizen-science"
-                    icon={Target}
-                    label="Start Classifying"
-                    description="Help advance real science"
-                  />
-                  <QuickActionLink
                     href="/explore"
                     icon={Telescope}
                     label="Explore Images"

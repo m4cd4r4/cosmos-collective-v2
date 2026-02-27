@@ -13,7 +13,6 @@ import type {
   SearchFilters,
   AstronomicalEvent,
   UserStats,
-  ClassificationTask,
 } from '@/types'
 
 // ============================================
@@ -21,7 +20,7 @@ import type {
 // ============================================
 
 interface ViewState {
-  currentView: 'gallery' | 'viewer' | 'sky-map' | 'events' | 'citizen-science'
+  currentView: 'gallery' | 'viewer' | 'sky-map' | 'events'
   sidebarOpen: boolean
   selectedObservationId: string | null
   comparisonObservationIds: string[]
@@ -41,7 +40,6 @@ interface DataState {
   observations: Observation[]
   featuredObservations: Observation[]
   events: AstronomicalEvent[]
-  classificationTasks: ClassificationTask[]
   isLoading: boolean
   error: string | null
 }
@@ -92,7 +90,6 @@ interface CosmosStore extends ViewState, FilterState, DataState, UserState {
   addObservations: (observations: Observation[]) => void
   setFeaturedObservations: (observations: Observation[]) => void
   setEvents: (events: AstronomicalEvent[]) => void
-  setClassificationTasks: (tasks: ClassificationTask[]) => void
   setLoading: (loading: boolean) => void
   setError: (error: string | null) => void
 
@@ -156,7 +153,6 @@ export const useCosmosStore = create<CosmosStore>()(
       observations: [],
       featuredObservations: [],
       events: [],
-      classificationTasks: [],
       isLoading: false,
       error: null,
 
@@ -224,7 +220,6 @@ export const useCosmosStore = create<CosmosStore>()(
         })),
       setFeaturedObservations: (observations) => set({ featuredObservations: observations }),
       setEvents: (events) => set({ events }),
-      setClassificationTasks: (tasks) => set({ classificationTasks: tasks }),
       setLoading: (loading) => set({ isLoading: loading }),
       setError: (error) => set({ error }),
 

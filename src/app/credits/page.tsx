@@ -128,13 +128,21 @@ export default function CreditsPage() {
                 <Heart className="w-3.5 h-3.5 text-[#e040fb]" />
                 <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-[#e040fb]">Special Thanks</span>
               </div>
-              <div className="px-4 py-4">
-                <p className="text-[11px] text-[#6070a0] leading-relaxed mb-3">
-                  To the scientists, engineers, and teams behind JWST, Hubble, and ground-based observatories worldwide who make these incredible observations possible.
-                </p>
-                <p className="text-[11px] text-[#6070a0] leading-relaxed">
-                  To the open source community for building and maintaining the tools that make projects like this possible.
-                </p>
+              <div className="px-4 py-4 space-y-3">
+                <div>
+                  <p className="text-[11px] text-[#6070a0] leading-relaxed">
+                    To the scientists, engineers, and teams behind{' '}
+                    <a href="https://webbtelescope.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">JWST</a>,{' '}
+                    <a href="https://hubblesite.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">Hubble</a>, and ground-based observatories worldwide who make these incredible observations possible.
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] text-[#6070a0] leading-relaxed">
+                    To the{' '}
+                    <a href="https://opensource.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">open source community</a>{' '}
+                    for building and maintaining the tools that make projects like this possible.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -148,13 +156,21 @@ export default function CreditsPage() {
               </div>
               <div className="px-4 py-3 space-y-2.5">
                 {[
-                  { title: 'James Webb Space Telescope', body: 'NASA, ESA, CSA, and STScI. JWST imagery is generally in the public domain.' },
-                  { title: 'Hubble Space Telescope', body: 'NASA, ESA, and STScI. Hubble imagery is generally in the public domain.' },
-                  { title: 'Australian Telescopes', body: 'CSIRO ASKAP, Parkes (Murriyang), and ATCA. Credit: CSIRO.' },
-                  { title: 'NASA APOD', body: 'Credit to individual astronomers, observatories, and agencies as noted per image.' },
-                ].map(({ title, body }) => (
+                  { title: 'James Webb Space Telescope', url: 'https://webbtelescope.org/images', body: 'NASA, ESA, CSA, and STScI. JWST imagery is generally in the public domain.' },
+                  { title: 'Hubble Space Telescope', url: 'https://hubblesite.org/images/gallery', body: 'NASA, ESA, and STScI. Hubble imagery is generally in the public domain.' },
+                  { title: 'Australian Telescopes', url: 'https://www.csiro.au/en/about/facilities-collections/atnf', body: 'CSIRO ASKAP, Parkes (Murriyang), and ATCA. Credit: CSIRO.' },
+                  { title: 'NASA APOD', url: 'https://apod.nasa.gov/', body: 'Credit to individual astronomers, observatories, and agencies as noted per image.' },
+                ].map(({ title, url, body }) => (
                   <div key={title} className="border-b border-[rgba(212,175,55,0.06)] last:border-0 pb-2.5 last:pb-0">
-                    <div className="text-[11px] font-semibold text-[#c8d4f0]">{title}</div>
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-[#d4af37] hover:text-[#e0c060] transition-colors hover:underline"
+                    >
+                      {title}
+                      <ExternalLink className="w-3 h-3 opacity-60" />
+                    </a>
                     <div className="text-[10px] text-[#4a5580] mt-0.5 leading-relaxed">{body}</div>
                   </div>
                 ))}
