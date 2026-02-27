@@ -7,6 +7,7 @@
 
 import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
+import { StatPopover, type StatPopoverItem } from '@/components/ui/StatPopover'
 import {
   Telescope,
   Calendar,
@@ -96,6 +97,41 @@ const tools = [
 
 // ── Info panels ────────────────────────────────────────────────────────────
 
+const dataSourceItems: StatPopoverItem[] = [
+  { label: 'NASA', url: 'https://www.nasa.gov/', detail: 'APOD, ISS tracking, NEO data' },
+  { label: 'STScI / MAST', url: 'https://mast.stsci.edu/', detail: 'JWST & Hubble archives' },
+  { label: 'ESA', url: 'https://www.esa.int/', detail: 'European Space Agency' },
+  { label: 'CSA', url: 'https://www.asc-csa.gc.ca/', detail: 'Canadian Space Agency' },
+  { label: 'CSIRO', url: 'https://www.csiro.au/', detail: 'Australian telescopes' },
+  { label: 'CDS Strasbourg', url: 'https://cds.u-strasbg.fr/', detail: 'Aladin sky atlas & SIMBAD' },
+  { label: 'NASA DONKI', url: 'https://kauai.ccmc.gsfc.nasa.gov/DONKI/', detail: 'Solar weather data' },
+  { label: 'NASA NEO API', url: 'https://api.nasa.gov/', detail: 'Near-Earth objects' },
+  { label: 'ISS Tracker', url: 'https://wheretheiss.at/', detail: 'Real-time ISS position' },
+  { label: 'ALeRCE', url: 'https://alerce.online/', detail: 'Astronomical transient broker' },
+  { label: 'Open-Meteo', url: 'https://open-meteo.com/', detail: 'Weather & atmospheric data' },
+]
+
+const observationItems: StatPopoverItem[] = [
+  { label: 'JWST (NIRCam / MIRI)', url: 'https://webbtelescope.org/images', detail: '85 observations' },
+  { label: 'Hubble (WFC3 / ACS)', url: 'https://hubblesite.org/images/gallery', detail: '18 observations' },
+  { label: 'Radio (ASKAP / Parkes / ATCA)', url: 'https://www.csiro.au/en/about/facilities-collections/atnf', detail: '29 observations' },
+]
+
+const wavelengthItems: StatPopoverItem[] = [
+  { label: 'Radio', detail: '> 1 mm — ASKAP, Parkes, MWA' },
+  { label: 'Infrared', detail: '700 nm – 1 mm — JWST NIRCam & MIRI' },
+  { label: 'Visible', detail: '400 – 700 nm — Hubble WFC3' },
+  { label: 'Ultraviolet', detail: '10 – 400 nm — Hubble ACS' },
+  { label: 'X-ray', detail: '0.01 – 10 nm — Chandra, XMM-Newton' },
+]
+
+const coverageItems: StatPopoverItem[] = [
+  { label: 'JWST Deep Field', url: 'https://webbtelescope.org/', detail: 'Earliest galaxies, 13.1B+ ly' },
+  { label: 'Hubble Ultra Deep Field', url: 'https://hubblesite.org/', detail: 'Deep-sky imaging, 13B+ ly' },
+  { label: 'Kepler Field (Cygnus)', detail: '~920 ly average distance' },
+  { label: 'Radio Sky', detail: 'All-sky coverage via ASKAP & MWA' },
+]
+
 const infoPanels = [
   {
     icon: Satellite,
@@ -103,6 +139,7 @@ const infoPanels = [
     value: '11',
     detail: 'Space agencies feeding real-time data',
     color: '#d4af37',
+    popoverItems: dataSourceItems,
   },
   {
     icon: Globe,
@@ -110,6 +147,7 @@ const infoPanels = [
     value: '13B+ ly',
     detail: 'Light years of observable universe',
     color: '#4a90e2',
+    popoverItems: coverageItems,
   },
   {
     icon: Activity,
@@ -117,6 +155,7 @@ const infoPanels = [
     value: '132+',
     detail: 'Curated telescope observations',
     color: '#4caf93',
+    popoverItems: observationItems,
   },
   {
     icon: Zap,
@@ -124,6 +163,7 @@ const infoPanels = [
     value: '5',
     detail: 'Radio · Infrared · Visible · UV · X-ray',
     color: '#e040fb',
+    popoverItems: wavelengthItems,
   },
 ]
 
@@ -154,11 +194,13 @@ export default function MissionControlPage() {
 
       {/* Stats Bar */}
       <div className="bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.08)] flex shrink-0">
-        {infoPanels.map(({ icon: Icon, label, value, color }) => (
-          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
-            <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
-            <span className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
-          </div>
+        {infoPanels.map(({ label, value, color, popoverItems }) => (
+          <StatPopover key={label} items={popoverItems} className="flex-1 border-r border-[rgba(212,175,55,0.06)] last:border-0">
+            <div className="flex flex-col items-center px-6 lg:px-10 py-2">
+              <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
+              <span className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
+            </div>
+          </StatPopover>
         ))}
       </div>
 
@@ -212,19 +254,21 @@ export default function MissionControlPage() {
 
         {/* Bottom info row */}
         <div className="mt-5 grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {infoPanels.map(({ icon: Icon, label, detail, color }) => (
-            <div key={label} className="rounded-xl border border-[rgba(212,175,55,0.08)] bg-[rgba(8,12,28,0.5)] px-3.5 py-3 flex items-start gap-2.5">
-              <div
-                className="w-6 h-6 rounded-md flex items-center justify-center shrink-0 mt-0.5"
-                style={{ background: `${color}15`, border: `1px solid ${color}20` }}
-              >
-                <Icon className="w-3 h-3" style={{ color }} />
+          {infoPanels.map(({ icon: Icon, label, detail, color, popoverItems }) => (
+            <StatPopover key={label} items={popoverItems}>
+              <div className="rounded-xl border border-[rgba(212,175,55,0.08)] bg-[rgba(8,12,28,0.5)] px-3.5 py-3 flex items-start gap-2.5 text-left">
+                <div
+                  className="w-6 h-6 rounded-md flex items-center justify-center shrink-0 mt-0.5"
+                  style={{ background: `${color}15`, border: `1px solid ${color}20` }}
+                >
+                  <Icon className="w-3 h-3" style={{ color }} />
+                </div>
+                <div>
+                  <div className="text-[10px] font-semibold text-[#c8d4f0]">{label}</div>
+                  <div className="text-[9px] text-[#4a5580] mt-0.5 leading-relaxed">{detail}</div>
+                </div>
               </div>
-              <div>
-                <div className="text-[10px] font-semibold text-[#c8d4f0]">{label}</div>
-                <div className="text-[9px] text-[#4a5580] mt-0.5 leading-relaxed">{detail}</div>
-              </div>
-            </div>
+            </StatPopover>
           ))}
         </div>
       </main>

@@ -2,26 +2,46 @@
 
 /**
  * Inline SVG World Map with ISS position marker
- * Simplified continent outlines — no external map library needed
+ * Equirectangular projection — viewBox maps to lon/lat space
+ * x = lon + 180 (0–360), y = 90 - lat (0–180)
  */
 
-// Simplified continent paths (Natural Earth simplified, equirectangular)
-// Coordinates are lon,lat pairs mapped to viewBox 0,0 → 360,180
+// Simplified but geographically accurate continent outlines
 const CONTINENTS = [
   // North America
-  'M45,28 L50,30 55,32 58,36 62,38 68,40 73,43 76,48 78,52 80,55 82,58 85,62 88,65 85,68 80,70 76,68 72,72 68,70 62,68 55,66 50,68 46,72 42,74 38,70 35,65 30,62 28,58 25,55 24,50 26,46 30,42 35,36 40,32 45,28Z',
+  'M18,26 L28,28 40,32 50,40 54,44 58,52 64,60 72,66 82,72 90,70 94,76 98,80 98,66 100,58 106,52 112,48 120,45 127,43 120,36 112,28 100,28 92,30 86,22 72,20 52,22 34,25Z',
+  // Greenland
+  'M126,18 L132,17 138,20 140,26 137,30 131,30 127,24Z',
   // South America
-  'M72,72 L76,76 78,80 80,85 82,90 84,95 86,100 88,105 88,110 86,115 84,118 80,122 76,125 72,128 68,130 65,128 63,124 62,120 60,115 58,110 58,105 60,100 62,95 64,90 66,85 68,80 70,76 72,72Z',
-  // Europe
-  'M170,28 L175,30 180,32 185,34 190,36 195,35 198,38 195,42 192,45 188,48 184,50 180,48 176,45 173,42 170,38 168,34 170,28Z',
+  'M96,80 L108,80 118,82 130,86 138,90 144,96 144,102 140,110 132,120 122,130 112,140 106,144 102,140 98,132 97,122 96,112 98,102 100,96 98,88 96,82Z',
+  // Europe (mainland)
+  'M172,50 L178,46 184,42 190,38 196,36 200,38 198,44 194,48 188,50 182,50Z',
+  // Scandinavia
+  'M188,28 L193,22 197,28 193,34 189,32Z',
+  // UK + Ireland
+  'M176,36 L179,34 180,38 178,40Z',
+  // Iberian Peninsula
+  'M170,48 L174,52 173,56 169,54 169,50Z',
+  // Italy
+  'M188,48 L190,52 189,56 186,54 187,50Z',
   // Africa
-  'M170,58 L175,56 180,55 185,58 190,62 195,65 198,70 200,76 202,82 204,88 202,94 200,100 196,106 192,110 188,114 184,116 180,114 176,110 172,106 168,100 166,94 164,88 164,82 166,76 168,70 168,64 170,58Z',
-  // Asia
-  'M195,22 L205,20 215,22 225,20 235,22 245,24 255,28 262,32 268,36 272,40 278,42 285,45 290,48 295,52 298,56 300,60 296,64 290,66 284,68 278,66 272,62 268,58 262,56 258,60 252,62 248,58 242,55 236,52 230,50 226,48 222,52 218,56 214,58 210,56 206,52 202,48 198,44 196,40 195,36 194,30 195,22Z',
+  'M174,56 L184,54 196,56 206,60 216,68 224,78 228,84 224,94 218,106 208,118 200,124 194,120 190,112 186,100 180,90 170,82 164,76 168,68 172,60Z',
+  // Madagascar
+  'M225,104 L228,102 228,112 224,110Z',
+  // Asia (main mass — Russia through SE Asia)
+  'M200,38 L210,34 220,28 232,22 246,18 262,16 278,16 294,18 310,18 326,22 340,26 348,32 340,38 326,42 316,48 308,52 298,60 290,66 282,66 278,72 270,80 260,82 252,78 246,70 240,62 234,56 228,50 222,54 218,62 216,68 212,60 206,50 202,42Z',
+  // India
+  'M250,66 L256,72 258,82 264,74 268,68 264,62 256,62Z',
+  // Arabian Peninsula
+  'M218,62 L226,58 234,62 240,68 234,76 226,78 220,72Z',
+  // Japan
+  'M314,40 L318,36 320,42 318,48 314,46Z',
+  // Indonesia archipelago
+  'M274,88 L280,86 288,88 296,92 290,94 282,92Z',
   // Australia
-  'M270,100 L278,98 286,100 292,104 296,108 298,114 296,118 292,122 286,124 280,124 274,122 270,118 268,114 268,108 270,100Z',
-  // Antarctica (simplified)
-  'M20,165 L60,162 100,160 140,158 180,158 220,158 260,160 300,162 340,165 300,170 260,172 220,174 180,174 140,172 100,170 60,168 20,165Z',
+  'M290,98 L300,96 310,100 316,106 314,114 308,120 298,124 290,122 284,116 282,110 284,104Z',
+  // New Zealand
+  'M324,118 L326,114 328,118 326,124Z',
 ]
 
 interface WorldMapSVGProps {
@@ -32,10 +52,9 @@ interface WorldMapSVGProps {
 }
 
 export function WorldMapSVG({ issPosition, width = 320, height = 160, className }: WorldMapSVGProps) {
-  // Map lat/lon to SVG coordinates (equirectangular)
   const toSVG = (lon: number, lat: number) => ({
-    x: ((lon + 180) / 360) * 360,
-    y: ((90 - lat) / 180) * 180,
+    x: lon + 180,
+    y: 90 - lat,
   })
 
   const issPoint = issPosition ? toSVG(issPosition.lon, issPosition.lat) : null
@@ -48,41 +67,69 @@ export function WorldMapSVG({ issPosition, width = 320, height = 160, className 
       className={className}
       aria-label={issPosition ? `World map showing ISS at ${issPosition.lat.toFixed(1)}°, ${issPosition.lon.toFixed(1)}°` : 'World map'}
     >
+      {/* Ocean background */}
+      <rect x={0} y={0} width={360} height={180} fill="rgba(10,20,40,0.4)" rx={4} />
+
       {/* Grid lines */}
-      {[0, 30, 60, 90, 120, 150, 180, 210, 240, 270, 300, 330].map((x) => (
-        <line key={`v${x}`} x1={x} y1={0} x2={x} y2={180} stroke="rgba(255,255,255,0.04)" strokeWidth={0.5} />
+      {[60, 120, 180, 240, 300].map((x) => (
+        <line key={`v${x}`} x1={x} y1={0} x2={x} y2={180} stroke="rgba(74,144,226,0.06)" strokeWidth={0.4} />
       ))}
-      {[30, 60, 90, 120, 150].map((y) => (
-        <line key={`h${y}`} x1={0} y1={y} x2={360} y2={y} stroke="rgba(255,255,255,0.04)" strokeWidth={0.5} />
+      {[45, 90, 135].map((y) => (
+        <line key={`h${y}`} x1={0} y1={y} x2={360} y2={y} stroke="rgba(74,144,226,0.06)" strokeWidth={0.4} />
       ))}
       {/* Equator */}
-      <line x1={0} y1={90} x2={360} y2={90} stroke="rgba(255,255,255,0.08)" strokeWidth={0.5} strokeDasharray="4,4" />
+      <line x1={0} y1={90} x2={360} y2={90} stroke="rgba(74,144,226,0.1)" strokeWidth={0.4} strokeDasharray="4,4" />
+      {/* Prime Meridian */}
+      <line x1={180} y1={0} x2={180} y2={180} stroke="rgba(74,144,226,0.08)" strokeWidth={0.4} strokeDasharray="4,4" />
 
       {/* Continents */}
       {CONTINENTS.map((d, i) => (
-        <path key={i} d={d} fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.15)" strokeWidth={0.5} />
+        <path
+          key={i}
+          d={d}
+          fill="rgba(100,160,220,0.08)"
+          stroke="rgba(100,160,220,0.2)"
+          strokeWidth={0.5}
+          strokeLinejoin="round"
+        />
       ))}
+
+      {/* ISS orbit track (approximate) */}
+      {issPoint && (
+        <line
+          x1={0}
+          y1={issPoint.y}
+          x2={360}
+          y2={issPoint.y}
+          stroke="rgba(212,175,55,0.06)"
+          strokeWidth={0.5}
+          strokeDasharray="2,6"
+        />
+      )}
 
       {/* ISS marker */}
       {issPoint && (
         <g>
-          {/* Glow */}
-          <circle cx={issPoint.x} cy={issPoint.y} r={8} fill="rgba(212,175,55,0.15)">
-            <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.3;0.1;0.3" dur="2s" repeatCount="indefinite" />
+          {/* Outer pulse */}
+          <circle cx={issPoint.x} cy={issPoint.y} r={8} fill="rgba(212,175,55,0.12)">
+            <animate attributeName="r" values="6;12;6" dur="3s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.2;0.05;0.2" dur="3s" repeatCount="indefinite" />
           </circle>
+          {/* Inner glow */}
+          <circle cx={issPoint.x} cy={issPoint.y} r={4} fill="rgba(212,175,55,0.25)" />
           {/* Core dot */}
-          <circle cx={issPoint.x} cy={issPoint.y} r={3} fill="#d4af37" />
-          <circle cx={issPoint.x} cy={issPoint.y} r={1.5} fill="#fff" opacity={0.9} />
+          <circle cx={issPoint.x} cy={issPoint.y} r={2.5} fill="#d4af37" />
+          <circle cx={issPoint.x} cy={issPoint.y} r={1.2} fill="#fff" opacity={0.9} />
           {/* Label */}
           <text
             x={issPoint.x}
-            y={issPoint.y - 8}
+            y={issPoint.y - 7}
             textAnchor="middle"
             fill="#d4af37"
-            fontSize={6}
+            fontSize={5}
             fontFamily="monospace"
             fontWeight="bold"
+            letterSpacing="0.5"
           >
             ISS
           </text>
