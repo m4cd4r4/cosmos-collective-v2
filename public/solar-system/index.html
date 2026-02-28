@@ -1226,6 +1226,7 @@
                 <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Show Moons</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="show-orbit-rings" checked><span>Show Orbit Lines</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits"><span>Elliptical Orbits</span></label>
             </div>
         </div>
@@ -2050,6 +2051,7 @@
         // =====================================================================
         const orbitRingLines = new Map();
         let ellipticalOrbits = false;
+        let showOrbitRings = true;
 
         function createOrbitRings() {
             orbitRingLines.forEach(line => {
@@ -2083,6 +2085,7 @@
                 });
                 const line = new THREE.Line(geo, mat);
                 line.position.z = sun.position.z;
+                line.visible = showOrbitRings;
                 orbitRingLines.set(planet.name, line);
                 scene.add(line);
             });
@@ -3107,6 +3110,10 @@
             if (showParticles && !coronaParticles) createCoronaParticles();
             else if (!showParticles && coronaParticles) { scene.remove(coronaParticles); coronaParticles = null; }
         });
+        document.getElementById('show-orbit-rings').addEventListener('change', (e) => {
+            showOrbitRings = e.target.checked;
+            orbitRingLines.forEach(line => { line.visible = showOrbitRings; });
+        });
         document.getElementById('elliptical-orbits').addEventListener('change', (e) => {
             ellipticalOrbits = e.target.checked;
             // Sync meanAnomaly/angle so planets don't teleport on toggle
@@ -4128,6 +4135,7 @@
                     showGrid: showGrid,
                     showMoons: showMoons,
                     showParticles: showParticles,
+                    showOrbitRingsVal: showOrbitRings,
                     ellipticalOrbitsVal: ellipticalOrbits,
                     isPaused: isPaused,
                     sunSpeedRaw: document.getElementById('sun-speed').value,
@@ -4187,6 +4195,9 @@
                 showParticles = state.showParticles;
                 document.getElementById('show-particles').checked = state.showParticles;
                 document.getElementById('show-particles').dispatchEvent(new Event('change'));
+                showOrbitRings = state.showOrbitRingsVal ?? true;
+                document.getElementById('show-orbit-rings').checked = showOrbitRings;
+                orbitRingLines.forEach(line => { line.visible = showOrbitRings; });
                 ellipticalOrbits = state.ellipticalOrbitsVal;
                 document.getElementById('elliptical-orbits').checked = state.ellipticalOrbitsVal;
 
