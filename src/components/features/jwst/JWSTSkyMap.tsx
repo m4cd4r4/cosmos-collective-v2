@@ -232,7 +232,7 @@ export const JWSTSkyMap = forwardRef<
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       aladinRef.current.gotoRaDec(obs.coordinates.ra, obs.coordinates.dec)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      aladinRef.current.setFov(5)
+      aladinRef.current.setFov(15)
     }
   }, [selectedObsId])
 

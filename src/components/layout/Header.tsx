@@ -9,16 +9,8 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import {
-  Globe,
-  Home,
-  Orbit,
-  Sun,
-  Hexagon,
-  LayoutDashboard,
-  Calendar,
-  BookMarked,
-} from 'lucide-react'
+import { Globe, Orbit, Sun, Hexagon, BookMarked } from 'lucide-react'
+import { useMCStore } from '@/lib/mc-store'
 
 // ============================================
 // Navigation Items
@@ -193,17 +185,38 @@ function DesktopNav() {
 // Mobile Bottom Navigation Bar
 // ============================================
 
-// Bottom nav items (subset of main nav for mobile)
-const bottomNavItems = [
-  { label: 'Home', href: '/', icon: Home },
+// Bottom nav items — Solar Sys and Sky Map on left, Kepler and JWST on right
+// MC button is the centre element rendered separately
+const bottomNavLeft = [
   { label: 'Solar Sys', href: '/solar-system', icon: Sun },
   { label: 'Sky Map', href: '/sky-map', icon: Globe },
+]
+const bottomNavRight = [
   { label: 'Kepler', href: '/kepler', icon: Orbit },
   { label: 'JWST', href: '/jwst', icon: Hexagon },
 ]
 
 function MobileBottomNav() {
   const pathname = usePathname()
+  const { open, toggle } = useMCStore()
+
+  function NavLink({ label, href, icon: Icon }: { label: string; href: string; icon: typeof Sun }) {
+    const isActive = pathname === href || pathname.startsWith(href)
+    return (
+      <Link
+        href={href}
+        prefetch={true}
+        className={cn(
+          'flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors',
+          isActive ? 'text-cosmos-gold' : 'text-gray-400 hover:text-white'
+        )}
+        aria-current={isActive ? 'page' : undefined}
+      >
+        <Icon className="w-5 h-5" aria-hidden="true" />
+        <span className="text-[10px] mt-1 font-medium">{label}</span>
+      </Link>
+    )
+  }
 
   return (
     <nav
@@ -211,29 +224,55 @@ function MobileBottomNav() {
       aria-label="Mobile navigation"
     >
       <div className="flex items-center justify-around h-16">
-        {bottomNavItems.map((item) => {
-          const Icon = item.icon
-          const isActive = pathname === item.href ||
-            (item.href !== '/' && pathname.startsWith(item.href))
+        {bottomNavLeft.map((item) => (
+          <NavLink key={item.href} {...item} />
+        ))}
 
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              prefetch={true}
-              className={cn(
-                'flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors',
-                isActive
-                  ? 'text-cosmos-gold'
-                  : 'text-gray-400 hover:text-white'
-              )}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <Icon className="w-5 h-5" aria-hidden="true" />
-              <span className="text-[10px] mt-1 font-medium">{item.label}</span>
-            </Link>
-          )
-        })}
+        {/* ── Mission Control centre button ── */}
+        <button
+          onClick={toggle}
+          aria-label={open ? 'Close Mission Control' : 'Open Mission Control'}
+          aria-expanded={open}
+          className="relative flex flex-col items-center justify-center w-14 cursor-pointer group"
+          style={{ marginTop: '-18px' }}
+        >
+          {/* Raised gold disc */}
+          <div
+            className="w-12 h-12 rounded-full flex items-center justify-center transition-all duration-200"
+            style={{
+              background: open
+                ? 'linear-gradient(135deg, rgba(212,175,55,0.35) 0%, rgba(212,175,55,0.15) 100%)'
+                : 'linear-gradient(135deg, rgba(212,175,55,0.25) 0%, rgba(212,175,55,0.08) 100%)',
+              border: `1px solid rgba(212,175,55,${open ? '0.5' : '0.35'})`,
+              boxShadow: open
+                ? '0 0 18px rgba(212,175,55,0.4), 0 4px 12px rgba(0,0,0,0.5)'
+                : '0 4px 12px rgba(0,0,0,0.5), 0 0 10px rgba(212,175,55,0.2)',
+            }}
+          >
+            <BookMarked
+              className="w-5 h-5 transition-transform duration-200 group-hover:scale-110"
+              style={{ color: '#d4af37' }}
+              aria-hidden="true"
+            />
+            {/* Pulse ring when closed */}
+            {!open && (
+              <span
+                className="absolute inset-0 rounded-full animate-ping pointer-events-none"
+                style={{ border: '1px solid rgba(212,175,55,0.2)', animationDuration: '3s' }}
+              />
+            )}
+          </div>
+          <span
+            className="text-[9px] mt-1 font-bold uppercase tracking-[0.12em] transition-colors"
+            style={{ color: open ? '#d4af37' : 'rgba(212,175,55,0.7)' }}
+          >
+            Control
+          </span>
+        </button>
+
+        {bottomNavRight.map((item) => (
+          <NavLink key={item.href} {...item} />
+        ))}
       </div>
     </nav>
   )

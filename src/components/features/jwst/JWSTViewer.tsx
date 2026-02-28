@@ -105,7 +105,7 @@ export function JWSTViewer() {
     setSelected(obs)
     setActiveWavelength(0)
     setHoveredFeature(null)
-    skyMapRef.current?.flyTo(obs.coordinates.ra, obs.coordinates.dec, 0.3)
+    skyMapRef.current?.flyTo(obs.coordinates.ra, obs.coordinates.dec, 15)
   }, [])
 
   // When sky map marker is clicked

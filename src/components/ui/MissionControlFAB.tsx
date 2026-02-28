@@ -1,14 +1,15 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useEffect, useRef, useCallback } from 'react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { BookMarked, X, ChevronRight, ExternalLink as ExternalLinkIcon } from 'lucide-react'
 import { TOOLS, INFO_PANELS } from '@/lib/mission-control-data'
 import { StatPopover } from '@/components/ui/StatPopover'
+import { useMCStore } from '@/lib/mc-store'
 
 export function MissionControlFAB() {
-  const [open, setOpen] = useState(false)
+  const { open, toggle, close: closeStore } = useMCStore()
   const pathname = usePathname()
   const panelRef = useRef<HTMLDivElement>(null)
   const fabRef = useRef<HTMLButtonElement>(null)
@@ -18,15 +19,14 @@ export function MissionControlFAB() {
   if (pathname === '/mission-control') return null
 
   const close = useCallback(() => {
-    setOpen(false)
-    // Return focus to FAB button
+    closeStore()
     setTimeout(() => fabRef.current?.focus(), 50)
-  }, [])
+  }, [closeStore])
 
   // Close on route change
   useEffect(() => {
-    setOpen(false)
-  }, [pathname])
+    closeStore()
+  }, [pathname, closeStore])
 
   // Close on Escape / click outside
   useEffect(() => {
@@ -66,8 +66,8 @@ export function MissionControlFAB() {
       {/* ── FAB Button ────────────────────────────────────────────── */}
       <button
         ref={fabRef}
-        onClick={() => setOpen(!open)}
-        className="fixed z-40 bottom-20 right-4 lg:bottom-6 lg:right-6 w-12 h-12 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 group"
+        onClick={toggle}
+        className="fixed z-40 bottom-20 right-4 lg:bottom-6 lg:right-6 w-12 h-12 rounded-full hidden lg:flex items-center justify-center cursor-pointer transition-all duration-300 group"
         style={{
           background: 'linear-gradient(135deg, rgba(212,175,55,0.2) 0%, rgba(212,175,55,0.08) 100%)',
           border: '1px solid rgba(212,175,55,0.3)',
