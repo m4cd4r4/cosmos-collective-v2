@@ -26,6 +26,7 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
   const [hovered, setHovered] = useState<PlottedObservation | null>(null)
   const [selected, setSelected] = useState<PlottedObservation | null>(null)
   const [tooltip, setTooltip] = useState<{ x: number; y: number } | null>(null)
+  const [mobileTab, setMobileTab] = useState<'canvas' | 'filters'>('canvas')
 
   // Filtered observations
   const filtered = useMemo(() => {
@@ -63,7 +64,10 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
 
   const handleSelect = useCallback(
     (obs: PlottedObservation | null) => {
-      if (!preview) setSelected(obs)
+      if (!preview) {
+        setSelected(obs)
+        if (obs) setMobileTab('filters')
+      }
     },
     [preview],
   )
@@ -72,24 +76,25 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
     <div className="flex flex-col h-full bg-[#0a0e1a] text-[#c8d4f0] font-mono text-xs select-none overflow-hidden">
 
       {/* ── HEADER ──────────────────────────────────────────────────── */}
-      <header className="flex items-center justify-between px-5 h-[52px] bg-[rgba(4,6,18,0.97)] border-b border-[rgba(74,144,226,0.15)] shrink-0 z-20">
-        <div className="flex items-center gap-3.5">
+      <header className="flex items-center justify-between px-3 sm:px-5 h-[52px] bg-[rgba(4,6,18,0.97)] border-b border-[rgba(74,144,226,0.15)] shrink-0 z-20">
+        <div className="flex items-center gap-2 sm:gap-3.5 min-w-0">
           <TelescopeLogo />
-          <span className="text-sm font-bold tracking-[0.2em] uppercase text-[#e0e8ff]">
-            Deep Space Observatory
+          <span className="text-sm font-bold tracking-[0.2em] uppercase text-[#e0e8ff] truncate">
+            <span className="hidden sm:inline">Deep Space Observatory</span>
+            <span className="sm:hidden">Observatory</span>
           </span>
           <Badge gold>JWST</Badge>
           <Badge>Hubble</Badge>
         </div>
-        <span className="text-[9px] text-[#4a5580] tracking-wider">
+        <span className="text-[9px] text-[#4a5580] tracking-wider hidden sm:block">
           Data: NASA / STScI · {stats.total} observations
         </span>
       </header>
 
       {/* ── STATS BAR ───────────────────────────────────────────────── */}
       {!preview && (
-        <div className="flex bg-[rgba(8,12,28,0.9)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
-          <Stat label="Total Observations" value={stats.total} color="gold" />
+        <div className="flex overflow-x-auto bg-[rgba(8,12,28,0.9)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
+          <Stat label="Total" value={stats.total} color="gold" />
           <Stat label="JWST" value={stats.jwst} color="amber" />
           <Stat label="Hubble" value={stats.hubble} color="purple" />
           <Stat label="Nebulae" value={stats.nebulae} color="blue" />
@@ -98,12 +103,30 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
         </div>
       )}
 
+      {/* ── MOBILE TAB BAR ──────────────────────────────────────────── */}
+      {!preview && (
+        <div className="flex lg:hidden bg-[rgba(4,6,18,0.97)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
+          <button
+            onClick={() => setMobileTab('canvas')}
+            className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'canvas' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+          >
+            Sky Map
+          </button>
+          <button
+            onClick={() => setMobileTab('filters')}
+            className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'filters' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+          >
+            Filters · Detail
+          </button>
+        </div>
+      )}
+
       {/* ── MAIN ────────────────────────────────────────────────────── */}
-      <div className={`flex-1 min-h-0 ${preview ? 'flex' : 'grid grid-cols-[210px_1fr_290px]'}`}>
+      <div className={`flex-1 min-h-0 ${preview ? 'flex' : 'flex flex-col lg:grid lg:grid-cols-[210px_1fr_290px]'}`}>
 
         {/* SIDEBAR */}
         {!preview && (
-          <aside className="bg-[rgba(13,18,35,0.92)] border-r border-[rgba(74,144,226,0.15)] p-3 overflow-y-auto flex flex-col gap-[18px]">
+          <aside className={`bg-[rgba(13,18,35,0.92)] border-r border-[rgba(74,144,226,0.15)] p-3 overflow-y-auto flex-col gap-[18px] ${mobileTab === 'filters' ? 'flex' : 'hidden lg:flex'}`}>
 
             <FilterGroup title="Search">
               <input
@@ -209,7 +232,7 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
         )}
 
         {/* CANVAS */}
-        <div className={`relative overflow-hidden bg-[#050810] ${preview ? 'flex-1 min-h-0' : ''}`}>
+        <div className={`relative overflow-hidden bg-[#050810] ${preview ? 'flex-1 min-h-0' : `${mobileTab === 'canvas' ? 'flex-1 min-h-0' : 'hidden lg:block'}`}`}>
           <ObservatoryCanvas
             observations={observations}
             filtered={filtered}
@@ -253,7 +276,7 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
 
         {/* DETAIL PANEL */}
         {!preview && (
-          <aside className="bg-[rgba(13,18,35,0.92)] border-l border-[rgba(74,144,226,0.15)] p-3.5 overflow-y-auto flex flex-col gap-3.5">
+          <aside className={`bg-[rgba(13,18,35,0.92)] border-l border-[rgba(74,144,226,0.15)] p-3.5 overflow-y-auto flex-col gap-3.5 ${mobileTab === 'filters' ? 'flex' : 'hidden lg:flex'}`}>
             {!selected ? <EmptyDetail /> : <ObservationDetail obs={selected} />}
           </aside>
         )}
