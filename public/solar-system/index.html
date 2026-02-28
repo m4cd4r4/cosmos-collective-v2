@@ -2049,6 +2049,7 @@
         // the Sun at the focus (periapsis is visibly closer, apoapsis farther).
         // =====================================================================
         const orbitRingLines = new Map();
+        let ellipticalOrbits = false;
 
         function createOrbitRings() {
             orbitRingLines.forEach(line => {
@@ -2629,7 +2630,6 @@
         // =====================================================================
         // ELLIPTICAL ORBIT ENGINE (Kepler's equation — Newton's method)
         // =====================================================================
-        let ellipticalOrbits = false;
 
         // Solve Kepler's equation M = E - e*sin(E) for eccentric anomaly E
         // Returns E such that planet positions obey Kepler's second law
