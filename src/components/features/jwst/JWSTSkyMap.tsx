@@ -92,7 +92,7 @@ export const JWSTSkyMap = forwardRef<
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     const aladin = (window.A.aladin as any)(containerRef.current, {
       survey: 'P/DSS2/color',
-      fov: 60,
+      fov: 180,
       target: 'galactic center',
       showReticle: false,
       showZoomControl: false,
@@ -103,6 +103,34 @@ export const JWSTSkyMap = forwardRef<
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     aladinRef.current = aladin
+
+    // Aggressively suppress Aladin's built-in click popup via two layers:
+    // 1. Override the popup.show method on the aladin instance
+    // 2. Inject CSS to hide the popup DOM container entirely
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      if (aladin.view?.popup) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        aladin.view.popup.show = () => {}
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        aladin.view.popup.setTitle = () => {}
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+        aladin.view.popup.setText = () => {}
+      }
+    } catch { /* no-op */ }
+
+    // Inject CSS as final fallback — hides the popup DOM element if it exists
+    if (!document.getElementById('aladin-popup-suppress')) {
+      const style = document.createElement('style')
+      style.id = 'aladin-popup-suppress'
+      style.textContent = `
+        #aladin-popup-container,
+        .aladin-popup-container,
+        .aladin-popup { display: none !important; }
+      `
+      document.head.appendChild(style)
+    }
+
     setIsLoaded(true)
 
     const observations = getFeaturedJWSTImages()
