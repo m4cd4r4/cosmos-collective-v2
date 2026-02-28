@@ -25,9 +25,10 @@ export function KeplerViewer() {
   const { planets, stars, status } = useKeplerData()
   const [viewMode, setViewMode]       = useState<ViewMode>('sky')
   const [filters,  setFilters]        = useState<KeplerFilters>(DEFAULT_FILTERS)
-  const [hovered,  setHovered]        = useState<StarSystem | null>(null)
-  const [selected, setSelected]       = useState<StarSystem | null>(null)
-  const [tooltip,  setTooltip]        = useState<{ x: number; y: number } | null>(null)
+  const [hovered,   setHovered]        = useState<StarSystem | null>(null)
+  const [selected,  setSelected]       = useState<StarSystem | null>(null)
+  const [tooltip,   setTooltip]        = useState<{ x: number; y: number } | null>(null)
+  const [mobileTab, setMobileTab]      = useState<'filters' | 'view'>('view')
   const skyMapRef = useRef<KeplerSkyMapHandle>(null)
 
   // ── Filtered stars ───────────────────────────────────────────────────────
@@ -82,15 +83,16 @@ export function KeplerViewer() {
       <header className="flex items-center justify-between px-5 h-[52px] bg-[rgba(4,6,18,0.97)] border-b border-[rgba(74,144,226,0.15)] shrink-0 z-20">
         <div className="flex items-center gap-3.5">
           <KeplerLogo />
-          <span className="text-base font-bold tracking-[0.2em] uppercase text-[#e0e8ff]">Kepler Mission</span>
-          <Badge>NASA · 2009–2018</Badge>
-          <Badge gold>Cygnus Field</Badge>
+          <span className="hidden sm:inline text-base font-bold tracking-[0.2em] uppercase text-[#e0e8ff]">Kepler Mission</span>
+          <span className="sm:hidden text-base font-bold tracking-[0.2em] uppercase text-[#e0e8ff]">Kepler</span>
+          <span className="hidden sm:inline"><Badge>NASA · 2009–2018</Badge></span>
+          <span className="hidden sm:inline"><Badge gold>Cygnus Field</Badge></span>
         </div>
         <span className="text-[11px] text-[#4a5580] tracking-wider">Data: NASA Exoplanet Archive · TAP API</span>
       </header>
 
       {/* ── STATS BAR ──────────────────────────────────────────────────── */}
-      <div className="flex bg-[rgba(8,12,28,0.9)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
+      <div className="flex overflow-x-auto bg-[rgba(8,12,28,0.9)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
         <Stat label="Confirmed Planets"       value={stats.planets}  color="gold"   loading={status === 'loading'} />
         <Stat label="Host Stars"              value={stats.stars}    color="blue"   loading={status === 'loading'} />
         <Stat label="Multi-Planet Systems"    value={stats.multi}    color="orange" loading={status === 'loading'} />
@@ -99,11 +101,27 @@ export function KeplerViewer() {
         <Stat label="Showing"                 value={`${stats.showing} / ${stats.stars}`} color="dim" loading={status === 'loading'} />
       </div>
 
+      {/* ── MOBILE TAB BAR ─────────────────────────────────────────────── */}
+      <div className="flex lg:hidden bg-[rgba(4,6,18,0.97)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
+        <button
+          onClick={() => setMobileTab('view')}
+          className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'view' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+        >
+          Star Map
+        </button>
+        <button
+          onClick={() => setMobileTab('filters')}
+          className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'filters' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+        >
+          Filters · Details
+        </button>
+      </div>
+
       {/* ── MAIN ───────────────────────────────────────────────────────── */}
-      <div className="flex-1 grid grid-cols-[230px_1fr_310px] min-h-0">
+      <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[230px_1fr_310px] min-h-0">
 
         {/* SIDEBAR */}
-        <aside className="bg-[rgba(13,18,35,0.92)] border-r border-[rgba(74,144,226,0.15)] p-3 overflow-y-auto flex flex-col gap-[18px]">
+        <aside className={`bg-[rgba(13,18,35,0.92)] border-r border-[rgba(74,144,226,0.15)] p-3 overflow-y-auto flex-col gap-[18px] ${mobileTab === 'filters' ? 'flex' : 'hidden lg:flex'}`}>
 
           <FilterGroup title="Search">
             <input
@@ -237,7 +255,7 @@ export function KeplerViewer() {
         </aside>
 
         {/* CANVAS / SKY MAP */}
-        <div className="relative overflow-hidden bg-[#050810]">
+        <div className={`relative overflow-hidden bg-[#050810] ${mobileTab === 'view' ? 'flex-1 min-h-0' : 'hidden lg:block'}`}>
           {viewMode === 'aladin' ? (
             <KeplerSkyMap
               ref={skyMapRef}
@@ -288,7 +306,7 @@ export function KeplerViewer() {
         </div>
 
         {/* DETAIL PANEL */}
-        <aside className="bg-[rgba(13,18,35,0.92)] border-l border-[rgba(74,144,226,0.15)] p-3.5 overflow-y-auto flex flex-col gap-3.5">
+        <aside className={`bg-[rgba(13,18,35,0.92)] border-l border-[rgba(74,144,226,0.15)] p-3.5 overflow-y-auto flex-col gap-3.5 ${mobileTab === 'filters' ? 'flex' : 'hidden lg:flex'}`}>
           {!selected ? (
             <EmptyDetail />
           ) : (

@@ -639,29 +639,32 @@
                 transform: scale(0.92);
             }
 
-            /* --- Controls: bottom sheet --- */
+            /* --- Controls: left-side drawer --- */
             #controls {
                 position: fixed;
-                top: auto;
+                top: 0;
                 left: 0;
-                right: 0;
-                bottom: 0;
-                max-width: 100%;
-                width: 100%;
-                border-radius: 16px 16px 0 0;
-                max-height: 33vh;
-                padding: 10px 16px 14px;
-                transform: translateY(100%);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+                right: auto;
+                bottom: 64px;          /* above the app bottom nav bar */
+                width: 82vw;
+                max-width: 300px;
+                max-height: none;
+                height: calc(100% - 64px);
+                border-radius: 0 16px 16px 0;
+                padding: 64px 14px 20px; /* top clearance for gear button */
+                transform: translateX(-105%);
+                transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 200;
                 border-bottom: none;
+                overflow-y: auto;
+                overflow-x: hidden;
             }
             #controls.mobile-open {
-                transform: translateY(0);
+                transform: translateX(0);
             }
             #controls h3 {
                 font-size: 14px;
-                margin-bottom: 6px;
+                margin-bottom: 8px;
             }
             .control-group {
                 margin: 6px 0;
@@ -825,9 +828,7 @@
 
         /* Landscape on small devices */
         @media (max-width: 768px) and (orientation: landscape) {
-            #controls.mobile-open {
-                max-height: 80vh;
-            }
+            /* Controls is a left drawer in landscape too — no height override needed */
             #events.mobile-open {
                 max-height: 70vh;
             }
@@ -1111,7 +1112,7 @@
     </div>
 
     <!-- Mobile toggle buttons (visible only on mobile via CSS) -->
-    <button type="button" id="mobile-controls-toggle" aria-label="Toggle controls">&#x2699;</button>
+    <button type="button" id="mobile-controls-toggle" aria-label="Toggle controls">&#x2630;</button>
     <button type="button" id="mobile-stats-toggle" aria-label="Toggle statistics">&#x1F4CA;</button>
     <button type="button" id="mobile-events-toggle" aria-label="Toggle events">&#x1F30D;</button>
     <div id="mobile-backdrop"></div>

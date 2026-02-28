@@ -53,6 +53,7 @@ export function JWSTViewer() {
   const [hoveredFeature, setHoveredFeature] = useState<string | null>(null)
   const [showFeatures, setShowFeatures] = useState(true)
   const [fullscreen, setFullscreen] = useState(false)
+  const [mobileTab, setMobileTab] = useState<'list' | 'detail'>('list')
   const [imgLoaded, setImgLoaded] = useState(false)
   const [imgError, setImgError] = useState(false)
 
@@ -106,6 +107,7 @@ export function JWSTViewer() {
     setActiveWavelength(0)
     setHoveredFeature(null)
     skyMapRef.current?.flyTo(obs.coordinates.ra, obs.coordinates.dec, 15)
+    setMobileTab('detail')
   }, [])
 
   // When sky map marker is clicked
@@ -155,20 +157,37 @@ export function JWSTViewer() {
       <header className="flex items-center justify-between px-5 h-[52px] bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] shrink-0 z-20">
         <div className="flex items-center gap-3.5">
           <JWSTLogo />
-          <span className="text-base font-bold tracking-[0.2em] uppercase text-[#e0e8ff]">James Webb Space Telescope</span>
-          <Badge gold>L2 Orbit · 1.5M km</Badge>
-          <Badge>Launched Dec 2021</Badge>
+          <span className="hidden sm:inline text-base font-bold tracking-[0.2em] uppercase text-[#e0e8ff]">James Webb Space Telescope</span>
+          <span className="sm:hidden text-base font-bold tracking-[0.2em] uppercase text-[#e0e8ff]">JWST</span>
+          <span className="hidden sm:inline"><Badge gold>L2 Orbit · 1.5M km</Badge></span>
+          <span className="hidden sm:inline"><Badge>Launched Dec 2021</Badge></span>
         </div>
         <span className="text-[11px] text-[#4a5580] tracking-wider">Data: NASA/ESA/CSA/STScI</span>
       </header>
 
       {/* ── STATS BAR ──────────────────────────────────────────────────── */}
-      <div className="flex bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.15)] shrink-0">
+      <div className="flex overflow-x-auto bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.15)] shrink-0">
         <Stat label="JWST Observations" value={stats.total} color="gold" />
         <Stat label="Nebulae" value={stats.nebulae} color="red" />
         <Stat label="Galaxies & Deep Fields" value={stats.galaxies} color="blue" />
         <Stat label="Solar System" value={stats.solar} color="orange" />
         <Stat label="Showing" value={`${stats.showing} / ${stats.total}`} color="dim" />
+      </div>
+
+      {/* ── MOBILE TAB BAR ─────────────────────────────────────────────── */}
+      <div className="flex lg:hidden bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] shrink-0">
+        <button
+          onClick={() => setMobileTab('list')}
+          className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'list' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
+        >
+          Gallery
+        </button>
+        <button
+          onClick={() => setMobileTab('detail')}
+          className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'detail' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
+        >
+          Details · Sky Map
+        </button>
       </div>
 
       {/* ── IMAGE HERO ─────────────────────────────────────────────────── */}
@@ -308,10 +327,10 @@ export function JWSTViewer() {
       </div>
 
       {/* ── BOTTOM 3-COL ────────────────────────────────────────────────── */}
-      <div className="flex-1 grid grid-cols-[240px_1fr_300px] min-h-0">
+      <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[240px_1fr_300px] min-h-0">
 
         {/* ── LEFT SIDEBAR: Gallery + Filters ───────────────────────── */}
-        <aside className="bg-[rgba(13,18,35,0.92)] border-r border-[rgba(212,175,55,0.15)] overflow-y-auto flex flex-col">
+        <aside className={`bg-[rgba(13,18,35,0.92)] border-r border-[rgba(212,175,55,0.15)] overflow-y-auto flex-col ${mobileTab === 'list' ? 'flex' : 'hidden lg:flex'}`}>
 
           {/* Search */}
           <div className="p-3 border-b border-[rgba(212,175,55,0.08)]">
@@ -415,15 +434,17 @@ export function JWSTViewer() {
         </aside>
 
         {/* ── CENTER: Sky Map ────────────────────────────────────────── */}
-        <JWSTSkyMap
-          ref={skyMapRef}
-          className="w-full h-full"
-          selectedObsId={selected.id}
-          onMarkerClick={handleSkyMapClick}
-        />
+        <div className={`relative overflow-hidden ${mobileTab === 'detail' ? 'block h-[220px] lg:h-auto shrink-0' : 'hidden lg:block'}`}>
+          <JWSTSkyMap
+            ref={skyMapRef}
+            className="w-full h-full"
+            selectedObsId={selected.id}
+            onMarkerClick={handleSkyMapClick}
+          />
+        </div>
 
         {/* ── RIGHT SIDEBAR: Details ────────────────────────────────── */}
-        <aside className="bg-[rgba(13,18,35,0.92)] border-l border-[rgba(212,175,55,0.15)] overflow-y-auto flex flex-col">
+        <aside className={`bg-[rgba(13,18,35,0.92)] border-l border-[rgba(212,175,55,0.15)] overflow-y-auto flex-col ${mobileTab === 'detail' ? 'flex' : 'hidden lg:flex'}`}>
 
           {/* Observation info */}
           <div className="p-4">

@@ -139,7 +139,7 @@ export function DashboardContent() {
   }, [])
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-3 sm:px-4 overflow-x-hidden">
       {/* Header */}
       <section className="mb-8">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -207,7 +207,7 @@ export function DashboardContent() {
             aria-controls={`panel-${tab.id}`}
             onClick={() => setActiveTab(tab.id)}
             className={cn(
-              'flex items-center gap-2 px-6 py-4 text-sm font-medium transition-all whitespace-nowrap',
+              'flex items-center gap-1.5 px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium transition-all whitespace-nowrap',
               'border-b-2 -mb-px',
               activeTab === tab.id
                 ? 'border-cosmos-gold text-cosmos-gold'
