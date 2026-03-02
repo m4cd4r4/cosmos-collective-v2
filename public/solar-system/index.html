@@ -261,6 +261,27 @@
             z-index: 10;
         }
         #galaxy-info-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        #galaxy-info-toggle {
+            position: fixed;
+            top: 12px;
+            right: 12px;
+            width: 44px;
+            height: 44px;
+            min-height: 44px;
+            background: rgba(10, 10, 25, 0.9);
+            border: 1px solid rgba(100, 150, 255, 0.4);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            color: #6495ff;
+            cursor: pointer;
+            z-index: 210;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transition: background 0.2s, transform 0.2s;
+        }
+        #galaxy-info-toggle:active { transform: scale(0.92); background: rgba(100, 150, 255, 0.2); }
         #galaxy-info h3 { color: #6495ff; font-size: 18px; margin: 0 0 16px; text-shadow: 0 0 10px rgba(100,150,255,0.4); }
         #galaxy-info .stat { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
         #galaxy-info .stat-label { color: #999; }
@@ -643,38 +664,44 @@
                 align-items: center;
                 justify-content: center;
                 position: fixed;
-                top: 12px;
-                right: 12px;
-                width: 44px;
-                height: 44px;
-                background: rgba(10, 10, 25, 0.9);
-                border: 1px solid rgba(100, 150, 255, 0.4);
-                border-radius: 12px;
+                bottom: 20px;
+                right: 20px;
+                width: 40px;
+                height: 40px;
+                background: rgba(10, 10, 25, 0.85);
+                border: 1px solid rgba(212, 175, 55, 0.45);
+                border-radius: 10px;
                 backdrop-filter: blur(10px);
-                color: #6495ff;
+                color: #d4af37;
                 font-size: 16px;
                 cursor: pointer;
-                z-index: 300;
-                transition: background 0.2s, transform 0.2s;
+                z-index: 500;
+                transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
             }
             #mobile-stats-toggle:active {
                 transform: scale(0.92);
+                background: rgba(212, 175, 55, 0.15);
             }
 
-            /* --- Controls: left-side drawer --- */
+            /* Hide the eye toggle on mobile — stats replaces it */
+            #ui-toggle-btn {
+                display: none !important;
+            }
+
+            /* --- Controls: bottom sheet (50% height, solar system visible above) --- */
             #controls {
                 position: fixed;
-                top: 0;
+                top: auto;
                 left: 0;
-                right: auto;
-                bottom: 64px;          /* above the app bottom nav bar */
-                width: 82vw;
-                max-width: 300px;
-                max-height: none;
-                height: calc(100% - 64px);
-                border-radius: 0 16px 16px 0;
-                padding: 64px 14px 20px; /* top clearance for gear button */
-                transform: translateX(-105%);
+                right: 0;
+                bottom: 0;
+                width: 100%;
+                max-width: 100%;
+                height: 50vh;
+                max-height: 50vh;
+                border-radius: 16px 16px 0 0;
+                padding: 16px 14px 80px; /* bottom clearance for app nav bar */
+                transform: translateY(100%);
                 transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
                 z-index: 200;
                 border-bottom: none;
@@ -682,7 +709,7 @@
                 overflow-x: hidden;
             }
             #controls.mobile-open {
-                transform: translateX(0);
+                transform: translateY(0);
             }
             #controls h3 {
                 font-size: 14px;
@@ -1166,7 +1193,7 @@
 
     <!-- Mobile toggle buttons (visible only on mobile via CSS) -->
     <button type="button" id="mobile-controls-toggle" aria-label="Toggle controls">&#x2630;</button>
-    <button type="button" id="mobile-stats-toggle" aria-label="Toggle statistics">&#x1F4CA;</button>
+    <button type="button" id="mobile-stats-toggle" aria-label="Toggle statistics"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></button>
     <button type="button" id="mobile-events-toggle" aria-label="Toggle events">&#x1F30D;</button>
     <div id="mobile-backdrop"></div>
 
@@ -1371,6 +1398,7 @@
             </p>
         </div>
     </div>
+    <button id="galaxy-info-toggle" aria-label="Toggle galaxy info" style="display:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
     <button id="galaxy-return-btn">&#x2190; Return to Solar System</button>
     <div id="galaxy-zoom-indicator">
         <div class="zoom-level" id="galaxy-zoom-level">1.0x</div>
@@ -3291,7 +3319,26 @@
         // Galaxy View
         document.getElementById('toggle-galaxy').addEventListener('click', toggleGalaxyView);
         document.getElementById('galaxy-return-btn').addEventListener('click', toggleGalaxyView);
-        document.getElementById('galaxy-info-close').addEventListener('click', toggleGalaxyView);
+        document.getElementById('galaxy-info-close').addEventListener('click', function() {
+            // On mobile: hide panel but stay in galaxy view
+            if (window.innerWidth <= 768) {
+                document.getElementById('galaxy-info').classList.remove('visible');
+                setTimeout(() => { document.getElementById('galaxy-info').style.display = 'none'; }, 300);
+                document.getElementById('galaxy-info-toggle').style.display = 'flex';
+            } else {
+                toggleGalaxyView();
+            }
+        });
+        document.getElementById('galaxy-info-toggle').addEventListener('click', function() {
+            const info = document.getElementById('galaxy-info');
+            if (info.classList.contains('visible')) {
+                info.classList.remove('visible');
+                setTimeout(() => { info.style.display = 'none'; }, 300);
+            } else {
+                info.style.display = 'block';
+                requestAnimationFrame(() => info.classList.add('visible'));
+            }
+        });
 
         // True Scale
         let trueScaleMode = false;
@@ -3689,6 +3736,7 @@
                 document.getElementById('galaxy-info').classList.remove('visible');
                 document.getElementById('galaxy-return-btn').classList.remove('visible');
                 document.getElementById('galaxy-zoom-indicator').classList.remove('visible');
+                document.getElementById('galaxy-info-toggle').style.display = 'none';
 
                 // Flash
                 const flash = document.getElementById('galaxy-transition-flash');
@@ -3757,8 +3805,13 @@
                     galaxyLookOffset = { x: 0, z: 0 };
                     galaxyTransition = { phase: 'idle-galaxy', savedCamera: savedCam };
                     loadGalaxyHiRes(); // load hi-res texture as soon as galaxy is fully visible
-                    document.getElementById('galaxy-info').style.display = 'block';
-                    requestAnimationFrame(() => document.getElementById('galaxy-info').classList.add('visible'));
+                    // On mobile: don't auto-show info panel — show info toggle button instead
+                    const isMobileView = window.innerWidth <= 768;
+                    if (!isMobileView) {
+                        document.getElementById('galaxy-info').style.display = 'block';
+                        requestAnimationFrame(() => document.getElementById('galaxy-info').classList.add('visible'));
+                    }
+                    document.getElementById('galaxy-info-toggle').style.display = isMobileView ? 'flex' : 'none';
                     document.getElementById('galaxy-return-btn').style.display = 'block';
                     requestAnimationFrame(() => document.getElementById('galaxy-return-btn').classList.add('visible'));
                     // Show zoom indicator
@@ -4580,11 +4633,8 @@
                 return window.innerWidth <= 768;
             }
 
-            // Open controls by default on mobile
-            if (isMobile()) {
-                controlsPanel.classList.add('mobile-open');
-                controlsBtn.classList.add('active');
-            }
+            // Don't auto-open controls on mobile — let user tap to open
+            // Controls now slide up as a bottom sheet
 
             function closeAllSheets() {
                 controlsPanel.classList.remove('mobile-open');
