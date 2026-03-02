@@ -15,9 +15,6 @@ export function MissionControlFAB() {
   const fabRef = useRef<HTMLButtonElement>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
 
-  // Hide on the full Mission Control page
-  if (pathname === '/mission-control') return null
-
   const close = useCallback(() => {
     closeStore()
     setTimeout(() => fabRef.current?.focus(), 50)
@@ -60,6 +57,9 @@ export function MissionControlFAB() {
       setTimeout(() => closeRef.current?.focus(), 100)
     }
   }, [open])
+
+  // Hide on the full Mission Control page (must be after all hooks)
+  if (pathname === '/mission-control') return null
 
   return (
     <>
