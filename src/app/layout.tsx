@@ -91,9 +91,9 @@ export const metadata: Metadata = {
       'Explore the universe through JWST, Australian radio telescopes, and real-time space data.',
     images: [
       {
-        url: '/og-image.png',
-        width: 1200,
-        height: 630,
+        url: 'https://cosmos-collective.com.au/images/social-preview.png',
+        width: 1280,
+        height: 640,
         alt: 'Cosmos Collective - Explore the Universe',
       },
     ],
@@ -103,7 +103,7 @@ export const metadata: Metadata = {
     title: 'Cosmos Collective | Multi-Spectrum Astronomical Explorer',
     description:
       'Explore the universe through JWST, Australian radio telescopes, and real-time space data.',
-    images: ['/og-image.png'],
+    images: ['https://cosmos-collective.com.au/images/social-preview.png'],
   },
   icons: {
     icon: [
