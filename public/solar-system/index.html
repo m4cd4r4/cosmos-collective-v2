@@ -1308,7 +1308,7 @@
                 <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-orbit-rings" checked><span>Show Orbit Lines</span></label>
-                <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits"><span>Elliptical Orbits</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits" checked><span>Elliptical Orbits</span></label>
             </div>
         </div>
 
@@ -2133,7 +2133,7 @@
         // the Sun at the focus (periapsis is visibly closer, apoapsis farther).
         // =====================================================================
         const orbitRingLines = new Map();
-        let ellipticalOrbits = false;
+        let ellipticalOrbits = true;
         let showOrbitRings = true;
 
         function createOrbitRings() {
@@ -3988,6 +3988,14 @@
                 });
             });
         })();
+
+        // Expand Visuals section by default on non-mobile
+        if (window.innerWidth >= 768) {
+            const visuals = document.getElementById('section-visuals');
+            if (visuals) visuals.classList.remove('collapsed');
+            const hint = visuals && visuals.querySelector('.ctrl-section-hint');
+            if (hint) hint.textContent = 'Visuals';
+        }
 
         // =====================================================================
         // GUIDED DEMO TOUR
