@@ -22,11 +22,6 @@ const WebVitals = dynamic(() => import('@/components/analytics/WebVitals').then(
   ssr: false,
 })
 
-// Lazy load Mission Control FAB (client-only)
-const MissionControlFAB = dynamic(() => import('@/components/ui/MissionControlFAB').then(mod => ({ default: mod.MissionControlFAB })), {
-  ssr: false,
-})
-
 // ============================================
 // Font Configuration
 // ============================================
@@ -239,7 +234,6 @@ export default function RootLayout({
           <div id="main-content" className="relative min-h-screen grain-overlay">
             {children}
           </div>
-          <MissionControlFAB />
         </Providers>
 
         {/* Announcer for screen readers */}
