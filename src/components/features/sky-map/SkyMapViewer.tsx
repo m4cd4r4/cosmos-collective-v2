@@ -189,7 +189,7 @@ interface SkyMapViewerProps {
 export function SkyMapViewer({
   initialRa,
   initialDec,
-  initialFov = 1.5,
+  initialFov = 180,
   initialTarget,
 }: SkyMapViewerProps) {
   const router = useRouter()
@@ -274,7 +274,7 @@ export function SkyMapViewer({
 
     try {
       // Set initial target
-      let targetStr = '05 41 00.00 -02 27 28.8' // Horsehead Nebula region (B33/IC 434)
+      let targetStr = 'galactic center'
       if (initialRa !== undefined && initialDec !== undefined) {
         targetStr = `${initialRa} ${initialDec}`
       } else if (initialTarget) {
@@ -300,6 +300,18 @@ export function SkyMapViewer({
 
         const aladin = window.A.aladin(containerRef.current, options)
         aladinRef.current = aladin
+
+        // Suppress Aladin's built-in white popup globally
+        if (!document.getElementById('aladin-popup-suppress')) {
+          const style = document.createElement('style')
+          style.id = 'aladin-popup-suppress'
+          style.textContent = `
+            #aladin-popup-container,
+            .aladin-popup-container,
+            .aladin-popup { display: none !important; }
+          `
+          document.head.appendChild(style)
+        }
 
         // Add observation markers after a short delay to ensure map is ready
         setTimeout(() => {
@@ -395,7 +407,6 @@ export function SkyMapViewer({
       color: '#f59e0b',
       sourceSize: 12,
       shape: 'circle',
-      onClick: 'showPopup',
     })
 
     const sources = observations.map((obs) => {
@@ -449,8 +460,8 @@ export function SkyMapViewer({
   const zoomIn = () => aladinRef.current?.increaseZoom()
   const zoomOut = () => aladinRef.current?.decreaseZoom()
   const goHome = () => {
-    aladinRef.current?.gotoRaDec(85.25, -2.4580) // Horsehead Nebula region (B33/IC 434)
-    aladinRef.current?.setFov(1.5)
+    aladinRef.current?.gotoObject('galactic center')
+    aladinRef.current?.setFov(180)
   }
   const goToCoords = (ra: number, dec: number) => {
     aladinRef.current?.gotoRaDec(ra, dec)
@@ -475,7 +486,6 @@ export function SkyMapViewer({
       color: '#ef4444',
       sourceSize: 14,
       shape: 'plus',
-      onClick: 'showPopup',
     })
 
     const sources = showers.map((shower) => {
