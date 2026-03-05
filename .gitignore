@@ -112,6 +112,9 @@ temp-*.txt
 prisma/*.db
 prisma/*.db-journal
 
+# Claude Code (personal workspace settings)
+.claude/
+
 # VS Code
 .vscode/
 
