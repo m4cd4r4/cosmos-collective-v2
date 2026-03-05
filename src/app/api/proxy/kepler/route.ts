@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 
+export const dynamic = 'force-dynamic'
+
 const NASA_TAP = 'https://exoplanetarchive.ipac.caltech.edu/TAP/sync'
 const QUERY = `select pl_name,hostname,pl_rade,pl_orbper,pl_eqt,pl_bmasse,pl_insol,pl_orbsmax,st_teff,st_rad,st_mass,st_lum,sy_dist,ra,dec,sy_pnum,disc_year from pscomppars where disc_facility like 'Kepler' order by hostname,pl_orbper`
 
