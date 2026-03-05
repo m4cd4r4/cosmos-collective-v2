@@ -22,6 +22,12 @@ const WebVitals = dynamic(() => import('@/components/analytics/WebVitals').then(
   ssr: false,
 })
 
+// Lazy load Mission Control FAB (client-side only — depends on zustand store)
+const MissionControlFAB = dynamic(
+  () => import('@/components/ui/MissionControlFAB').then(mod => ({ default: mod.MissionControlFAB })),
+  { ssr: false }
+)
+
 // ============================================
 // Font Configuration
 // ============================================
@@ -83,7 +89,7 @@ export const metadata: Metadata = {
     siteName: 'Cosmos Collective',
     title: 'Cosmos Collective | Multi-Spectrum Astronomical Explorer',
     description:
-      'Explore the universe through JWST, Australian radio telescopes, and real-time space data.',
+      'Explore the universe through JWST infrared imagery, 2,600+ Kepler exoplanets, Australian radio telescopes, real-time ISS tracking, and an interactive 3D solar system.',
     images: [
       {
         url: 'https://cosmos-collective.com.au/images/social-preview.png',
@@ -97,7 +103,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Cosmos Collective | Multi-Spectrum Astronomical Explorer',
     description:
-      'Explore the universe through JWST, Australian radio telescopes, and real-time space data.',
+      'Explore the universe through JWST infrared imagery, 2,600+ Kepler exoplanets, Australian radio telescopes, real-time ISS tracking, and an interactive 3D solar system.',
     images: ['https://cosmos-collective.com.au/images/social-preview.png'],
   },
   icons: {
@@ -234,6 +240,8 @@ export default function RootLayout({
           <div id="main-content" className="relative min-h-screen grain-overlay">
             {children}
           </div>
+          {/* Mission Control FAB — global overlay panel, hides itself on /mission-control */}
+          <MissionControlFAB />
         </Providers>
 
         {/* Announcer for screen readers */}
