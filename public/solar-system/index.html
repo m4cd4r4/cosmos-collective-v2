@@ -2795,8 +2795,21 @@
                 updateGalaxyZoomUI();
                 return;
             }
+            const prevDist = cameraDistance;
             cameraDistance += e.deltaY * 0.1;
             cameraDistance = Math.max(5, Math.min(800, cameraDistance));
+            // Trigger galaxy view when scrolling out past max zoom
+            if (!galaxyTransition && diveState === 'none') {
+                if (cameraDistance >= 800 && e.deltaY > 0) {
+                    galaxyOverscrollAccum += e.deltaY;
+                    if (galaxyOverscrollAccum >= 300) {
+                        galaxyOverscrollAccum = 0;
+                        toggleGalaxyView();
+                    }
+                } else {
+                    galaxyOverscrollAccum = 0;
+                }
+            }
             if (diveState === 'none') updateCameraPosition();
         });
 
@@ -2880,8 +2893,13 @@
                         if (galaxyZoom > 1.5) loadGalaxyHiRes();
                         updateGalaxyZoomUI();
                     } else {
+                        const wasAtMax = cameraDistance >= 799;
                         cameraDistance *= scale;
                         cameraDistance = Math.max(5, Math.min(800, cameraDistance));
+                        // Trigger galaxy view when pinching out past max zoom
+                        if (wasAtMax && scale > 1 && cameraDistance >= 800 && !galaxyTransition && diveState === 'none') {
+                            toggleGalaxyView();
+                        }
                     }
                     touchStartDistance = dist;
                 }
@@ -3373,6 +3391,7 @@
         let galaxyDiskMaterial = null;
         let galaxyHiResLoaded = false;
         let galaxyArmLabels = []; // 3D sprite labels for spiral arms
+        let galaxyOverscrollAccum = 0; // accumulated scroll-delta at max zoom to trigger galaxy view
         let galaxyFeatureMarkers = []; // notable features (Sgr A*, nebulae)
         const GALAXY_RADIUS = 500;
         const GALAXY_CENTER = new THREE.Vector3(0, 0, -2000); // offset from solar system
