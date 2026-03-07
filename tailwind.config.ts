@@ -194,6 +194,11 @@ const config: Config = {
         'shimmer': 'shimmer 2s linear infinite',
         'page-enter': 'page-enter 0.4s ease-out both',
         'fab-panel-enter': 'fab-panel-enter 0.25s ease-out both',
+        'scanline': 'scanline 0.6s ease-in-out',
+        'typing-cursor': 'typing-cursor 0.8s step-end infinite',
+        'orbit-slow': 'orbit 30s linear infinite',
+        'counter-orbit': 'counter-orbit 30s linear infinite',
+        'ripple': 'ripple-expand 0.4s ease-out forwards',
       },
 
       keyframes: {
@@ -240,6 +245,28 @@ const config: Config = {
         'fab-panel-enter': {
           '0%': { opacity: '0', transform: 'scale(0.92) translateY(12px)' },
           '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+        },
+        scanline: {
+          '0%': { top: '0%', opacity: '0' },
+          '10%': { opacity: '0.5' },
+          '90%': { opacity: '0.5' },
+          '100%': { top: '100%', opacity: '0' },
+        },
+        'typing-cursor': {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0' },
+        },
+        orbit: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        'counter-orbit': {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(-360deg)' },
+        },
+        'ripple-expand': {
+          '0%': { transform: 'scale(0)', opacity: '0.35' },
+          '100%': { transform: 'scale(4)', opacity: '0' },
         },
       },
 

@@ -1,19 +1,60 @@
 'use client'
 
 /**
- * Mission Control — Hub page for tools NOT in the header nav
- * Links to: Explore, Live Events, Devlog, Observatory, Dashboard, Credits
+ * Mission Control — Live Telemetry Dashboard
+ * Each module tile shows real data previews from its module
  */
 
-import Link from 'next/link'
 import { Header } from '@/components/layout/Header'
 import { StatPopover } from '@/components/ui/StatPopover'
-import { BookMarked, ChevronRight } from 'lucide-react'
+import { BookMarked } from 'lucide-react'
 import { TOOLS, INFO_PANELS } from '@/lib/mission-control-data'
+import { TelemetryTile } from '@/components/features/mission-control/TelemetryTile'
+import { useTelemetryData } from '@/components/features/mission-control/useTelemetryData'
+import { ExploreWidget } from '@/components/features/mission-control/ExploreWidget'
+import { LiveEventsWidget } from '@/components/features/mission-control/LiveEventsWidget'
+import { DevlogWidget } from '@/components/features/mission-control/DevlogWidget'
+import { ObservatoryWidget } from '@/components/features/mission-control/ObservatoryWidget'
+import { DashboardWidget } from '@/components/features/mission-control/DashboardWidget'
+import { CreditsWidget } from '@/components/features/mission-control/CreditsWidget'
 
-// ──────────────────────────────────────────────────────────────────────────
+// Map each module to its widget, data status, and telemetry text generator
+const WIDGET_CONFIG: Record<string, {
+  Widget: React.ComponentType<any>
+  dataStatus: 'live' | 'cached' | 'static'
+  propsKey?: string[]
+}> = {
+  Explore: { Widget: ExploreWidget, dataStatus: 'static' },
+  'Live Events': { Widget: LiveEventsWidget, dataStatus: 'live', propsKey: ['issPosition', 'solarWeather', 'upcomingEvents'] },
+  Devlog: { Widget: DevlogWidget, dataStatus: 'static' },
+  Observatory: { Widget: ObservatoryWidget, dataStatus: 'static' },
+  Dashboard: { Widget: DashboardWidget, dataStatus: 'live', propsKey: ['apod', 'issPosition', 'utcTime'] },
+  Credits: { Widget: CreditsWidget, dataStatus: 'live' },
+}
+
+const TELEMETRY_TEXT: Record<string, (data: any) => string> = {
+  Explore: () => 'OBS: 132 | JWST: 85 | HUBBLE: 18 | RADIO: 29',
+  'Live Events': (d) => {
+    const lat = d.issPosition?.lat?.toFixed(1) ?? '--'
+    const lon = d.issPosition?.lon?.toFixed(1) ?? '--'
+    const solar = d.solarWeather?.flareLevel ?? 'unknown'
+    return `ISS: ${lat}° ${lon}° | ALT: ~408km | SOLAR: ${solar}`
+  },
+  Devlog: () => 'ARCHITECTURE · APIS · VISUALIZATION · RADIO',
+  Observatory: () => 'AITOFF PROJECTION | IR · OPT · RADIO · UV · XRAY',
+  Dashboard: (d) => {
+    const parts = []
+    if (d.apod) parts.push(`APOD: ${d.apod.title.slice(0, 28)}`)
+    if (d.issPosition) parts.push(`ISS: ${d.issPosition.lat.toFixed(1)}° ${d.issPosition.lon.toFixed(1)}°`)
+    parts.push(`UTC: ${d.utcTime ?? '--:--:--'}`)
+    return parts.join(' | ')
+  },
+  Credits: () => 'LIVE API HEALTH MONITOR | 6 ENDPOINTS',
+}
 
 export default function MissionControlPage() {
+  const telemetry = useTelemetryData()
+
   return (
     <div className="h-screen overflow-hidden flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
@@ -55,45 +96,46 @@ export default function MissionControlPage() {
           <div className="flex-1 h-px bg-[rgba(212,175,55,0.06)]" />
         </div>
 
-        {/* Tool Grid */}
+        {/* Live Telemetry Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {TOOLS.map(({ label, href, icon: Icon, badge, badgeColor, badgePulse, description, stat, color, glow }) => (
-            <Link
-              key={href}
-              href={href}
-              className="group rounded-xl border border-[rgba(212,175,55,0.12)] bg-[rgba(8,12,28,0.7)] overflow-hidden hover:border-[rgba(212,175,55,0.3)] transition-all duration-200 hover:bg-[rgba(8,12,28,0.9)] flex flex-col"
-              style={{ '--glow': glow } as React.CSSProperties}
-            >
-              {/* Card Header */}
-              <div className="px-4 py-3 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div
-                    className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                    style={{ background: `${color}18`, border: `1px solid ${color}28` }}
-                  >
-                    <Icon className="w-3.5 h-3.5" style={{ color }} />
-                  </div>
-                  <span className="text-[13px] font-bold text-[#e0e8ff] uppercase tracking-[0.1em]">{label}</span>
-                </div>
-                <div
-                  className="flex items-center gap-1 px-2 py-0.5 rounded"
-                  style={{ background: `${badgeColor}18`, border: `1px solid ${badgeColor}28` }}
-                >
-                  {badgePulse && <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: badgeColor }} />}
-                  <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: badgeColor }}>{badge}</span>
-                </div>
-              </div>
+          {TOOLS.map((tool) => {
+            const config = WIDGET_CONFIG[tool.label]
+            if (!config) return null
+            const { Widget, dataStatus } = config
 
-              {/* Card Body */}
-              <div className="px-4 py-3.5 flex-1 flex flex-col gap-2.5">
-                <p className="text-[11px] text-[#6070a0] leading-relaxed">{description}</p>
-                <div className="mt-auto flex items-center justify-between">
-                  <span className="text-[9px] uppercase tracking-[0.12em] text-[#4a5580]">{stat}</span>
-                  <ChevronRight className="w-3.5 h-3.5 text-[#4a5580] group-hover:text-[#d4af37] group-hover:translate-x-0.5 transition-all duration-200" />
-                </div>
-              </div>
-            </Link>
-          ))}
+            // Build widget props from telemetry data
+            const widgetProps: Record<string, any> = {}
+            if (tool.label === 'Live Events') {
+              widgetProps.issPosition = telemetry.issPosition
+              widgetProps.solarWeather = telemetry.solarWeather
+              widgetProps.upcomingEvents = telemetry.upcomingEvents
+            } else if (tool.label === 'Dashboard') {
+              widgetProps.apod = telemetry.apod
+              widgetProps.issPosition = telemetry.issPosition
+              widgetProps.utcTime = telemetry.utcTime
+            }
+
+            const effectiveStatus = telemetry.isLoading && dataStatus === 'live' ? 'cached' as const : dataStatus
+            const telemetryText = TELEMETRY_TEXT[tool.label]?.(telemetry) ?? ''
+
+            return (
+              <TelemetryTile
+                key={tool.href}
+                label={tool.label}
+                href={tool.href}
+                icon={tool.icon}
+                badge={tool.badge}
+                badgeColor={tool.badgeColor}
+                badgePulse={tool.badgePulse}
+                color={tool.color}
+                glow={tool.glow}
+                dataStatus={effectiveStatus}
+                telemetryText={telemetryText}
+              >
+                <Widget {...widgetProps} />
+              </TelemetryTile>
+            )
+          })}
         </div>
 
         {/* Bottom info row */}
