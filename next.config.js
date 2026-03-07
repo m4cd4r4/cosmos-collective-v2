@@ -3,6 +3,9 @@ const withPWA = require('next-pwa')({
   register: true,
   skipWaiting: true,
   disable: process.env.NODE_ENV === 'development',
+  fallbacks: {
+    document: '/offline',
+  },
   // Exclude Next.js App Router internal files that are not publicly served as static assets
   buildExcludes: [/app-build-manifest\.json$/, /middleware-manifest\.json$/, /middleware-build-manifest\.js$/],
   runtimeCaching: [

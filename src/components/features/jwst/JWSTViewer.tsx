@@ -3,9 +3,8 @@
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import type { Observation, DetectedFeature, ObjectCategory, JWSTInstrument } from '@/types'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
-import { JWSTSkyMap } from './JWSTSkyMap'
-import type { JWSTSkyMapHandle } from './JWSTSkyMap'
-import { ExternalLink, MapPin, Calendar, Ruler, Star, Layers, Search, ChevronRight, Maximize2, Info } from 'lucide-react'
+import Link from 'next/link'
+import { ExternalLink, MapPin, Calendar, Ruler, Star, Layers, Search, ChevronRight, Maximize2, Info, Map } from 'lucide-react'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -57,7 +56,6 @@ export function JWSTViewer() {
   const [imgLoaded, setImgLoaded] = useState(false)
   const [imgError, setImgError] = useState(false)
 
-  const skyMapRef = useRef<JWSTSkyMapHandle>(null)
   const listRef = useRef<HTMLDivElement>(null)
 
   // ── Derived data ─────────────────────────────────────────────────────────
@@ -106,19 +104,8 @@ export function JWSTViewer() {
     setSelected(obs)
     setActiveWavelength(0)
     setHoveredFeature(null)
-    skyMapRef.current?.flyTo(obs.coordinates.ra, obs.coordinates.dec, 15)
     setMobileTab('detail')
   }, [])
-
-  // When sky map marker is clicked
-  const handleSkyMapClick = useCallback((obsId: string) => {
-    const obs = observations.find(o => o.id === obsId)
-    if (obs) {
-      setSelected(obs)
-      setActiveWavelength(0)
-      setHoveredFeature(null)
-    }
-  }, [observations])
 
   // Scroll the sidebar list to show the selected item
   useEffect(() => {
@@ -186,147 +173,11 @@ export function JWSTViewer() {
           onClick={() => setMobileTab('detail')}
           className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'detail' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
         >
-          Details · Sky Map
+          Image · Details
         </button>
       </div>
 
-      {/* ── IMAGE HERO ─────────────────────────────────────────────────── */}
-      <div
-        className={`relative bg-black shrink-0 ${fullscreen ? 'fixed inset-0 z-50' : ''}`}
-        style={{ height: fullscreen ? undefined : 260 }}
-      >
-        {/* Loading state */}
-        {!imgLoaded && !imgError && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none z-10">
-            <div className="w-8 h-8 rounded-full border border-[rgba(212,175,55,0.2)] border-t-[#d4af37] animate-spin" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Loading image…</span>
-          </div>
-        )}
-
-        {/* Error state */}
-        {imgError && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none z-10">
-            <span className="text-4xl opacity-30">🔭</span>
-            <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Image unavailable</span>
-          </div>
-        )}
-
-        {/* JWST Image — object-cover for full-bleed fill */}
-        <img
-          src={proxiedImageUrl}
-          alt={selected.targetName}
-          className={`w-full h-full object-cover transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-          draggable={false}
-          onLoad={() => setImgLoaded(true)}
-          onError={() => { setImgLoaded(false); setImgError(true) }}
-        />
-
-        {/* Gradient vignette so text overlays are legible */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/80 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0a0e1a]/40 via-transparent to-transparent pointer-events-none" />
-
-        {/* Feature bounding boxes */}
-        {showFeatures && selected.features && selected.features.length > 0 && (
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-            {selected.features.map(f => (
-              <g key={f.id}>
-                <rect
-                  x={f.boundingBox.x}
-                  y={f.boundingBox.y}
-                  width={f.boundingBox.width}
-                  height={f.boundingBox.height}
-                  fill={hoveredFeature === f.id ? 'rgba(212,175,55,0.15)' : 'transparent'}
-                  stroke={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.4)'}
-                  strokeWidth={hoveredFeature === f.id ? 0.5 : 0.3}
-                  strokeDasharray={hoveredFeature === f.id ? undefined : '1 0.5'}
-                  className="pointer-events-auto cursor-pointer transition-all"
-                  onMouseEnter={() => setHoveredFeature(f.id)}
-                  onMouseLeave={() => setHoveredFeature(null)}
-                  style={{ vectorEffect: 'non-scaling-stroke' }}
-                />
-                <text
-                  x={f.boundingBox.x + 0.5}
-                  y={f.boundingBox.y - 0.5}
-                  fill={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.6)'}
-                  fontSize="2.2"
-                  fontFamily="monospace"
-                  className="pointer-events-none"
-                >
-                  {f.label}
-                </text>
-              </g>
-            ))}
-          </svg>
-        )}
-
-        {/* Controls — top right */}
-        <div className="absolute top-3 right-3 flex gap-2 z-10">
-          {selected.features && selected.features.length > 0 && (
-            <button
-              onClick={() => setShowFeatures(!showFeatures)}
-              className={`px-2.5 py-1.5 rounded text-[10px] uppercase tracking-wider transition-all backdrop-blur-sm ${
-                showFeatures
-                  ? 'bg-[rgba(212,175,55,0.2)] text-[#d4af37] border border-[rgba(212,175,55,0.3)]'
-                  : 'bg-black/50 text-[#4a5580] border border-white/10 hover:text-[#d4af37]'
-              }`}
-            >
-              <Layers className="w-3 h-3 inline-block mr-1" />
-              {showFeatures ? 'Hide' : 'Show'} Features
-            </button>
-          )}
-          <button
-            onClick={() => setFullscreen(!fullscreen)}
-            className="p-1.5 rounded bg-black/50 text-[#4a5580] border border-white/10 hover:text-[#d4af37] transition-colors backdrop-blur-sm"
-            title="Fullscreen"
-          >
-            <Maximize2 className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Fullscreen close */}
-        {fullscreen && (
-          <button
-            onClick={() => setFullscreen(false)}
-            className="absolute top-4 right-16 z-50 px-3 py-1.5 rounded bg-black/70 text-white border border-white/20 hover:bg-white/10 transition-colors text-xs tracking-wider"
-          >
-            ESC
-          </button>
-        )}
-
-        {/* Target name — bottom left */}
-        <div className="absolute bottom-3 left-4 z-10">
-          <div className="text-lg font-bold text-white drop-shadow-lg leading-tight">
-            {selected.targetName}
-          </div>
-          {selected.description && (
-            <div className="text-[11px] text-white/60 max-w-[600px] line-clamp-1 drop-shadow-lg mt-0.5">
-              {selected.description}
-            </div>
-          )}
-        </div>
-
-        {/* Wavelength switcher — bottom right */}
-        {selected.images.wavelengthVersions && selected.images.wavelengthVersions.length > 1 && (
-          <div className="absolute bottom-3 right-3 flex items-center gap-2 z-10">
-            <span className="text-[9px] uppercase tracking-[0.18em] text-white/40 mr-1">Band</span>
-            {selected.images.wavelengthVersions.map((wv, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveWavelength(i)}
-                className={`px-3 py-1 rounded text-[11px] font-mono transition-all backdrop-blur-sm ${
-                  activeWavelength === i
-                    ? 'bg-[rgba(212,175,55,0.25)] text-[#d4af37] border border-[rgba(212,175,55,0.5)]'
-                    : 'bg-black/50 text-white/50 border border-white/15 hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)]'
-                }`}
-              >
-                {wv.colorMap || wv.band}
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* ── BOTTOM 3-COL ────────────────────────────────────────────────── */}
+      {/* ── 3-COL LAYOUT ─────────────────────────────────────────────── */}
       <div className="flex-1 flex flex-col lg:grid lg:grid-cols-[240px_1fr_300px] min-h-0">
 
         {/* ── LEFT SIDEBAR: Gallery + Filters ───────────────────────── */}
@@ -433,14 +284,136 @@ export function JWSTViewer() {
           </div>
         </aside>
 
-        {/* ── CENTER: Sky Map ────────────────────────────────────────── */}
-        <div className={`relative overflow-hidden ${mobileTab === 'detail' ? 'block h-[220px] lg:h-auto shrink-0' : 'hidden lg:block'}`}>
-          <JWSTSkyMap
-            ref={skyMapRef}
-            className="w-full h-full"
-            selectedObsId={selected.id}
-            onMarkerClick={handleSkyMapClick}
+        {/* ── CENTER: Image Viewer ──────────────────────────────────── */}
+        <div className={`relative bg-black overflow-hidden ${fullscreen ? 'fixed inset-0 z-50' : ''} ${mobileTab === 'detail' ? 'flex flex-col min-h-[40vh] lg:min-h-0' : 'hidden lg:flex lg:flex-col'}`}>
+          {/* Loading state */}
+          {!imgLoaded && !imgError && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none z-10">
+              <div className="w-8 h-8 rounded-full border border-[rgba(212,175,55,0.2)] border-t-[#d4af37] animate-spin" />
+              <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Loading image…</span>
+            </div>
+          )}
+
+          {/* Error state */}
+          {imgError && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none z-10">
+              <span className="text-4xl opacity-30">🔭</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Image unavailable</span>
+            </div>
+          )}
+
+          {/* JWST Image — object-contain to show entire image */}
+          <img
+            src={proxiedImageUrl}
+            alt={selected.targetName}
+            className={`flex-1 w-full object-contain transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+            draggable={false}
+            onLoad={() => setImgLoaded(true)}
+            onError={() => { setImgLoaded(false); setImgError(true) }}
           />
+
+          {/* Gradient vignette — bottom only for text readability */}
+          <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
+
+          {/* Feature bounding boxes */}
+          {showFeatures && selected.features && selected.features.length > 0 && (
+            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+              {selected.features.map(f => (
+                <g key={f.id}>
+                  <rect
+                    x={f.boundingBox.x}
+                    y={f.boundingBox.y}
+                    width={f.boundingBox.width}
+                    height={f.boundingBox.height}
+                    fill={hoveredFeature === f.id ? 'rgba(212,175,55,0.15)' : 'transparent'}
+                    stroke={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.4)'}
+                    strokeWidth={hoveredFeature === f.id ? 0.5 : 0.3}
+                    strokeDasharray={hoveredFeature === f.id ? undefined : '1 0.5'}
+                    className="pointer-events-auto cursor-pointer transition-all"
+                    onMouseEnter={() => setHoveredFeature(f.id)}
+                    onMouseLeave={() => setHoveredFeature(null)}
+                    style={{ vectorEffect: 'non-scaling-stroke' }}
+                  />
+                  <text
+                    x={f.boundingBox.x + 0.5}
+                    y={f.boundingBox.y - 0.5}
+                    fill={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.6)'}
+                    fontSize="2.2"
+                    fontFamily="monospace"
+                    className="pointer-events-none"
+                  >
+                    {f.label}
+                  </text>
+                </g>
+              ))}
+            </svg>
+          )}
+
+          {/* Controls — top right */}
+          <div className="absolute top-3 right-3 flex gap-2 z-10">
+            {selected.features && selected.features.length > 0 && (
+              <button
+                onClick={() => setShowFeatures(!showFeatures)}
+                className={`px-2.5 py-1.5 rounded text-[10px] uppercase tracking-wider transition-all backdrop-blur-sm ${
+                  showFeatures
+                    ? 'bg-[rgba(212,175,55,0.2)] text-[#d4af37] border border-[rgba(212,175,55,0.3)]'
+                    : 'bg-black/50 text-[#4a5580] border border-white/10 hover:text-[#d4af37]'
+                }`}
+              >
+                <Layers className="w-3 h-3 inline-block mr-1" />
+                {showFeatures ? 'Hide' : 'Show'} Features
+              </button>
+            )}
+            <button
+              onClick={() => setFullscreen(!fullscreen)}
+              className="p-1.5 rounded bg-black/50 text-[#4a5580] border border-white/10 hover:text-[#d4af37] transition-colors backdrop-blur-sm"
+              title="Fullscreen"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          {/* Fullscreen close */}
+          {fullscreen && (
+            <button
+              onClick={() => setFullscreen(false)}
+              className="absolute top-4 right-16 z-50 px-3 py-1.5 rounded bg-black/70 text-white border border-white/20 hover:bg-white/10 transition-colors text-xs tracking-wider"
+            >
+              ESC
+            </button>
+          )}
+
+          {/* Target name — bottom left */}
+          <div className="absolute bottom-3 left-4 z-10">
+            <div className="text-lg font-bold text-white drop-shadow-lg leading-tight">
+              {selected.targetName}
+            </div>
+            {selected.description && (
+              <div className="text-[11px] text-white/60 max-w-[600px] line-clamp-1 drop-shadow-lg mt-0.5">
+                {selected.description}
+              </div>
+            )}
+          </div>
+
+          {/* Wavelength switcher — bottom right */}
+          {selected.images.wavelengthVersions && selected.images.wavelengthVersions.length > 1 && (
+            <div className="absolute bottom-3 right-3 flex items-center gap-2 z-10">
+              <span className="text-[9px] uppercase tracking-[0.18em] text-white/40 mr-1">Band</span>
+              {selected.images.wavelengthVersions.map((wv, i) => (
+                <button
+                  key={i}
+                  onClick={() => setActiveWavelength(i)}
+                  className={`px-3 py-1 rounded text-[11px] font-mono transition-all backdrop-blur-sm ${
+                    activeWavelength === i
+                      ? 'bg-[rgba(212,175,55,0.25)] text-[#d4af37] border border-[rgba(212,175,55,0.5)]'
+                      : 'bg-black/50 text-white/50 border border-white/15 hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)]'
+                  }`}
+                >
+                  {wv.colorMap || wv.band}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* ── RIGHT SIDEBAR: Details ────────────────────────────────── */}
@@ -482,6 +455,13 @@ export function JWSTViewer() {
                   <span className="text-[#8090b0]">{selected.coordinates.dec.toFixed(4)}°</span>
                 </div>
               </div>
+              <Link
+                href={`/sky-map?ra=${selected.coordinates.ra.toFixed(4)}&dec=${selected.coordinates.dec.toFixed(4)}&fov=2&target=${encodeURIComponent(selected.targetName)}`}
+                className="flex items-center gap-1.5 mt-2 text-[10px] text-[#4a90e2] hover:text-[#d4af37] transition-colors"
+              >
+                <Map className="w-3 h-3" />
+                Open in Sky Map
+              </Link>
             </div>
 
             {/* Filters used */}
