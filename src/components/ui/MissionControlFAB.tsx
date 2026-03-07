@@ -58,8 +58,8 @@ export function MissionControlFAB() {
     }
   }, [open])
 
-  // Hide on the full Mission Control page (must be after all hooks)
-  if (pathname === '/mission-control') return null
+  // Hide on Mission Control page and Solar System page (FAB obscures solar system's own UI toggle)
+  if (pathname === '/mission-control' || pathname === '/solar-system') return null
 
   return (
     <>

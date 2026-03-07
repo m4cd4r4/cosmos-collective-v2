@@ -22,12 +22,6 @@ const WebVitals = dynamic(() => import('@/components/analytics/WebVitals').then(
   ssr: false,
 })
 
-// Lazy load Mission Control FAB (client-side only — depends on zustand store)
-const MissionControlFAB = dynamic(
-  () => import('@/components/ui/MissionControlFAB').then(mod => ({ default: mod.MissionControlFAB })),
-  { ssr: false }
-)
-
 // ============================================
 // Font Configuration
 // ============================================
@@ -240,8 +234,7 @@ export default function RootLayout({
           <div id="main-content" className="relative min-h-screen grain-overlay">
             {children}
           </div>
-          {/* Mission Control FAB — global overlay panel, hides itself on /mission-control */}
-          <MissionControlFAB />
+
         </Providers>
 
         {/* Announcer for screen readers */}
