@@ -1,14 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { Shield, Accessibility, Gauge, CheckCircle } from 'lucide-react'
+import { Zap, Accessibility, ShieldCheck, BadgeCheck } from 'lucide-react'
 
 const BADGES = [
   {
     label: 'Performance',
     score: 95,
     grade: 'A',
-    icon: Gauge,
+    icon: Zap,
     color: '#22c55e',
     detail: 'Lighthouse Score',
   },
@@ -24,7 +24,7 @@ const BADGES = [
     label: 'Security',
     score: null,
     grade: 'A+',
-    icon: Shield,
+    icon: ShieldCheck,
     color: '#8b5cf6',
     detail: 'SSL Labs Grade',
   },
@@ -32,7 +32,7 @@ const BADGES = [
     label: 'Best Practices',
     score: 100,
     grade: 'A',
-    icon: CheckCircle,
+    icon: BadgeCheck,
     color: '#d4af37',
     detail: 'Lighthouse Score',
   },
@@ -64,37 +64,17 @@ export function QualitySealBadges() {
               key={label}
               className="rounded-xl border border-[rgba(212,175,55,0.08)] bg-[rgba(8,12,28,0.5)] px-4 py-5 text-center"
             >
-              {/* Score ring */}
-              <div className="relative w-16 h-16 mx-auto mb-3">
-                <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                  {/* Background ring */}
-                  <circle
-                    cx="18" cy="18" r="15.5"
-                    fill="none"
-                    stroke="rgba(255,255,255,0.06)"
-                    strokeWidth="3"
-                  />
-                  {/* Score ring */}
-                  <circle
-                    cx="18" cy="18" r="15.5"
-                    fill="none"
-                    stroke={scoreColor(score)}
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeDasharray={`${(score ?? 100) * 0.974} 100`}
-                    style={{ filter: `drop-shadow(0 0 4px ${scoreColor(score)})` }}
-                  />
-                </svg>
-                {/* Center text */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="text-sm font-mono font-bold" style={{ color: scoreColor(score) }}>
-                    {score !== null ? score : grade}
-                  </span>
-                </div>
+              {/* Icon */}
+              <div className="flex items-center justify-center w-12 h-12 mx-auto mb-3 rounded-full border border-[rgba(212,175,55,0.15)]">
+                <Icon className="w-6 h-6" style={{ color }} />
               </div>
 
-              <Icon className="w-4 h-4 mx-auto mb-1.5" style={{ color }} />
-              <h3 className="text-[11px] font-semibold text-[#c8d4f0]">{label}</h3>
+              {/* Score */}
+              <span className="text-lg font-mono font-bold" style={{ color: scoreColor(score) }}>
+                {score !== null ? score : grade}
+              </span>
+
+              <h3 className="text-[11px] font-semibold text-[#c8d4f0] mt-1">{label}</h3>
               <p className="text-[9px] text-[#4a5580] mt-0.5">{detail}</p>
             </div>
           ))}
