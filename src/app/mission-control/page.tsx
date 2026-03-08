@@ -13,10 +13,8 @@ import { TelemetryTile } from '@/components/features/mission-control/TelemetryTi
 import { useTelemetryData } from '@/components/features/mission-control/useTelemetryData'
 import { ExploreWidget } from '@/components/features/mission-control/ExploreWidget'
 import { LiveEventsWidget } from '@/components/features/mission-control/LiveEventsWidget'
-import { DevlogWidget } from '@/components/features/mission-control/DevlogWidget'
 import { ObservatoryWidget } from '@/components/features/mission-control/ObservatoryWidget'
 import { DashboardWidget } from '@/components/features/mission-control/DashboardWidget'
-import { CreditsWidget } from '@/components/features/mission-control/CreditsWidget'
 
 // Map each module to its widget, data status, and telemetry text generator
 const WIDGET_CONFIG: Record<string, {
@@ -26,10 +24,8 @@ const WIDGET_CONFIG: Record<string, {
 }> = {
   Explore: { Widget: ExploreWidget, dataStatus: 'static' },
   'Live Events': { Widget: LiveEventsWidget, dataStatus: 'live', propsKey: ['issPosition', 'solarWeather', 'upcomingEvents'] },
-  Devlog: { Widget: DevlogWidget, dataStatus: 'static' },
   Observatory: { Widget: ObservatoryWidget, dataStatus: 'static' },
   Dashboard: { Widget: DashboardWidget, dataStatus: 'live', propsKey: ['apod', 'issPosition', 'utcTime'] },
-  Credits: { Widget: CreditsWidget, dataStatus: 'live' },
 }
 
 const TELEMETRY_TEXT: Record<string, (data: any) => string> = {
@@ -40,7 +36,6 @@ const TELEMETRY_TEXT: Record<string, (data: any) => string> = {
     const solar = d.solarWeather?.flareLevel ?? 'unknown'
     return `ISS: ${lat}° ${lon}° | ALT: ~408km | SOLAR: ${solar}`
   },
-  Devlog: () => 'ARCHITECTURE · APIS · VISUALIZATION · RADIO',
   Observatory: () => 'AITOFF PROJECTION | IR · OPT · RADIO · UV · XRAY',
   Dashboard: (d) => {
     const parts = []
@@ -49,7 +44,6 @@ const TELEMETRY_TEXT: Record<string, (data: any) => string> = {
     parts.push(`UTC: ${d.utcTime ?? '--:--:--'}`)
     return parts.join(' | ')
   },
-  Credits: () => 'LIVE API HEALTH MONITOR | 6 ENDPOINTS',
 }
 
 export default function MissionControlPage() {
