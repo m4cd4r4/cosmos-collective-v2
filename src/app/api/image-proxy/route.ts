@@ -25,7 +25,7 @@ const ALLOWED_DOMAINS = [
 function isAllowedDomain(url: string): boolean {
   try {
     const urlObj = new URL(url)
-    return ALLOWED_DOMAINS.some(domain => urlObj.hostname.includes(domain))
+    return ALLOWED_DOMAINS.some(domain => urlObj.hostname === domain || urlObj.hostname.endsWith('.' + domain))
   } catch {
     return false
   }

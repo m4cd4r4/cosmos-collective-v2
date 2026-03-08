@@ -10,7 +10,7 @@ import type { AstronomicalEvent, ApiResponse, SkyCoordinates, EventType, EventSe
 // Configuration
 // ============================================
 
-const NASA_API_KEY = process.env.NEXT_PUBLIC_NASA_API_KEY || 'DEMO_KEY'
+const NASA_API_KEY = process.env.NEXT_PUBLIC_NASA_API_KEY ?? 'DEMO_KEY'
 
 const API_ENDPOINTS = {
   nasaApod: `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`,

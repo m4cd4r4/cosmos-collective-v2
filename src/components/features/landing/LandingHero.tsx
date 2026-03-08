@@ -1,31 +1,18 @@
 'use client'
 
-import { useState } from 'react'
-import { ChevronDown, Eye, EyeOff, Sparkles } from 'lucide-react'
+import { ChevronDown, Sparkles } from 'lucide-react'
 
 export function LandingHero() {
-  const [uiHidden, setUiHidden] = useState(false)
-
   return (
-    <section className="relative h-screen overflow-hidden" aria-labelledby="hero-heading">
-      {/* Solar System 3D iframe — full background */}
-      <iframe
-        src="/solar-system/index.html"
-        title="Interactive 3D Solar System"
-        className="absolute inset-0 w-full h-full border-0"
-        style={{ zIndex: 1, background: '#000' }}
-        loading="eager"
-        allow="fullscreen"
-      />
+    <section className="relative h-screen overflow-hidden flex items-end justify-center" aria-labelledby="hero-heading">
+      {/* Background — uses the global Starfield from layout, just add a nebula gradient */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(74,144,226,0.06)] via-[rgba(212,175,55,0.04)] to-[#0a0e1a]" />
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[rgba(212,175,55,0.03)] blur-[120px]" />
+      </div>
 
-      {/* Bottom gradient for text readability */}
-      <div
-        className="absolute inset-x-0 bottom-0 h-[45%] z-[2] pointer-events-none"
-        style={{ background: 'linear-gradient(to top, rgba(10,14,26,0.95) 0%, rgba(10,14,26,0.6) 40%, transparent 100%)' }}
-      />
-
-      {/* Title overlay — always visible, anchored to bottom */}
-      <div className={`absolute inset-x-0 bottom-20 z-10 text-center px-4 transition-opacity duration-500 ${uiHidden ? 'opacity-0 pointer-events-none' : ''}`}>
+      {/* Title overlay */}
+      <div className="relative z-10 text-center px-4 pb-20">
         {/* Badge */}
         <div className="relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(212,175,55,0.1)] border border-[rgba(212,175,55,0.3)] mb-4 overflow-hidden">
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(212,175,55,0.15)] to-transparent animate-shimmer bg-[length:200%_100%]" />
@@ -55,7 +42,7 @@ export function LandingHero() {
       </div>
 
       {/* Scroll-down chevron */}
-      <div className={`absolute bottom-6 left-1/2 -translate-x-1/2 z-10 animate-bounce transition-opacity duration-300 ${uiHidden ? 'opacity-0 pointer-events-none' : ''}`}>
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 animate-bounce">
         <button
           onClick={() => {
             const next = document.getElementById('features')
@@ -67,20 +54,6 @@ export function LandingHero() {
           <ChevronDown className="w-5 h-5 text-white" />
         </button>
       </div>
-
-      {/* Hide/Show UI toggle */}
-      <button
-        onClick={() => setUiHidden(!uiHidden)}
-        className={`absolute z-30 transition-all duration-300 rounded-lg p-2 backdrop-blur-sm hover:bg-white/10 ${
-          uiHidden
-            ? 'bottom-6 right-6 bg-white/5 opacity-50 hover:opacity-100'
-            : 'bottom-6 right-6 bg-white/10'
-        }`}
-        aria-label={uiHidden ? 'Show controls' : 'Hide controls'}
-        title={uiHidden ? 'Show controls' : 'Hide controls'}
-      >
-        {uiHidden ? <Eye className="w-5 h-5 text-white" /> : <EyeOff className="w-5 h-5 text-white" />}
-      </button>
     </section>
   )
 }

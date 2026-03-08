@@ -34,8 +34,8 @@ export function DevlogContent({ content }: DevlogContentProps) {
 function parseMarkdown(markdown: string): string {
   let html = markdown
 
-  // Escape HTML (except for code blocks which we'll handle separately)
-  // html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  // Escape HTML before markdown processing (code blocks use escapeHtml separately)
+  html = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
 
   // Code blocks with syntax highlighting
   html = html.replace(
