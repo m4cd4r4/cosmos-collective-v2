@@ -56,9 +56,9 @@ const navItems = [
 function Logo() {
   return (
     <Link
-      href="/solar-system"
+      href="/"
       className="flex items-center gap-2.5 group"
-      aria-label="Cosmos Collective - Solar System"
+      aria-label="Cosmos Collective - Home"
     >
       {/* Logo Icon — Armillary Sphere */}
       <div className="relative w-10 h-10">
