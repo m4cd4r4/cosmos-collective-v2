@@ -6,9 +6,7 @@ import type { LucideIcon } from 'lucide-react'
 import {
   Telescope,
   Calendar,
-  BookOpen,
   LayoutDashboard,
-  Award,
   Radio,
   Satellite,
   Zap,
@@ -57,17 +55,6 @@ export const TOOLS: MissionControlTool[] = [
     glow: 'rgba(239,68,68,0.08)',
   },
   {
-    label: 'Devlog',
-    href: '/devlog',
-    icon: BookOpen,
-    badge: 'BLOG',
-    badgeColor: '#e040fb',
-    description: 'Technical blog documenting the design and engineering decisions behind Cosmos Collective.',
-    stat: 'Architecture · APIs · Visualisation',
-    color: '#e040fb',
-    glow: 'rgba(224,64,251,0.08)',
-  },
-  {
     label: 'Observatory',
     href: '/observatory',
     icon: Radio,
@@ -88,17 +75,6 @@ export const TOOLS: MissionControlTool[] = [
     stat: 'Favourites · ISS · Events · SKA',
     color: '#4caf93',
     glow: 'rgba(76,175,147,0.08)',
-  },
-  {
-    label: 'Credits',
-    href: '/credits',
-    icon: Award,
-    badge: 'ATTRIBUTION',
-    badgeColor: '#64d8cb',
-    description: 'Data sources, third-party libraries and acknowledgements powering the platform.',
-    stat: 'NASA · ESA · CSIRO · CDS',
-    color: '#64d8cb',
-    glow: 'rgba(100,216,203,0.08)',
   },
 ]
 

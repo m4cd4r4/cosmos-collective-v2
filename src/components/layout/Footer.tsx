@@ -25,7 +25,6 @@ const footerLinks = {
     { label: 'Kepler Exoplanets', href: '/kepler' },
   ],
   learn: [
-    { label: 'Devlog', href: '/devlog' },
     { label: 'About SKA', href: 'https://www.skao.int/', external: true },
     { label: 'CSIRO Astronomy', href: 'https://www.csiro.au/en/about/facilities-collections/atnf', external: true },
     { label: 'NASA JWST', href: 'https://webb.nasa.gov/', external: true },
@@ -34,7 +33,6 @@ const footerLinks = {
     { label: 'Privacy Policy', href: '/privacy' },
     { label: 'Terms of Use', href: '/terms' },
     { label: 'Accessibility', href: '/accessibility' },
-    { label: 'Credits', href: '/credits' },
   ],
 }
 

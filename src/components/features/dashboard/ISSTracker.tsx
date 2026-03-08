@@ -1,8 +1,13 @@
 'use client'
 
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Satellite, Maximize2, X, ExternalLink } from 'lucide-react'
-import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
+
+const WorldMapLeaflet = dynamic(
+  () => import('@/components/ui/WorldMapLeaflet').then(mod => ({ default: mod.WorldMapLeaflet })),
+  { ssr: false, loading: () => <div className="w-full h-[200px] rounded-lg bg-[rgba(10,20,40,0.4)] animate-pulse" /> }
+)
 
 interface ISSTrackerProps {
   issPosition: { lat: number; lon: number; alt: number } | null
@@ -39,9 +44,10 @@ export function ISSTracker({ issPosition, issVelocity, issError }: ISSTrackerPro
               onClick={() => setModalOpen(true)}
               className="w-full cursor-pointer rounded-lg hover:ring-1 hover:ring-[rgba(212,175,55,0.2)] transition-all"
             >
-              <WorldMapSVG
+              <WorldMapLeaflet
                 issPosition={issPosition}
-                className="w-full h-auto rounded-lg"
+                height={200}
+                className="rounded-lg"
               />
             </button>
           ) : issError ? (
@@ -112,11 +118,10 @@ export function ISSTracker({ issPosition, issVelocity, issError }: ISSTrackerPro
             </div>
 
             <div className="px-6 pt-5 pb-3">
-              <WorldMapSVG
+              <WorldMapLeaflet
                 issPosition={issPosition}
-                width={720}
-                height={360}
-                className="w-full rounded-xl bg-white/[0.03] border border-white/5 p-2"
+                height={400}
+                className="rounded-xl"
               />
             </div>
 
