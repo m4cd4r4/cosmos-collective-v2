@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams
     const classifier = searchParams.get('classifier') || 'lc_classifier'
     const className = searchParams.get('class_name') || 'SNIa'
-    const limit = searchParams.get('limit') || '5'
+    const limit = String(Math.min(Math.max(parseInt(searchParams.get('limit') || '5', 10) || 5, 1), 100))
 
     // Build query with correct ALeRCE v1 parameters
     // Note: order_by is not supported by this endpoint

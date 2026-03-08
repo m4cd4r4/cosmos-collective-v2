@@ -306,7 +306,7 @@ export function JWSTViewer() {
           <img
             src={proxiedImageUrl}
             alt={selected.targetName}
-            className={`flex-1 w-full object-contain transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+            className={`w-full object-contain object-top transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
             draggable={false}
             onLoad={() => setImgLoaded(true)}
             onError={() => { setImgLoaded(false); setImgError(true) }}

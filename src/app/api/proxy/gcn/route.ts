@@ -11,7 +11,7 @@ const GCN_BASE = 'https://gcn.nasa.gov/circulars'
 export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
-    const limit = parseInt(searchParams.get('limit') || '5')
+    const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '5', 10) || 5, 1), 100)
 
     // First, get the latest circular ID by fetching the main page
     // We'll start from a recent known ID and work backwards

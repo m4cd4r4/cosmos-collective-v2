@@ -5,36 +5,36 @@ import { Zap, Accessibility, ShieldCheck, BadgeCheck } from 'lucide-react'
 
 const BADGES = [
   {
-    label: 'Performance',
-    score: 95,
+    label: 'Accessibility',
+    score: 100,
+    grade: 'A',
+    icon: Accessibility,
+    color: '#22c55e',
+    detail: 'WCAG 2.1 AA — Lighthouse',
+  },
+  {
+    label: 'SEO',
+    score: 100,
+    grade: 'A',
+    icon: BadgeCheck,
+    color: '#22c55e',
+    detail: 'Lighthouse Score',
+  },
+  {
+    label: 'Best Practices',
+    score: 96,
     grade: 'A',
     icon: Zap,
     color: '#22c55e',
     detail: 'Lighthouse Score',
   },
   {
-    label: 'Accessibility',
-    score: 100,
-    grade: 'AA',
-    icon: Accessibility,
-    color: '#4a90e2',
-    detail: 'WCAG 2.1 Compliant',
-  },
-  {
     label: 'Security',
     score: null,
     grade: 'A+',
     icon: ShieldCheck,
-    color: '#8b5cf6',
+    color: '#22c55e',
     detail: 'SSL Labs Grade',
-  },
-  {
-    label: 'Best Practices',
-    score: 100,
-    grade: 'A',
-    icon: BadgeCheck,
-    color: '#d4af37',
-    detail: 'Lighthouse Score',
   },
 ]
 
