@@ -194,6 +194,17 @@ export default function RootLayout({
                   'https://github.com/m4cd4r4/cosmos-collective-v2'
                 ]
               },
+              creator: {
+                '@type': 'Person',
+                name: 'Macdara Ó Murchú',
+                url: 'https://github.com/m4cd4r4',
+                worksFor: {
+                  '@type': 'Organization',
+                  name: 'Solaisoft',
+                  legalName: 'Solaisoft Pty Ltd',
+                  url: 'https://solaisoft.com',
+                },
+              },
               about: [
                 {
                   '@type': 'Thing',
