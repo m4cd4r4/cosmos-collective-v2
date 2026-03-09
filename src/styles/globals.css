@@ -55,7 +55,7 @@
 /* ---------- Base Styles ---------- */
 @layer base {
   html {
-    @apply antialiased;
+    @apply bg-cosmos-void antialiased;
     scroll-behavior: smooth;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -79,7 +79,7 @@
   }
 
   body {
-    @apply bg-cosmos-void text-gray-100;
+    @apply text-gray-100;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     min-height: 100vh;
     min-height: 100dvh; /* Dynamic viewport height for mobile */
