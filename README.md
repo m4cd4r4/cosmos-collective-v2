@@ -39,7 +39,7 @@ The hero section features a live 75vw × 62vh Solar System preview — an intera
 - Planet dive mode, adjustable simulation speed, and orbital trail visualisation
 - **Collapsible panel UI**: All three panels (Controls, Statistics, Planetary Events) are hidden by default to maximise the 3D canvas. A pulsing arrow at the left edge reveals the Controls panel; a second arrow at the right edge reveals Statistics and Planetary Events. Each slides in/out with a smooth CSS transition
 - **True Scale mode**: Toggling "True Scale" rescales both planets and all 13 moons to their correct relative sizes. Phobos (~11 km) and Deimos (~6 km) become near-invisible specks next to Mars — accurately reflecting their status as captured asteroids
-- **Tidally locked Moon**: Earth's Moon is permanently tidally locked, keeping the same face towards Earth at all times (no visible rotation from Earth's surface)
+- **Tidally locked moons**: All 13 moons (Moon, Phobos, Deimos, Io, Europa, Ganymede, Callisto, Titan, Rhea, Iapetus, Titania, Oberon, Triton) permanently keep the same face towards their parent planet — matching the real-world behaviour driven by tidal forces
 
 ### Interactive Sky Map (`/sky-map`)
 - Pan and zoom across the entire celestial sphere using Aladin Lite
