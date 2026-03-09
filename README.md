@@ -14,12 +14,16 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 
 ![Cosmos Collective - Interactive Solar System](./public/images/solar-system-demo-optimized.gif)
 
+## Landing Page
+
+The hero section features a live 75vw × 62vh Solar System preview — an interactive iframe of the full Three.js simulation that fills the above-the-fold viewport. Clicking anywhere on it navigates to `/solar-system` for the complete experience.
+
 ## Interactive Apps
 
 ### JWST Explorer (`/jwst`)
 - 3-column interactive viewer for 14 curated James Webb Space Telescope observations
 - **Wavelength switching**: Toggle between NIRCam and MIRI infrared views
-- **Feature annotations**: Bounding box overlays on Carina Nebula, Pillars of Creation, Stephan's Quintet
+- **Feature annotations**: Bounding box overlays on Carina Nebula, Pillars of Creation, Stephan's Quintet — coordinates scoped precisely to image bounds (not the surrounding container)
 - Scientific analysis, coordinates, instrument filters, and external links
 - Categories: nebulae, galaxies, deep fields, solar system objects
 
@@ -33,6 +37,9 @@ Cosmos Collective is an interactive platform for exploring the universe through 
 - Real-time 3D solar system with accurate orbital mechanics powered by Three.js
 - Zoom out to view our position in the Milky Way galaxy using NASA/JPL-Caltech imagery
 - Planet dive mode, adjustable simulation speed, and orbital trail visualisation
+- **Collapsible panel UI**: All three panels (Controls, Statistics, Planetary Events) are hidden by default to maximise the 3D canvas. A pulsing arrow at the left edge reveals the Controls panel; a second arrow at the right edge reveals Statistics and Planetary Events. Each slides in/out with a smooth CSS transition
+- **True Scale mode**: Toggling "True Scale" rescales both planets and all 13 moons to their correct relative sizes. Phobos (~11 km) and Deimos (~6 km) become near-invisible specks next to Mars — accurately reflecting their status as captured asteroids
+- **Tidally locked Moon**: Earth's Moon is permanently tidally locked, keeping the same face towards Earth at all times (no visible rotation from Earth's surface)
 
 ### Interactive Sky Map (`/sky-map`)
 - Pan and zoom across the entire celestial sphere using Aladin Lite
