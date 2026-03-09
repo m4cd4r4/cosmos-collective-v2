@@ -1749,9 +1749,21 @@
                 transparent: true,
                 opacity: 0.35,
             });
-            textureLoader.load('textures/8k_stars_milky_way.jpg', (tex) => {
-                mat.map = tex;
+            // Load 2k immediately for fast first render, then silently upgrade
+            // to 8k unless the browser reports a slow/metered connection.
+            textureLoader.load('textures/stars_milky_way.jpg', (lqTex) => {
+                mat.map = lqTex;
                 mat.needsUpdate = true;
+
+                const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                const skipHQ = conn && (conn.saveData || conn.effectiveType === '2g' || conn.effectiveType === 'slow-2g');
+                if (!skipHQ) {
+                    textureLoader.load('textures/8k_stars_milky_way.jpg', (hqTex) => {
+                        mat.map = hqTex;
+                        mat.needsUpdate = true;
+                        lqTex.dispose(); // free 2k from GPU memory
+                    });
+                }
             });
             const bgSphere = new THREE.Mesh(geo, mat);
             bgSphere.renderOrder = -1;
