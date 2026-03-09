@@ -154,6 +154,9 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://apod.nasa.gov" />
         <link rel="dns-prefetch" href="https://casda.csiro.au" />
 
+        {/* Google Search Console verification */}
+        <meta name="google-site-verification" content="5ybihpOyWpmz42me0nJQJEv9DDlgxGAWl1GL-2984Ow" />
+
         {/* Color scheme for system UI */}
         <meta name="color-scheme" content="dark" />
 
