@@ -302,52 +302,54 @@ export function JWSTViewer() {
             </div>
           )}
 
-          {/* JWST Image — object-contain to show entire image */}
-          <img
-            src={proxiedImageUrl}
-            alt={selected.targetName}
-            className={`w-full object-contain object-top transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-            draggable={false}
-            onLoad={() => setImgLoaded(true)}
-            onError={() => { setImgLoaded(false); setImgError(true) }}
-          />
+          {/* Image wrapper — SVG coordinate space matches image bounds exactly */}
+          <div className="relative w-full flex-shrink-0">
+            <img
+              src={proxiedImageUrl}
+              alt={selected.targetName}
+              className={`w-full block transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+              draggable={false}
+              onLoad={() => setImgLoaded(true)}
+              onError={() => { setImgLoaded(false); setImgError(true) }}
+            />
 
-          {/* Gradient vignette — bottom only for text readability */}
+            {/* Feature bounding boxes — positioned relative to image, not container */}
+            {showFeatures && selected.features && selected.features.length > 0 && (
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
+                {selected.features.map(f => (
+                  <g key={f.id}>
+                    <rect
+                      x={f.boundingBox.x}
+                      y={f.boundingBox.y}
+                      width={f.boundingBox.width}
+                      height={f.boundingBox.height}
+                      fill={hoveredFeature === f.id ? 'rgba(212,175,55,0.15)' : 'transparent'}
+                      stroke={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.4)'}
+                      strokeWidth={hoveredFeature === f.id ? 0.5 : 0.3}
+                      strokeDasharray={hoveredFeature === f.id ? undefined : '1 0.5'}
+                      className="pointer-events-auto cursor-pointer transition-all"
+                      onMouseEnter={() => setHoveredFeature(f.id)}
+                      onMouseLeave={() => setHoveredFeature(null)}
+                      style={{ vectorEffect: 'non-scaling-stroke' }}
+                    />
+                    <text
+                      x={f.boundingBox.x + 0.5}
+                      y={f.boundingBox.y - 0.5}
+                      fill={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.6)'}
+                      fontSize="2.2"
+                      fontFamily="monospace"
+                      className="pointer-events-none"
+                    >
+                      {f.label}
+                    </text>
+                  </g>
+                ))}
+              </svg>
+            )}
+          </div>
+
+          {/* Gradient vignette — bottom of center panel for text readability */}
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
-
-          {/* Feature bounding boxes */}
-          {showFeatures && selected.features && selected.features.length > 0 && (
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-              {selected.features.map(f => (
-                <g key={f.id}>
-                  <rect
-                    x={f.boundingBox.x}
-                    y={f.boundingBox.y}
-                    width={f.boundingBox.width}
-                    height={f.boundingBox.height}
-                    fill={hoveredFeature === f.id ? 'rgba(212,175,55,0.15)' : 'transparent'}
-                    stroke={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.4)'}
-                    strokeWidth={hoveredFeature === f.id ? 0.5 : 0.3}
-                    strokeDasharray={hoveredFeature === f.id ? undefined : '1 0.5'}
-                    className="pointer-events-auto cursor-pointer transition-all"
-                    onMouseEnter={() => setHoveredFeature(f.id)}
-                    onMouseLeave={() => setHoveredFeature(null)}
-                    style={{ vectorEffect: 'non-scaling-stroke' }}
-                  />
-                  <text
-                    x={f.boundingBox.x + 0.5}
-                    y={f.boundingBox.y - 0.5}
-                    fill={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.6)'}
-                    fontSize="2.2"
-                    fontFamily="monospace"
-                    className="pointer-events-none"
-                  >
-                    {f.label}
-                  </text>
-                </g>
-              ))}
-            </svg>
-          )}
 
           {/* Controls — top right */}
           <div className="absolute top-3 right-3 flex gap-2 z-10">

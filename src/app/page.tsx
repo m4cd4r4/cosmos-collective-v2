@@ -14,7 +14,7 @@ import { LandingFooter } from '@/components/features/landing/LandingFooter'
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-[#0a0e1a] text-[#c8d4f0]">
+    <div className="min-h-screen">
       <Header />
       <LandingHero />
       <FeatureShowcase />
