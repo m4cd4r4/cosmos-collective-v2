@@ -504,7 +504,9 @@
         body.ui-hidden #bottom-left-btns,
         body.ui-hidden #earth-date-counter,
         body.ui-hidden #accuracy-panel,
-        body.ui-hidden #science-panel {
+        body.ui-hidden #science-panel,
+        body.ui-hidden #left-panel-toggle,
+        body.ui-hidden #right-panel-toggle {
             display: none !important;
         }
 
@@ -1168,6 +1170,69 @@
         #start-demo-tour.touring {
             background: linear-gradient(135deg, #ea4444 0%, #a22222 100%) !important;
         }
+        /* ============================================================
+           PANEL SLIDE TOGGLES
+           ============================================================ */
+        #controls, #stats, #events {
+            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
+        }
+        #controls.panel-collapsed {
+            transform: translateX(calc(-100% - 25px));
+            opacity: 0;
+            pointer-events: none;
+        }
+        #stats.panel-collapsed, #events.panel-collapsed {
+            transform: translateX(calc(100% + 25px));
+            opacity: 0;
+            pointer-events: none;
+        }
+        #left-panel-toggle, #right-panel-toggle {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 200;
+            background: rgba(10, 10, 25, 0.85);
+            border: 1px solid rgba(100, 150, 255, 0.35);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6495ff;
+            font-size: 15px;
+            font-weight: bold;
+            width: 22px;
+            height: 52px;
+            backdrop-filter: blur(10px);
+            transition: background 0.2s, box-shadow 0.2s;
+            line-height: 1;
+        }
+        #left-panel-toggle {
+            left: 0;
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+        }
+        #right-panel-toggle {
+            right: 0;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+        }
+        #left-panel-toggle:hover, #right-panel-toggle:hover {
+            background: rgba(30, 30, 70, 0.95);
+            box-shadow: 0 0 14px rgba(100, 150, 255, 0.45);
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 6px rgba(100, 150, 255, 0.2); border-color: rgba(100, 150, 255, 0.35); }
+            50%       { box-shadow: 0 0 18px rgba(100, 150, 255, 0.7); border-color: rgba(100, 150, 255, 0.8); }
+        }
+        .pulsing { animation: pulse-glow 2s ease-in-out infinite; }
+        @media (max-width: 767px) {
+            #left-panel-toggle, #right-panel-toggle { display: none !important; }
+            #controls.panel-collapsed, #stats.panel-collapsed, #events.panel-collapsed {
+                transform: none !important;
+                opacity: 1 !important;
+                pointer-events: auto !important;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1190,6 +1255,10 @@
         <div class="loading-subtext">Initializing visualization</div>
         <div class="loading-bar"><div class="loading-bar-fill" id="loading-bar-fill"></div></div>
     </div>
+
+    <!-- Desktop panel collapse toggles -->
+    <button id="left-panel-toggle" aria-label="Toggle controls panel">&#x276F;</button>
+    <button id="right-panel-toggle" aria-label="Toggle side panels">&#x276E;</button>
 
     <!-- Mobile toggle buttons (visible only on mobile via CSS) -->
     <button type="button" id="mobile-controls-toggle" aria-label="Toggle controls">&#x2630;</button>
@@ -4720,6 +4789,38 @@
                     backdrop.style.display = 'none';
                     statsPanel.style.display = '';
                 }
+            });
+        })();
+
+        // ── Desktop panel collapse toggles ──────────────────────────────
+        (function initPanelToggles() {
+            const leftBtn     = document.getElementById('left-panel-toggle');
+            const rightBtn    = document.getElementById('right-panel-toggle');
+            const controlsEl  = document.getElementById('controls');
+            const statsEl     = document.getElementById('stats');
+            const eventsEl    = document.getElementById('events');
+
+            let leftCollapsed  = true;
+            let rightCollapsed = true;
+
+            // Start both sides collapsed
+            controlsEl.classList.add('panel-collapsed');
+            statsEl.classList.add('panel-collapsed');
+            eventsEl.classList.add('panel-collapsed');
+            leftBtn.classList.add('pulsing');
+
+            leftBtn.addEventListener('click', function () {
+                leftCollapsed = !leftCollapsed;
+                controlsEl.classList.toggle('panel-collapsed', leftCollapsed);
+                leftBtn.innerHTML  = leftCollapsed ? '&#x276F;' : '&#x276E;';
+                leftBtn.classList.toggle('pulsing', leftCollapsed);
+            });
+
+            rightBtn.addEventListener('click', function () {
+                rightCollapsed = !rightCollapsed;
+                statsEl.classList.toggle('panel-collapsed', rightCollapsed);
+                eventsEl.classList.toggle('panel-collapsed', rightCollapsed);
+                rightBtn.innerHTML = rightCollapsed ? '&#x276E;' : '&#x276F;';
             });
         })();
     </script>
