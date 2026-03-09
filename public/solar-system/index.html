@@ -3582,8 +3582,81 @@
                 })));
             }
 
+            // ---- 1. Galactic stellar halo (large soft glow behind the disk) ----
+            const _haloCanvas = document.createElement('canvas');
+            _haloCanvas.width = 512; _haloCanvas.height = 512;
+            const _haloCtx = _haloCanvas.getContext('2d');
+            const _haloGrad = _haloCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
+            _haloGrad.addColorStop(0,    'rgba(200,190,255,0.18)');
+            _haloGrad.addColorStop(0.25, 'rgba(180,170,255,0.10)');
+            _haloGrad.addColorStop(0.55, 'rgba(140,130,220,0.05)');
+            _haloGrad.addColorStop(1,    'rgba(80,70,160,0)');
+            _haloCtx.fillStyle = _haloGrad;
+            _haloCtx.fillRect(0, 0, 512, 512);
+            const haloMesh = new THREE.Mesh(
+                new THREE.PlaneGeometry(GALAXY_RADIUS * 5.5, GALAXY_RADIUS * 5.5),
+                new THREE.MeshBasicMaterial({
+                    map: new THREE.CanvasTexture(_haloCanvas),
+                    transparent: true, opacity: 0,
+                    blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
+                })
+            );
+            haloMesh.rotation.x = -Math.PI / 2;
+            haloMesh.position.y = -4;
+            haloMesh.userData.isGalaxyLayer = true;
+            galaxyGroup.add(haloMesh);
+
+            // ---- 2. Galactic core bloom (warm concentrated glow over the centre) ----
+            const _coreCanvas = document.createElement('canvas');
+            _coreCanvas.width = 256; _coreCanvas.height = 256;
+            const _coreCtx = _coreCanvas.getContext('2d');
+            const _coreGrad = _coreCtx.createRadialGradient(128, 128, 0, 128, 128, 128);
+            _coreGrad.addColorStop(0,    'rgba(255,240,180,0.55)');
+            _coreGrad.addColorStop(0.2,  'rgba(255,210,120,0.30)');
+            _coreGrad.addColorStop(0.5,  'rgba(200,160,80,0.12)');
+            _coreGrad.addColorStop(1,    'rgba(140,100,40,0)');
+            _coreCtx.fillStyle = _coreGrad;
+            _coreCtx.fillRect(0, 0, 256, 256);
+            const coreMesh = new THREE.Mesh(
+                new THREE.PlaneGeometry(GALAXY_RADIUS * 0.55, GALAXY_RADIUS * 0.55),
+                new THREE.MeshBasicMaterial({
+                    map: new THREE.CanvasTexture(_coreCanvas),
+                    transparent: true, opacity: 0,
+                    blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
+                })
+            );
+            coreMesh.rotation.x = -Math.PI / 2;
+            coreMesh.position.y = 1;
+            coreMesh.userData.isGalaxyLayer = true;
+            galaxyGroup.add(coreMesh);
+
+            // ---- 3. Galactic disk edge-glow (thin tilted plane — vertical thickness illusion) ----
+            const _edgeCanvas = document.createElement('canvas');
+            _edgeCanvas.width = 512; _edgeCanvas.height = 64;
+            const _edgeCtx = _edgeCanvas.getContext('2d');
+            const _edgeGrad = _edgeCtx.createLinearGradient(0, 0, 0, 64);
+            _edgeGrad.addColorStop(0,    'rgba(180,170,255,0)');
+            _edgeGrad.addColorStop(0.5,  'rgba(200,195,255,0.22)');
+            _edgeGrad.addColorStop(1,    'rgba(180,170,255,0)');
+            _edgeCtx.fillStyle = _edgeGrad;
+            _edgeCtx.fillRect(0, 0, 512, 64);
+            const edgeMesh = new THREE.Mesh(
+                new THREE.PlaneGeometry(GALAXY_RADIUS * 2.4, GALAXY_RADIUS * 0.08),
+                new THREE.MeshBasicMaterial({
+                    map: new THREE.CanvasTexture(_edgeCanvas),
+                    transparent: true, opacity: 0,
+                    blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
+                })
+            );
+            // Perpendicular to the disk plane — gives vertical extent at low viewing angles
+            edgeMesh.rotation.y = Math.PI * 0.12;
+            edgeMesh.position.y = -2;
+            edgeMesh.userData.isGalaxyLayer = true;
+            galaxyGroup.add(edgeMesh);
+
+            // ---- 4. Star particles — denser field (40k disk + 12k core) ----
             // Sparse bright sparkle stars scattered across the disk
-            addParticles(15000, (i, pos, col) => {
+            addParticles(40000, (i, pos, col) => {
                 const r = Math.pow(Math.random(), 0.5) * GALAXY_RADIUS * 0.95;
                 const theta = Math.random() * Math.PI * 2;
                 pos[i*3]   = Math.cos(theta) * r;
@@ -3595,7 +3668,7 @@
             }, 1.0);
 
             // Brighter core sparkles
-            addParticles(5000, (i, pos, col) => {
+            addParticles(12000, (i, pos, col) => {
                 const r = Math.pow(Math.random(), 2.5) * GALAXY_RADIUS * 0.2;
                 const theta = Math.random() * Math.PI * 2;
                 pos[i*3]   = Math.cos(theta) * r;
