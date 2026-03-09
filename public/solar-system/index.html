@@ -2817,6 +2817,9 @@
                 updateLabels();
                 updateStats();
             }
+            // Keep background sphere centred on the camera so it never exits
+            // its own BackSide surface regardless of how far the sun travels in Z
+            if (galacticBg) galacticBg.position.copy(camera.position);
             renderer.render(scene, camera);
         }
 
