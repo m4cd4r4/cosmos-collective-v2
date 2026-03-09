@@ -2710,14 +2710,10 @@
                                 mx, my,
                                 planet.mesh.position.z
                             );
-                            if (moon.name === 'Moon') {
-                                // Tidally locked: same face always toward Earth
-                                const dx = mx - planet.mesh.position.x;
-                                const dy = my - planet.mesh.position.y;
-                                moon.mesh.rotation.y = Math.atan2(dy, dx) + Math.PI;
-                            } else {
-                                moon.mesh.rotation.y += 0.02;
-                            }
+                            // All major moons are tidally locked — same face always toward their planet
+                            const tdx = mx - planet.mesh.position.x;
+                            const tdy = my - planet.mesh.position.y;
+                            moon.mesh.rotation.y = Math.atan2(tdy, tdx) + Math.PI;
                             moon.mesh.visible = true;
                         });
                     } else {
