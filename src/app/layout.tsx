@@ -76,6 +76,7 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  verification: { google: '5ybihpOyWpmz42me0nJQJEv9DDlgxGAWl1GL-2984Ow' },
   openGraph: {
     type: 'website',
     locale: 'en_AU',
