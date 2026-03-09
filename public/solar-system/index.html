@@ -3062,10 +3062,12 @@
 
             if (cameraMode === 'cinematic') {
                 cinematicAngle += 0.002;
-                camera.position.x = tx + Math.cos(cinematicAngle) * cameraDistance * 0.7;
-                camera.position.y = ty + Math.sin(cinematicAngle * 0.2) * cameraDistance * 0.3 + 40;
-                camera.position.z = tz + Math.sin(cinematicAngle) * cameraDistance * 0.7;
-                camera.lookAt(tx, ty, tz);
+                camera.position.x = tx + Math.cos(cinematicAngle) * cameraDistance * 0.65;
+                // Orbit at ~60° elevation with a slow gentle vertical bob
+                camera.position.y = ty + cameraDistance * 0.7 + Math.sin(cinematicAngle * 0.4) * cameraDistance * 0.08;
+                camera.position.z = tz + Math.sin(cinematicAngle) * cameraDistance * 0.65;
+                // Look slightly ahead of the sun so the trailing helix fills the frame
+                camera.lookAt(tx, ty - 10, tz + 90);
             } else if (cameraMode === 'orbital') {
                 camera.position.set(tx, ty + cameraDistance, tz);
                 camera.lookAt(tx, ty, tz);
@@ -3269,10 +3271,14 @@
         // Scene presets
         (function() {
             const PRESETS = {
-                vortex:       { mode: 'side',      sunSpeed: 4.19, orbitSpeed: 1.24, trailLength: 800,  showMoons: false, camDist: 220, camRot: { x: 0.18, y: 0.7 } },
-                cinema:       { mode: 'cinematic', sunSpeed: 2.50, orbitSpeed: 0.50, trailLength: 1200, showMoons: false },
-                overview:     { mode: 'orbital',   sunSpeed: 3.00, orbitSpeed: 0.80, trailLength: 600,  showMoons: false },
-                'moon-watch': { mode: 'free',       sunSpeed: 1.50, orbitSpeed: 0.12, trailLength: 400,  showMoons: true  },
+                // Classic side-on view — full helix ribbon in frame
+                vortex:       { mode: 'side',      sunSpeed: 4.19, orbitSpeed: 1.24, trailLength: 800,  showMoons: false, camDist: 220, camRot: { x: 0.08, y: 0.7 } },
+                // Sweeping high-arc orbit at ~60° elevation — helix in 3D relief
+                cinema:       { mode: 'cinematic', sunSpeed: 2.00, orbitSpeed: 0.40, trailLength: 1600, showMoons: false, camDist: 300 },
+                // Steep bird's-eye — full vortex history spread below
+                overview:     { mode: 'free',      sunSpeed: 1.80, orbitSpeed: 0.55, trailLength: 1800, showMoons: false, camDist: 580, camRot: { x: 1.28, y: -0.25 } },
+                // Earth-locked close-up with moons
+                'moon-watch': { mode: 'free',       sunSpeed: 1.00, orbitSpeed: 0.12, trailLength: 300,  showMoons: true,  camDist: 65, camRot: { x: 0.35, y: 1.0 }, followTarget: 'earth' },
             };
             document.querySelectorAll('.preset-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -3302,6 +3308,16 @@
                     showMoons = p.showMoons;
                     document.getElementById('show-moons').checked = p.showMoons;
                     document.getElementById('show-moons').dispatchEvent(new Event('change'));
+                    // Follow target (e.g. Moon Watch locks onto Earth)
+                    if (p.followTarget !== undefined) {
+                        followTarget = p.followTarget;
+                        document.getElementById('follow-target').value = p.followTarget;
+                        const followPos = getFollowPosition();
+                        if (followPos) { cameraTarget.x = followPos.x; cameraTarget.y = followPos.y; cameraTarget.z = followPos.z; }
+                    } else {
+                        followTarget = 'sun';
+                        document.getElementById('follow-target').value = 'sun';
+                    }
                     // Active state
                     document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b === btn));
                 });
