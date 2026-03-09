@@ -1374,6 +1374,7 @@
                 </div>
                 <label class="checkbox-label"><input type="checkbox" id="show-labels" checked><span>Show Planet Labels</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Show Moons</span></label>
+                <label class="checkbox-label"><input type="checkbox" id="show-milky-way" checked><span>Milky Way Background</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-orbit-rings" checked><span>Show Orbit Lines</span></label>
@@ -1744,126 +1745,52 @@
             const ctx = canvas.getContext('2d');
             const cy = H / 2;
 
-            // --- Base ---
-            ctx.fillStyle = '#00000e';
+            // Pure black base — the Three.js starfield provides all the stars
+            ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, W, H);
 
-            // --- Background scattered stars (entire sky, denser near band) ---
-            for (let i = 0; i < 12000; i++) {
-                const x = Math.random() * W;
-                const y = Math.random() * H;
-                const distFromBand = Math.abs(y - cy) / H;
-                if (Math.random() > 0.88 - distFromBand * 0.55) continue;
-                const sz = Math.random() < 0.86 ? Math.random() * 0.55 + 0.15 : Math.random() * 1.1 + 0.7;
-                const alpha = Math.random() * 0.65 + 0.2;
-                const r = Math.random();
-                let col;
-                if (r < 0.22)      col = `rgba(155,180,255,${alpha})`;  // blue-white
-                else if (r < 0.42) col = `rgba(255,238,185,${alpha})`;  // yellow
-                else if (r < 0.52) col = `rgba(255,155,110,${alpha})`;  // orange-red
-                else               col = `rgba(228,232,255,${alpha})`;  // white
-                ctx.beginPath();
-                ctx.arc(x, y, sz, 0, Math.PI * 2);
-                ctx.fillStyle = col;
-                ctx.fill();
-            }
-
-            // --- Wide diffuse glow (outer disk haze) ---
-            const outerGlow = ctx.createLinearGradient(0, cy - H*0.40, 0, cy + H*0.40);
+            // Wide outer haze — barely perceptible brightening toward the galactic plane
+            const outerGlow = ctx.createLinearGradient(0, cy - H*0.38, 0, cy + H*0.38);
             outerGlow.addColorStop(0,   'rgba(0,0,0,0)');
-            outerGlow.addColorStop(0.3, 'rgba(7,5,17,0.52)');
-            outerGlow.addColorStop(0.5, 'rgba(20,14,36,0.70)');
-            outerGlow.addColorStop(0.7, 'rgba(7,5,17,0.52)');
+            outerGlow.addColorStop(0.4, 'rgba(175,185,210,0.04)');
+            outerGlow.addColorStop(0.5, 'rgba(180,190,215,0.07)');
+            outerGlow.addColorStop(0.6, 'rgba(175,185,210,0.04)');
             outerGlow.addColorStop(1,   'rgba(0,0,0,0)');
             ctx.fillStyle = outerGlow;
-            ctx.fillRect(0, cy - H*0.40, W, H*0.80);
+            ctx.fillRect(0, cy - H*0.38, W, H*0.76);
 
-            // --- Bright inner band (dense star field core) ---
-            const innerBand = ctx.createLinearGradient(0, cy - H*0.115, 0, cy + H*0.115);
+            // Narrow bright core — soft cool-white glow, max 0.13 opacity
+            const innerBand = ctx.createLinearGradient(0, cy - H*0.09, 0, cy + H*0.09);
             innerBand.addColorStop(0,   'rgba(0,0,0,0)');
-            innerBand.addColorStop(0.18,'rgba(28,20,55,0.80)');
-            innerBand.addColorStop(0.5, 'rgba(72,55,118,0.94)');
-            innerBand.addColorStop(0.82,'rgba(28,20,55,0.80)');
+            innerBand.addColorStop(0.2, 'rgba(195,200,225,0.07)');
+            innerBand.addColorStop(0.5, 'rgba(205,212,232,0.13)');
+            innerBand.addColorStop(0.8, 'rgba(195,200,225,0.07)');
             innerBand.addColorStop(1,   'rgba(0,0,0,0)');
             ctx.fillStyle = innerBand;
-            ctx.fillRect(0, cy - H*0.115, W, H*0.23);
+            ctx.fillRect(0, cy - H*0.09, W, H*0.18);
 
-            // --- Galactic centre bulge (Sagittarius direction, ~74% across) ---
+            // Galactic centre — very gentle warm brightening, nothing dominant
             const gcX = W * 0.74;
-            const bulgeOuter = ctx.createRadialGradient(gcX, cy, 0, gcX, cy, W * 0.26);
-            bulgeOuter.addColorStop(0,   'rgba(255,200,95,0.32)');
-            bulgeOuter.addColorStop(0.35,'rgba(195,135,55,0.18)');
-            bulgeOuter.addColorStop(0.65,'rgba(110,65,25,0.08)');
-            bulgeOuter.addColorStop(1,   'rgba(0,0,0,0)');
-            ctx.fillStyle = bulgeOuter;
+            const gcGrad = ctx.createRadialGradient(gcX, cy, 0, gcX, cy, W * 0.20);
+            gcGrad.addColorStop(0,   'rgba(255,225,165,0.07)');
+            gcGrad.addColorStop(0.5, 'rgba(230,180,110,0.03)');
+            gcGrad.addColorStop(1,   'rgba(0,0,0,0)');
+            ctx.fillStyle = gcGrad;
             ctx.fillRect(0, 0, W, H);
 
-            const bulgeCore = ctx.createRadialGradient(gcX, cy, 0, gcX, cy, W * 0.065);
-            bulgeCore.addColorStop(0,   'rgba(255,228,155,0.52)');
-            bulgeCore.addColorStop(0.5, 'rgba(215,155,75,0.22)');
-            bulgeCore.addColorStop(1,   'rgba(0,0,0,0)');
-            ctx.fillStyle = bulgeCore;
-            ctx.fillRect(0, 0, W, H);
-
-            // --- Blue nebula pockets (OB associations / star-forming regions) ---
-            [
-                { x: W*0.11, y: cy - H*0.025, r: W*0.078, col: 'rgba(65,108,195,0.13)' },
-                { x: W*0.37, y: cy + H*0.020, r: W*0.060, col: 'rgba(88,68,178,0.11)' },
-                { x: W*0.54, y: cy - H*0.016, r: W*0.068, col: 'rgba(48,88,188,0.09)' },
-                { x: W*0.88, y: cy + H*0.013, r: W*0.062, col: 'rgba(75,98,208,0.10)' },
-            ].forEach(n => {
-                const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
-                g.addColorStop(0, n.col); g.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = g;
-                ctx.fillRect(Math.max(0, n.x-n.r), Math.max(0, n.y-n.r), n.r*2, n.r*2);
-            });
-
-            // --- Reddish HII emission regions ---
-            [
-                { x: W*0.62, y: cy - H*0.030, r: W*0.044, col: 'rgba(198,68,58,0.08)' },
-                { x: W*0.27, y: cy + H*0.024, r: W*0.040, col: 'rgba(175,52,72,0.07)' },
-                { x: W*0.92, y: cy - H*0.018, r: W*0.036, col: 'rgba(208,78,48,0.07)' },
-            ].forEach(n => {
-                const g = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.r);
-                g.addColorStop(0, n.col); g.addColorStop(1, 'rgba(0,0,0,0)');
-                ctx.fillStyle = g;
-                ctx.fillRect(Math.max(0, n.x-n.r), Math.max(0, n.y-n.r), n.r*2, n.r*2);
-            });
-
-            // --- Dense stellar band (thousands of resolved stars) ---
-            for (let i = 0; i < 22000; i++) {
-                const x = Math.random() * W;
-                const spread = H * 0.185;
-                const rawY = cy + (Math.random() - 0.5) * spread * 3.2;
-                const dist = Math.abs(rawY - cy) / spread;
-                if (Math.random() > Math.exp(-dist * 1.6)) continue;
-                const sz = Math.random() < 0.91 ? Math.random() * 0.65 + 0.12 : Math.random() * 0.95 + 0.65;
-                const alpha = (1 - dist * 0.38) * (Math.random() * 0.52 + 0.32);
-                ctx.beginPath();
-                ctx.arc(x, rawY, sz, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(208,202,255,${Math.min(1, alpha)})`;
-                ctx.fill();
-            }
-
-            // --- Dust lanes (Great Rift / dark absorption bands) ---
-            const drawDust = (x0, y0, x1, y1, halfW, opacity) => {
-                const angle = Math.atan2(y1-y0, x1-x0);
-                const len   = Math.hypot(x1-x0, y1-y0);
-                ctx.save();
-                ctx.translate(x0, y0);
-                ctx.rotate(angle);
-                const g = ctx.createLinearGradient(0, -halfW, 0, halfW);
-                g.addColorStop(0,    'rgba(0,0,0,0)');
-                g.addColorStop(0.22, `rgba(0,0,0,${opacity})`);
-                g.addColorStop(0.78, `rgba(0,0,0,${opacity})`);
-                g.addColorStop(1,    'rgba(0,0,0,0)');
-                ctx.fillStyle = g;
-                ctx.fillRect(0, -halfW, len, halfW * 2);
-                ctx.restore();
-            };
-            drawDust(W*0.34, cy - H*0.007, W*0.73, cy + H*0.011, H*0.024, 0.62); // Great Rift
-            drawDust(W*0.47, cy - H*0.016, W*0.61, cy + H*0.004, H*0.016, 0.55); // secondary rift
-            drawDust(W*0.19, cy + H*0.006, W*0.33, cy - H*0.009, H*0.013, 0.48); // Cygnus rift
+            // A whisper of a dust lane — barely darkens the bright core strip
+            const dAngle = Math.atan2(H*0.016, W*0.38);
+            ctx.save();
+            ctx.translate(W*0.36, cy - H*0.005);
+            ctx.rotate(dAngle);
+            const dustG = ctx.createLinearGradient(0, -H*0.018, 0, H*0.018);
+            dustG.addColorStop(0,   'rgba(0,0,0,0)');
+            dustG.addColorStop(0.3, 'rgba(0,0,0,0.10)');
+            dustG.addColorStop(0.7, 'rgba(0,0,0,0.10)');
+            dustG.addColorStop(1,   'rgba(0,0,0,0)');
+            ctx.fillStyle = dustG;
+            ctx.fillRect(0, -H*0.018, W*0.38, H*0.036);
+            ctx.restore();
 
             // --- Build sphere ---
             const tex = new THREE.CanvasTexture(canvas);
@@ -1878,12 +1805,12 @@
             });
             const bgSphere = new THREE.Mesh(geo, mat);
             bgSphere.renderOrder = -1;
-            // Galactic plane is inclined ~60° to the ecliptic (XY plane here)
-            bgSphere.rotation.z = Math.PI * 0.335;  // ~60° tilt
-            bgSphere.rotation.y = Math.PI * 0.22;   // plausible galactic longitude orientation
+            bgSphere.rotation.z = Math.PI * 0.335;  // ~60° to ecliptic
+            bgSphere.rotation.y = Math.PI * 0.22;
             scene.add(bgSphere);
+            return bgSphere;
         }
-        createGalacticBackground();
+        let galacticBg = createGalacticBackground();
 
         // =====================================================================
         // REFERENCE GRID
@@ -3310,6 +3237,7 @@
             updateCameraPosition();
         });
         document.getElementById('show-labels').addEventListener('change', (e) => { showLabels = e.target.checked; });
+        document.getElementById('show-milky-way').addEventListener('change', (e) => { if (galacticBg) galacticBg.visible = e.target.checked; });
         document.getElementById('show-moons').addEventListener('change', (e) => {
             showMoons = e.target.checked;
             if (!showMoons) {
