@@ -56,14 +56,14 @@ export function HeroBanner({ apod, utcTime, issPosition, isLoading }: HeroBanner
             {/* UTC Clock */}
             <div className="px-3 py-1.5 rounded-lg bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)] backdrop-blur-sm">
               <span className="text-[10px] uppercase tracking-[0.15em] text-[#4a5580] block">UTC</span>
-              <span className="text-lg font-mono font-bold text-white tracking-wider">{utcTime}</span>
+              <span suppressHydrationWarning className="text-lg font-mono font-bold text-white tracking-wider">{utcTime}</span>
             </div>
 
             {/* ISS badge */}
             {issPosition && (
               <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[rgba(34,197,94,0.08)] border border-[rgba(34,197,94,0.2)]">
                 <Satellite className="w-3 h-3 text-[#22c55e]" />
-                <span className="text-[10px] font-mono text-[#22c55e]">
+                <span suppressHydrationWarning className="text-[10px] font-mono text-[#22c55e]">
                   {issPosition.lat.toFixed(1)}° {issPosition.lon.toFixed(1)}°
                 </span>
               </div>

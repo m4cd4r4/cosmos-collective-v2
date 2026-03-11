@@ -41,7 +41,7 @@ export function TelemetryStrip({
           ledActive={!!issPosition}
         >
           {issPosition ? (
-            <span className="font-mono text-white text-sm">
+            <span suppressHydrationWarning className="font-mono text-white text-sm">
               {issPosition.lat.toFixed(1)}° {issPosition.lon.toFixed(1)}°
             </span>
           ) : (
@@ -69,7 +69,7 @@ export function TelemetryStrip({
           <div className="flex items-center gap-1.5">
             <span className="text-xs text-[#e0e8ff] truncate max-w-[80px]">{nextEventTitle || 'None'}</span>
             {nextEventCountdown && (
-              <span className="text-xs font-mono text-[#d4af37] shrink-0">{nextEventCountdown}</span>
+              <span suppressHydrationWarning className="text-xs font-mono text-[#d4af37] shrink-0">{nextEventCountdown}</span>
             )}
           </div>
         </TelemetryCell>
