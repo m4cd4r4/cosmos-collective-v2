@@ -10,10 +10,10 @@ const withPWA = require('next-pwa')({
   buildExcludes: [/app-build-manifest\.json$/, /middleware-manifest\.json$/, /middleware-build-manifest\.js$/],
   runtimeCaching: [
     {
-      urlPattern: /^https:\/\/www\.nasa\.gov\/wp-content\/uploads\/.*/i,
+      urlPattern: /^https:\/\/esawebb\.org\/archives\/images\/.*/i,
       handler: 'CacheFirst',
       options: {
-        cacheName: 'nasa-images',
+        cacheName: 'esawebb-images',
         expiration: {
           maxEntries: 100,
           maxAgeSeconds: 60 * 60 * 24 * 30 // 30 days
@@ -78,7 +78,7 @@ const nextConfig = {
       },
       {
         protocol: 'https',
-        hostname: 'www.nasa.gov',
+        hostname: 'esawebb.org',
       },
       {
         protocol: 'https',

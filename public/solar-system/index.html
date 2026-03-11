@@ -166,7 +166,7 @@
             cursor: pointer;
             white-space: nowrap;
             border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s, font-size 0.15s, opacity 0.15s;
             transform: translate(-50%, -100%);
         }
         .planet-label:hover {
@@ -174,6 +174,47 @@
             border-color: rgba(100, 150, 255, 0.6);
             transform: translate(-50%, -100%) scale(1.1);
         }
+        .planet-label.dwarf-label {
+            border-style: dashed;
+            border-color: rgba(200, 180, 140, 0.4);
+        }
+        #planet-info-card {
+            position: fixed; z-index: 300;
+            background: rgba(10, 14, 26, 0.92);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 14px; backdrop-filter: blur(14px);
+            padding: 20px; min-width: 280px; max-width: 340px;
+            color: #ddd; font-size: 12px;
+            opacity: 0; transform: translateY(10px) scale(0.96);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            pointer-events: auto;
+        }
+        #planet-info-card.visible { opacity: 1; transform: translateY(0) scale(1); }
+        .planet-info-close-btn {
+            position: absolute; top: 10px; right: 10px;
+            width: 28px; height: 28px; min-height: 28px;
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px; color: #999; font-size: 18px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; padding: 0; margin: 0; line-height: 1;
+        }
+        .planet-info-close-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+        .planet-info-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; padding-right: 30px; }
+        .planet-info-symbol { font-size: 32px; line-height: 1; text-shadow: 0 0 12px rgba(212, 175, 55, 0.5); }
+        .planet-info-header h3 { color: #d4af37; font-size: 18px; margin: 0; text-shadow: 0 0 8px rgba(212, 175, 55, 0.3); }
+        .planet-info-subtitle { color: #888; font-size: 11px; letter-spacing: 1.5px; text-transform: uppercase; margin-top: 2px; }
+        .planet-info-stats { display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; margin-bottom: 14px; }
+        .planet-info-stats .stat-key { color: #777; font-size: 11px; }
+        .planet-info-stats .stat-val { color: #fff; font-size: 11px; font-weight: 600; }
+        .planet-info-dive-btn {
+            background: linear-gradient(135deg, #2196F3 0%, #0D47A1 100%);
+            color: #fff; border: none; padding: 8px 18px; border-radius: 6px;
+            font-size: 12px; cursor: pointer; width: 100%;
+        }
+        .planet-info-dive-btn:hover { box-shadow: 0 0 12px rgba(33, 150, 243, 0.5); }
+        .planet-info-funfact { color: #d4af37; font-size: 11px; font-style: italic; margin-bottom: 14px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); }
+        .planet-label.distance-mode { cursor: crosshair; }
+        .planet-label.distance-selected { border-color: #d4af37; background: rgba(212, 175, 55, 0.2); box-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
+        #toggle-distance.active { background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%) !important; }
         .toggle-section {
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: 15px;
@@ -1403,6 +1444,8 @@
                     <option value="saturn" style="background:#1a1a2e;color:#fff;">Saturn</option>
                     <option value="uranus" style="background:#1a1a2e;color:#fff;">Uranus</option>
                     <option value="neptune" style="background:#1a1a2e;color:#fff;">Neptune</option>
+                    <option value="ceres" style="background:#1a1a2e;color:#fff;">Ceres (dwarf)</option>
+                    <option value="pluto" style="background:#1a1a2e;color:#fff;">Pluto (dwarf)</option>
                     <option value="none" style="background:#1a1a2e;color:#fff;">None (free cam)</option>
                 </select>
             </div>
@@ -1426,8 +1469,8 @@
         <div class="stat-line">Distance: <span class="stat-value" id="stat-distance">0</span> AU</div>
         <div class="stat-line">Sim Time: <span class="stat-value" id="stat-time">0</span>s</div>
         <div class="stat-line">Date: <span class="stat-value" id="stat-date">Feb 4, 2026</span></div>
-        <div class="stat-line">Planets: <span class="stat-value">8</span></div>
-        <div class="stat-line">Moons: <span class="stat-value">16</span></div>
+        <div class="stat-line">Planets: <span class="stat-value">8 + 2 dwarf</span></div>
+        <div class="stat-line">Moons: <span class="stat-value">17</span></div>
         <div class="stat-line">Camera: <span class="stat-value" id="stat-zoom">160</span></div>
     </div>
 
@@ -1445,13 +1488,56 @@
         <div id="science-panel-content"></div>
     </div>
 
+    <!-- Planet Info Card (glassmorphism overlay) -->
+    <div id="planet-info-card" style="display:none;">
+        <button id="planet-info-close" class="planet-info-close-btn">&times;</button>
+        <div class="planet-info-header">
+            <span id="planet-info-symbol" class="planet-info-symbol"></span>
+            <div>
+                <h3 id="planet-info-name"></h3>
+                <div id="planet-info-subtitle" class="planet-info-subtitle"></div>
+            </div>
+        </div>
+        <div id="planet-info-stats" class="planet-info-stats"></div>
+        <div id="planet-info-funfact" class="planet-info-funfact"></div>
+        <div class="planet-info-actions">
+            <button id="planet-info-dive" class="planet-info-dive-btn">Dive Into</button>
+        </div>
+    </div>
+
+    <!-- Distance Meter Label -->
+    <div id="distance-label" style="position:fixed; display:none; background:rgba(10,14,26,0.92); border:1px solid rgba(212,175,55,0.4); border-radius:8px; backdrop-filter:blur(10px); padding:8px 14px; font-size:12px; color:#fff; z-index:100; pointer-events:none; white-space:nowrap;">
+        <div id="distance-label-names" style="color:#d4af37; font-weight:600; margin-bottom:4px;"></div>
+        <div id="distance-label-au" style="font-family:'Courier New',monospace;"></div>
+        <div id="distance-label-km" style="font-family:'Courier New',monospace; color:#aaa; font-size:11px;"></div>
+    </div>
+
     <!-- Bottom-left buttons -->
-    <div style="position:absolute; bottom:20px; left:20px; display:flex; gap:8px; z-index:50;" id="bottom-left-btns">
+    <div style="position:absolute; bottom:20px; left:20px; display:flex; gap:8px; z-index:50; flex-wrap:wrap;" id="bottom-left-btns">
         <button id="toggle-science" style="font-size:11px; padding:8px 14px; opacity:0.8;">Planet Info</button>
         <button id="toggle-scale" style="font-size:11px; padding:8px 14px; opacity:0.8;">True Scale</button>
         <button id="toggle-accuracy" style="font-size:11px; padding:8px 14px; opacity:0.8;">Accuracy</button>
+        <button id="toggle-distance" style="font-size:11px; padding:8px 14px; opacity:0.8;">Distance</button>
+        <button id="toggle-scrubber" style="font-size:11px; padding:8px 14px; opacity:0.8;">Time Travel</button>
         <button id="toggle-galaxy" style="font-size:11px; padding:8px 14px; opacity:0.8; background:linear-gradient(135deg, #1a237e 0%, #4a148c 100%);">&#x1F30C; Galaxy View</button>
         <button id="start-demo-tour" style="font-size:11px; padding:8px 14px; opacity:0.8; background:linear-gradient(135deg, #ff6b35 0%, #d63384 100%);">&#x1F3AC; Tour</button>
+    </div>
+
+    <!-- Time Scrubber Bar -->
+    <div id="time-scrubber" style="position:fixed; bottom:0; left:0; right:0; z-index:60; display:none; background:linear-gradient(to top, rgba(10,14,26,0.95), rgba(10,14,26,0.7)); border-top:1px solid rgba(212,175,55,0.25); backdrop-filter:blur(10px); padding:10px 20px 14px;">
+        <div style="max-width:900px; margin:0 auto;">
+            <div style="display:flex; gap:6px; justify-content:center; margin-bottom:8px;">
+                <button type="button" class="scrubber-preset-btn" data-offset="-365" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">-1 Year</button>
+                <button type="button" class="scrubber-preset-btn" data-offset="0" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">Today</button>
+                <button type="button" class="scrubber-preset-btn" data-offset="365" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">+1 Year</button>
+                <button type="button" class="scrubber-preset-btn" data-offset="3652" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">+10 Years</button>
+            </div>
+            <input type="range" id="scrubber-slider" min="-36525" max="36525" step="1" value="0" style="width:100%;">
+            <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:12px;">
+                <span id="scrubber-date" style="color:#d4af37; font-family:'Courier New',monospace; font-weight:600;"></span>
+                <span id="scrubber-speed" style="color:#666; font-size:11px;"></span>
+            </div>
+        </div>
     </div>
 
     <!-- Galaxy View overlay elements -->
@@ -1619,6 +1705,27 @@
             saturn_ring:   'textures/saturn_ring.png',
             uranus:        'textures/uranus.jpg',
             neptune:       'textures/neptune.jpg',
+            // Moon textures - Solar System Scope 2K (CC BY 4.0)
+            // Download from solarsystemscope.com/textures and place in public/solar-system/textures/
+            io:            'textures/io.jpg',
+            europa:        'textures/europa.jpg',
+            ganymede:      'textures/ganymede.jpg',
+            callisto:      'textures/callisto.jpg',
+            titan:         'textures/titan.jpg',
+            phobos:        'textures/phobos.jpg',
+            triton:        'textures/triton.jpg',
+            // 8K/high-res dive textures - Solar System Scope (CC BY 4.0)
+            sun_8k:              'textures/2-8k_textures/8k_sun.jpg',
+            mercury_8k:          'textures/2-8k_textures/8k_mercury.jpg',
+            venus_atmo_4k:       'textures/2-8k_textures/4k_venus_atmosphere.jpg',
+            earth_8k:            'textures/2-8k_textures/8k_earth_daymap.jpg',
+            earth_clouds_8k:     'textures/2-8k_textures/8k_earth_clouds.jpg',
+            moon_8k:             'textures/2-8k_textures/8k_moon.jpg',
+            mars_8k:             'textures/2-8k_textures/8k_mars.jpg',
+            jupiter_8k:          'textures/2-8k_textures/8k_jupiter.jpg',
+            saturn_8k:           'textures/2-8k_textures/8k_saturn.jpg',
+            saturn_ring_8k:      'textures/2-8k_textures/8k_saturn_ring.png',
+            stars_milky_way_8k:  'textures/2-8k_textures/8k_stars_milky_way.jpg',
         };
 
         const textureCache = {};
@@ -1784,16 +1891,67 @@
         // REFERENCE GRID
         // =====================================================================
         let referenceGrid;
-        function createReferenceGrid() {
-            const gridHelper = new THREE.GridHelper(500, 50, 0x333355, 0x1a1a2e);
-            gridHelper.rotation.x = Math.PI / 2;
-            gridHelper.material.transparent = true;
-            gridHelper.material.opacity = 0.3;
-            referenceGrid = gridHelper;
-            referenceGrid.visible = true; // ON by default
-            scene.add(gridHelper);
+        function createEclipticGrid() {
+            if (referenceGrid) scene.remove(referenceGrid);
+            const group = new THREE.Group();
+            const maxDist = 90;
+
+            // Concentric rings at each planet's orbital distance
+            const ringDistances = planetsData.map(p => p.distance);
+            ringDistances.forEach(dist => {
+                const segments = 128;
+                const pts = [];
+                for (let j = 0; j <= segments; j++) {
+                    const theta = (j / segments) * Math.PI * 2;
+                    pts.push(new THREE.Vector3(Math.cos(theta) * dist, Math.sin(theta) * dist, 0));
+                }
+                const geo = new THREE.BufferGeometry().setFromPoints(pts);
+                const opacity = Math.max(0.06, 0.25 - (dist / maxDist) * 0.19);
+                const mat = new THREE.LineBasicMaterial({ color: 0x334466, transparent: true, opacity, depthWrite: false });
+                group.add(new THREE.Line(geo, mat));
+            });
+
+            // Scale reference rings every 10 AU (skip near orbital distances)
+            for (let r = 10; r <= maxDist; r += 10) {
+                if (ringDistances.some(d => Math.abs(d - r) < 2)) continue;
+                const pts = [];
+                for (let j = 0; j <= 64; j++) {
+                    const theta = (j / 64) * Math.PI * 2;
+                    pts.push(new THREE.Vector3(Math.cos(theta) * r, Math.sin(theta) * r, 0));
+                }
+                const geo = new THREE.BufferGeometry().setFromPoints(pts);
+                group.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x1a1a2e, transparent: true, opacity: 0.08, depthWrite: false })));
+            }
+
+            // Radial lines every 30 degrees
+            for (let a = 0; a < 360; a += 30) {
+                const rad = a * Math.PI / 180;
+                const pts = [new THREE.Vector3(0, 0, 0), new THREE.Vector3(Math.cos(rad) * maxDist, Math.sin(rad) * maxDist, 0)];
+                const geo = new THREE.BufferGeometry().setFromPoints(pts);
+                group.add(new THREE.Line(geo, new THREE.LineBasicMaterial({ color: 0x1a1a3e, transparent: true, opacity: 0.06, depthWrite: false })));
+            }
+
+            // Subtle radial glow plane
+            const glowCanvas = document.createElement('canvas');
+            glowCanvas.width = 512; glowCanvas.height = 512;
+            const gCtx = glowCanvas.getContext('2d');
+            const grad = gCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
+            grad.addColorStop(0, 'rgba(50, 70, 120, 0.06)');
+            grad.addColorStop(0.5, 'rgba(30, 50, 100, 0.03)');
+            grad.addColorStop(1, 'rgba(20, 30, 60, 0)');
+            gCtx.fillStyle = grad;
+            gCtx.fillRect(0, 0, 512, 512);
+            const glowMat = new THREE.MeshBasicMaterial({
+                map: new THREE.CanvasTexture(glowCanvas),
+                transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide
+            });
+            group.add(new THREE.Mesh(new THREE.PlaneGeometry(maxDist * 2.2, maxDist * 2.2), glowMat));
+
+            group.visible = true;
+            scene.add(group);
+            referenceGrid = group;
         }
-        createReferenceGrid();
+        // createEclipticGrid() called after planetsData is defined (below)
 
         // =====================================================================
         // SCIENCE DATA (NASA/JPL)
@@ -1807,7 +1965,9 @@
             Jupiter: { realRadius: 69911, realRadiusEarth: 10.97, distanceAU: 5.203, mass: '1.898 x 10^27 kg', gravity: '24.79 m/s\u00B2', temp: '-110\u00B0C cloud tops', dayLength: '9h 55m (fastest)', tilt: '3.13\u00B0', atmosphere: '90% H2, 10% He', funFact: 'Great Red Spot is a storm bigger than Earth, raging for 350+ years' },
             Saturn:  { realRadius: 58232, realRadiusEarth: 9.14, distanceAU: 9.537, mass: '5.683 x 10^26 kg', gravity: '10.44 m/s\u00B2', temp: '-140\u00B0C cloud tops', dayLength: '10h 33m', tilt: '26.73\u00B0', atmosphere: '96% H2, 3% He', funFact: 'Density is 0.687 g/cm\u00B3 \u2013 it would float in water' },
             Uranus:  { realRadius: 25362, realRadiusEarth: 3.98, distanceAU: 19.19, mass: '8.681 x 10^25 kg', gravity: '8.87 m/s\u00B2', temp: '-195\u00B0C', dayLength: '17h 14m', tilt: '97.77\u00B0', atmosphere: '83% H2, 15% He, 2% CH4', funFact: 'Rotates on its side \u2013 likely from a massive ancient collision' },
-            Neptune: { realRadius: 24622, realRadiusEarth: 3.86, distanceAU: 30.07, mass: '1.024 x 10^26 kg', gravity: '11.15 m/s\u00B2', temp: '-200\u00B0C', dayLength: '16h 6m', tilt: '28.32\u00B0', atmosphere: '80% H2, 19% He, 1% CH4', funFact: 'Winds reach 2,100 km/h \u2013 fastest in the solar system' }
+            Neptune: { realRadius: 24622, realRadiusEarth: 3.86, distanceAU: 30.07, mass: '1.024 x 10^26 kg', gravity: '11.15 m/s\u00B2', temp: '-200\u00B0C', dayLength: '16h 6m', tilt: '28.32\u00B0', atmosphere: '80% H2, 19% He, 1% CH4', funFact: 'Winds reach 2,100 km/h \u2013 fastest in the solar system' },
+            Ceres:   { realRadius: 473, realRadiusEarth: 0.074, distanceAU: 2.77, mass: '9.39 x 10^20 kg', gravity: '0.28 m/s\u00B2', temp: '-106\u00B0C', dayLength: '9h 4m', tilt: '4\u00B0', atmosphere: 'Transient water vapor', funFact: 'Largest object in the asteroid belt - contains a third of the belt\'s total mass' },
+            Pluto:   { realRadius: 1188, realRadiusEarth: 0.186, distanceAU: 39.5, mass: '1.303 x 10^22 kg', gravity: '0.62 m/s\u00B2', temp: '-230\u00B0C', dayLength: '6.4 Earth days (retrograde)', tilt: '122.5\u00B0', atmosphere: 'Thin N2, CH4, CO', funFact: 'Pluto and Charon are tidally locked to each other - both always show the same face' }
         };
 
         // =====================================================================
@@ -1820,21 +1980,26 @@
               moons: [{ name: 'Moon', radius: 0.27, distance: 2.5, speed: 13.4, ecc: 0.055, color: 0xaaaaaa, texture: 'moon', realRadiusScale: 1.01 }]
             },
             { name: 'Mars', radius: 0.5, distance: 20, speed: 0.53, ecc: 0.093, orbitalPeriod: 687, color: 0xe27b58, emissive: 0x713d2c, texture: 'mars', realRadiusScale: 0.532,
-              moons: [{ name: 'Phobos', radius: 0.12, distance: 1.2, speed: 365, ecc: 0.015, color: 0x7a6a5a, realRadiusScale: 0.0148 }, { name: 'Deimos', radius: 0.1, distance: 1.8, speed: 182, ecc: 0.0002, color: 0x8a7a6a, realRadiusScale: 0.00973 }]
+              moons: [{ name: 'Phobos', radius: 0.12, distance: 1.2, speed: 365, ecc: 0.015, color: 0x7a6a5a, texture: 'phobos', realRadiusScale: 0.0148 }, { name: 'Deimos', radius: 0.1, distance: 1.8, speed: 182, ecc: 0.0002, color: 0x8a7a6a, realRadiusScale: 0.00973 }]
             },
             { name: 'Jupiter', radius: 2.5, distance: 32, speed: 0.08, ecc: 0.049, orbitalPeriod: 4333, color: 0xc88b3a, emissive: 0x64451d, texture: 'jupiter', realRadiusScale: 10.97,
-              moons: [{ name: 'Io', radius: 0.28, distance: 4, speed: 85, ecc: 0.004, color: 0xffdd66, realRadiusScale: 1.021 }, { name: 'Europa', radius: 0.24, distance: 5, speed: 52, ecc: 0.009, color: 0xddddff, realRadiusScale: 1.021 }, { name: 'Ganymede', radius: 0.32, distance: 6.5, speed: 33, ecc: 0.001, color: 0xccccaa, realRadiusScale: 1.292 }, { name: 'Callisto', radius: 0.3, distance: 8, speed: 21, ecc: 0.007, color: 0x888888, realRadiusScale: 1.261 }]
+              moons: [{ name: 'Io', radius: 0.28, distance: 4, speed: 85, ecc: 0.004, color: 0xffdd66, texture: 'io', realRadiusScale: 1.021 }, { name: 'Europa', radius: 0.24, distance: 5, speed: 52, ecc: 0.009, color: 0xddddff, texture: 'europa', realRadiusScale: 1.021 }, { name: 'Ganymede', radius: 0.32, distance: 6.5, speed: 33, ecc: 0.001, color: 0xccccaa, texture: 'ganymede', realRadiusScale: 1.292 }, { name: 'Callisto', radius: 0.3, distance: 8, speed: 21, ecc: 0.007, color: 0x888888, texture: 'callisto', realRadiusScale: 1.261 }]
             },
             { name: 'Saturn', radius: 2.2, distance: 44, speed: 0.03, ecc: 0.057, orbitalPeriod: 10759, color: 0xfad5a5, emissive: 0x7d6a52, texture: 'saturn', realRadiusScale: 9.14,
-              moons: [{ name: 'Titan', radius: 0.4, distance: 6, speed: 22, ecc: 0.029, color: 0xffbb88, realRadiusScale: 1.011 }, { name: 'Rhea', radius: 0.2, distance: 4.5, speed: 40, ecc: 0.001, color: 0xaaaaaa, realRadiusScale: 0.600 }, { name: 'Iapetus', radius: 0.18, distance: 8, speed: 13, ecc: 0.029, color: 0x666666, realRadiusScale: 0.641 }]
+              moons: [{ name: 'Titan', radius: 0.4, distance: 6, speed: 22, ecc: 0.029, color: 0xffbb88, texture: 'titan', realRadiusScale: 1.011 }, { name: 'Rhea', radius: 0.2, distance: 4.5, speed: 40, ecc: 0.001, color: 0xaaaaaa, realRadiusScale: 0.600 }, { name: 'Iapetus', radius: 0.18, distance: 8, speed: 13, ecc: 0.029, color: 0x666666, realRadiusScale: 0.641 }]
             },
             { name: 'Uranus', radius: 1.6, distance: 56, speed: 0.01, ecc: 0.046, orbitalPeriod: 30687, color: 0x4fd0e7, emissive: 0x276873, texture: 'uranus', realRadiusScale: 3.98,
               moons: [{ name: 'Titania', radius: 0.22, distance: 4, speed: 40, ecc: 0.001, color: 0xbbccdd, realRadiusScale: 0.563 }, { name: 'Oberon', radius: 0.2, distance: 5, speed: 32, ecc: 0.001, color: 0x99aabb, realRadiusScale: 0.598 }]
             },
             { name: 'Neptune', radius: 1.5, distance: 68, speed: 0.006, ecc: 0.010, orbitalPeriod: 60190, color: 0x4166f5, emissive: 0x20337a, texture: 'neptune', realRadiusScale: 3.86,
-              moons: [{ name: 'Triton', radius: 0.26, distance: 4.5, speed: 60, ecc: 0.000016, color: 0xeeffff, realRadiusScale: 0.817 }]
+              moons: [{ name: 'Triton', radius: 0.26, distance: 4.5, speed: 60, ecc: 0.000016, color: 0xeeffff, texture: 'triton', realRadiusScale: 0.817 }]
+            },
+            { name: 'Ceres', radius: 0.15, distance: 26, speed: 0.38, ecc: 0.076, orbitalPeriod: 1682, color: 0x8a8a7a, emissive: 0x454540, texture: 'ceres', realRadiusScale: 0.074, isDwarf: true, moons: [] },
+            { name: 'Pluto', radius: 0.18, distance: 82, speed: 0.004, ecc: 0.250, orbitalPeriod: 90560, color: 0xc4a882, emissive: 0x625440, texture: 'pluto', realRadiusScale: 0.186, isDwarf: true,
+              moons: [{ name: 'Charon', radius: 0.1, distance: 2.0, speed: 9.5, ecc: 0.0002, color: 0x999999, realRadiusScale: 0.474 }]
             }
         ];
+        createEclipticGrid();
 
         // =====================================================================
         // SUN - multi-layered glow
@@ -1992,6 +2157,23 @@
                     for(let i=0;i<500;i++){ctx.beginPath();ctx.arc(Math.random()*width,Math.random()*height,Math.random()*6+2,0,Math.PI*2);ctx.fillStyle=`rgba(${200+Math.random()*55},${150+Math.random()*80},${Math.random()*60},${Math.random()*0.3+0.1})`;ctx.fill();}
                     break;
                 }
+                case 'ceres': {
+                    ctx.fillStyle='#8a8a7a';ctx.fillRect(0,0,width,height);
+                    for(let i=0;i<120;i++){ctx.beginPath();ctx.arc(Math.random()*width,Math.random()*height,Math.random()*6+1,0,Math.PI*2);ctx.fillStyle=`rgba(${100+Math.random()*40},${100+Math.random()*40},${90+Math.random()*30},${Math.random()*0.4+0.2})`;ctx.fill();}
+                    // Occator crater bright spots
+                    ctx.beginPath();ctx.arc(width*0.35,height*0.45,6,0,Math.PI*2);ctx.fillStyle='rgba(255,255,240,0.6)';ctx.fill();
+                    ctx.beginPath();ctx.arc(width*0.37,height*0.42,3,0,Math.PI*2);ctx.fillStyle='rgba(255,255,250,0.4)';ctx.fill();
+                    break;
+                }
+                case 'pluto': {
+                    const g=ctx.createLinearGradient(0,0,0,height);
+                    g.addColorStop(0,'#d4c4a8');g.addColorStop(0.3,'#c4a882');g.addColorStop(0.5,'#b09070');g.addColorStop(0.7,'#c4a882');g.addColorStop(1,'#e8d8c0');
+                    ctx.fillStyle=g;ctx.fillRect(0,0,width,height);
+                    // Tombaugh Regio (heart-shaped nitrogen ice plain)
+                    ctx.beginPath();ctx.ellipse(width*0.3,height*0.45,40,35,-0.2,0,Math.PI*2);ctx.fillStyle='rgba(220,210,190,0.5)';ctx.fill();
+                    for(let i=0;i<60;i++){ctx.beginPath();ctx.arc(Math.random()*width,Math.random()*height,Math.random()*8+2,0,Math.PI*2);ctx.fillStyle=`rgba(${80+Math.random()*60},${60+Math.random()*50},${40+Math.random()*40},${Math.random()*0.3+0.1})`;ctx.fill();}
+                    break;
+                }
             }
             const texture = new THREE.CanvasTexture(canvas);
             texture.wrapS = THREE.RepeatWrapping;
@@ -2037,6 +2219,23 @@
             });
             return new THREE.Mesh(geo, mat);
         }
+
+        // =====================================================================
+        // J2000 EPOCH DATA (for real date-based orbital positioning)
+        // =====================================================================
+        const J2000_EPOCH_EARLY = {
+            Mercury: { L0: 252.251, n: 4.09233445 },
+            Venus:   { L0: 181.979, n: 1.60213034 },
+            Earth:   { L0: 100.464, n: 0.98560028 },
+            Mars:    { L0: 355.453, n: 0.52402068 },
+            Ceres:   { L0: 153.300, n: 0.21408 },
+            Jupiter: { L0: 34.404,  n: 0.08308529 },
+            Saturn:  { L0: 49.944,  n: 0.03344414 },
+            Uranus:  { L0: 313.232, n: 0.01172834 },
+            Neptune: { L0: 304.880, n: 0.00598103 },
+            Pluto:   { L0: 238.929, n: 0.00397 },
+        };
+        const DAYS_FROM_J2000_TO_START_EARLY = 9530.5; // Feb 4, 2026 from J2000.0
 
         // =====================================================================
         // PLANET CREATION
@@ -2132,8 +2331,16 @@
                 distance: data.distance,
                 speed: data.speed,
                 ecc: data.ecc || 0,
-                angle: Math.random() * Math.PI * 2,
-                meanAnomaly: Math.random() * Math.PI * 2,
+                angle: (() => {
+                    const elem = J2000_EPOCH_EARLY[data.name];
+                    if (!elem) return Math.random() * Math.PI * 2;
+                    return ((elem.L0 + elem.n * DAYS_FROM_J2000_TO_START_EARLY) % 360) * Math.PI / 180;
+                })(),
+                meanAnomaly: (() => {
+                    const elem = J2000_EPOCH_EARLY[data.name];
+                    if (!elem) return Math.random() * Math.PI * 2;
+                    return ((elem.L0 + elem.n * DAYS_FROM_J2000_TO_START_EARLY) % 360) * Math.PI / 180;
+                })(),
                 trail: [],
                 maxTrailLength: 800,
                 name: data.name,
@@ -2279,13 +2486,28 @@
                 }
 
                 const geo = new THREE.BufferGeometry().setFromPoints(pts);
-                const mat = new THREE.LineBasicMaterial({
-                    color: pd ? pd.color : 0x4488ff,
-                    transparent: true,
-                    opacity: 0.22,
-                    depthWrite: false
-                });
-                const line = new THREE.Line(geo, mat);
+                const isDwarf = pd && pd.isDwarf;
+                let line;
+                if (isDwarf) {
+                    const mat = new THREE.LineDashedMaterial({
+                        color: pd ? pd.color : 0x4488ff,
+                        transparent: true,
+                        opacity: 0.12,
+                        depthWrite: false,
+                        dashSize: 2,
+                        gapSize: 1,
+                    });
+                    line = new THREE.Line(geo, mat);
+                    line.computeLineDistances();
+                } else {
+                    const mat = new THREE.LineBasicMaterial({
+                        color: pd ? pd.color : 0x4488ff,
+                        transparent: true,
+                        opacity: 0.22,
+                        depthWrite: false
+                    });
+                    line = new THREE.Line(geo, mat);
+                }
                 line.position.z = sun.position.z;
                 line.visible = showOrbitRings;
                 orbitRingLines.set(planet.name, line);
@@ -2381,10 +2603,23 @@
             planets.forEach(planet => {
                 const label = planetLabels.get(planet.name);
                 const v = planet.mesh.position.clone().project(camera);
-                if (v.z < 1 && v.x > -1.2 && v.x < 1.2 && v.y > -1.2 && v.y < 1.2) {
+                if (v.z < 1 && v.x > -1.5 && v.x < 1.5 && v.y > -1.5 && v.y < 1.5) {
+                    const distToCam = camera.position.distanceTo(planet.mesh.position);
+                    const scaleFactor = Math.max(0.55, Math.min(1.4, 80 / distToCam));
+                    const fontSize = Math.round(12 * scaleFactor);
+                    const opacity = Math.max(0.4, Math.min(1.0, 120 / distToCam));
+
                     label.style.left = (v.x * halfW + halfW) + 'px';
-                    label.style.top = (-v.y * halfH + halfH - 20) + 'px';
+                    label.style.top = (-v.y * halfH + halfH - 20 * scaleFactor) + 'px';
+                    label.style.fontSize = fontSize + 'px';
+                    label.style.opacity = opacity;
                     label.style.display = 'block';
+
+                    // Dwarf planet style
+                    const pd = planetsData.find(d => d.name === planet.name);
+                    if (pd && pd.isDwarf && !label.classList.contains('dwarf-label')) {
+                        label.classList.add('dwarf-label');
+                    }
                 } else {
                     label.style.display = 'none';
                 }
@@ -2394,9 +2629,16 @@
                 allMoons.forEach(moon => {
                     const label = moonLabels.get(moon.name);
                     const v = moon.mesh.position.clone().project(camera);
-                    if (v.z < 1 && v.x > -1.2 && v.x < 1.2 && v.y > -1.2 && v.y < 1.2) {
+                    if (v.z < 1 && v.x > -1.5 && v.x < 1.5 && v.y > -1.5 && v.y < 1.5) {
+                        const distToCam = camera.position.distanceTo(moon.mesh.position);
+                        const scaleFactor = Math.max(0.5, Math.min(1.2, 40 / distToCam));
+                        const fontSize = Math.round(10 * scaleFactor);
+                        const opacity = Math.max(0.3, Math.min(0.7, 60 / distToCam));
+
                         label.style.left = (v.x * halfW + halfW) + 'px';
-                        label.style.top = (-v.y * halfH + halfH - 15) + 'px';
+                        label.style.top = (-v.y * halfH + halfH - 15 * scaleFactor) + 'px';
+                        label.style.fontSize = fontSize + 'px';
+                        label.style.opacity = opacity;
                         label.style.display = 'block';
                     } else {
                         label.style.display = 'none';
@@ -2512,6 +2754,20 @@
             Saturn:  { subtitle: 'SATURNIAN ORBIT',    symbol: '\u2644', orbitMult: 3.0, realRadius: 58232,  speedMult: 0.5, tilt: 0.35 },
             Uranus:  { subtitle: 'URANIAN ORBIT',      symbol: '\u26E2', orbitMult: 3.0, realRadius: 25362,  speedMult: 0.6, tilt: 0.4 },
             Neptune: { subtitle: 'NEPTUNIAN ORBIT',    symbol: '\u2646', orbitMult: 3.0, realRadius: 24622,  speedMult: 0.6, tilt: 0.3 },
+            Ceres:   { subtitle: 'CEREAN ORBIT',      symbol: '\u26B3', orbitMult: 4.0, realRadius: 473,    speedMult: 1.5, tilt: 0.15 },
+            Pluto:   { subtitle: 'PLUTONIAN ORBIT',   symbol: '\u2647', orbitMult: 4.0, realRadius: 1188.3, speedMult: 0.7, tilt: 0.25 },
+        };
+
+        // Maps planet name to 8K texture keys for dive mode
+        const dive8kMap = {
+            Sun:     { texKey: 'sun_8k',        origKey: 'sun' },
+            Mercury: { texKey: 'mercury_8k',    origKey: 'mercury' },
+            Venus:   { texKey: 'venus_atmo_4k', origKey: 'venus_atmo' },
+            Earth:   { texKey: 'earth_8k',      origKey: 'earth',    cloudsKey: 'earth_clouds_8k', origCloudsKey: 'earth_clouds' },
+            Mars:    { texKey: 'mars_8k',        origKey: 'mars' },
+            Jupiter: { texKey: 'jupiter_8k',    origKey: 'jupiter' },
+            Saturn:  { texKey: 'saturn_8k',     origKey: 'saturn' },
+            // Uranus and Neptune: no 8K available, no swap
         };
 
         function getDiveTargetFromFollow() {
@@ -2562,6 +2818,23 @@
             document.getElementById('dive-subtitle').textContent = info.subtitle;
             document.getElementById('dive-hud').classList.add('visible');
             document.getElementById('dive-altitude').classList.add('visible');
+
+            // Swap in 8K texture for close-up quality
+            const d8k = dive8kMap[diveTargetName];
+            if (d8k) {
+                loadTextureWithFallback(d8k.texKey).then(tex => {
+                    if (tex) { diveTarget.mesh.material.map = tex; diveTarget.mesh.material.needsUpdate = true; }
+                });
+                if (d8k.cloudsKey && diveTarget.cloudsMesh) {
+                    loadTextureWithFallback(d8k.cloudsKey).then(tex => {
+                        if (tex) {
+                            diveTarget.cloudsMesh.material.map = tex;
+                            diveTarget.cloudsMesh.material.alphaMap = tex;
+                            diveTarget.cloudsMesh.material.needsUpdate = true;
+                        }
+                    });
+                }
+            }
         }
 
         function updateDive(dt) {
@@ -2645,6 +2918,18 @@
                     followTarget = preDiveState.followTarget;
                     document.getElementById('follow-target').value = followTarget;
 
+                    // Restore 2K textures after exiting dive
+                    const d8k = dive8kMap[diveTargetName];
+                    if (d8k && textureCache[d8k.origKey]) {
+                        diveTarget.mesh.material.map = textureCache[d8k.origKey];
+                        diveTarget.mesh.material.needsUpdate = true;
+                    }
+                    if (d8k && d8k.origCloudsKey && diveTarget.cloudsMesh && textureCache[d8k.origCloudsKey]) {
+                        diveTarget.cloudsMesh.material.map = textureCache[d8k.origCloudsKey];
+                        diveTarget.cloudsMesh.material.alphaMap = textureCache[d8k.origCloudsKey];
+                        diveTarget.cloudsMesh.material.needsUpdate = true;
+                    }
+
                     const btn = document.getElementById('planet-dive-btn');
                     btn.classList.remove('active');
                     updateDiveButtonText();
@@ -2711,7 +2996,9 @@
                     glow.rotation.y += 0.001 * (i + 1);
                 });
 
-                simulationDays += daysPerSecond * dt * Math.max(currentSunSpeed, 0.01) * Math.max(orbitSpeedMultiplier, 0.01);
+                if (!scrubberActive) {
+                    simulationDays += daysPerSecond * dt * Math.max(currentSunSpeed, 0.01) * Math.max(orbitSpeedMultiplier, 0.01);
+                }
 
                 planets.forEach(planet => {
                     let x, y;
@@ -2816,6 +3103,7 @@
                 }
                 updateLabels();
                 updateStats();
+                updateDistanceMeter();
             }
             // Keep background sphere centred on the camera so it never exits
             // its own BackSide surface regardless of how far the sun travels in Z
@@ -3483,8 +3771,271 @@
             document.getElementById('bottom-left-btns').style.display = 'none';
         }
 
-        planetLabels.forEach((label, name) => label.addEventListener('click', () => {
-            showPlanetInfo(name);
+        // =====================================================================
+        // FEATURE: PLANET INFO CARD (glassmorphism overlay)
+        // =====================================================================
+        const planetSymbols = {
+            Sun: '\u2609', Mercury: '\u263F', Venus: '\u2640', Earth: '\u2295',
+            Mars: '\u2642', Jupiter: '\u2643', Saturn: '\u2644', Uranus: '\u26E2',
+            Neptune: '\u2646', Ceres: '\u26B3', Pluto: '\u2647'
+        };
+        const planetSubtitles = {
+            Sun: 'Yellow Dwarf Star', Mercury: 'Innermost Planet',
+            Venus: 'Morning Star', Earth: 'The Blue Marble',
+            Mars: 'The Red Planet', Jupiter: 'King of Planets',
+            Saturn: 'The Ringed World', Uranus: 'The Ice Giant',
+            Neptune: 'The Windiest Planet', Ceres: 'Dwarf Planet',
+            Pluto: 'Dwarf Planet'
+        };
+        let infoCardPlanet = null;
+
+        function showInfoCard(name, screenX, screenY) {
+            const card = document.getElementById('planet-info-card');
+            const data = scienceData[name];
+            if (!data) return;
+            infoCardPlanet = name;
+            document.getElementById('planet-info-symbol').textContent = planetSymbols[name] || '';
+            document.getElementById('planet-info-name').textContent = name;
+            document.getElementById('planet-info-subtitle').textContent = planetSubtitles[name] || '';
+
+            let statsHTML = '';
+            const fields = [
+                ['Distance', data.distanceAU ? data.distanceAU + ' AU' : null],
+                ['Radius', data.realRadius.toLocaleString() + ' km'],
+                ['Mass', data.mass],
+                ['Gravity', data.gravity],
+                ['Temperature', data.temp],
+                ['Day Length', data.dayLength],
+                ['Axial Tilt', data.tilt],
+                ['Atmosphere', data.atmosphere],
+            ];
+            fields.forEach(([key, val]) => {
+                if (val) statsHTML += `<span class="stat-key">${key}</span><span class="stat-val">${val}</span>`;
+            });
+            document.getElementById('planet-info-stats').innerHTML = statsHTML;
+            document.getElementById('planet-info-funfact').textContent = data.funFact || '';
+
+            card.style.display = 'block';
+            const cardW = 320, cardH = 400;
+            let left = screenX + 20;
+            let top = screenY - 30;
+            if (left + cardW > window.innerWidth - 10) left = screenX - cardW - 20;
+            if (top + cardH > window.innerHeight - 10) top = window.innerHeight - cardH - 10;
+            if (top < 10) top = 10;
+            card.style.left = left + 'px';
+            card.style.top = top + 'px';
+            requestAnimationFrame(() => card.classList.add('visible'));
+        }
+
+        function hideInfoCard() {
+            const card = document.getElementById('planet-info-card');
+            card.classList.remove('visible');
+            setTimeout(() => { card.style.display = 'none'; }, 300);
+            infoCardPlanet = null;
+        }
+
+        document.getElementById('planet-info-close').addEventListener('click', hideInfoCard);
+        document.getElementById('planet-info-dive').addEventListener('click', () => {
+            if (!infoCardPlanet) return;
+            followTarget = infoCardPlanet.toLowerCase();
+            document.getElementById('follow-target').value = followTarget;
+            hideInfoCard();
+            updateDiveButtonText();
+            startDive();
+        });
+        document.addEventListener('click', (e) => {
+            const card = document.getElementById('planet-info-card');
+            if (card.style.display !== 'none' && !card.contains(e.target) && !e.target.classList.contains('planet-label')) {
+                hideInfoCard();
+            }
+        });
+
+        // =====================================================================
+        // FEATURE: DISTANCE METER
+        // =====================================================================
+        let distanceModeActive = false;
+        let distanceOrigin = null;
+        let distanceDestination = null;
+        let distanceLine = null;
+
+        function toggleDistanceMode() {
+            distanceModeActive = !distanceModeActive;
+            const btn = document.getElementById('toggle-distance');
+            btn.classList.toggle('active', distanceModeActive);
+            btn.textContent = distanceModeActive ? 'Cancel Distance' : 'Distance';
+            if (!distanceModeActive) clearDistanceMeasure();
+            planetLabels.forEach(label => label.classList.toggle('distance-mode', distanceModeActive));
+        }
+
+        function clearDistanceMeasure() {
+            distanceOrigin = null;
+            distanceDestination = null;
+            if (distanceLine) { scene.remove(distanceLine); distanceLine.geometry.dispose(); distanceLine.material.dispose(); distanceLine = null; }
+            document.getElementById('distance-label').style.display = 'none';
+            planetLabels.forEach(label => label.classList.remove('distance-selected'));
+        }
+
+        function handleDistanceClick(planetName) {
+            if (!distanceModeActive) return false;
+            if (!distanceOrigin) {
+                distanceOrigin = planetName;
+                planetLabels.get(planetName).classList.add('distance-selected');
+            } else if (!distanceDestination && planetName !== distanceOrigin) {
+                distanceDestination = planetName;
+                planetLabels.get(planetName).classList.add('distance-selected');
+            } else {
+                clearDistanceMeasure();
+                distanceOrigin = planetName;
+                planetLabels.get(planetName).classList.add('distance-selected');
+            }
+            return true;
+        }
+
+        function updateDistanceMeter() {
+            if (!distanceModeActive || !distanceOrigin || !distanceDestination) return;
+            const p1 = distanceOrigin === 'Sun' ? { mesh: sun } : planets.find(p => p.name === distanceOrigin);
+            const p2 = distanceDestination === 'Sun' ? { mesh: sun } : planets.find(p => p.name === distanceDestination);
+            if (!p1 || !p2) return;
+
+            const pos1 = p1.mesh.position;
+            const pos2 = p2.mesh.position;
+
+            if (distanceLine) { scene.remove(distanceLine); distanceLine.geometry.dispose(); distanceLine.material.dispose(); }
+            const pts = [pos1.clone(), pos2.clone()];
+            const geo = new THREE.BufferGeometry().setFromPoints(pts);
+            const mat = new THREE.LineDashedMaterial({ color: 0xd4af37, transparent: true, opacity: 0.6, dashSize: 2, gapSize: 1, depthWrite: false });
+            distanceLine = new THREE.Line(geo, mat);
+            distanceLine.computeLineDistances();
+            scene.add(distanceLine);
+
+            // Earth orbits at distance 16 scene units = 1 AU
+            const sceneDistPerAU = 16;
+            const dx = pos1.x - pos2.x;
+            const dy = pos1.y - pos2.y;
+            const flatDist = Math.sqrt(dx * dx + dy * dy);
+            const distAU = flatDist / sceneDistPerAU;
+            const distKm = distAU * 149597870.7;
+
+            const midWorld = new THREE.Vector3((pos1.x + pos2.x) / 2, (pos1.y + pos2.y) / 2, (pos1.z + pos2.z) / 2);
+            const midScreen = midWorld.clone().project(camera);
+            const halfW = window.innerWidth * 0.5;
+            const halfH = window.innerHeight * 0.5;
+            const sx = midScreen.x * halfW + halfW;
+            const sy = -midScreen.y * halfH + halfH;
+
+            const lbl = document.getElementById('distance-label');
+            lbl.style.display = 'block';
+            lbl.style.left = (sx + 15) + 'px';
+            lbl.style.top = (sy - 30) + 'px';
+            document.getElementById('distance-label-names').textContent = `${distanceOrigin} \u2194 ${distanceDestination}`;
+            document.getElementById('distance-label-au').textContent = `${distAU.toFixed(3)} AU`;
+            document.getElementById('distance-label-km').textContent = `${Math.round(distKm).toLocaleString()} km`;
+        }
+
+        document.getElementById('toggle-distance').addEventListener('click', toggleDistanceMode);
+
+        // =====================================================================
+        // FEATURE: TIME SCRUBBER (J2000 epoch-based positioning)
+        // =====================================================================
+        const J2000_EPOCH = J2000_EPOCH_EARLY;
+        const DAYS_FROM_J2000_TO_START = DAYS_FROM_J2000_TO_START_EARLY;
+        let scrubberActive = false;
+
+        function toggleScrubber() {
+            scrubberActive = !scrubberActive;
+            const panel = document.getElementById('time-scrubber');
+            const btn = document.getElementById('toggle-scrubber');
+            if (scrubberActive) {
+                panel.style.display = 'block';
+                btn.textContent = 'Close Scrubber';
+                btn.style.background = 'linear-gradient(135deg, #d4af37 0%, #b8860b 100%)';
+                isPaused = true;
+                document.getElementById('toggle-pause').textContent = 'Resume';
+                document.getElementById('scrubber-slider').value = Math.round(simulationDays);
+                updateScrubberDisplay();
+            } else {
+                panel.style.display = 'none';
+                btn.textContent = 'Time Travel';
+                btn.style.background = '';
+            }
+        }
+
+        function setSimulationToDay(dayOffset) {
+            simulationDays = dayOffset;
+            const totalDaysFromJ2000 = DAYS_FROM_J2000_TO_START + dayOffset;
+
+            planets.forEach((planet, idx) => {
+                const pd = planetsData[idx];
+                const elem = J2000_EPOCH[pd.name];
+                if (!elem) return;
+
+                const meanLongDeg = (elem.L0 + elem.n * totalDaysFromJ2000) % 360;
+                const M = meanLongDeg * Math.PI / 180;
+                planet.meanAnomaly = M;
+                planet.angle = M;
+
+                const e = ellipticalOrbits ? planet.ecc : 0;
+                let x, y;
+                if (e > 0) {
+                    const E = solveKepler(M, e);
+                    const a = planet.distance;
+                    const b = a * Math.sqrt(1 - e * e);
+                    x = a * (Math.cos(E) - e);
+                    y = b * Math.sin(E);
+                } else {
+                    x = Math.cos(M) * planet.distance;
+                    y = Math.sin(M) * planet.distance;
+                }
+
+                const z = sun.position.z;
+                planet.mesh.position.set(x, y, z);
+                if (planet.cloudsMesh) planet.cloudsMesh.position.set(x, y, z);
+                if (planet.atmosphereMesh) planet.atmosphereMesh.position.set(x, y, z);
+                if (planet.venusAtmo) planet.venusAtmo.position.set(x, y, z);
+                if (planet.marsAtmo) planet.marsAtmo.position.set(x, y, z);
+                if (planet.gasGiantAtmo) planet.gasGiantAtmo.position.set(x, y, z);
+            });
+
+            updateScrubberDisplay();
+            updateStats();
+        }
+
+        function updateScrubberDisplay() {
+            const d = getSimulationDate();
+            document.getElementById('scrubber-date').textContent = formatDate(d);
+            const years = (simulationDays / 365.25).toFixed(1);
+            const sign = simulationDays >= 0 ? '+' : '';
+            document.getElementById('scrubber-speed').textContent = `${sign}${years} years from start`;
+        }
+
+        document.getElementById('toggle-scrubber').addEventListener('click', toggleScrubber);
+        document.getElementById('scrubber-slider').addEventListener('input', (e) => {
+            setSimulationToDay(parseInt(e.target.value));
+        });
+        document.querySelectorAll('.scrubber-preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const offset = parseInt(btn.dataset.offset);
+                let targetDays;
+                if (offset === 0) {
+                    targetDays = Math.round((new Date() - startDate) / 86400000);
+                } else {
+                    targetDays = simulationDays + offset;
+                }
+                document.getElementById('scrubber-slider').value = targetDays;
+                setSimulationToDay(targetDays);
+            });
+        });
+
+        // =====================================================================
+        // LABEL CLICK HANDLER (integrates info card + distance mode)
+        // =====================================================================
+        planetLabels.forEach((label, name) => label.addEventListener('click', (e) => {
+            // Distance mode takes priority
+            if (handleDistanceClick(name)) { e.stopPropagation(); return; }
+
+            // Show info card near the click
+            showInfoCard(name, e.clientX, e.clientY);
+
             // Also switch follow target to this planet
             const val = name.toLowerCase();
             followTarget = val;
@@ -3938,12 +4489,23 @@
 
         function setSolarSystemOpacity(opacity) {
             // Fade all solar system elements
-            [sun, ...glowLayers, asteroidBelt, referenceGrid].forEach(obj => {
+            [sun, ...glowLayers, asteroidBelt].forEach(obj => {
                 if (obj && obj.material) {
                     obj.material.transparent = true;
                     obj.material.opacity = opacity;
                 }
             });
+            // Handle grid (may be a Group with children)
+            if (referenceGrid) {
+                if (referenceGrid.isGroup) {
+                    referenceGrid.traverse(child => {
+                        if (child.material) { child.material.transparent = true; child.material.opacity = opacity * 0.3; }
+                    });
+                } else if (referenceGrid.material) {
+                    referenceGrid.material.transparent = true;
+                    referenceGrid.material.opacity = opacity;
+                }
+            }
             planets.forEach(p => {
                 if (p.mesh?.material) { p.mesh.material.transparent = true; p.mesh.material.opacity = opacity; }
                 if (p.cloudsMesh?.material) { p.cloudsMesh.material.transparent = true; p.cloudsMesh.material.opacity = opacity; }

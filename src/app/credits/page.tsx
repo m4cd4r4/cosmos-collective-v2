@@ -160,6 +160,7 @@ export default function CreditsPage() {
                   { title: 'Hubble Space Telescope', url: 'https://hubblesite.org/images/gallery', body: 'NASA, ESA, and STScI. Hubble imagery is generally in the public domain.' },
                   { title: 'Australian Telescopes', url: 'https://www.csiro.au/en/about/facilities-collections/atnf', body: 'CSIRO ASKAP, Parkes (Murriyang), and ATCA. Credit: CSIRO.' },
                   { title: 'NASA APOD', url: 'https://apod.nasa.gov/', body: 'Credit to individual astronomers, observatories, and agencies as noted per image.' },
+                  { title: 'Solar System Scope Textures', url: 'https://www.solarsystemscope.com/textures/', body: 'Planetary and lunar surface textures used in the 3D Solar System viewer. Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).' },
                 ].map(({ title, url, body }) => (
                   <div key={title} className="border-b border-[rgba(212,175,55,0.06)] last:border-0 pb-2.5 last:pb-0">
                     <a

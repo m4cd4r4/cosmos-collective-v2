@@ -74,13 +74,15 @@ export function FeatureShowcase() {
             <Link
               key={href}
               href={href}
+              aria-label={`${title} - ${description}`}
               className="group relative rounded-xl overflow-hidden border border-[rgba(212,175,55,0.08)] bg-[rgba(8,12,28,0.6)] hover:border-[rgba(212,175,55,0.25)] transition-all duration-300"
             >
               {/* Image */}
               <div className="relative h-36 sm:h-40 overflow-hidden">
                 <Image
                   src={image.url}
-                  alt={image.name}
+                  alt=""
+                  aria-hidden="true"
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
