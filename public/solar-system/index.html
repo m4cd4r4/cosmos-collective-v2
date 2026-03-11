@@ -1951,7 +1951,7 @@
             scene.add(group);
             referenceGrid = group;
         }
-        createEclipticGrid();
+        // createEclipticGrid() called after planetsData is defined (below)
 
         // =====================================================================
         // SCIENCE DATA (NASA/JPL)
@@ -1999,6 +1999,7 @@
               moons: [{ name: 'Charon', radius: 0.1, distance: 2.0, speed: 9.5, ecc: 0.0002, color: 0x999999, realRadiusScale: 0.474 }]
             }
         ];
+        createEclipticGrid();
 
         // =====================================================================
         // SUN - multi-layered glow
