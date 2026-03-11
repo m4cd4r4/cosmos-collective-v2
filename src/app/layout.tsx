@@ -22,6 +22,11 @@ const WebVitals = dynamic(() => import('@/components/analytics/WebVitals').then(
   ssr: false,
 })
 
+// Lazy load PWA install prompt
+const InstallPrompt = dynamic(() => import('@/components/pwa/InstallPrompt').then(mod => ({ default: mod.InstallPrompt })), {
+  ssr: false,
+})
+
 // ============================================
 // Font Configuration
 // ============================================
@@ -250,6 +255,8 @@ export default function RootLayout({
             {children}
           </div>
 
+          {/* PWA install prompt */}
+          <InstallPrompt />
         </Providers>
 
         {/* Announcer for screen readers */}
