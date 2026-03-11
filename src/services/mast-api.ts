@@ -452,6 +452,13 @@ export function getFeaturedJWSTImages(): Observation[] {
       distanceLightYears: 7600,
       isFeatured: true,
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.eagleNebula,
+      channels: [
+        { name: 'F090W', wavelength: '0.9 μm', color: 'blue', description: 'Young hot stars and ionized hydrogen', instrument: 'NIRCam' },
+        { name: 'F187N', wavelength: '1.87 μm', color: 'green', description: 'Paschen-alpha: glowing hydrogen gas', instrument: 'NIRCam' },
+        { name: 'F335M', wavelength: '3.35 μm', color: 'red', description: 'Polycyclic aromatic hydrocarbons (PAHs)', instrument: 'NIRCam' },
+        { name: 'F444W', wavelength: '4.4 μm', color: 'red', description: 'Warm dust and carbon molecules', instrument: 'NIRCam' },
+      ],
       externalLinks: [
         { label: 'NASA Feature', url: 'https://www.nasa.gov/image-feature/goddard/2022/nasa-s-webb-reveals-cosmic-cliffs-glittering-landscape-of-star-birth', type: 'nasa' },
       ],
@@ -489,6 +496,12 @@ export function getFeaturedJWSTImages(): Observation[] {
       redshift: 0.39,
       isFeatured: true,
       dataQuality: 'excellent',
+      channels: [
+        { name: 'F090W', wavelength: '0.9 μm', color: 'blue', description: 'Blue stars in nearby galaxies', instrument: 'NIRCam' },
+        { name: 'F150W', wavelength: '1.5 μm', color: 'blue', description: 'Stellar continuum, intermediate-redshift galaxies', instrument: 'NIRCam' },
+        { name: 'F277W', wavelength: '2.77 μm', color: 'green', description: 'Molecular hydrogen, high-redshift galaxies', instrument: 'NIRCam' },
+        { name: 'F444W', wavelength: '4.4 μm', color: 'red', description: 'Most distant galaxies — universe at &lt;1 billion years old', instrument: 'NIRCam' },
+      ],
       analysis: {
         summary: 'Gravitationally lensed deep field showing thousands of galaxies spanning cosmic history.',
         scientificContext: 'The galaxy cluster SMACS 0723 acts as a gravitational lens, magnifying distant galaxies behind it. Some visible galaxies existed when the universe was less than 1 billion years old.',
@@ -557,6 +570,12 @@ export function getFeaturedJWSTImages(): Observation[] {
       distanceLightYears: 2500,
       isFeatured: true,
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.helix,
+      channels: [
+        { name: 'F090W', wavelength: '0.9 μm', color: 'blue', description: 'Ionized gas and hot stellar emission', instrument: 'NIRCam' },
+        { name: 'F187N', wavelength: '1.87 μm', color: 'green', description: 'Paschen-alpha hydrogen emission', instrument: 'NIRCam' },
+        { name: 'F356W', wavelength: '3.56 μm', color: 'red', description: 'Warm molecular hydrogen', instrument: 'NIRCam' },
+      ],
       analysis: {
         summary: 'Planetary nebula showing the expanding shells of material expelled by a dying Sun-like star.',
         scientificContext: 'JWST revealed that the central system is actually a binary star. The dying white dwarf is now clearly visible alongside its companion.',
@@ -594,6 +613,13 @@ export function getFeaturedJWSTImages(): Observation[] {
       distanceLightYears: 6500,
       isFeatured: true,
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.omega,
+      channels: [
+        { name: 'F090W', wavelength: '0.9 μm', color: 'blue', description: 'Neutral hydrogen, ionized gas edges', instrument: 'NIRCam' },
+        { name: 'F187N', wavelength: '1.87 μm', color: 'green', description: 'Paschen-alpha: glowing hydrogen inside pillars', instrument: 'NIRCam' },
+        { name: 'F200W', wavelength: '2.0 μm', color: 'green', description: 'Near-infrared continuum, stellar light', instrument: 'NIRCam' },
+        { name: 'F444W', wavelength: '4.4 μm', color: 'red', description: 'Warm dust and embedded protostars', instrument: 'NIRCam' },
+      ],
       analysis: {
         summary: 'Star-forming pillars of cold gas and dust in the Eagle Nebula, showing newborn stars previously hidden.',
         scientificContext: 'These pillars are being sculpted by radiation from nearby massive stars. The infrared view reveals young stars embedded within the pillars that are invisible in optical light.',
@@ -650,6 +676,12 @@ export function getFeaturedJWSTImages(): Observation[] {
       distanceLightYears: 161000,
       isFeatured: true,
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.ngc2014,
+      channels: [
+        { name: 'F090W', wavelength: '0.9 μm', color: 'blue', description: 'Young hot O-type stars', instrument: 'NIRCam' },
+        { name: 'F200W', wavelength: '2.0 μm', color: 'green', description: 'Near-infrared stellar continuum', instrument: 'NIRCam' },
+        { name: 'F444W', wavelength: '4.4 μm', color: 'red', description: 'Warm dust surrounding star clusters', instrument: 'NIRCam' },
+      ],
       analysis: {
         summary: 'Most active star-forming region in the Local Group, revealing thousands of young stars.',
         scientificContext: 'Located in the Large Magellanic Cloud, this nebula provides insight into what star formation was like when the universe was much younger and metal-poor.',
@@ -679,6 +711,7 @@ export function getFeaturedJWSTImages(): Observation[] {
       distanceLightYears: 500000000,
       isFeatured: true,
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.antennae,
       analysis: {
         summary: 'Ring galaxy showing expanding wave of star formation triggered by a galactic collision.',
         scientificContext: 'About 400 million years ago, a smaller galaxy punched through the centre, creating an expanding ring of star formation like ripples from a stone dropped in water.',
@@ -707,6 +740,7 @@ export function getFeaturedJWSTImages(): Observation[] {
       description: 'A grand design spiral galaxy revealing intricate dust and gas structure.',
       distanceLightYears: 32000000,
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.sombrero,
       analysis: {
         summary: 'Face-on spiral galaxy showing delicate filaments of gas and dust tracing spiral arms.',
         scientificContext: 'The mid-infrared view reveals the structure of gas and dust in unprecedented detail, showing how star formation propagates through spiral arms.',
@@ -732,6 +766,7 @@ export function getFeaturedJWSTImages(): Observation[] {
       },
       description: 'The clearest view of Neptune\'s rings in more than 30 years.',
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.saturn,
       analysis: {
         summary: 'Infrared view of Neptune showing its faint ring system and atmospheric features.',
         scientificContext: 'JWST revealed Neptune\'s rings clearly for the first time since Voyager 2 flew past in 1989.',
@@ -869,6 +904,13 @@ export function getFeaturedJWSTImages(): Observation[] {
       distanceLightYears: 2300,
       isFeatured: true,
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.catsEye,
+      channels: [
+        { name: 'F090W', wavelength: '0.9 μm', color: 'blue', description: 'Ionized outer shell emission', instrument: 'NIRCam' },
+        { name: 'F187N', wavelength: '1.87 μm', color: 'green', description: 'Paschen-alpha hydrogen glow', instrument: 'NIRCam' },
+        { name: 'F212N', wavelength: '2.12 μm', color: 'green', description: 'Molecular hydrogen in the main ring', instrument: 'NIRCam' },
+        { name: 'F444W', wavelength: '4.4 μm', color: 'red', description: 'Warm dust and outer molecular halo', instrument: 'NIRCam' },
+      ],
       externalLinks: [{ label: 'NASA Feature', url: 'https://www.nasa.gov/missions/webb/nasas-webb-reveals-intricate-details-in-the-ring-nebula/', type: 'nasa' }],
       analysis: {
         summary: 'Classic planetary nebula showing a dying Sun-like star shedding its outer layers in stunning concentric rings.',
@@ -899,6 +941,11 @@ export function getFeaturedJWSTImages(): Observation[] {
       distanceLightYears: 6500,
       isFeatured: true,
       dataQuality: 'excellent',
+      hubbleUrl: NASA_IMAGE_URLS.orionHeart,
+      channels: [
+        { name: 'F162M', wavelength: '1.62 μm', color: 'blue', description: 'Synchrotron emission and stellar continuum', instrument: 'NIRCam' },
+        { name: 'F480M', wavelength: '4.8 μm', color: 'red', description: 'Warm dust formed in supernova ejecta', instrument: 'NIRCam' },
+      ],
       externalLinks: [{ label: 'NASA Feature', url: 'https://www.nasa.gov/missions/webb/nasas-webb-images-iconic-crab-nebula/', type: 'nasa' }],
       analysis: {
         summary: 'Supernova remnant powered by a central pulsar, showing synchrotron radiation and dust formation.',

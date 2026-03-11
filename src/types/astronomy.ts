@@ -122,6 +122,10 @@ export interface Observation {
   externalLinks?: ExternalLink[]
   /** Metadata for display */
   metadata?: Record<string, string | number>
+  /** Hubble comparison image URL for the Hubble vs JWST slider */
+  hubbleUrl?: string
+  /** Wavelength channel decomposition data for the channel toggle panel */
+  channels?: WavelengthChannel[]
 }
 
 export interface ImageSet {
@@ -139,6 +143,19 @@ export interface ImageSet {
     url: string
     colorMap?: string
   }[]
+}
+
+export interface WavelengthChannel {
+  /** Filter name e.g. "F444W" */
+  name: string
+  /** Human-readable wavelength e.g. "4.4 μm" */
+  wavelength: string
+  /** Primary color role in the composite */
+  color: 'red' | 'green' | 'blue' | 'luminance'
+  /** What this channel reveals scientifically */
+  description: string
+  /** Instrument used for this channel */
+  instrument: string
 }
 
 export interface ExternalLink {
