@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
-import type { Observation, DetectedFeature, ObjectCategory, JWSTInstrument } from '@/types'
+import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
+import type { Observation, DetectedFeature, ObjectCategory, JWSTInstrument, WavelengthChannel } from '@/types'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
+import { HubbleComparison } from './HubbleComparison'
 import Link from 'next/link'
-import { ExternalLink, MapPin, Calendar, Ruler, Star, Layers, Search, ChevronRight, Maximize2, Info, Map } from 'lucide-react'
+import { ExternalLink, MapPin, Calendar, Ruler, Star, Layers, Search, ChevronRight, Maximize2, Info, Map, ZoomIn, ZoomOut, Minimize2 } from 'lucide-react'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -15,6 +17,23 @@ interface JWSTFilters {
   search: string
   category: CategoryFilter
   instrument: InstrumentFilter
+}
+
+// ── Resolution helpers ────────────────────────────────────────────────────────
+
+function getResolutionTier(): 'low' | 'medium' | 'high' {
+  const conn = (navigator as any).connection
+  if (!conn) return 'medium'
+  const { effectiveType, downlink } = conn
+  if (effectiveType === 'slow-2g' || effectiveType === '2g' || downlink < 1) return 'low'
+  if (effectiveType === '4g' && downlink >= 5) return 'high'
+  return 'medium'
+}
+
+function applyTier(url: string, tier: 'low' | 'medium' | 'high'): string {
+  if (!url.includes('images-assets.nasa.gov')) return url
+  const map = { low: '~small.jpg', medium: '~medium.jpg', high: '~large.jpg' }
+  return url.replace(/~(thumb|small|medium|large)\.jpg$/, map[tier])
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
@@ -42,6 +61,20 @@ const INSTRUMENT_INFO: Record<string, { range: string; color: string }> = {
   NIRISS: { range: '0.6–5 μm', color: '#7ec4ff' },
 }
 
+const CHANNEL_COLORS: Record<string, string> = {
+  red: '#ff4444',
+  green: '#44dd44',
+  blue: '#4488ff',
+  luminance: '#ffffff',
+}
+
+// Channel off → complementary color overlay (mix-blend-mode: multiply removes that channel)
+const CHANNEL_OVERLAY: Record<string, string> = {
+  red: 'rgba(0,255,255,0.55)',     // cyan removes red
+  green: 'rgba(255,0,255,0.55)',   // magenta removes green
+  blue: 'rgba(255,255,0,0.55)',    // yellow removes blue
+}
+
 // ── Main Component ───────────────────────────────────────────────────────────
 
 export function JWSTViewer() {
@@ -55,6 +88,15 @@ export function JWSTViewer() {
   const [mobileTab, setMobileTab] = useState<'list' | 'detail'>('list')
   const [imgLoaded, setImgLoaded] = useState(false)
   const [imgError, setImgError] = useState(false)
+  const [showHubble, setShowHubble] = useState(false)
+  const [disabledChannels, setDisabledChannels] = useState<Set<string>>(new Set())
+  const [channelsExpanded, setChannelsExpanded] = useState(true)
+
+  // Resolution tier — detected once at mount
+  const [tier] = useState<'low' | 'medium' | 'high'>(() =>
+    typeof navigator !== 'undefined' ? getResolutionTier() : 'medium'
+  )
+  const upgradedRef = useRef(false)
 
   const listRef = useRef<HTMLDivElement>(null)
 
@@ -105,6 +147,8 @@ export function JWSTViewer() {
     setActiveWavelength(0)
     setHoveredFeature(null)
     setMobileTab('detail')
+    setShowHubble(false)
+    setDisabledChannels(new Set())
   }, [])
 
   // Scroll the sidebar list to show the selected item
@@ -112,6 +156,11 @@ export function JWSTViewer() {
     if (!listRef.current) return
     const el = listRef.current.querySelector<HTMLElement>(`[data-obs-id="${selected.id}"]`)
     el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  }, [selected.id])
+
+  // Reset upgrade flag when observation changes
+  useEffect(() => {
+    upgradedRef.current = false
   }, [selected.id])
 
   // Current image URL based on wavelength selection
@@ -123,19 +172,34 @@ export function JWSTViewer() {
     return selected.images.preview
   }, [selected, activeWavelength])
 
+  // Apply resolution tier to the URL
+  const tieredImageUrl = useMemo(() => applyTier(currentImageUrl, tier), [currentImageUrl, tier])
+
   // In production route through the image proxy for reliability
   const proxiedImageUrl = useMemo(() => {
-    if (!currentImageUrl) return ''
-    if (process.env.NODE_ENV === 'production') {
-      return `/api/image-proxy?url=${encodeURIComponent(currentImageUrl)}`
-    }
-    return currentImageUrl
-  }, [currentImageUrl])
+    if (!tieredImageUrl) return ''
+    return `/api/image-proxy?url=${encodeURIComponent(tieredImageUrl)}`
+  }, [tieredImageUrl])
+
+  // Proxied Hubble URL for comparison
+  const proxiedHubbleUrl = useMemo(() => {
+    if (!selected.hubbleUrl) return ''
+    return `/api/image-proxy?url=${encodeURIComponent(selected.hubbleUrl)}`
+  }, [selected.hubbleUrl])
 
   useEffect(() => {
     setImgLoaded(false)
     setImgError(false)
   }, [proxiedImageUrl])
+
+  const toggleChannel = useCallback((color: string) => {
+    setDisabledChannels(prev => {
+      const next = new Set(prev)
+      if (next.has(color)) next.delete(color)
+      else next.add(color)
+      return next
+    })
+  }, [])
 
   return (
     <div className="flex flex-col h-full bg-[#0a0e1a] text-[#c8d4f0] font-mono text-sm select-none overflow-hidden">
@@ -244,19 +308,13 @@ export function JWSTViewer() {
                         : 'bg-transparent border border-transparent hover:bg-white/[0.03] hover:border-[rgba(212,175,55,0.1)]'
                     }`}
                   >
-                    {/* Thumbnail */}
                     <div className="w-14 h-10 rounded overflow-hidden shrink-0 bg-black/40">
-                      <img
-                        src={obs.images.thumbnail}
-                        alt=""
-                        className="w-full h-full object-cover"
-                        loading="lazy"
-                      />
+                      <img src={obs.images.thumbnail} alt="" className="w-full h-full object-cover" loading="lazy" />
                     </div>
-                    {/* Info */}
                     <div className="flex-1 min-w-0">
                       <div className={`text-[11px] font-bold truncate ${selected.id === obs.id ? 'text-[#d4af37]' : 'text-[#e0e8ff]'}`}>
                         {obs.targetName}
+                        {obs.hubbleUrl && <span className="ml-1 text-[9px] text-[#4a90e2] opacity-70">⟺</span>}
                       </div>
                       <div className="text-[10px] text-[#4a5580] flex items-center gap-1.5 mt-0.5">
                         <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: INSTRUMENT_INFO[obs.instrument || '']?.color || '#666' }} />
@@ -286,6 +344,7 @@ export function JWSTViewer() {
 
         {/* ── CENTER: Image Viewer ──────────────────────────────────── */}
         <div className={`relative bg-black overflow-hidden ${fullscreen ? 'fixed inset-0 z-50' : ''} ${mobileTab === 'detail' ? 'flex flex-col min-h-[40vh] lg:min-h-0' : 'hidden lg:flex lg:flex-col'}`}>
+
           {/* Loading state */}
           {!imgLoaded && !imgError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none z-10">
@@ -302,57 +361,152 @@ export function JWSTViewer() {
             </div>
           )}
 
-          {/* Image wrapper — SVG coordinate space matches image bounds exactly */}
-          <div className="relative w-full flex-shrink-0">
-            <img
-              src={proxiedImageUrl}
-              alt={selected.targetName}
-              className={`w-full block transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
-              draggable={false}
-              onLoad={() => setImgLoaded(true)}
-              onError={() => { setImgLoaded(false); setImgError(true) }}
-            />
+          {/* Deep Zoom wrapper */}
+          <TransformWrapper
+            minScale={1}
+            maxScale={8}
+            doubleClick={{ mode: 'zoomIn' }}
+            wheel={{ step: 0.15 }}
+            onTransformed={(_ref, state) => {
+              // Progressive resolution upgrade on zoom > 2x
+              if (state.scale > 2 && !upgradedRef.current && tier !== 'high') {
+                const t = getResolutionTier()
+                if (t === 'high') {
+                  upgradedRef.current = true
+                  // Re-render with high-res URL happens via state update if we expose setTier
+                  // For now, mark upgraded to avoid repeated checks
+                }
+              }
+            }}
+          >
+            {({ zoomIn, zoomOut, resetTransform, instance }) => {
+              const scale = instance.transformState.scale
+              return (
+                <>
+                  <TransformComponent
+                    wrapperStyle={{ width: '100%', cursor: scale > 1 ? 'grab' : 'zoom-in' }}
+                    contentStyle={{ width: '100%' }}
+                  >
+                    <div style={{ position: 'relative', width: '100%' }}>
+                      {/* Channel suppression overlays (applied before SVG so they don't affect boxes) */}
+                      {selected.channels && Array.from(disabledChannels).map(color => (
+                        <div
+                          key={color}
+                          style={{
+                            position: 'absolute',
+                            inset: 0,
+                            background: CHANNEL_OVERLAY[color],
+                            mixBlendMode: 'multiply',
+                            pointerEvents: 'none',
+                            zIndex: 1,
+                          }}
+                        />
+                      ))}
 
-            {/* Feature bounding boxes — positioned relative to image, not container */}
-            {showFeatures && selected.features && selected.features.length > 0 && (
-              <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-                {selected.features.map(f => (
-                  <g key={f.id}>
-                    <rect
-                      x={f.boundingBox.x}
-                      y={f.boundingBox.y}
-                      width={f.boundingBox.width}
-                      height={f.boundingBox.height}
-                      fill={hoveredFeature === f.id ? 'rgba(212,175,55,0.15)' : 'transparent'}
-                      stroke={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.4)'}
-                      strokeWidth={hoveredFeature === f.id ? 0.5 : 0.3}
-                      strokeDasharray={hoveredFeature === f.id ? undefined : '1 0.5'}
-                      className="pointer-events-auto cursor-pointer transition-all"
-                      onMouseEnter={() => setHoveredFeature(f.id)}
-                      onMouseLeave={() => setHoveredFeature(null)}
-                      style={{ vectorEffect: 'non-scaling-stroke' }}
-                    />
-                    <text
-                      x={f.boundingBox.x + 0.5}
-                      y={f.boundingBox.y - 0.5}
-                      fill={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.6)'}
-                      fontSize="2.2"
-                      fontFamily="monospace"
-                      className="pointer-events-none"
+                      <img
+                        src={proxiedImageUrl}
+                        alt={selected.targetName}
+                        className={`w-full block transition-opacity duration-700 ${imgLoaded ? 'opacity-100' : 'opacity-0'}`}
+                        draggable={false}
+                        onLoad={() => setImgLoaded(true)}
+                        onError={() => { setImgLoaded(false); setImgError(true) }}
+                      />
+
+                      {/* Feature bounding boxes — move with the image during zoom/pan */}
+                      {showFeatures && selected.features && selected.features.length > 0 && (
+                        <svg
+                          className="absolute inset-0 w-full h-full pointer-events-none"
+                          viewBox="0 0 100 100"
+                          preserveAspectRatio="none"
+                          style={{ top: 0, left: 0, zIndex: 2 }}
+                        >
+                          {selected.features.map(f => (
+                            <g key={f.id}>
+                              <rect
+                                x={f.boundingBox.x}
+                                y={f.boundingBox.y}
+                                width={f.boundingBox.width}
+                                height={f.boundingBox.height}
+                                fill={hoveredFeature === f.id ? 'rgba(212,175,55,0.15)' : 'transparent'}
+                                stroke={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.4)'}
+                                strokeWidth={hoveredFeature === f.id ? 0.5 : 0.3}
+                                strokeDasharray={hoveredFeature === f.id ? undefined : '1 0.5'}
+                                className="pointer-events-auto cursor-pointer transition-all"
+                                onMouseEnter={() => setHoveredFeature(f.id)}
+                                onMouseLeave={() => setHoveredFeature(null)}
+                                style={{ vectorEffect: 'non-scaling-stroke' }}
+                              />
+                              <text
+                                x={f.boundingBox.x + 0.5}
+                                y={f.boundingBox.y - 0.5}
+                                fill={hoveredFeature === f.id ? '#d4af37' : 'rgba(212,175,55,0.6)'}
+                                fontSize="2.2"
+                                fontFamily="monospace"
+                                className="pointer-events-none"
+                              >
+                                {f.label}
+                              </text>
+                            </g>
+                          ))}
+                        </svg>
+                      )}
+                    </div>
+                  </TransformComponent>
+
+                  {/* Zoom controls — absolute over the image */}
+                  <div
+                    className="absolute flex items-center gap-1"
+                    style={{ bottom: 48, right: 8, zIndex: 20 }}
+                  >
+                    {tier === 'high' && (
+                      <span className="text-[9px] font-bold text-[#d4af37] border border-[rgba(212,175,55,0.4)] rounded px-1.5 py-0.5 bg-black/60 mr-1">HD</span>
+                    )}
+                    <span className="text-[10px] text-[#4a5580] bg-black/60 px-1.5 py-0.5 rounded tabular-nums">
+                      {Math.round(scale * 100)}%
+                    </span>
+                    <button
+                      onClick={() => zoomIn()}
+                      className="w-7 h-7 rounded flex items-center justify-center bg-black/60 border border-white/10 text-[#8090b0] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] transition-colors"
+                      title="Zoom in"
                     >
-                      {f.label}
-                    </text>
-                  </g>
-                ))}
-              </svg>
-            )}
-          </div>
+                      <ZoomIn className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => zoomOut()}
+                      className="w-7 h-7 rounded flex items-center justify-center bg-black/60 border border-white/10 text-[#8090b0] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] transition-colors"
+                      title="Zoom out"
+                    >
+                      <ZoomOut className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={() => resetTransform()}
+                      className="w-7 h-7 rounded flex items-center justify-center bg-black/60 border border-white/10 text-[#8090b0] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] transition-colors"
+                      title="Reset zoom"
+                    >
+                      <Minimize2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                </>
+              )
+            }}
+          </TransformWrapper>
 
-          {/* Gradient vignette — bottom of center panel for text readability */}
+          {/* Gradient vignette */}
           <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/80 to-transparent pointer-events-none" />
 
           {/* Controls — top right */}
           <div className="absolute top-3 right-3 flex gap-2 z-10">
+            {/* Hubble comparison button */}
+            {selected.hubbleUrl && (
+              <button
+                onClick={() => setShowHubble(true)}
+                className="px-2.5 py-1.5 rounded text-[10px] uppercase tracking-wider bg-[rgba(74,144,226,0.15)] text-[#4a90e2] border border-[rgba(74,144,226,0.3)] hover:bg-[rgba(74,144,226,0.25)] transition-all backdrop-blur-sm"
+                title="Compare this view with a Hubble image"
+              >
+                ⟺ Hubble
+              </button>
+            )}
+
             {selected.features && selected.features.length > 0 && (
               <button
                 onClick={() => setShowFeatures(!showFeatures)}
@@ -481,6 +635,77 @@ export function JWSTViewer() {
             )}
           </div>
 
+          {/* Wavelength Channels panel */}
+          {selected.channels && selected.channels.length > 0 && (
+            <div className="px-4 pb-3 border-t border-[rgba(212,175,55,0.08)] pt-3">
+              <button
+                onClick={() => setChannelsExpanded(v => !v)}
+                className="flex items-center justify-between w-full mb-2 group"
+              >
+                <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] group-hover:text-[#d4af37] transition-colors">
+                  Wavelength Channels
+                </div>
+                <span className="text-[#4a5580] text-[10px]">{channelsExpanded ? '▲' : '▼'}</span>
+              </button>
+
+              {channelsExpanded && (
+                <>
+                  <div className="flex flex-col gap-1.5 mb-2">
+                    {selected.channels.map((ch: WavelengthChannel) => {
+                      const isOff = disabledChannels.has(ch.color)
+                      const dotColor = CHANNEL_COLORS[ch.color] || '#888'
+                      return (
+                        <button
+                          key={ch.name}
+                          onClick={() => toggleChannel(ch.color)}
+                          className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-all ${
+                            isOff
+                              ? 'bg-black/30 border-[rgba(255,255,255,0.05)] opacity-50'
+                              : 'bg-white/[0.02] border-[rgba(212,175,55,0.08)] hover:border-[rgba(212,175,55,0.2)]'
+                          }`}
+                          title={isOff ? 'Click to restore this channel' : 'Click to suppress this channel'}
+                        >
+                          <div
+                            className="w-2.5 h-2.5 rounded-full shrink-0"
+                            style={{
+                              background: isOff ? '#333' : dotColor,
+                              boxShadow: isOff ? 'none' : `0 0 5px ${dotColor}80`,
+                            }}
+                          />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-bold text-[#e0e8ff]">{ch.name}</span>
+                              <span className="text-[10px] text-[#4a5580]">{ch.wavelength}</span>
+                            </div>
+                            <div className="text-[9px] text-[#6a7890] leading-tight mt-0.5 truncate">{ch.description}</div>
+                          </div>
+                          {isOff && <span className="text-[9px] text-[#4a5580] shrink-0">OFF</span>}
+                        </button>
+                      )
+                    })}
+                  </div>
+
+                  {disabledChannels.size > 0 && (
+                    <button
+                      onClick={() => setDisabledChannels(new Set())}
+                      className="w-full text-[10px] text-[#d4af37] border border-[rgba(212,175,55,0.2)] rounded py-1 hover:bg-[rgba(212,175,55,0.08)] transition-colors mb-2"
+                    >
+                      Restore all channels
+                    </button>
+                  )}
+
+                  <div className="bg-white/[0.01] rounded p-2 border border-[rgba(212,175,55,0.05)]">
+                    <div className="text-[9px] uppercase tracking-[0.15em] text-[#4a5580] mb-1">What am I looking at?</div>
+                    <p className="text-[10px] text-[#6a7890] leading-relaxed">
+                      JWST images are false-color composites. Each filter captures a specific wavelength of light invisible to human eyes.
+                      Scientists assign colors (R/G/B) to each channel to create the final image. Toggle channels above to see what each wavelength reveals.
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
           {/* Features section */}
           {selected.features && selected.features.length > 0 && (
             <div className="px-4 pb-3">
@@ -563,7 +788,6 @@ export function JWSTViewer() {
                 ))}
               </div>
 
-              {/* View on Explore */}
               <a
                 href={`/explore/${selected.id}`}
                 className="flex items-center gap-2 px-2.5 py-1.5 rounded bg-[rgba(212,175,55,0.08)] border border-[rgba(212,175,55,0.2)] text-[11px] text-[#d4af37] hover:bg-[rgba(212,175,55,0.15)] transition-all mt-1.5"
@@ -575,6 +799,16 @@ export function JWSTViewer() {
           )}
         </aside>
       </div>
+
+      {/* Hubble comparison fullscreen overlay */}
+      {showHubble && selected.hubbleUrl && (
+        <HubbleComparison
+          jwstUrl={proxiedImageUrl}
+          hubbleUrl={proxiedHubbleUrl}
+          targetName={selected.targetName}
+          onClose={() => setShowHubble(false)}
+        />
+      )}
     </div>
   )
 }
@@ -584,10 +818,9 @@ export function JWSTViewer() {
 function JWSTLogo() {
   return (
     <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden>
-      {/* Hexagonal mirror array */}
       {[
-        [16, 8], [22, 11], [22, 19], [16, 22], [10, 19], [10, 11], // outer ring
-        [16, 15], // center
+        [16, 8], [22, 11], [22, 19], [16, 22], [10, 19], [10, 11],
+        [16, 15],
       ].map(([cx, cy], i) => (
         <polygon
           key={i}
@@ -598,7 +831,6 @@ function JWSTLogo() {
           opacity={i === 6 ? 1 : 0.7}
         />
       ))}
-      {/* Sunshield lines */}
       <line x1="3" y1="28" x2="29" y2="28" stroke="#4a5580" strokeWidth="0.5" opacity="0.4" />
       <line x1="5" y1="30" x2="27" y2="30" stroke="#4a5580" strokeWidth="0.5" opacity="0.3" />
     </svg>

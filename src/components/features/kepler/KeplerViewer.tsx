@@ -1,11 +1,16 @@
 'use client'
 
 import { useState, useMemo, useCallback, useRef } from 'react'
+import dynamic from 'next/dynamic'
 import type { StarSystem, ViewMode, KeplerFilters, KeplerPlanetRow } from './types'
 import { PLANET_COLORS, isInHZ, tempToColor, tempToSpectral } from './utils'
 import { StarCanvas } from './StarCanvas'
-import { OrbitalDiagram } from './OrbitalDiagram'
 import { KeplerSkyMap } from './KeplerSkyMap'
+
+const ExoplanetSystemViewer = dynamic(
+  () => import('./ExoplanetSystemViewer').then(m => ({ default: m.ExoplanetSystemViewer })),
+  { ssr: false, loading: () => <div className="h-80 flex items-center justify-center text-[#4a5580] text-[11px]">Loading 3D viewer...</div> }
+)
 import type { KeplerSkyMapHandle } from './KeplerSkyMap'
 import { useKeplerData } from './useKeplerData'
 
@@ -465,9 +470,7 @@ function StarDetail({ star }: { star: StarSystem }) {
 
       <section>
         <div className="text-[10px] uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">Orbital System</div>
-        <div className="flex justify-center">
-          <OrbitalDiagram star={star} size={220} />
-        </div>
+        <ExoplanetSystemViewer star={star} />
       </section>
 
       <section>

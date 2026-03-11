@@ -101,8 +101,9 @@ export async function GET(request: NextRequest) {
     // Check if client sent ETag for conditional request
     const clientETag = request.headers.get('if-none-match')
 
-    // Fetch image with retry logic
-    const response = await fetchWithRetry(decodedUrl)
+    // Fetch image with retry logic — use longer timeout for large images
+    const isLargeImage = decodedUrl.includes('~large.jpg')
+    const response = await fetchWithRetry(decodedUrl, 2, isLargeImage ? 20000 : 10000)
 
     // Get image data
     const imageBuffer = await response.arrayBuffer()

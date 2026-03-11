@@ -1422,7 +1422,7 @@
                 <label class="checkbox-label"><input type="checkbox" id="show-labels" checked><span>Show Planet Labels</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Show Moons</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-milky-way" checked><span>Milky Way Background</span></label>
-                <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid</span></label>
+                <label class="checkbox-label" title="Concentric rings show each planet&#39;s orbital distance from the Sun, plus scale markers at 10 AU intervals"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid <span style="font-size:10px; color:#888; cursor:help;" title="Concentric rings show each planet&#39;s orbital distance from the Sun, plus scale markers at 10 AU intervals">ⓘ</span></span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="show-orbit-rings" checked><span>Show Orbit Lines</span></label>
                 <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits" checked><span>Elliptical Orbits</span></label>
@@ -1525,6 +1525,7 @@
 
     <!-- Time Scrubber Bar -->
     <div id="time-scrubber" style="position:fixed; bottom:0; left:0; right:0; z-index:60; display:none; background:linear-gradient(to top, rgba(10,14,26,0.95), rgba(10,14,26,0.7)); border-top:1px solid rgba(212,175,55,0.25); backdrop-filter:blur(10px); padding:10px 20px 14px;">
+        <button id="scrubber-close" onclick="toggleScrubber()" title="Close (Esc)" style="position:absolute; top:8px; right:12px; background:none; border:none; color:#d4af37; font-size:20px; line-height:1; cursor:pointer; padding:4px 8px; opacity:0.8;">×</button>
         <div style="max-width:900px; margin:0 auto;">
             <div style="display:flex; gap:6px; justify-content:center; margin-bottom:8px;">
                 <button type="button" class="scrubber-preset-btn" data-offset="-365" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">-1 Year</button>
@@ -1668,6 +1669,9 @@
         // Lighting
         const ambientLight = new THREE.AmbientLight(0x333344, 0.4);
         scene.add(ambientLight);
+
+        const diveFillLight = new THREE.HemisphereLight(0x223366, 0x110022, 0);
+        scene.add(diveFillLight);
 
         const sunLight = new THREE.PointLight(0xfff5e0, 2.5, 1500);
         sunLight.castShadow = false;
@@ -2809,6 +2813,8 @@
             diveState = 'diving';
             diveProgress = 0;
             cameraMode = 'dive';
+            ambientLight.intensity = 0.85;
+            diveFillLight.intensity = 0.4;
 
             const btn = document.getElementById('planet-dive-btn');
             btn.textContent = 'Exit Orbit';
@@ -2909,6 +2915,8 @@
 
                 if (t >= 1) {
                     diveState = 'none';
+                    ambientLight.intensity = 0.4;
+                    diveFillLight.intensity = 0;
                     cameraMode = preDiveState.mode;
                     cameraDistance = preDiveState.distance;
                     cameraRotation = { ...preDiveState.rotation };
@@ -4009,6 +4017,7 @@
         }
 
         document.getElementById('toggle-scrubber').addEventListener('click', toggleScrubber);
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && scrubberActive) toggleScrubber(); });
         document.getElementById('scrubber-slider').addEventListener('input', (e) => {
             setSimulationToDay(parseInt(e.target.value));
         });

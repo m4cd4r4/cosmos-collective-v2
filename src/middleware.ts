@@ -17,9 +17,13 @@ export function middleware(request: NextRequest) {
 
   // Content Security Policy (CSP)
   // Allows our own content, NASA/astronomy APIs, and necessary CDNs
+  // 'unsafe-eval' is required in dev for Next.js Fast Refresh / React HMR
+  const scriptSrc = process.env.NODE_ENV === 'development'
+    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://aladin.cds.unistra.fr https://www.googletagmanager.com https://www.google-analytics.com"
+    : "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://aladin.cds.unistra.fr https://www.googletagmanager.com https://www.google-analytics.com"
   const cspDirectives = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://aladin.cds.unistra.fr https://www.googletagmanager.com https://www.google-analytics.com",
+    scriptSrc,
     "style-src 'self' 'unsafe-inline' https://aladin.cds.unistra.fr https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: blob: https: http:",
