@@ -1760,7 +1760,9 @@
                     if (settled) return;
                     settled = true;
                     console.warn('[SolarSystem] Texture timeout, using procedural fallback:', name);
-                    textureCache[name] = createProceduralTexture(name);
+                    const pt = createProceduralTexture(name);
+                    pt._isProcedural = true;
+                    textureCache[name] = pt;
                     texturesLoaded++;
                     updateLoadingProgress();
                     resolve(textureCache[name]);
@@ -1784,7 +1786,9 @@
                         if (settled) return;
                         settled = true;
                         clearTimeout(timeoutId);
-                        textureCache[name] = createProceduralTexture(name);
+                        const pt = createProceduralTexture(name);
+                        pt._isProcedural = true;
+                        textureCache[name] = pt;
                         texturesLoaded++;
                         updateLoadingProgress();
                         resolve(textureCache[name]);
@@ -2850,11 +2854,12 @@
             const d8k = dive8kMap[diveTargetName];
             if (d8k) {
                 loadTextureWithFallback(d8k.texKey).then(tex => {
-                    if (tex) { diveTarget.mesh.material.map = tex; diveTarget.mesh.material.needsUpdate = true; }
+                    // Skip if procedural fallback — don't replace a real texture with a gray blob
+                    if (tex && !tex._isProcedural) { diveTarget.mesh.material.map = tex; diveTarget.mesh.material.needsUpdate = true; }
                 });
                 if (d8k.cloudsKey && diveTarget.cloudsMesh) {
                     loadTextureWithFallback(d8k.cloudsKey).then(tex => {
-                        if (tex) {
+                        if (tex && !tex._isProcedural) {
                             diveTarget.cloudsMesh.material.map = tex;
                             diveTarget.cloudsMesh.material.alphaMap = tex;
                             diveTarget.cloudsMesh.material.needsUpdate = true;
