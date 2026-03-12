@@ -1675,12 +1675,12 @@
 
         // Camera-tracking fill light: illuminates planet from camera viewpoint during dive.
         // decay=0 bypasses the distance attenuation formula (r128: distance=0 with decay>0
-        // evaluates to saturate(-d/0+1) = 0 — zero light). decay=0 returns constant 1.0.
-        // Needed because the camera orbits in XZ plane while sun illumination is in XY plane,
-        // so without this the visible face is always the dark terminator edge.
-        const diveCamLight = new THREE.PointLight(0xfff5e0, 0);
-        diveCamLight.decay = 0;
+        // DirectionalLight that follows the camera during dive — illuminates the
+        // planet hemisphere the camera is facing. DirectionalLight has no distance
+        // attenuation, making it reliable regardless of THREE.js PointLight decay quirks.
+        const diveCamLight = new THREE.DirectionalLight(0xfff5e0, 0);
         scene.add(diveCamLight);
+        scene.add(diveCamLight.target); // target must be in scene for direction to update
 
         const sunLight = new THREE.PointLight(0xfff5e0, 2.5, 1500);
         sunLight.castShadow = false;
@@ -2822,7 +2822,8 @@
             diveState = 'diving';
             diveProgress = 0;
             cameraMode = 'dive';
-            ambientLight.intensity = 0.85;
+            ambientLight.color.set(0x888888);
+            ambientLight.intensity = 1.2;
             diveFillLight.intensity = 0.4;
 
             const btn = document.getElementById('planet-dive-btn');
@@ -2877,6 +2878,7 @@
                 camera.position.z = targetPos.z + Math.sin(orbitAngle) * dist * (1 - eased * 0.7);
                 camera.lookAt(targetPos.x, targetPos.y, targetPos.z);
                 diveCamLight.position.copy(camera.position);
+                diveCamLight.target.position.copy(targetPos);
                 diveCamLight.intensity = 1.5 * eased;
 
                 const altitude = ((dist - targetRadius) * kmPerUnit).toFixed(0);
@@ -2896,6 +2898,7 @@
                 camera.position.z = targetPos.z + Math.sin(diveProgress) * orbitDist;
                 camera.lookAt(targetPos.x, targetPos.y, targetPos.z);
                 diveCamLight.position.copy(camera.position);
+                diveCamLight.target.position.copy(targetPos);
                 diveCamLight.intensity = 1.5;
 
                 const altitude = ((orbitDist - targetRadius) * kmPerUnit).toFixed(0);
@@ -2924,12 +2927,14 @@
                 const lookZ = targetPos.z * (1-eased) + sunZ * eased;
                 camera.lookAt(lookX, lookY, lookZ);
                 diveCamLight.position.copy(camera.position);
+                diveCamLight.target.position.set(lookX, lookY, lookZ);
                 diveCamLight.intensity = 1.5 * (1 - eased);
 
                 document.getElementById('dive-altitude').textContent = `RETURNING... ${((1-eased)*100).toFixed(0)}%`;
 
                 if (t >= 1) {
                     diveState = 'none';
+                    ambientLight.color.set(0x333344);
                     ambientLight.intensity = 0.4;
                     diveFillLight.intensity = 0;
                     diveCamLight.intensity = 0;
@@ -3582,6 +3587,7 @@
             // If currently diving, instantly exit dive and switch to new target
             if (diveState !== 'none') {
                 diveState = 'none';
+                ambientLight.color.set(0x333344);
                 ambientLight.intensity = 0.4;
                 diveFillLight.intensity = 0;
                 diveCamLight.intensity = 0;
@@ -4071,6 +4077,7 @@
             // If in dive, exit it
             if (diveState !== 'none') {
                 diveState = 'none';
+                ambientLight.color.set(0x333344);
                 ambientLight.intensity = 0.4;
                 diveFillLight.intensity = 0;
                 diveCamLight.intensity = 0;
