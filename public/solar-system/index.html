@@ -1674,10 +1674,12 @@
         scene.add(diveFillLight);
 
         // Camera-tracking fill light: illuminates planet from camera viewpoint during dive.
-        // distance=0 means no falloff (light reaches everywhere at full intensity).
+        // decay=0 bypasses the distance attenuation formula (r128: distance=0 with decay>0
+        // evaluates to saturate(-d/0+1) = 0 — zero light). decay=0 returns constant 1.0.
         // Needed because the camera orbits in XZ plane while sun illumination is in XY plane,
         // so without this the visible face is always the dark terminator edge.
-        const diveCamLight = new THREE.PointLight(0xfff5e0, 0, 0);
+        const diveCamLight = new THREE.PointLight(0xfff5e0, 0);
+        diveCamLight.decay = 0;
         scene.add(diveCamLight);
 
         const sunLight = new THREE.PointLight(0xfff5e0, 2.5, 1500);
