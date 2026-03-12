@@ -5573,11 +5573,16 @@
             let leftCollapsed  = true;
             let rightCollapsed = true;
 
-            // Start both sides collapsed
-            controlsEl.classList.add('panel-collapsed');
-            statsEl.classList.add('panel-collapsed');
-            eventsEl.classList.add('panel-collapsed');
-            leftBtn.classList.add('pulsing');
+            // Start both sides collapsed — desktop only.
+            // On mobile, panels are hidden by translateY(100%) via CSS; adding
+            // panel-collapsed would trigger the 767px override (transform:none !important)
+            // which defeats that hiding and shows the panel on load.
+            if (window.innerWidth > 768) {
+                controlsEl.classList.add('panel-collapsed');
+                statsEl.classList.add('panel-collapsed');
+                eventsEl.classList.add('panel-collapsed');
+                leftBtn.classList.add('pulsing');
+            }
 
             leftBtn.addEventListener('click', function () {
                 leftCollapsed = !leftCollapsed;
