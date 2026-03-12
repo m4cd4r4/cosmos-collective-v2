@@ -2825,6 +2825,17 @@
             ambientLight.color.set(0x888888);
             ambientLight.intensity = 1.2;
             diveFillLight.intensity = 0.4;
+            renderer.toneMappingExposure = 3.0;
+
+            // Subtle emissive fallback so dark-side surface is never pure black during dive
+            if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
+                const _m = diveTarget.mesh.material;
+                _m._diveEmissive = _m.emissive.clone();
+                _m._diveEmissiveInt = _m.emissiveIntensity;
+                _m.emissive.set(0x334455);
+                _m.emissiveIntensity = 0.3;
+                _m.needsUpdate = true;
+            }
 
             const btn = document.getElementById('planet-dive-btn');
             btn.textContent = 'Exit Orbit';
@@ -2938,6 +2949,13 @@
                     ambientLight.intensity = 0.4;
                     diveFillLight.intensity = 0;
                     diveCamLight.intensity = 0;
+                    renderer.toneMappingExposure = 1.2;
+                    if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
+                        const _m = diveTarget.mesh.material;
+                        if (_m._diveEmissive) { _m.emissive.copy(_m._diveEmissive); _m._diveEmissive = null; }
+                        if (_m._diveEmissiveInt !== undefined) { _m.emissiveIntensity = _m._diveEmissiveInt; _m._diveEmissiveInt = undefined; }
+                        _m.needsUpdate = true;
+                    }
                     cameraMode = preDiveState.mode;
                     cameraDistance = preDiveState.distance;
                     cameraRotation = { ...preDiveState.rotation };
@@ -3591,6 +3609,13 @@
                 ambientLight.intensity = 0.4;
                 diveFillLight.intensity = 0;
                 diveCamLight.intensity = 0;
+                renderer.toneMappingExposure = 1.2;
+                if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
+                    const _m = diveTarget.mesh.material;
+                    if (_m._diveEmissive) { _m.emissive.copy(_m._diveEmissive); _m._diveEmissive = null; }
+                    if (_m._diveEmissiveInt !== undefined) { _m.emissiveIntensity = _m._diveEmissiveInt; _m._diveEmissiveInt = undefined; }
+                    _m.needsUpdate = true;
+                }
                 cameraMode = preDiveState ? preDiveState.mode : 'free';
                 if (preDiveState) {
                     cameraDistance = preDiveState.distance;
@@ -4081,6 +4106,13 @@
                 ambientLight.intensity = 0.4;
                 diveFillLight.intensity = 0;
                 diveCamLight.intensity = 0;
+                renderer.toneMappingExposure = 1.2;
+                if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
+                    const _m = diveTarget.mesh.material;
+                    if (_m._diveEmissive) { _m.emissive.copy(_m._diveEmissive); _m._diveEmissive = null; }
+                    if (_m._diveEmissiveInt !== undefined) { _m.emissiveIntensity = _m._diveEmissiveInt; _m._diveEmissiveInt = undefined; }
+                    _m.needsUpdate = true;
+                }
                 cameraMode = preDiveState ? preDiveState.mode : 'free';
                 if (preDiveState) {
                     cameraDistance = preDiveState.distance;
