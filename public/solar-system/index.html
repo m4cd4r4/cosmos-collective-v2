@@ -1674,9 +1674,10 @@
         scene.add(diveFillLight);
 
         // Camera-tracking fill light: illuminates planet from camera viewpoint during dive.
+        // distance=0 means no falloff (light reaches everywhere at full intensity).
         // Needed because the camera orbits in XZ plane while sun illumination is in XY plane,
         // so without this the visible face is always the dark terminator edge.
-        const diveCamLight = new THREE.PointLight(0xfff5e0, 0, 30);
+        const diveCamLight = new THREE.PointLight(0xfff5e0, 0, 0);
         scene.add(diveCamLight);
 
         const sunLight = new THREE.PointLight(0xfff5e0, 2.5, 1500);
@@ -2874,7 +2875,7 @@
                 camera.position.z = targetPos.z + Math.sin(orbitAngle) * dist * (1 - eased * 0.7);
                 camera.lookAt(targetPos.x, targetPos.y, targetPos.z);
                 diveCamLight.position.copy(camera.position);
-                diveCamLight.intensity = 0.7 * eased;
+                diveCamLight.intensity = 1.5 * eased;
 
                 const altitude = ((dist - targetRadius) * kmPerUnit).toFixed(0);
                 document.getElementById('dive-altitude').textContent = `ALT ${Number(altitude).toLocaleString()} km | ${(dist/targetRadius).toFixed(1)}${info.symbol}`;
@@ -2893,7 +2894,7 @@
                 camera.position.z = targetPos.z + Math.sin(diveProgress) * orbitDist;
                 camera.lookAt(targetPos.x, targetPos.y, targetPos.z);
                 diveCamLight.position.copy(camera.position);
-                diveCamLight.intensity = 0.7;
+                diveCamLight.intensity = 1.5;
 
                 const altitude = ((orbitDist - targetRadius) * kmPerUnit).toFixed(0);
                 document.getElementById('dive-altitude').textContent = `ALT ${Number(altitude).toLocaleString()} km | ORBIT ${(diveProgress * 180 / Math.PI % 360).toFixed(0)}\u00B0`;
@@ -2921,7 +2922,7 @@
                 const lookZ = targetPos.z * (1-eased) + sunZ * eased;
                 camera.lookAt(lookX, lookY, lookZ);
                 diveCamLight.position.copy(camera.position);
-                diveCamLight.intensity = 0.7 * (1 - eased);
+                diveCamLight.intensity = 1.5 * (1 - eased);
 
                 document.getElementById('dive-altitude').textContent = `RETURNING... ${((1-eased)*100).toFixed(0)}%`;
 
