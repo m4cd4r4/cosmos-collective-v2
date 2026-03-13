@@ -164,6 +164,7 @@ function DesktopNav() {
             key={item.href}
             href={item.href}
             prefetch={true}
+            title={item.description}
             className={cn(
               'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
               isActive
@@ -188,12 +189,12 @@ function DesktopNav() {
 // Bottom nav items — Solar Sys and Sky Map on left, Kepler and JWST on right
 // MC button is the centre element rendered separately
 const bottomNavLeft = [
-  { label: 'Solar Sys', href: '/solar-system', icon: Sun },
+  { label: 'Solar', href: '/solar-system', icon: Sun },
   { label: 'Sky Map', href: '/sky-map', icon: Globe },
 ]
 const bottomNavRight = [
   { label: 'Kepler', href: '/kepler', icon: Orbit },
-  { label: 'JWST', href: '/jwst', icon: Hexagon },
+  { label: 'Webb', href: '/jwst', icon: Hexagon },
 ]
 
 function MobileBottomNav() {
@@ -239,7 +240,7 @@ function MobileBottomNav() {
           )}
         >
           <BookMarked className="w-5 h-5" aria-hidden="true" />
-          <span className="text-[10px] mt-1 font-medium">Mission</span>
+          <span className="text-[10px] mt-1 font-medium">Hub</span>
         </button>
 
         {bottomNavRight.map((item) => (

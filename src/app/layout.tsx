@@ -251,9 +251,9 @@ export default function RootLayout({
         {/* App providers (React Query, Auth, etc.) */}
         <Providers>
           {/* Main content area */}
-          <div id="main-content" className="relative min-h-screen grain-overlay">
+          <main id="main-content" tabIndex={-1} className="relative min-h-screen grain-overlay">
             {children}
-          </div>
+          </main>
 
           {/* PWA install prompt */}
           <InstallPrompt />

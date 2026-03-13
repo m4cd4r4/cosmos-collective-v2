@@ -17,20 +17,20 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
   const [isInstalled, setIsInstalled] = useState(false)
 
   useEffect(() => {
+    let updateIntervalId: ReturnType<typeof setInterval> | undefined
+
     // Register service worker
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
         .then((registration) => {
-          console.log('Service Worker registered:', registration.scope)
-
           // Check for updates periodically
-          setInterval(() => {
+          updateIntervalId = setInterval(() => {
             registration.update()
           }, 60 * 60 * 1000) // Every hour
         })
-        .catch((error) => {
-          console.error('Service Worker registration failed:', error)
+        .catch(() => {
+          // Service worker registration failed
         })
     }
 
@@ -57,17 +57,18 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
       window.removeEventListener('appinstalled', handleAppInstalled)
+      if (updateIntervalId) clearInterval(updateIntervalId)
     }
   }, [])
 
   // Handle online/offline status
   useEffect(() => {
     const handleOnline = () => {
-      console.log('App is online')
+      // App back online
     }
 
     const handleOffline = () => {
-      console.log('App is offline')
+      // App went offline
     }
 
     window.addEventListener('online', handleOnline)

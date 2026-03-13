@@ -58,7 +58,7 @@ function CreditRow({ name, url, description }: { name: string; url: string; desc
   )
 }
 
-function Section({ title, icon: Icon, color, children }: { title: string; icon: React.ComponentType<{ className?: string }>, color: string; children: React.ReactNode }) {
+function Section({ title, icon: Icon, color, children }: { title: string; icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>, color: string; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
       <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">

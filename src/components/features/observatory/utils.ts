@@ -1,29 +1,7 @@
-import type { Observation, ObjectCategory, WavelengthBand } from '@/types'
+import type { Observation, ObjectCategory } from '@/types'
 
-// ── Wavelength band colors ────────────────────────────────────────────────
-
-const WAVELENGTH_COLORS: Record<string, string> = {
-  infrared: '#d4af37',
-  optical: '#b088f9',
-  radio: '#4af0e2',
-  ultraviolet: '#8b5cf6',
-  xray: '#3b82f6',
-  gamma: '#06b6d4',
-  microwave: '#84cc16',
-}
-
-export function wavelengthToColor(band: WavelengthBand): string {
-  return WAVELENGTH_COLORS[band] ?? '#888888'
-}
-
-export function wavelengthToRGB(band: WavelengthBand): [number, number, number] {
-  const hex = wavelengthToColor(band)
-  return [
-    parseInt(hex.slice(1, 3), 16),
-    parseInt(hex.slice(3, 5), 16),
-    parseInt(hex.slice(5, 7), 16),
-  ]
-}
+// Re-export wavelength utilities from shared module
+export { wavelengthToColor, wavelengthToRGB } from '@/lib/astronomy-utils'
 
 // ── Aitoff all-sky projection ─────────────────────────────────────────────
 
@@ -33,7 +11,7 @@ export function aitoffProjection(
   W: number,
   H: number,
 ): { x: number; y: number } {
-  // RA: 0-360 → -180 to +180 (centered at 0h)
+  // RA: 0-360 -> -180 to +180 (centered at 0h)
   const lambda = ((raDeg > 180 ? raDeg - 360 : raDeg) * Math.PI) / 180
   const phi = (decDeg * Math.PI) / 180
 
@@ -125,7 +103,7 @@ export function computeNodeRadius(obs: Observation): number {
 // ── Distance formatting ──────────────────────────────────────────────────
 
 export function formatDistance(ly: number | undefined): string {
-  if (ly == null) return '—'
+  if (ly == null) return '-'
   if (ly >= 1_000_000_000) return `${(ly / 1_000_000_000).toFixed(1)} Gly`
   if (ly >= 1_000_000) return `${(ly / 1_000_000).toFixed(0)} Mly`
   if (ly >= 10_000) return `${(ly / 1_000).toFixed(0)}k ly`

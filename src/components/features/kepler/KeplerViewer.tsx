@@ -139,21 +139,31 @@ export function KeplerViewer() {
 
           <FilterGroup title="View Mode">
             <div className="flex flex-wrap gap-1">
-              {(['sky', 'galaxy', 'hr', 'aladin'] as ViewMode[]).map(v => (
-                <button
-                  key={v}
-                  onClick={() => setViewMode(v)}
-                  className={`flex-1 min-w-[48%] py-1.5 text-[10px] uppercase tracking-wider transition-colors rounded border ${
-                    viewMode === v
-                      ? v === 'aladin'
-                        ? 'bg-[rgba(212,175,55,0.18)] text-[#d4af37] border-[rgba(212,175,55,0.3)]'
-                        : 'bg-[rgba(74,144,226,0.18)] text-[#a0c8ff] border-[rgba(74,144,226,0.3)]'
-                      : 'bg-transparent text-[#4a5580] border-[rgba(74,144,226,0.15)] hover:text-[#4a90e2] hover:border-[rgba(74,144,226,0.3)]'
-                  }`}
-                >
-                  {v === 'hr' ? 'HR Diagram' : v === 'aladin' ? 'Sky Map' : v.charAt(0).toUpperCase() + v.slice(1)}
-                </button>
-              ))}
+              {(['sky', 'galaxy', 'hr', 'aladin'] as ViewMode[]).map(v => {
+                const viewLabels: Record<string, { label: string; title?: string }> = {
+                  sky: { label: 'Sky' },
+                  galaxy: { label: 'Galaxy' },
+                  hr: { label: 'HR Diagram', title: 'Hertzsprung-Russell Diagram - plots star brightness vs temperature' },
+                  aladin: { label: 'Sky Map', title: 'Interactive sky atlas powered by CDS Aladin Lite' },
+                }
+                const { label, title } = viewLabels[v] ?? { label: v }
+                return (
+                  <button
+                    key={v}
+                    onClick={() => setViewMode(v)}
+                    title={title}
+                    className={`flex-1 min-w-[48%] py-1.5 text-[10px] uppercase tracking-wider transition-colors rounded border ${
+                      viewMode === v
+                        ? v === 'aladin'
+                          ? 'bg-[rgba(212,175,55,0.18)] text-[#d4af37] border-[rgba(212,175,55,0.3)]'
+                          : 'bg-[rgba(74,144,226,0.18)] text-[#a0c8ff] border-[rgba(74,144,226,0.3)]'
+                        : 'bg-transparent text-[#4a5580] border-[rgba(74,144,226,0.15)] hover:text-[#4a90e2] hover:border-[rgba(74,144,226,0.3)]'
+                    }`}
+                  >
+                    {label}
+                  </button>
+                )
+              })}
             </div>
           </FilterGroup>
 
@@ -175,9 +185,9 @@ export function KeplerViewer() {
             <ChipGroup
               options={[
                 { value: 'all',   label: 'All' },
-                { value: 'cool',  label: 'Cool M/K',  style: { color: '#ff8c00' } },
-                { value: 'solar', label: 'Sun-like G', style: { color: '#ffd700' } },
-                { value: 'hot',   label: 'Hot F/A',   style: { color: '#9bb8ff' } },
+                { value: 'cool',  label: 'Cool M/K',  style: { color: '#ff8c00' }, title: 'Cool M/K type stars - cooler and redder than our Sun' },
+                { value: 'solar', label: 'Sun-like G', style: { color: '#ffd700' }, title: 'Sun-like G type stars - similar temperature to our Sun' },
+                { value: 'hot',   label: 'Hot F/A',   style: { color: '#9bb8ff' }, title: 'Hot F/A type stars - hotter and bluer than our Sun' },
               ]}
               active={filters.temp}
               onChange={v => setFilter('temp', v as KeplerFilters['temp'])}
@@ -211,7 +221,7 @@ export function KeplerViewer() {
             <ChipGroup
               options={[
                 { value: 'all', label: 'All' },
-                { value: 'hz',  label: 'HZ planets only' },
+                { value: 'hz',  label: 'Habitable Zone only', title: 'Habitable Zone - the region around a star where liquid water could exist on a planet\'s surface' },
               ]}
               active={filters.hz}
               onChange={v => setFilter('hz', v as KeplerFilters['hz'])}
@@ -400,7 +410,7 @@ function FilterGroup({ title, children }: { title: string; children: React.React
 function ChipGroup({
   options, active, onChange,
 }: {
-  options: Array<{ value: string; label: string; style?: React.CSSProperties }>
+  options: Array<{ value: string; label: string; style?: React.CSSProperties; title?: string }>
   active: string
   onChange: (v: string) => void
 }) {
@@ -411,6 +421,7 @@ function ChipGroup({
           key={o.value}
           onClick={() => onChange(o.value)}
           style={o.style}
+          title={o.title}
           className={`text-[11px] px-2.5 py-1 rounded-full border transition-all font-mono ${
             active === o.value
               ? 'bg-[rgba(74,144,226,0.18)] border-[#4a90e2] text-[#a0c8ff]'

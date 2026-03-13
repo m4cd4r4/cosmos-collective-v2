@@ -36,9 +36,20 @@ export default function Error({
           Something went wrong
         </h1>
 
-        <p className="text-gray-400 mb-6">
+        <p className="text-gray-400 mb-4">
           We encountered an unexpected error. This has been logged and we'll look into it.
         </p>
+
+        {/* Troubleshooting tips */}
+        <div className="mb-6 p-4 bg-cosmos-surface/50 border border-white/10 rounded-lg text-left">
+          <p className="text-xs font-semibold text-gray-300 mb-2">Try these solutions:</p>
+          <ul className="text-xs text-gray-400 space-y-1 list-disc pl-4">
+            <li>Check your internet connection</li>
+            <li>Try refreshing the page</li>
+            <li>Clear your browser cache</li>
+            <li>Try a different browser</li>
+          </ul>
+        </div>
 
         {/* Error Details (Development Only) */}
         {process.env.NODE_ENV === 'development' && (

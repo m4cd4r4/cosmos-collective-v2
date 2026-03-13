@@ -101,13 +101,11 @@ interface AladinCatalog {
   addSources: (sources: AladinSource[]) => void
 }
 
-interface AladinSource {
-  // Source object
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface AladinSource {}
 
-interface AladinMarker {
-  // Marker object
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+interface AladinMarker {}
 
 // ============================================
 // Survey Options (Different Wavelengths)

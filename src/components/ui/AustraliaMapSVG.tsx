@@ -5,7 +5,7 @@
  * Shows 5 radio telescope locations with click-to-select interaction
  */
 
-import type { AustralianTelescope } from '@/types'
+import type { AustralianTelescope } from '@/services/australian-telescopes'
 
 // Simplified Australia outline path (Natural Earth)
 // viewBox coordinates: lon 110-156, lat -10 to -45 (SVG y inverted)

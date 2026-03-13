@@ -15,9 +15,14 @@ import { ExploreWidget } from '@/components/features/mission-control/ExploreWidg
 import { LiveEventsWidget } from '@/components/features/mission-control/LiveEventsWidget'
 import { ObservatoryWidget } from '@/components/features/mission-control/ObservatoryWidget'
 import { DashboardWidget } from '@/components/features/mission-control/DashboardWidget'
+import { SolarSystemWidget } from '@/components/features/mission-control/SolarSystemWidget'
+import { SkyMapWidget } from '@/components/features/mission-control/SkyMapWidget'
+import { KeplerWidget } from '@/components/features/mission-control/KeplerWidget'
+import { JWSTWidget } from '@/components/features/mission-control/JWSTWidget'
 
 // Map each module to its widget, data status, and telemetry text generator
 const WIDGET_CONFIG: Record<string, {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Widget: React.ComponentType<any>
   dataStatus: 'live' | 'cached' | 'static'
   propsKey?: string[]
@@ -26,8 +31,13 @@ const WIDGET_CONFIG: Record<string, {
   'Live Events': { Widget: LiveEventsWidget, dataStatus: 'live', propsKey: ['issPosition', 'solarWeather', 'upcomingEvents'] },
   Observatory: { Widget: ObservatoryWidget, dataStatus: 'static' },
   Dashboard: { Widget: DashboardWidget, dataStatus: 'live', propsKey: ['apod', 'issPosition', 'utcTime'] },
+  'Solar System': { Widget: SolarSystemWidget, dataStatus: 'static' },
+  'Sky Map': { Widget: SkyMapWidget, dataStatus: 'static' },
+  Kepler: { Widget: KeplerWidget, dataStatus: 'static' },
+  JWST: { Widget: JWSTWidget, dataStatus: 'static' },
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const TELEMETRY_TEXT: Record<string, (data: any) => string> = {
   Explore: () => 'OBS: 132 | JWST: 85 | HUBBLE: 18 | RADIO: 29',
   'Live Events': (d) => {
@@ -44,6 +54,10 @@ const TELEMETRY_TEXT: Record<string, (data: any) => string> = {
     parts.push(`UTC: ${d.utcTime ?? '--:--:--'}`)
     return parts.join(' | ')
   },
+  'Solar System': () => '8 PLANETS | 3D ORBITS | EARTH DIVE | REAL DATA',
+  'Sky Map': () => 'ALADIN LITE | RA/DEC | MULTI-WAVELENGTH | CONSTELLATIONS',
+  Kepler: () => 'CYGNUS FIELD | 2,600+ PLANETS | HR DIAGRAM | HZ FILTER',
+  JWST: () => 'NIRCAM · MIRI · NIRSPEC · NIRISS | DEEP SPACE OBS',
 }
 
 export default function MissionControlPage() {
@@ -67,7 +81,7 @@ export default function MissionControlPage() {
           </span>
         </div>
         <span className="hidden sm:block text-[9px] uppercase tracking-wider text-[#4a5580]">
-          6 Modules Active
+          8 Features Active
         </span>
       </div>
 
@@ -86,7 +100,7 @@ export default function MissionControlPage() {
       <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-6xl mx-auto w-full">
         {/* Section label */}
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-[9px] uppercase tracking-[0.2em] text-[#4a5580]">Available Modules</span>
+          <span className="text-[9px] uppercase tracking-[0.2em] text-[#4a5580]">Available Features</span>
           <div className="flex-1 h-px bg-[rgba(212,175,55,0.06)]" />
         </div>
 
@@ -98,6 +112,7 @@ export default function MissionControlPage() {
             const { Widget, dataStatus } = config
 
             // Build widget props from telemetry data
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const widgetProps: Record<string, any> = {}
             if (tool.label === 'Live Events') {
               widgetProps.issPosition = telemetry.issPosition

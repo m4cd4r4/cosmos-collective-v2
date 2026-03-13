@@ -29,7 +29,7 @@ const localStorage = [
   'Display preferences (view mode, sort order)',
 ]
 
-function SectionHeader({ icon: Icon, title, color }: { icon: React.ComponentType<{ className?: string }>, title: string; color: string }) {
+function SectionHeader({ icon: Icon, title, color }: { icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>, title: string; color: string }) {
   return (
     <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
       <Icon className="w-3.5 h-3.5" style={{ color }} />

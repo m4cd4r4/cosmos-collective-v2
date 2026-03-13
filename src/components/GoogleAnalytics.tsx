@@ -14,7 +14,7 @@ import Script from 'next/script'
 import { useEffect, useState } from 'react'
 
 export default function GoogleAnalytics() {
-  const measurementId = 'G-EFL048RDVK'
+  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? 'G-EFL048RDVK'
   const [shouldLoad, setShouldLoad] = useState(false)
 
   useEffect(() => {
@@ -31,7 +31,6 @@ export default function GoogleAnalytics() {
       userAgent.includes('selenium') ||
       userAgent.includes('playwright') ||
       userAgent.includes('puppeteer') ||
-      // @ts-ignore - navigator.webdriver exists in automated contexts
       navigator.webdriver === true
 
     // Only load GA for real users

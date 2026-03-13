@@ -4,11 +4,18 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { apiLimiter, getClientIdentifier } from '@/lib/rate-limit'
 
 // GCN circulars can be fetched individually via JSON endpoint
 const GCN_BASE = 'https://gcn.nasa.gov/circulars'
 
 export async function GET(request: NextRequest) {
+  const clientId = getClientIdentifier(request)
+  const allowed = await apiLimiter.check(clientId)
+  if (!allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams
     const limit = Math.min(Math.max(parseInt(searchParams.get('limit') || '5', 10) || 5, 1), 100)
@@ -46,34 +53,60 @@ export async function GET(request: NextRequest) {
 
 async function getLatestCircularId(): Promise<number | null> {
   try {
-    // Try to fetch a known recent circular to verify the endpoint works
-    // Then estimate the latest ID based on current date
-    // GCN circulars are numbered sequentially, roughly ~43000 as of Dec 2025
-    const estimatedLatest = 43010 // Approximate current ID
-
-    // Verify this ID exists
-    const response = await fetch(`${GCN_BASE}/${estimatedLatest}.json`, {
-      headers: { 'Accept': 'application/json' }
+    // Try dynamic discovery first: fetch the circulars listing page to find the latest ID
+    const discoveryResponse = await fetch(`${GCN_BASE}?limit=1`, {
+      headers: { 'Accept': 'application/json' },
+      signal: AbortSignal.timeout(8000),
     })
 
-    if (response.ok) {
-      return estimatedLatest
-    }
+    if (discoveryResponse.ok) {
+      const body = await discoveryResponse.json()
 
-    // If not found, try a slightly lower ID
-    for (let id = estimatedLatest; id > estimatedLatest - 20; id--) {
+      // The API returns an array of circulars or an object with items
+      let latestId: number | null = null
+
+      if (Array.isArray(body) && body.length > 0) {
+        latestId = body[0].circularId ?? body[0].id ?? null
+      } else if (body?.items && Array.isArray(body.items) && body.items.length > 0) {
+        latestId = body.items[0].circularId ?? body.items[0].id ?? null
+      }
+
+      if (latestId && typeof latestId === 'number') {
+        return latestId
+      }
+
+      // If the response was HTML or unexpected JSON, try parsing text for a circular number
+      if (!latestId) {
+        const text = typeof body === 'string' ? body : JSON.stringify(body)
+        const match = text.match(/circularId["\s:]+(\d{4,6})/)
+        if (match) {
+          return parseInt(match[1], 10)
+        }
+      }
+    }
+  } catch {
+    // Dynamic discovery failed, fall through to estimate
+  }
+
+  // Fallback: estimate based on ~44000+ as of early 2026, then probe for a valid ID
+  const estimatedLatest = 44500
+
+  try {
+    // Binary-style search: try the estimate, then walk down to find a valid one
+    for (let id = estimatedLatest; id > estimatedLatest - 50; id--) {
       const checkResponse = await fetch(`${GCN_BASE}/${id}.json`, {
-        headers: { 'Accept': 'application/json' }
+        headers: { 'Accept': 'application/json' },
+        signal: AbortSignal.timeout(5000),
       })
       if (checkResponse.ok) {
         return id
       }
     }
-
-    return null
   } catch {
-    return null
+    // Probe failed entirely
   }
+
+  return null
 }
 
 async function fetchRecentCirculars(latestId: number, limit: number) {

@@ -72,7 +72,9 @@ class ErrorTracker {
 
   captureMessage(message: string, level: 'info' | 'warning' | 'error' = 'info') {
     if (!this.config.enabled) {
-      console.log(`[Sentry ${level}]:`, message)
+      if (process.env.NODE_ENV === 'development') {
+        console.warn(`[Sentry ${level}]:`, message)
+      }
       return
     }
 

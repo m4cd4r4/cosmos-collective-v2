@@ -12,6 +12,7 @@ import type {
   JWSTInstrument,
   ObjectCategory,
 } from '@/types'
+import { mjdToISOString } from '@/lib/astronomy-utils'
 
 // ============================================
 // Configuration
@@ -77,16 +78,7 @@ interface MASTResponse {
 // Helper Functions
 // ============================================
 
-/**
- * Convert MAST Modified Julian Date to ISO date string
- */
-function mjdToISODate(mjd: number): string {
-  // MJD = JD - 2400000.5
-  // JD to Unix timestamp: (JD - 2440587.5) * 86400 * 1000
-  const jd = mjd + 2400000.5
-  const unixTimestamp = (jd - 2440587.5) * 86400 * 1000
-  return new Date(unixTimestamp).toISOString()
-}
+// mjdToISOString imported from @/lib/astronomy-utils
 
 /**
  * Infer object category from target name and classification
@@ -143,7 +135,7 @@ function transformMASTObservation(mast: MASTObservation): Observation {
     wavelengthBand: mast.obs_collection === 'JWST' ? 'infrared' : 'optical',
     instrument: mast.instrument_name as JWSTInstrument | undefined,
     filters: mast.filters ? mast.filters.split(';').map((f) => f.trim()) : undefined,
-    observationDate: mjdToISODate(mast.t_min),
+    observationDate: mjdToISOString(mast.t_min),
     exposureTime: mast.t_exptime,
     proposalId: mast.proposal_id,
     principalInvestigator: mast.proposal_pi,
@@ -341,7 +333,8 @@ export async function getObservationProducts(
     return {
       success: true,
       data:
-        (response.data.data as any[])?.map((p: any) => ({
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (response.data.data as Array<Record<string, unknown>>)?.map((p: Record<string, unknown>) => ({
           dataURI: p.dataURI,
           productType: p.productType,
         })) || [],

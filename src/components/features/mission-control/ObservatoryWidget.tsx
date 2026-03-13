@@ -164,7 +164,8 @@ export function ObservatoryWidget() {
       {/* Wavelength legend */}
       <div className="absolute bottom-2 left-3 flex gap-2 pointer-events-none">
         {Object.entries(bandCounts).slice(0, 4).map(([band, count]) => {
-          const [r, g, b] = wavelengthToRGB(band as any)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const [r, g, b] = wavelengthToRGB(band as unknown as Parameters<typeof wavelengthToRGB>[0])
           return (
             <div key={band} className="flex items-center gap-1">
               <span

@@ -62,7 +62,7 @@ export function FeatureShowcase() {
       <div className="max-w-5xl mx-auto">
         {/* Section header */}
         <div className="text-center mb-10">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Modules</span>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Features</span>
           <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">
             Explore Every Corner of the Universe
           </h2>
