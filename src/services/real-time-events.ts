@@ -5,6 +5,7 @@
 
 import axios from 'axios'
 import type { AstronomicalEvent, ApiResponse, SkyCoordinates, EventType, EventSeverity } from '@/types'
+import { SEVERITY_ORDER } from '@/lib/event-utils'
 
 // ============================================
 // Configuration
@@ -398,26 +399,59 @@ export interface LunarEvent {
 }
 
 export function getLunarEvents(year: number = new Date().getFullYear()): LunarEvent[] {
-  // Key lunar events for 2025 (pre-computed from astronomical data)
-  const events2025: LunarEvent[] = [
-    { name: 'Full Moon (Wolf Moon)', date: '2025-01-13', type: 'full-moon', description: 'First full moon of the year, named Wolf Moon by Native Americans.' },
-    { name: 'New Moon', date: '2025-01-29', type: 'new-moon', description: 'Best time for deep-sky observation with no moonlight interference.' },
-    { name: 'Full Moon (Snow Moon)', date: '2025-02-12', type: 'full-moon', description: 'February full moon, traditionally called Snow Moon.' },
-    { name: 'Full Moon (Worm Moon)', date: '2025-03-14', type: 'full-moon', description: 'March full moon marking the end of winter.' },
-    { name: 'Full Moon (Pink Moon)', date: '2025-04-13', type: 'full-moon', description: 'April full moon named after spring wildflowers.' },
-    { name: 'Supermoon (Flower Moon)', date: '2025-05-12', type: 'supermoon', description: 'Full moon at perigee appears 14% larger and 30% brighter.', isSupermoon: true },
-    { name: 'Full Moon (Strawberry Moon)', date: '2025-06-11', type: 'full-moon', description: 'June full moon coinciding with strawberry harvest season.' },
-    { name: 'Supermoon (Buck Moon)', date: '2025-07-10', type: 'supermoon', description: 'Supermoon appearing larger and brighter than average.', isSupermoon: true },
-    { name: 'Supermoon (Sturgeon Moon)', date: '2025-08-09', type: 'supermoon', description: 'August supermoon at closest approach to Earth.', isSupermoon: true },
-    { name: 'Supermoon (Harvest Moon)', date: '2025-09-07', type: 'supermoon', description: 'Closest supermoon of 2025, spectacular viewing opportunity.', isSupermoon: true },
-    { name: 'Supermoon (Hunter\'s Moon)', date: '2025-10-07', type: 'supermoon', description: 'October supermoon with orange hue near horizon.', isSupermoon: true },
-    { name: 'Full Moon (Beaver Moon)', date: '2025-11-05', type: 'full-moon', description: 'November full moon when beavers prepare for winter.' },
-    { name: 'Full Moon (Cold Moon)', date: '2025-12-04', type: 'full-moon', description: 'Last full moon of the year during winter\'s start.' },
-  ]
+  // Key lunar events per year (pre-computed from astronomical data)
+  const eventsByYear: Record<number, LunarEvent[]> = {
+    2025: [
+      { name: 'Full Moon (Wolf Moon)', date: '2025-01-13', type: 'full-moon', description: 'First full moon of the year, named Wolf Moon by Native Americans.' },
+      { name: 'New Moon', date: '2025-01-29', type: 'new-moon', description: 'Best time for deep-sky observation with no moonlight interference.' },
+      { name: 'Full Moon (Snow Moon)', date: '2025-02-12', type: 'full-moon', description: 'February full moon, traditionally called Snow Moon.' },
+      { name: 'Full Moon (Worm Moon)', date: '2025-03-14', type: 'full-moon', description: 'March full moon marking the end of winter.' },
+      { name: 'Full Moon (Pink Moon)', date: '2025-04-13', type: 'full-moon', description: 'April full moon named after spring wildflowers.' },
+      { name: 'Supermoon (Flower Moon)', date: '2025-05-12', type: 'supermoon', description: 'Full moon at perigee appears 14% larger and 30% brighter.', isSupermoon: true },
+      { name: 'Full Moon (Strawberry Moon)', date: '2025-06-11', type: 'full-moon', description: 'June full moon coinciding with strawberry harvest season.' },
+      { name: 'Supermoon (Buck Moon)', date: '2025-07-10', type: 'supermoon', description: 'Supermoon appearing larger and brighter than average.', isSupermoon: true },
+      { name: 'Supermoon (Sturgeon Moon)', date: '2025-08-09', type: 'supermoon', description: 'August supermoon at closest approach to Earth.', isSupermoon: true },
+      { name: 'Supermoon (Harvest Moon)', date: '2025-09-07', type: 'supermoon', description: 'Closest supermoon of 2025, spectacular viewing opportunity.', isSupermoon: true },
+      { name: 'Supermoon (Hunter\'s Moon)', date: '2025-10-07', type: 'supermoon', description: 'October supermoon with orange hue near horizon.', isSupermoon: true },
+      { name: 'Full Moon (Beaver Moon)', date: '2025-11-05', type: 'full-moon', description: 'November full moon when beavers prepare for winter.' },
+      { name: 'Full Moon (Cold Moon)', date: '2025-12-04', type: 'full-moon', description: 'Last full moon of the year during winter\'s start.' },
+    ],
+    2026: [
+      { name: 'Full Moon (Wolf Moon)', date: '2026-01-13', type: 'full-moon', description: 'First full moon of 2026, named Wolf Moon by Native Americans.' },
+      { name: 'New Moon', date: '2026-01-29', type: 'new-moon', description: 'Best time for deep-sky observation with no moonlight interference.' },
+      { name: 'Full Moon (Snow Moon)', date: '2026-02-12', type: 'full-moon', description: 'February full moon, traditionally called Snow Moon.' },
+      { name: 'New Moon', date: '2026-02-28', type: 'new-moon', description: 'New moon ideal for faint galaxy observation.' },
+      { name: 'Full Moon (Worm Moon)', date: '2026-03-14', type: 'full-moon', description: 'March full moon marking the transition to spring.' },
+      { name: 'New Moon', date: '2026-03-29', type: 'new-moon', description: 'New moon with excellent dark-sky conditions.' },
+      { name: 'Full Moon (Pink Moon)', date: '2026-04-13', type: 'full-moon', description: 'April full moon named after spring wildflowers.' },
+      { name: 'New Moon', date: '2026-04-27', type: 'new-moon', description: 'Dark skies for late-April deep-sky observing.' },
+      { name: 'Full Moon (Flower Moon)', date: '2026-05-12', type: 'full-moon', description: 'May full moon celebrating spring blooms.' },
+      { name: 'New Moon', date: '2026-05-27', type: 'new-moon', description: 'New moon before summer observing season.' },
+      { name: 'Full Moon (Strawberry Moon)', date: '2026-06-11', type: 'full-moon', description: 'June full moon coinciding with strawberry harvest season.' },
+      { name: 'New Moon', date: '2026-06-25', type: 'new-moon', description: 'Summer new moon for Milky Way photography.' },
+      { name: 'Full Moon (Buck Moon)', date: '2026-07-10', type: 'full-moon', description: 'July full moon named for new antler growth on deer.' },
+      { name: 'New Moon', date: '2026-07-25', type: 'new-moon', description: 'Dark skies ideal for summer meteor observing.' },
+      { name: 'Supermoon (Sturgeon Moon)', date: '2026-08-09', type: 'supermoon', description: 'First supermoon of 2026 at perigee, appearing larger and brighter.', isSupermoon: true },
+      { name: 'New Moon', date: '2026-08-23', type: 'new-moon', description: 'New moon near Perseid meteor shower tail end.' },
+      { name: 'Supermoon (Harvest Moon)', date: '2026-09-07', type: 'supermoon', description: 'Closest supermoon of 2026, spectacular viewing opportunity.', isSupermoon: true },
+      { name: 'New Moon', date: '2026-09-22', type: 'new-moon', description: 'New moon around the autumn equinox.' },
+      { name: 'Supermoon (Hunter\'s Moon)', date: '2026-10-07', type: 'supermoon', description: 'October supermoon with orange hue near horizon.', isSupermoon: true },
+      { name: 'New Moon', date: '2026-10-21', type: 'new-moon', description: 'Dark skies for Orionid meteor shower.' },
+      { name: 'Supermoon (Beaver Moon)', date: '2026-11-05', type: 'supermoon', description: 'Final supermoon of 2026, appearing noticeably larger.', isSupermoon: true },
+      { name: 'New Moon', date: '2026-11-20', type: 'new-moon', description: 'Late autumn new moon for deep-sky observing.' },
+      { name: 'Full Moon (Cold Moon)', date: '2026-12-04', type: 'full-moon', description: 'Last full moon of 2026 during the onset of winter.' },
+      { name: 'New Moon', date: '2026-12-19', type: 'new-moon', description: 'Year-end new moon near the winter solstice.' },
+    ],
+  }
 
-  return year === 2025 ? events2025 : events2025.map(e => ({
+  if (eventsByYear[year]) {
+    return eventsByYear[year]
+  }
+
+  // Fallback: return 2025 data with naive year replacement for unsupported years
+  return eventsByYear[2025].map(e => ({
     ...e,
-    date: e.date.replace('2025', String(year))
+    date: e.date.replace('2025', String(year)),
   }))
 }
 
@@ -472,23 +506,41 @@ export function getEclipses(): EclipseEvent[] {
       visibility: ['New Zealand', 'Antarctica', 'Southern Pacific'],
       peakTime: '19:42 UTC',
     },
-    // 2026 Eclipses (for advance planning)
+    // 2026 Eclipses
     {
       name: 'Annular Solar Eclipse',
       date: '2026-02-17',
       type: 'solar-annular',
-      description: 'Ring of fire eclipse with Moon too far to fully cover the Sun.',
-      visibility: ['Antarctica', 'Southern Africa', 'South America'],
+      description: 'Ring of fire eclipse with the Moon too far from Earth to fully cover the Sun. Annulus visible along a narrow path.',
+      visibility: ['Antarctica', 'Southern Argentina', 'Southern Africa'],
       peakTime: '12:28 UTC',
+      duration: '2 minutes 20 seconds annularity',
     },
     {
-      name: 'Total Solar Eclipse',
+      name: 'Total Lunar Eclipse',
+      date: '2026-03-03',
+      type: 'lunar-total',
+      description: 'Total lunar eclipse with deep Blood Moon coloring. Excellent visibility across the Americas and Europe.',
+      visibility: ['Americas', 'Europe', 'Africa', 'Eastern Pacific'],
+      peakTime: '11:33 UTC',
+      duration: '58 minutes totality',
+    },
+    {
+      name: 'Partial Solar Eclipse',
       date: '2026-08-12',
-      type: 'solar-total',
-      description: 'Total solar eclipse crossing Spain and Iceland. Rare opportunity for European observers.',
-      visibility: ['Greenland', 'Iceland', 'Spain', 'North Africa'],
+      type: 'solar-partial',
+      description: 'Partial solar eclipse visible from high northern latitudes. Up to 92% coverage in parts of Iceland and Greenland.',
+      visibility: ['Greenland', 'Iceland', 'Northern Europe', 'Arctic'],
       peakTime: '17:46 UTC',
-      duration: '2 minutes 18 seconds totality',
+    },
+    {
+      name: 'Partial Lunar Eclipse',
+      date: '2026-08-28',
+      type: 'lunar-partial',
+      description: 'Partial lunar eclipse with about 37% of the Moon entering Earth\'s umbral shadow.',
+      visibility: ['Australia', 'East Asia', 'Pacific', 'Americas'],
+      peakTime: '04:13 UTC',
+      duration: '3 hours 18 minutes partial phase',
     },
   ]
 }
@@ -508,83 +560,155 @@ export interface ConjunctionEvent {
 }
 
 export function getPlanetaryConjunctions(year: number = new Date().getFullYear()): ConjunctionEvent[] {
-  const events2025: ConjunctionEvent[] = [
-    {
-      name: 'Venus-Saturn Conjunction',
-      date: '2025-01-18',
-      bodies: ['Venus', 'Saturn'],
-      separation: '2.2°',
-      description: 'Brilliant Venus passes close to Saturn in the evening sky. Easy naked-eye observation.',
-      bestViewingTime: 'evening',
-      magnitude: -4.0,
-    },
-    {
-      name: 'Mars-Pleiades Conjunction',
-      date: '2025-01-21',
-      bodies: ['Mars', 'Pleiades'],
-      separation: '1.5°',
-      description: 'Mars passes by the famous Seven Sisters star cluster. Stunning binocular view.',
-      bestViewingTime: 'evening',
-      magnitude: 1.0,
-    },
-    {
-      name: 'Venus-Neptune Conjunction',
-      date: '2025-02-03',
-      bodies: ['Venus', 'Neptune'],
-      separation: '0.5°',
-      description: 'Venus and Neptune appear extremely close. Telescope needed to spot Neptune.',
-      bestViewingTime: 'evening',
-      magnitude: -4.0,
-    },
-    {
-      name: 'Moon-Jupiter Close Approach',
-      date: '2025-02-11',
-      bodies: ['Moon', 'Jupiter'],
-      separation: '0.8°',
-      description: 'Crescent Moon passes very close to Jupiter. Spectacular naked-eye sight.',
-      bestViewingTime: 'evening',
-    },
-    {
-      name: 'Mars-Jupiter Conjunction',
-      date: '2025-08-14',
-      bodies: ['Mars', 'Jupiter'],
-      separation: '0.3°',
-      description: 'Two bright planets appear almost touching in the pre-dawn sky.',
-      bestViewingTime: 'morning',
-      magnitude: 1.8,
-    },
-    {
-      name: 'Venus-Jupiter Conjunction',
-      date: '2025-08-12',
-      bodies: ['Venus', 'Jupiter'],
-      separation: '1.0°',
-      description: 'The two brightest planets meet in the morning sky. Unmissable event.',
-      bestViewingTime: 'morning',
-      magnitude: -4.2,
-    },
-    {
-      name: 'Saturn Opposition',
-      date: '2025-09-21',
-      bodies: ['Saturn'],
-      separation: 'N/A',
-      description: 'Saturn at its closest and brightest for the year. Rings beautifully visible.',
-      bestViewingTime: 'all-night',
-      magnitude: 0.4,
-    },
-    {
-      name: 'Jupiter Opposition',
-      date: '2025-12-07',
-      bodies: ['Jupiter'],
-      separation: 'N/A',
-      description: 'Jupiter at peak brightness and size. Great Galilean moons easily visible.',
-      bestViewingTime: 'all-night',
-      magnitude: -2.8,
-    },
-  ]
+  const eventsByYear: Record<number, ConjunctionEvent[]> = {
+    2025: [
+      {
+        name: 'Venus-Saturn Conjunction',
+        date: '2025-01-18',
+        bodies: ['Venus', 'Saturn'],
+        separation: '2.2°',
+        description: 'Brilliant Venus passes close to Saturn in the evening sky. Easy naked-eye observation.',
+        bestViewingTime: 'evening',
+        magnitude: -4.0,
+      },
+      {
+        name: 'Mars-Pleiades Conjunction',
+        date: '2025-01-21',
+        bodies: ['Mars', 'Pleiades'],
+        separation: '1.5°',
+        description: 'Mars passes by the famous Seven Sisters star cluster. Stunning binocular view.',
+        bestViewingTime: 'evening',
+        magnitude: 1.0,
+      },
+      {
+        name: 'Venus-Neptune Conjunction',
+        date: '2025-02-03',
+        bodies: ['Venus', 'Neptune'],
+        separation: '0.5°',
+        description: 'Venus and Neptune appear extremely close. Telescope needed to spot Neptune.',
+        bestViewingTime: 'evening',
+        magnitude: -4.0,
+      },
+      {
+        name: 'Moon-Jupiter Close Approach',
+        date: '2025-02-11',
+        bodies: ['Moon', 'Jupiter'],
+        separation: '0.8°',
+        description: 'Crescent Moon passes very close to Jupiter. Spectacular naked-eye sight.',
+        bestViewingTime: 'evening',
+      },
+      {
+        name: 'Mars-Jupiter Conjunction',
+        date: '2025-08-14',
+        bodies: ['Mars', 'Jupiter'],
+        separation: '0.3°',
+        description: 'Two bright planets appear almost touching in the pre-dawn sky.',
+        bestViewingTime: 'morning',
+        magnitude: 1.8,
+      },
+      {
+        name: 'Venus-Jupiter Conjunction',
+        date: '2025-08-12',
+        bodies: ['Venus', 'Jupiter'],
+        separation: '1.0°',
+        description: 'The two brightest planets meet in the morning sky. Unmissable event.',
+        bestViewingTime: 'morning',
+        magnitude: -4.2,
+      },
+      {
+        name: 'Saturn Opposition',
+        date: '2025-09-21',
+        bodies: ['Saturn'],
+        separation: 'N/A',
+        description: 'Saturn at its closest and brightest for the year. Rings beautifully visible.',
+        bestViewingTime: 'all-night',
+        magnitude: 0.4,
+      },
+      {
+        name: 'Jupiter Opposition',
+        date: '2025-12-07',
+        bodies: ['Jupiter'],
+        separation: 'N/A',
+        description: 'Jupiter at peak brightness and size. Great Galilean moons easily visible.',
+        bestViewingTime: 'all-night',
+        magnitude: -2.8,
+      },
+    ],
+    2026: [
+      {
+        name: 'Venus-Saturn Conjunction',
+        date: '2026-01-18',
+        bodies: ['Venus', 'Saturn'],
+        separation: '2.0°',
+        description: 'Venus and Saturn pair up in the evening twilight. Easy naked-eye target low in the west.',
+        bestViewingTime: 'evening',
+        magnitude: -3.9,
+      },
+      {
+        name: 'Jupiter-Mercury Conjunction',
+        date: '2026-03-07',
+        bodies: ['Jupiter', 'Mercury'],
+        separation: '0.7°',
+        description: 'Jupiter and Mercury appear close in the pre-dawn sky. Binoculars help spot Mercury.',
+        bestViewingTime: 'morning',
+        magnitude: -2.0,
+      },
+      {
+        name: 'Mars-Jupiter Conjunction',
+        date: '2026-06-01',
+        bodies: ['Mars', 'Jupiter'],
+        separation: '0.5°',
+        description: 'Mars and Jupiter meet in the morning sky. Both visible to the naked eye.',
+        bestViewingTime: 'morning',
+        magnitude: 1.5,
+      },
+      {
+        name: 'Venus-Mars Conjunction',
+        date: '2026-07-12',
+        bodies: ['Venus', 'Mars'],
+        separation: '0.6°',
+        description: 'Brilliant Venus passes close to reddish Mars in the evening sky. Striking color contrast.',
+        bestViewingTime: 'evening',
+        magnitude: -4.1,
+      },
+      {
+        name: 'Saturn Opposition',
+        date: '2026-10-04',
+        bodies: ['Saturn'],
+        separation: 'N/A',
+        description: 'Saturn at its closest and brightest for 2026. Rings increasingly edge-on as we approach 2025 ring crossing.',
+        bestViewingTime: 'all-night',
+        magnitude: 0.3,
+      },
+      {
+        name: 'Mars-Saturn Conjunction',
+        date: '2026-12-14',
+        bodies: ['Mars', 'Saturn'],
+        separation: '1.0°',
+        description: 'Mars and Saturn converge in the evening sky to close out the year. Naked-eye pair.',
+        bestViewingTime: 'evening',
+        magnitude: 1.2,
+      },
+      {
+        name: 'Jupiter Opposition',
+        date: '2027-01-10',
+        bodies: ['Jupiter'],
+        separation: 'N/A',
+        description: 'Jupiter approaching opposition in early 2027, already bright and prominent in late 2026 skies.',
+        bestViewingTime: 'all-night',
+        magnitude: -2.7,
+      },
+    ],
+  }
 
-  return year === 2025 ? events2025 : events2025.map(e => ({
+  if (eventsByYear[year]) {
+    return eventsByYear[year]
+  }
+
+  // Fallback: return 2025 data with naive year replacement for unsupported years
+  return eventsByYear[2025].map(e => ({
     ...e,
-    date: e.date.replace('2025', String(year))
+    date: e.date.replace('2025', String(year)),
   }))
 }
 
@@ -605,8 +729,9 @@ export interface RocketLaunch {
 }
 
 export function getUpcomingLaunches(): RocketLaunch[] {
-  // Static list of notable upcoming launches (would be replaced with API in production)
+  // Notable upcoming launches - includes both 2025 and 2026 missions
   return [
+    // Late 2025
     {
       name: 'SpaceX Starship Flight 8',
       date: '2025-12-15',
@@ -618,38 +743,50 @@ export function getUpcomingLaunches(): RocketLaunch[] {
       isCrewed: false,
       webcastUrl: 'https://www.spacex.com/launches/',
     },
+    // 2026 Missions
+    {
+      name: 'SpaceX Starship (2026 Campaign)',
+      date: '2026-03-01',
+      provider: 'SpaceX',
+      rocket: 'Starship/Super Heavy',
+      mission: 'Orbital Test / Payload Delivery',
+      site: 'Starbase, TX',
+      description: 'Continued Starship test campaign through 2026, targeting orbital flights and payload deployment.',
+      isCrewed: false,
+      webcastUrl: 'https://www.spacex.com/launches/',
+    },
+    {
+      name: 'Axiom Space Mission 4',
+      date: '2026-05-01',
+      provider: 'Axiom Space / SpaceX',
+      rocket: 'Falcon 9',
+      mission: 'Private ISS Mission',
+      site: 'Kennedy Space Center, FL',
+      description: 'Fourth private astronaut mission to the ISS, continuing commercial space station operations.',
+      isCrewed: true,
+      webcastUrl: 'https://www.axiomspace.com/',
+    },
+    {
+      name: 'Boeing Starliner CFT-2',
+      date: '2026-06-15',
+      provider: 'Boeing / NASA',
+      rocket: 'Atlas V N22',
+      mission: 'Crewed ISS Flight Test',
+      site: 'Cape Canaveral, FL',
+      description: 'Second crewed flight test of Boeing Starliner following the extended CFT-1 mission.',
+      isCrewed: true,
+      webcastUrl: 'https://www.boeing.com/space/starliner/',
+    },
     {
       name: 'Artemis II',
-      date: '2025-09-01',
+      date: '2026-09-01',
       provider: 'NASA',
       rocket: 'SLS Block 1',
       mission: 'Crewed Lunar Flyby',
       site: 'Kennedy Space Center, FL',
-      description: 'First crewed Artemis mission, sending astronauts around the Moon.',
+      description: 'First crewed Artemis mission, sending four astronauts around the Moon and back.',
       isCrewed: true,
       webcastUrl: 'https://www.nasa.gov/artemis-ii',
-    },
-    {
-      name: 'Europa Clipper Launch Window',
-      date: '2025-10-01',
-      provider: 'NASA/SpaceX',
-      rocket: 'Falcon Heavy',
-      mission: 'Jupiter/Europa Mission',
-      site: 'Kennedy Space Center, FL',
-      description: 'Mission to study Jupiter\'s moon Europa for signs of habitability.',
-      isCrewed: false,
-      webcastUrl: 'https://europa.nasa.gov/',
-    },
-    {
-      name: 'Crew Dragon Mission',
-      date: '2025-12-20',
-      provider: 'SpaceX',
-      rocket: 'Falcon 9',
-      mission: 'ISS Crew Rotation',
-      site: 'Kennedy Space Center, FL',
-      description: 'Regular crew rotation mission to the International Space Station.',
-      isCrewed: true,
-      webcastUrl: 'https://www.spacex.com/launches/',
     },
   ]
 }
@@ -948,7 +1085,7 @@ export async function getGCNNotices(
       // Determine severity based on title keywords
       const title = notice.title.toLowerCase()
       let severity: EventSeverity = 'notable'
-      let eventType: EventType = 'transient'
+      const eventType: EventType = 'transient'
 
       if (title.includes('gravitational') || title.includes('ligo') || title.includes('virgo')) {
         severity = 'rare'
@@ -1037,16 +1174,8 @@ export async function getAllCurrentEvents(): Promise<ApiResponse<AstronomicalEve
   allEvents.push(...getUpcomingEvents(5))
 
   // Sort by severity then date
-  const severityOrder: Record<EventSeverity, number> = {
-    'once-in-lifetime': 5,
-    'rare': 4,
-    'significant': 3,
-    'notable': 2,
-    'info': 1,
-  }
-
   allEvents.sort((a, b) => {
-    const severityDiff = severityOrder[b.severity] - severityOrder[a.severity]
+    const severityDiff = SEVERITY_ORDER[b.severity] - SEVERITY_ORDER[a.severity]
     if (severityDiff !== 0) return severityDiff
     return new Date(a.eventTime).getTime() - new Date(b.eventTime).getTime()
   })

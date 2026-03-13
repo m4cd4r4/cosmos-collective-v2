@@ -22,11 +22,12 @@ interface JWSTFilters {
 // ── Resolution helpers ────────────────────────────────────────────────────────
 
 function getResolutionTier(): 'low' | 'medium' | 'high' {
-  const conn = (navigator as any).connection
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const conn = (navigator as unknown as Record<string, unknown>).connection as { effectiveType?: string; downlink?: number } | undefined
   if (!conn) return 'medium'
   const { effectiveType, downlink } = conn
-  if (effectiveType === 'slow-2g' || effectiveType === '2g' || downlink < 1) return 'low'
-  if (effectiveType === '4g' && downlink >= 5) return 'high'
+  if (effectiveType === 'slow-2g' || effectiveType === '2g' || (downlink != null && downlink < 1)) return 'low'
+  if (effectiveType === '4g' && downlink != null && downlink >= 5) return 'high'
   return 'medium'
 }
 
@@ -54,11 +55,11 @@ const CATEGORY_LABELS: Record<string, string> = {
   other: 'Other',
 }
 
-const INSTRUMENT_INFO: Record<string, { range: string; color: string }> = {
-  NIRCam: { range: '0.6–5 μm', color: '#d4af37' },
-  MIRI: { range: '5–28 μm', color: '#ff6b6b' },
-  NIRSpec: { range: '0.6–5.3 μm', color: '#4a90e2' },
-  NIRISS: { range: '0.6–5 μm', color: '#7ec4ff' },
+const INSTRUMENT_INFO: Record<string, { range: string; color: string; fullName: string }> = {
+  NIRCam: { range: '0.6–5 μm', color: '#d4af37', fullName: 'Near-Infrared Camera' },
+  MIRI: { range: '5–28 μm', color: '#ff6b6b', fullName: 'Mid-Infrared Instrument' },
+  NIRSpec: { range: '0.6–5.3 μm', color: '#4a90e2', fullName: 'Near-Infrared Spectrograph' },
+  NIRISS: { range: '0.6–5 μm', color: '#7ec4ff', fullName: 'Near-Infrared Imager and Slitless Spectrograph' },
 }
 
 const CHANNEL_COLORS: Record<string, string> = {
@@ -284,6 +285,7 @@ export function JWSTViewer() {
                   active={filters.instrument === inst}
                   onClick={() => setFilter('instrument', inst)}
                   color={INSTRUMENT_INFO[inst]?.color}
+                  title={INSTRUMENT_INFO[inst] ? `${inst} (${INSTRUMENT_INFO[inst].fullName}) — ${INSTRUMENT_INFO[inst].range}` : inst}
                 >
                   {inst}
                 </Chip>
@@ -318,7 +320,7 @@ export function JWSTViewer() {
                       </div>
                       <div className="text-[10px] text-[#4a5580] flex items-center gap-1.5 mt-0.5">
                         <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: INSTRUMENT_INFO[obs.instrument || '']?.color || '#666' }} />
-                        {obs.instrument || 'Multi'}
+                        <span title={INSTRUMENT_INFO[obs.instrument || '']?.fullName}>{obs.instrument || 'Multi'}</span>
                         <span className="text-[#2a3050]">·</span>
                         {CATEGORY_LABELS[obs.category] || obs.category}
                       </div>
@@ -585,7 +587,7 @@ export function JWSTViewer() {
             {/* Metadata grid */}
             <div className="grid grid-cols-2 gap-x-3 gap-y-2 mb-4">
               <MetaItem icon={<Star className="w-3 h-3" />} label="Category" value={CATEGORY_LABELS[selected.category] || selected.category} />
-              <MetaItem icon={<Layers className="w-3 h-3" />} label="Instrument" value={selected.instrument || 'Multiple'} />
+              <MetaItem icon={<Layers className="w-3 h-3" />} label="Instrument" value={selected.instrument ? `${selected.instrument} (${INSTRUMENT_INFO[selected.instrument]?.fullName || selected.instrument})` : 'Multiple'} />
               <MetaItem icon={<Calendar className="w-3 h-3" />} label="Observed" value={formatDate(selected.observationDate)} />
               {selected.coordinates.constellation && (
                 <MetaItem icon={<MapPin className="w-3 h-3" />} label="Constellation" value={selected.coordinates.constellation} />
@@ -874,10 +876,11 @@ function Stat({ label, value, color }: { label: string; value: string | number; 
   )
 }
 
-function Chip({ children, active, onClick, color }: { children: React.ReactNode; active: boolean; onClick: () => void; color?: string }) {
+function Chip({ children, active, onClick, color, title }: { children: React.ReactNode; active: boolean; onClick: () => void; color?: string; title?: string }) {
   return (
     <button
       onClick={onClick}
+      title={title}
       className={`px-2 py-1 rounded text-[10px] transition-all border ${
         active
           ? 'bg-[rgba(212,175,55,0.15)] text-[#d4af37] border-[rgba(212,175,55,0.3)]'

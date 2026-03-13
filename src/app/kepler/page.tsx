@@ -43,7 +43,7 @@ export default function KeplerPage() {
       <Header />
       <main
         id="main-content"
-        className="flex-1 overflow-hidden"
+        className="flex-1 overflow-hidden pb-16 lg:pb-0"
         style={{ height: 'calc(100vh - 64px)' }}
         aria-label="Kepler Exoplanet Explorer"
       >

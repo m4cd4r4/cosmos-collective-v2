@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
+import { formatCountdown } from '@/lib/event-utils'
 import type { AstronomicalEvent } from '@/types/astronomy'
 
 interface LiveEventsWidgetProps {
@@ -21,17 +22,6 @@ const FLARE_COLORS: Record<string, string> = {
 function getNextEvent(events: AstronomicalEvent[]): AstronomicalEvent | null {
   const now = Date.now()
   return events.find(e => new Date(e.eventTime).getTime() > now) ?? events[0] ?? null
-}
-
-function formatCountdown(eventTime: string): string {
-  const diff = new Date(eventTime).getTime() - Date.now()
-  if (diff <= 0) return 'NOW'
-  const days = Math.floor(diff / 86400000)
-  const hrs = Math.floor((diff % 86400000) / 3600000)
-  const mins = Math.floor((diff % 3600000) / 60000)
-  if (days > 0) return `${days}d ${hrs}h`
-  if (hrs > 0) return `${hrs}h ${mins}m`
-  return `${mins}m`
 }
 
 export function LiveEventsWidget({ issPosition, solarWeather, upcomingEvents }: LiveEventsWidgetProps) {

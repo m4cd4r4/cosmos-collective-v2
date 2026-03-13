@@ -144,7 +144,7 @@ export const JWSTSkyMap = forwardRef<
 
     for (const [category, obs] of Object.entries(groups)) {
       const color = JWST_CATEGORY_COLORS[category] ?? JWST_CATEGORY_COLORS.other
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-explicit-any
       const catalog = (window.A.catalog as any)({
         name: CATEGORY_LABELS[category] ?? category,
         color,

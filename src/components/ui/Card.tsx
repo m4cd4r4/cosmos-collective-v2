@@ -63,8 +63,10 @@ export const Card = forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant, padding, as: Component = 'div', children, ...props }, ref) => {
     return (
       <Component
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ref={ref as any}
         className={cn(cardVariants({ variant, padding }), className)}
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         {...(props as any)}
       >
         {children}
@@ -79,6 +81,7 @@ Card.displayName = 'Card'
 // Card Header
 // ============================================
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CardHeaderProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const CardHeader = forwardRef<HTMLDivElement, CardHeaderProps>(
@@ -117,6 +120,7 @@ CardTitle.displayName = 'CardTitle'
 // Card Description
 // ============================================
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CardDescriptionProps extends HTMLAttributes<HTMLParagraphElement> {}
 
 export const CardDescription = forwardRef<HTMLParagraphElement, CardDescriptionProps>(
@@ -135,6 +139,7 @@ CardDescription.displayName = 'CardDescription'
 // Card Content
 // ============================================
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CardContentProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const CardContent = forwardRef<HTMLDivElement, CardContentProps>(
@@ -149,6 +154,7 @@ CardContent.displayName = 'CardContent'
 // Card Footer
 // ============================================
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface CardFooterProps extends HTMLAttributes<HTMLDivElement> {}
 
 export const CardFooter = forwardRef<HTMLDivElement, CardFooterProps>(

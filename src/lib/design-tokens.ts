@@ -1,0 +1,26 @@
+export const COSMOS_COLORS = {
+  void: '#0a0e1a',
+  depth: '#131820',
+  surface: '#1a1f2e',
+  elevated: '#2a2f3e',
+  gold: '#d4af37',
+  amber: '#ff9a3c',
+  nebulaBlue: '#4a90e2',
+  hydrogen: '#ff6b6b',
+  oxygen: '#3b82f6',
+  text: {
+    primary: '#e0e8ff',
+    secondary: '#c8d4f0',
+    dim: '#4a5580',
+    muted: '#6070a0',
+  },
+  spectrum: {
+    radio: '#22c55e',
+    microwave: '#84cc16',
+    infrared: '#ff9a3c',
+    visible: '#d4af37',
+    ultraviolet: '#3b82f6',
+    xray: '#4a90e2',
+    gamma: '#ff6b6b',
+  },
+} as const

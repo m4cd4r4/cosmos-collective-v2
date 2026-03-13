@@ -43,6 +43,7 @@ import {
   Telescope,
 } from 'lucide-react'
 import { cn, formatDate } from '@/lib/utils'
+import { getEventIcon, getSeverityHex } from '@/lib/event-utils'
 
 // ── ISS Camera feeds ────────────────────────────────────────────────────────
 
@@ -82,26 +83,6 @@ const INITIAL_EVENT_COUNT = 8
 const LOAD_MORE_COUNT = 8
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
-
-function getSeverityColor(severity: string) {
-  if (severity === 'once-in-lifetime' || severity === 'rare') return '#e040fb'
-  if (severity === 'significant' || severity === 'notable') return '#d4af37'
-  return '#4a5580'
-}
-
-function getEventIcon(type: string) {
-  switch (type) {
-    case 'solar': return Zap
-    case 'asteroid': return Globe
-    case 'meteor-shower': return Star
-    case 'transit': return Radio
-    case 'lunar': return Moon
-    case 'eclipse': return Sun
-    case 'conjunction': return Sparkles
-    case 'launch': return Rocket
-    default: return Sparkles
-  }
-}
 
 function getEventThumbnail(type: string) {
   switch (type) {
@@ -425,7 +406,7 @@ export default function EventsPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {events.slice(0, displayCount).map((event) => {
                       const Icon = getEventIcon(event.type)
-                      const severityColor = getSeverityColor(event.severity)
+                      const severityColor = getSeverityHex(event.severity)
                       const isHighlighted = highlightedEvent === event.id
                       return (
                         <div

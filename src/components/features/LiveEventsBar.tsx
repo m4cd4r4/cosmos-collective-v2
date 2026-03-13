@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { getUpcomingEvents, getISSPosition, getSolarWeather } from '@/services/real-time-events'
 import type { AstronomicalEvent } from '@/types'
 import { cn, getRelativeTime } from '@/lib/utils'
+import { SEVERITY_ORDER } from '@/lib/event-utils'
 import { Radio, AlertCircle, Star, Rocket, Sun, Sparkles, Moon, Globe, Zap, ChevronRight, Satellite } from 'lucide-react'
 
 // ============================================
@@ -35,14 +36,6 @@ const severityColors: Record<string, string> = {
   significant: 'text-cosmos-gold',
   notable: 'text-cosmos-gold',
   info: 'text-gray-400',
-}
-
-const severityOrder: Record<string, number> = {
-  'once-in-lifetime': 5,
-  rare: 4,
-  significant: 3,
-  notable: 2,
-  info: 1,
 }
 
 const MAX_BANNER_EVENTS = 6
@@ -74,7 +67,7 @@ function getPriorityEvents(events: AstronomicalEvent[]): AstronomicalEvent[] {
     .sort((a, b) => {
       if (a.isOngoing && !b.isOngoing) return -1
       if (!a.isOngoing && b.isOngoing) return 1
-      const severityDiff = (severityOrder[b.severity] || 0) - (severityOrder[a.severity] || 0)
+      const severityDiff = (SEVERITY_ORDER[b.severity] || 0) - (SEVERITY_ORDER[a.severity] || 0)
       if (severityDiff !== 0) return severityDiff
       return Math.abs(new Date(a.eventTime).getTime() - now) - Math.abs(new Date(b.eventTime).getTime() - now)
     })

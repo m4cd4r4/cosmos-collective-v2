@@ -4,11 +4,19 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { apiLimiter, getClientIdentifier } from '@/lib/rate-limit'
+import { mjdToISOString } from '@/lib/astronomy-utils'
 
 // Correct ALeRCE ZTF API endpoint (with trailing slash for redirect handling)
 const ALERCE_API = 'https://api.alerce.online/ztf/v1/objects/'
 
 export async function GET(request: NextRequest) {
+  const clientId = getClientIdentifier(request)
+  const allowed = await apiLimiter.check(clientId)
+  if (!allowed) {
+    return NextResponse.json({ error: 'Rate limit exceeded' }, { status: 429 })
+  }
+
   try {
     const searchParams = request.nextUrl.searchParams
     const classifier = searchParams.get('classifier') || 'lc_classifier'
@@ -47,7 +55,7 @@ export async function GET(request: NextRequest) {
       dec: item.meandec,
       classification: item.class || className,
       probability: item.probability || 0.5,
-      lastDetection: mjdToDate(item.lastmjd),
+      lastDetection: mjdToISOString(item.lastmjd),
       url: `https://alerce.online/object/${item.oid}`
     }))
 
@@ -68,12 +76,6 @@ export async function GET(request: NextRequest) {
       note: 'Using cached data due to API unavailability'
     })
   }
-}
-
-function mjdToDate(mjd: number): string {
-  const jd = mjd + 2400000.5
-  const unixTime = (jd - 2440587.5) * 86400000
-  return new Date(unixTime).toISOString()
 }
 
 function getFallbackAleRCEData() {

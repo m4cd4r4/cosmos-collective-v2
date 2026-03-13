@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useCallback } from 'react'
+import { useRef, useEffect, useCallback, useMemo } from 'react'
 import type { PlottedObservation, ObservatoryViewMode } from './types'
 import {
   wavelengthToRGB,
@@ -21,6 +21,9 @@ interface Props {
   selectedObs: PlottedObservation | null
 }
 
+const MOUSE_HIT_RADIUS = 18
+const TOUCH_HIT_RADIUS = 26
+
 // ── Background field stars (generated once) ──────────────────────────────
 
 let bgStars: Array<{ x: number; y: number; r: number; a: number; c: string }> = []
@@ -33,6 +36,26 @@ function ensureBgStars() {
     a: Math.random() * 0.4 + 0.07,
     c: ['#fff', '#ddf', '#ffd', '#fdd'][Math.floor(Math.random() * 4)],
   }))
+}
+
+function usePrefersReducedMotion(): boolean {
+  const ref = useRef(false)
+  useEffect(() => {
+    const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
+    ref.current = mql.matches
+    const handler = (e: MediaQueryListEvent) => { ref.current = e.matches }
+    mql.addEventListener('change', handler)
+    return () => mql.removeEventListener('change', handler)
+  }, [])
+  return ref.current
+}
+
+function useIsTouchDevice(): boolean {
+  const ref = useRef(false)
+  useEffect(() => {
+    ref.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0
+  }, [])
+  return ref.current
 }
 
 // ── Canvas component ─────────────────────────────────────────────────────
@@ -49,8 +72,21 @@ export function ObservatoryCanvas({
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const rafRef = useRef<number>(0)
   const twinkle = useRef<Float32Array>(new Float32Array(0))
+  const sizeRef = useRef<{ W: number; H: number }>({ W: 0, H: 0 })
+  const hasRenderedStaticFrame = useRef(false)
+  const prefersReducedMotion = usePrefersReducedMotion()
+  const _isTouchDevice = useIsTouchDevice()
 
-  // Recompute positions each frame
+  // Pre-built index map for O(1) lookup of observation index
+  const obsIndexMap = useMemo(() => {
+    const map = new Map<PlottedObservation, number>()
+    for (let i = 0; i < observations.length; i++) {
+      map.set(observations[i], i)
+    }
+    return map
+  }, [observations])
+
+  // Recompute positions
   const computePositions = useCallback(
     (W: number, H: number) => {
       for (const obs of observations) {
@@ -75,6 +111,27 @@ export function ObservatoryCanvas({
     )
   }, [observations.length])
 
+  // Recompute positions on resize, viewMode, or data change (not every frame)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+
+    const recompute = () => {
+      const W = canvas.offsetWidth
+      const H = canvas.offsetHeight
+      if (W > 0 && H > 0) {
+        sizeRef.current = { W, H }
+        computePositions(W, H)
+      }
+    }
+
+    const ro = new ResizeObserver(recompute)
+    ro.observe(canvas)
+    recompute()
+
+    return () => ro.disconnect()
+  }, [computePositions])
+
   // Animation loop
   useEffect(() => {
     const canvas = canvasRef.current
@@ -83,11 +140,20 @@ export function ObservatoryCanvas({
     if (!ctx) return
     ensureBgStars()
 
-    function frame(ts: number) {
+    hasRenderedStaticFrame.current = false
+
+    function renderFrame(ts: number) {
       if (!canvas) return
       const W = (canvas.width = canvas.offsetWidth)
       const H = (canvas.height = canvas.offsetHeight)
-      computePositions(W, H)
+
+      // Update sizeRef if canvas resized since last ResizeObserver tick
+      if (W !== sizeRef.current.W || H !== sizeRef.current.H) {
+        sizeRef.current = { W, H }
+        computePositions(W, H)
+      }
+
+      const reducedMotion = prefersReducedMotion
 
       // Background
       ctx!.fillStyle = '#050810'
@@ -124,15 +190,16 @@ export function ObservatoryCanvas({
       }
       ctx!.globalAlpha = 1
 
-      // Twinkle factor
-      const t = ts * 0.0006
+      // Twinkle factor - static 1.0 when reduced motion is preferred
+      const t = reducedMotion ? 0 : ts * 0.0006
       const tw = twinkle.current
 
       // Draw observation nodes
       for (let i = 0; i < filtered.length; i++) {
         const obs = filtered[i]
-        const phase = tw[observations.indexOf(obs)] ?? 0
-        const twk = 0.82 + 0.18 * Math.sin(t + phase)
+        const idx = obsIndexMap.get(obs) ?? 0
+        const phase = tw[idx] ?? 0
+        const twk = reducedMotion ? 1.0 : 0.82 + 0.18 * Math.sin(t + phase)
         drawNode(ctx!, obs, obs === hoveredObs, obs === selectedObs, twk)
       }
 
@@ -144,18 +211,23 @@ export function ObservatoryCanvas({
         ctx!.fillText(selectedObs.targetName, selectedObs.x + 14, selectedObs.y - 5)
       }
 
-      rafRef.current = requestAnimationFrame(frame)
+      if (reducedMotion) {
+        hasRenderedStaticFrame.current = true
+        return
+      }
+
+      rafRef.current = requestAnimationFrame(renderFrame)
     }
 
-    rafRef.current = requestAnimationFrame(frame)
+    rafRef.current = requestAnimationFrame(renderFrame)
     return () => cancelAnimationFrame(rafRef.current)
-  }, [filtered, hoveredObs, selectedObs, viewMode, computePositions, observations])
+  }, [filtered, hoveredObs, selectedObs, viewMode, computePositions, observations, obsIndexMap, prefersReducedMotion])
 
-  // Hit testing
+  // Hit testing with configurable radius for mouse vs touch
   const hitTest = useCallback(
-    (mx: number, my: number): PlottedObservation | null => {
+    (mx: number, my: number, isTouch: boolean): PlottedObservation | null => {
       let best: PlottedObservation | null = null
-      let bestD = 18
+      let bestD = isTouch ? TOUCH_HIT_RADIUS : MOUSE_HIT_RADIUS
       for (const obs of filtered) {
         const d = Math.hypot(obs.x - mx, obs.y - my)
         if (d < bestD) {
@@ -171,7 +243,7 @@ export function ObservatoryCanvas({
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       const r = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect()
-      onHover(hitTest(e.clientX - r.left, e.clientY - r.top), e)
+      onHover(hitTest(e.clientX - r.left, e.clientY - r.top, false), e)
     },
     [hitTest, onHover],
   )
@@ -179,20 +251,47 @@ export function ObservatoryCanvas({
   const handleClick = useCallback(
     (e: React.MouseEvent<HTMLCanvasElement>) => {
       const r = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect()
-      const hit = hitTest(e.clientX - r.left, e.clientY - r.top)
+      const hit = hitTest(e.clientX - r.left, e.clientY - r.top, false)
       onSelect(hit)
     },
     [hitTest, onSelect],
+  )
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLCanvasElement>) => {
+      if (e.touches.length !== 1) return
+      const touch = e.touches[0]
+      const r = (e.currentTarget as HTMLCanvasElement).getBoundingClientRect()
+      const cx = touch.clientX - r.left
+      const cy = touch.clientY - r.top
+      const hit = hitTest(cx, cy, true)
+      if (hit) {
+        e.preventDefault()
+        onSelect(hit)
+      }
+    },
+    [hitTest, onSelect],
+  )
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent<HTMLCanvasElement>) => {
+      if (e.touches.length === 0) {
+        onHover(null)
+      }
+    },
+    [onHover],
   )
 
   return (
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full"
-      style={{ cursor: hoveredObs ? 'pointer' : 'crosshair' }}
+      style={{ cursor: hoveredObs ? 'pointer' : 'crosshair', touchAction: 'none' }}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => onHover(null)}
       onClick={handleClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     />
   )
 }

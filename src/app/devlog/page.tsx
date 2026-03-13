@@ -26,7 +26,7 @@ export const metadata: Metadata = {
 
 // ── Category config ────────────────────────────────────────────────────────
 
-const categoryMeta: Record<string, { icon: React.ComponentType<{ className?: string }>, color: string }> = {
+const categoryMeta: Record<string, { icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>, color: string }> = {
   'architecture':      { icon: Code2,     color: '#4a90e2' },
   'data-integration':  { icon: Telescope, color: '#d4af37' },
   'radio-astronomy':   { icon: Radio,     color: '#e040fb' },

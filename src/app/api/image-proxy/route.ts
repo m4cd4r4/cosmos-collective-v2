@@ -5,6 +5,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { imageProxyLimiter, getClientIdentifier } from '@/lib/rate-limit'
 
 // Placeholder image (1x1 cosmic gradient)
 const PLACEHOLDER_IMAGE = Buffer.from(
@@ -81,6 +82,19 @@ async function fetchWithRetry(
 }
 
 export async function GET(request: NextRequest) {
+  // Rate limiting
+  const clientId = getClientIdentifier(request)
+  const allowed = await imageProxyLimiter.check(clientId)
+  if (!allowed) {
+    return new NextResponse(PLACEHOLDER_IMAGE, {
+      status: 429,
+      headers: {
+        'Content-Type': 'image/png',
+        'Retry-After': '60',
+      },
+    })
+  }
+
   try {
     const { searchParams } = new URL(request.url)
     const imageUrl = searchParams.get('url')

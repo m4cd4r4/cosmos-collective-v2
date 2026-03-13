@@ -39,9 +39,20 @@ export default function ExploreError({
             Catalog Temporarily Unavailable
           </h1>
 
-          <p className="text-gray-400 mb-6">
+          <p className="text-gray-400 mb-4">
             We're having trouble loading the observation catalog. The NASA and astronomy APIs might be experiencing high traffic.
           </p>
+
+          {/* Troubleshooting Tips */}
+          <div className="mb-6 text-left bg-white/5 border border-white/10 rounded-lg p-4">
+            <p className="text-sm font-medium text-gray-300 mb-2">Troubleshooting tips:</p>
+            <ul className="text-sm text-gray-400 space-y-1 list-disc list-inside">
+              <li>Check your internet connection</li>
+              <li>NASA APIs may be under maintenance - try again in a few minutes</li>
+              <li>Clear your browser cache and reload</li>
+              <li>Try the Sky Map for an alternative view of the cosmos</li>
+            </ul>
+          </div>
 
           {/* Error Details (Development Only) */}
           {process.env.NODE_ENV === 'development' && (

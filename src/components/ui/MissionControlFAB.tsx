@@ -84,12 +84,13 @@ export function MissionControlFAB() {
         ) : (
           <>
             <BookMarked className="w-5 h-5 text-[#d4af37] group-hover:scale-110 transition-transform" />
-            {/* Pulse ring */}
+            {/* Pulse ring - 3 iterations then stops */}
             <span
               className="absolute inset-0 rounded-full animate-ping"
               style={{
                 border: '1px solid rgba(212,175,55,0.2)',
                 animationDuration: '3s',
+                animationIterationCount: 3,
               }}
             />
           </>
