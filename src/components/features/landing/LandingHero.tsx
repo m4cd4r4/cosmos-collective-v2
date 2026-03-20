@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronDown, Sparkles, Orbit, ArrowRight } from 'lucide-react'
 
 export function LandingHero() {
@@ -43,16 +44,17 @@ export function LandingHero() {
         className="relative z-10 rounded-2xl overflow-hidden border border-white/10 group cursor-pointer shadow-[0_0_60px_rgba(212,175,55,0.08)] w-[90vw] h-[50vh] md:w-[75vw] md:h-[62vh]"
         aria-label="Open Solar System Explorer"
       >
-        {/* Mobile: static image to avoid loading 11MB of Three.js textures */}
-        <picture className="w-full h-full md:hidden">
-          <source srcSet="/images/hero-solar-system.webp" type="image/webp" />
-          <img
-            src="/images/hero-solar-system.png"
+        {/* Mobile: preloaded WebP via next/image priority — avoids 15MB iframe on mobile */}
+        <div className="relative w-full h-full md:hidden">
+          <Image
+            src="/images/hero-solar-system.webp"
             alt="Solar System Preview"
-            className="w-full h-full object-cover"
-            fetchPriority="high"
+            fill
+            priority
+            className="object-cover"
+            sizes="90vw"
           />
-        </picture>
+        </div>
         {/* Desktop: vortex animation — eliminates 15MB Three.js texture load on homepage */}
         <video
           autoPlay

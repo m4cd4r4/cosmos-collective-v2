@@ -153,6 +153,7 @@ export default async function RootLayout({
     >
       <head>
         {/* Critical Resource Hints - Preconnect for immediate needs */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://images-api.nasa.gov" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://images-assets.nasa.gov" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://mast.stsci.edu" crossOrigin="anonymous" />
