@@ -51,6 +51,7 @@ export function LandingHero() {
             alt="Solar System Preview"
             fill
             priority
+            unoptimized
             className="object-cover"
             sizes="90vw"
           />
