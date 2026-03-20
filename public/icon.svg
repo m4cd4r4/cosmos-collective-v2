@@ -1,0 +1,32 @@
+<svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="cc-core" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.8" />
+      <stop offset="35%" stop-color="#d4af37" stop-opacity="0.3" />
+      <stop offset="100%" stop-color="#d4af37" stop-opacity="0" />
+    </radialGradient>
+    <linearGradient id="cc-ring-gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#d4af37" />
+      <stop offset="100%" stop-color="#ff9a3c" />
+    </linearGradient>
+    <linearGradient id="cc-ring-blue" x1="1" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4a90e2" />
+      <stop offset="100%" stop-color="#7ec4ff" />
+    </linearGradient>
+    <linearGradient id="cc-ring-red" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0%" stop-color="#ff6b6b" />
+      <stop offset="100%" stop-color="#d4af37" />
+    </linearGradient>
+  </defs>
+  <circle cx="20" cy="20" r="10" fill="url(#cc-core)" />
+  <ellipse cx="20" cy="20" rx="17" ry="6" stroke="url(#cc-ring-gold)" stroke-width="1.2" opacity="0.65" transform="rotate(-25, 20, 20)" />
+  <ellipse cx="20" cy="20" rx="17" ry="6" stroke="url(#cc-ring-blue)" stroke-width="1.2" opacity="0.65" transform="rotate(35, 20, 20)" />
+  <ellipse cx="20" cy="20" rx="17" ry="6" stroke="url(#cc-ring-red)" stroke-width="1.2" opacity="0.65" transform="rotate(90, 20, 20)" />
+  <circle cx="20" cy="20" r="3.5" fill="#d4af37" />
+  <circle cx="20" cy="20" r="1.8" fill="white" opacity="0.85" />
+  <circle cx="35" cy="13" r="1.8" fill="#ff9a3c" />
+  <circle cx="7" cy="11" r="1.5" fill="#4a90e2" />
+  <circle cx="20" cy="3" r="1.5" fill="#ff6b6b" />
+  <circle cx="33" cy="32" r="0.6" fill="white" opacity="0.4" />
+  <circle cx="8" cy="33" r="0.5" fill="white" opacity="0.3" />
+</svg>
