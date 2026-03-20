@@ -786,6 +786,7 @@ export function JWSTViewer() {
                   >
                     <ExternalLink className="w-3 h-3 shrink-0" />
                     {link.label}
+                    <span className="sr-only">(opens in new tab)</span>
                   </a>
                 ))}
               </div>

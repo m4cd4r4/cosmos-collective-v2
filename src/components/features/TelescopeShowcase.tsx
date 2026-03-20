@@ -172,6 +172,7 @@ export function TelescopeShowcase() {
                     rel="noopener noreferrer"
                   >
                     Learn More
+                    <span className="sr-only">(opens in new tab)</span>
                   </a>
                 </Button>
                 <Button variant="secondary" size="sm" asChild>

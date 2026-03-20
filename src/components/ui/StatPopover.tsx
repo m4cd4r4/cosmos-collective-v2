@@ -67,6 +67,7 @@ export function StatPopover({ items, children, className }: StatPopoverProps) {
                       )}
                     </div>
                     <ExternalLink className="w-3 h-3 text-[#4a5580] group-hover:text-[#d4af37] shrink-0 transition-colors" />
+                    <span className="sr-only">(opens in new tab)</span>
                   </a>
                 ) : (
                   <div>

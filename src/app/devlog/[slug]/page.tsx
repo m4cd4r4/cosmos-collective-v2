@@ -153,7 +153,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
                   href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(post.title)}&url=${encodeURIComponent(`https://cosmos-collective.dev/devlog/${post.slug}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Share on Twitter"
+                  aria-label="Share on Twitter (opens in new tab)"
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[rgba(212,175,55,0.15)] text-[#4a5580] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] text-[10px] transition-colors"
                 >
                   <Twitter className="w-3 h-3" /> X / Twitter
@@ -162,7 +162,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
                   href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(`https://cosmos-collective.dev/devlog/${post.slug}`)}&title=${encodeURIComponent(post.title)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Share on LinkedIn"
+                  aria-label="Share on LinkedIn (opens in new tab)"
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[rgba(212,175,55,0.15)] text-[#4a5580] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] text-[10px] transition-colors"
                 >
                   <Linkedin className="w-3 h-3" /> LinkedIn

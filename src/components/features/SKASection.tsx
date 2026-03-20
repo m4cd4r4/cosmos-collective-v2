@@ -305,6 +305,7 @@ export function SKASection() {
               rel="noopener noreferrer"
             >
               Visit SKA Observatory
+              <span className="sr-only">(opens in new tab)</span>
             </a>
           </Button>
         </div>

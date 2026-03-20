@@ -1,26 +1,33 @@
 /**
  * Next.js Middleware
- * Adds security headers to all responses
- * Improves security score and protects against common vulnerabilities
+ * Generates a per-request CSP nonce and applies security headers
  */
 
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  // Clone the response
-  const response = NextResponse.next()
+  // Generate a cryptographically random nonce per request
+  const nonce = Buffer.from(crypto.randomUUID()).toString('base64')
+
+  // Forward nonce to the app via request header (layout.tsx reads it)
+  const requestHeaders = new Headers(request.headers)
+  requestHeaders.set('x-nonce', nonce)
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  })
 
   // ============================================
-  // Security Headers
+  // Content Security Policy (nonce-based)
   // ============================================
-
-  // Content Security Policy (CSP)
-  // Allows our own content, NASA/astronomy APIs, and necessary CDNs
-  // 'unsafe-eval' is required in dev for Next.js Fast Refresh / React HMR
+  // 'strict-dynamic' allows scripts loaded by nonce-bearing scripts (Next.js
+  // chunks, GTM child scripts, etc.) — origin allowlist is fallback for
+  // browsers that don't support strict-dynamic.
   const scriptSrc = process.env.NODE_ENV === 'development'
-    ? "script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://aladin.cds.unistra.fr https://www.googletagmanager.com https://www.google-analytics.com"
-    : "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://aladin.cds.unistra.fr https://www.googletagmanager.com https://www.google-analytics.com"
+    ? `script-src 'self' 'nonce-${nonce}' 'unsafe-eval' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://aladin.cds.unistra.fr https://www.googletagmanager.com https://www.google-analytics.com`
+    : `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' 'wasm-unsafe-eval' https://cdnjs.cloudflare.com https://aladin.cds.unistra.fr https://www.googletagmanager.com https://www.google-analytics.com`
+
   const cspDirectives = [
     "default-src 'self'",
     scriptSrc,
@@ -39,38 +46,31 @@ export function middleware(request: NextRequest) {
 
   response.headers.set('Content-Security-Policy', cspDirectives)
 
-  // HTTP Strict Transport Security (HSTS)
-  // Force HTTPS for 2 years, including subdomains
+  // HTTP Strict Transport Security
   response.headers.set(
     'Strict-Transport-Security',
     'max-age=63072000; includeSubDomains; preload'
   )
 
-  // X-Frame-Options
-  // Prevent clickjacking attacks
+  // Clickjacking protection
   response.headers.set('X-Frame-Options', 'SAMEORIGIN')
 
-  // X-Content-Type-Options
-  // Prevent MIME type sniffing
+  // MIME type sniffing prevention
   response.headers.set('X-Content-Type-Options', 'nosniff')
 
-  // X-XSS-Protection
-  // Enable browser XSS protection (legacy browsers)
+  // Legacy XSS protection header
   response.headers.set('X-XSS-Protection', '1; mode=block')
 
-  // Referrer-Policy
-  // Control referrer information
+  // Referrer policy (+5 Observatory bonus)
   response.headers.set('Referrer-Policy', 'strict-origin-when-cross-origin')
 
-  // Permissions-Policy
-  // Control browser features
+  // Permissions policy
   response.headers.set(
     'Permissions-Policy',
     'camera=(), microphone=(), geolocation=()'
   )
 
-  // X-DNS-Prefetch-Control
-  // Enable DNS prefetching for performance
+  // DNS prefetch
   response.headers.set('X-DNS-Prefetch-Control', 'on')
 
   return response
@@ -81,20 +81,7 @@ export function middleware(request: NextRequest) {
 // ============================================
 
 export const config = {
-  // Apply middleware to all routes except:
-  // - API routes (they set their own headers)
-  // - Static files (_next/static)
-  // - Image optimization (_next/image)
-  // - Favicon and other public files
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder files
-     */
     '/((?!api|_next/static|_next/image|favicon.ico|.*\\..*|public).*)',
   ],
 }

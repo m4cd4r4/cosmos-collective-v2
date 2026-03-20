@@ -69,7 +69,7 @@ function parseMarkdown(markdown: string): string {
   // Links
   html = html.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" class="text-cosmos-gold hover:underline" target="_blank" rel="noopener noreferrer">$1</a>'
+    '<a href="$2" class="text-cosmos-gold hover:underline" target="_blank" rel="noopener noreferrer">$1<span class="sr-only"> (opens in new tab)</span></a>'
   )
 
   // Unordered lists

@@ -417,7 +417,7 @@ export function SkyMapViewer({
         popupDesc: [
           `<div style="font-size:11px;color:#999;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px">${obs.source} · ${category}${obs.instrument ? ' · ' + obs.instrument : ''}</div>`,
           truncDesc ? `<div style="font-size:12px;color:#ccc;line-height:1.4;margin-bottom:8px">${truncDesc}</div>` : '',
-          `<a href="/explore/${obs.id}" target="_blank" style="color:#d4af37;font-size:12px;text-decoration:none">View full details →</a>`,
+          `<a href="/explore/${obs.id}" target="_blank" rel="noopener noreferrer" style="color:#d4af37;font-size:12px;text-decoration:none">View full details →<span class="sr-only"> (opens in new tab)</span></a>`,
         ].join(''),
         // Extra fields for sidebar card
         id: obs.id,

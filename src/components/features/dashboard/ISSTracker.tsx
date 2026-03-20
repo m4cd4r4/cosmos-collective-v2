@@ -60,6 +60,7 @@ export function ISSTracker({ issPosition, issVelocity, issError }: ISSTrackerPro
                 className="text-xs text-[#d4af37] hover:underline mt-1 inline-block"
               >
                 View on NASA Spot the Station →
+                <span className="sr-only">(opens in new tab)</span>
               </a>
             </div>
           ) : (
@@ -142,6 +143,7 @@ export function ISSTracker({ issPosition, issVelocity, issError }: ISSTrackerPro
               >
                 NASA Spot the Station
                 <ExternalLink className="w-3 h-3" />
+                <span className="sr-only">(opens in new tab)</span>
               </a>
             </div>
           </div>

@@ -5,10 +5,12 @@
 
 import type { Metadata, Viewport } from 'next'
 import dynamic from 'next/dynamic'
+import { headers } from 'next/headers'
 import { Inter, Outfit, JetBrains_Mono } from 'next/font/google'
 import '@/styles/globals.css'
 import { Providers } from './providers'
 import { SkipToContent } from '@/components/accessibility/SkipToContent'
+import { Analytics } from '@vercel/analytics/react'
 import GoogleAnalytics from '@/components/GoogleAnalytics'
 
 // Lazy load Starfield (WebGL animation) to reduce initial bundle
@@ -135,11 +137,14 @@ export const viewport: Viewport = {
 // Root Layout Component
 // ============================================
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const headersList = await headers()
+  const nonce = headersList.get('x-nonce') ?? ''
+
   return (
     <html
       lang="en"
@@ -175,6 +180,7 @@ export default function RootLayout({
 
         {/* JSON-LD Structured Data - Organization Schema */}
         <script
+          nonce={nonce}
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
@@ -243,7 +249,7 @@ export default function RootLayout({
         <Starfield />
 
         {/* Google Analytics */}
-        <GoogleAnalytics />
+        <GoogleAnalytics nonce={nonce} />
 
         {/* Web Vitals Performance Monitoring */}
         <WebVitals />
@@ -258,6 +264,8 @@ export default function RootLayout({
           {/* PWA install prompt */}
           <InstallPrompt />
         </Providers>
+
+        <Analytics />
 
         {/* Announcer for screen readers */}
         <div
