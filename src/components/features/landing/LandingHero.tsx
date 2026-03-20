@@ -53,14 +53,19 @@ export function LandingHero() {
             fetchPriority="high"
           />
         </picture>
-        {/* Desktop: live Three.js iframe */}
-        <iframe
-          src="/solar-system/index.html"
-          title="Interactive Solar System"
-          className="w-full h-full border-0 pointer-events-none hidden md:block"
-          loading="lazy"
-          sandbox="allow-scripts allow-same-origin"
-        />
+        {/* Desktop: vortex animation — eliminates 15MB Three.js texture load on homepage */}
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="w-full h-full object-cover hidden md:block"
+          poster="/images/hero-solar-system.webp"
+          aria-label="Solar System vortex animation"
+        >
+          <source src="/images/hero-vortex.webm" type="video/webm" />
+          <source src="/images/hero-vortex.mp4" type="video/mp4" />
+        </video>
         {/* Hover/tap overlay with CTA */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
           <span className="opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm border border-[rgba(212,175,55,0.3)] rounded-lg px-6 py-3 text-white font-medium flex items-center gap-2">
