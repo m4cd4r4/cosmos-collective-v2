@@ -381,6 +381,7 @@ export default function EventsPage() {
                   className="flex items-center gap-1 text-[#d4af37] hover:text-[#e0c060] transition-colors"
                 >
                   YouTube <ExternalLink className="w-3 h-3" />
+                  <span className="sr-only">(opens in new tab)</span>
                 </a>
               </div>
             </section>
@@ -478,6 +479,7 @@ export default function EventsPage() {
                                   >
                                     {event.references[0].label}
                                     <ExternalLink className="w-2 h-2" />
+                                    <span className="sr-only">(opens in new tab)</span>
                                   </a>
                                 )}
                               </div>
@@ -542,6 +544,7 @@ export default function EventsPage() {
                     <p className="text-[11px] text-[#4a5580]">Tracking unavailable</p>
                     <a href="https://spotthestation.nasa.gov/" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#d4af37] hover:underline">
                       NASA Spot the Station →
+                      <span className="sr-only">(opens in new tab)</span>
                     </a>
                   </div>
                 ) : (
@@ -563,6 +566,7 @@ export default function EventsPage() {
                   <SolarGauge flareLevel={solarData.flareLevel} currentFlux={solarData.currentFlux} />
                   <a href="https://www.swpc.noaa.gov/" target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#d4af37] hover:underline flex items-center gap-1 mt-2">
                     NOAA Space Weather <ExternalLink className="w-2.5 h-2.5" />
+                    <span className="sr-only">(opens in new tab)</span>
                   </a>
                 </div>
               </section>
@@ -617,7 +621,7 @@ export default function EventsPage() {
                   <span className="text-[9px] text-[#d4af37] px-1.5 py-0.5 rounded border border-[rgba(212,175,55,0.2)]">Today</span>
                 </div>
                 {apod.media_type === 'image' ? (
-                  <a href={apod.hdurl || apod.url} target="_blank" rel="noopener noreferrer" className="block">
+                  <a href={apod.hdurl || apod.url} target="_blank" rel="noopener noreferrer" className="block" aria-label={`${apod.title} (opens in new tab)`}>
                     <div className="relative aspect-video">
                       <img src={apod.url} alt={apod.title} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] to-transparent" />
@@ -644,6 +648,7 @@ export default function EventsPage() {
                   )}
                   <a href="https://apod.nasa.gov/apod/astropix.html" target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#d4af37] hover:underline flex items-center gap-0.5 mt-2">
                     NASA APOD <ExternalLink className="w-2.5 h-2.5" />
+                    <span className="sr-only">(opens in new tab)</span>
                   </a>
                 </div>
               </section>

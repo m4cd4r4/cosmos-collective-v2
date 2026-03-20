@@ -44,11 +44,15 @@ export function LandingHero() {
         aria-label="Open Solar System Explorer"
       >
         {/* Mobile: static image to avoid loading 11MB of Three.js textures */}
-        <img
-          src="/images/hero-solar-system.png"
-          alt="Solar System Preview"
-          className="w-full h-full object-cover md:hidden"
-        />
+        <picture className="w-full h-full md:hidden">
+          <source srcSet="/images/hero-solar-system.webp" type="image/webp" />
+          <img
+            src="/images/hero-solar-system.png"
+            alt="Solar System Preview"
+            className="w-full h-full object-cover"
+            fetchPriority="high"
+          />
+        </picture>
         {/* Desktop: live Three.js iframe */}
         <iframe
           src="/solar-system/index.html"

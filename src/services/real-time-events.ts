@@ -203,8 +203,11 @@ export async function getISSPosition(retries = 2): Promise<ApiResponse<{
         },
       }
     } catch (error) {
-      // Log error but continue to retry
-      console.error(`ISS position error (attempt ${attempt + 1}/${retries + 1}):`, error)
+      // Suppress abort/cancel errors (expected on page unload or timeout)
+      const msg = error instanceof Error ? error.message : String(error)
+      if (!msg.includes('cancel') && !msg.includes('abort') && !msg.includes('Cancel')) {
+        console.error(`ISS position error (attempt ${attempt + 1}/${retries + 1}):`, error)
+      }
 
       // If we have more retries, wait before trying again (exponential backoff)
       if (attempt < retries) {

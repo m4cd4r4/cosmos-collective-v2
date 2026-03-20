@@ -13,7 +13,11 @@
 import Script from 'next/script'
 import { useEffect, useState } from 'react'
 
-export default function GoogleAnalytics() {
+interface Props {
+  nonce?: string
+}
+
+export default function GoogleAnalytics({ nonce }: Props) {
   const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? 'G-EFL048RDVK'
   const [shouldLoad, setShouldLoad] = useState(false)
 
@@ -49,8 +53,9 @@ export default function GoogleAnalytics() {
       <Script
         src={`https://www.googletagmanager.com/gtag/js?id=${measurementId}`}
         strategy="afterInteractive"
+        nonce={nonce}
       />
-      <Script id="google-analytics" strategy="afterInteractive">
+      <Script id="google-analytics" strategy="afterInteractive" nonce={nonce}>
         {`
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}

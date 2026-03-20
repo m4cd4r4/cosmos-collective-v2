@@ -135,6 +135,7 @@ export default function TermsPage() {
                     <Github className="w-3 h-3" />
                     View on GitHub
                     <ExternalLink className="w-2.5 h-2.5 opacity-60" />
+                    <span className="sr-only">(opens in new tab)</span>
                   </a>
                 </div>
                 <div className="border-t border-[rgba(212,175,55,0.06)] pt-3">
@@ -171,6 +172,7 @@ export default function TermsPage() {
                   <Github className="w-3.5 h-3.5" />
                   Open an issue
                   <ExternalLink className="w-3 h-3 opacity-60" />
+                  <span className="sr-only">(opens in new tab)</span>
                 </a>
               </div>
             </div>

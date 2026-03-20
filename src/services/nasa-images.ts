@@ -241,7 +241,7 @@ export const CURATED_JWST_NASA_IDS = [
  */
 export const FALLBACK_IMAGES = {
   jwst: {
-    carina: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_star-forming_region_carina_702.jpg',
+    carina: 'https://images-assets.nasa.gov/image/carina_nebula/carina_nebula~large.jpg',
     deepField: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_deep_field_702.jpg',
     pillars: 'https://www.nasa.gov/wp-content/uploads/2023/03/stsci-01gfnp0nhpz8bk6f6vxjq3fdrr_1.png',
     southernRing: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_stellar_702.jpg',

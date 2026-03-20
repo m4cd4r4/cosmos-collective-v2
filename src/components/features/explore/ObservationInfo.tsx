@@ -264,6 +264,7 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
                     {link.label}
                   </span>
                   <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-cosmos-gold" />
+                  <span className="sr-only">(opens in new tab)</span>
                 </a>
               ))}
             </div>

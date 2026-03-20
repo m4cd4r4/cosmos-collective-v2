@@ -164,6 +164,7 @@ export default function PrivacyPage() {
                   <Github className="w-3.5 h-3.5" />
                   Open an issue on GitHub
                   <ExternalLink className="w-3 h-3 opacity-60" />
+                  <span className="sr-only">(opens in new tab)</span>
                 </a>
               </div>
             </div>

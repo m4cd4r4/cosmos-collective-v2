@@ -77,7 +77,7 @@ export const PLANET_HERO_IMAGES = {
     credit: 'NASA/JPL/Voyager',
   },
   carina: {
-    url: 'https://www.nasa.gov/wp-content/uploads/2023/03/main_image_star-forming_region_carina_702.jpg',
+    url: 'https://images-assets.nasa.gov/image/carina_nebula/carina_nebula~large.jpg',
     name: 'Carina Nebula',
     description: 'JWST Cosmic Cliffs in the Carina Nebula',
     credit: 'NASA/ESA/CSA/STScI',

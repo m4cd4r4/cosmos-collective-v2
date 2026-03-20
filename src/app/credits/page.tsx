@@ -51,6 +51,7 @@ function CreditRow({ name, url, description }: { name: string; url: string; desc
         >
           {name}
           <ExternalLink className="w-3 h-3 opacity-60" />
+          <span className="sr-only">(opens in new tab)</span>
         </a>
         <p className="text-[11px] text-[#4a5580] mt-0.5 leading-relaxed">{description}</p>
       </div>
@@ -132,14 +133,14 @@ export default function CreditsPage() {
                 <div>
                   <p className="text-[11px] text-[#6070a0] leading-relaxed">
                     To the scientists, engineers, and teams behind{' '}
-                    <a href="https://webbtelescope.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">JWST</a>,{' '}
-                    <a href="https://hubblesite.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">Hubble</a>, and ground-based observatories worldwide who make these incredible observations possible.
+                    <a href="https://webbtelescope.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">JWST<span className="sr-only"> (opens in new tab)</span></a>,{' '}
+                    <a href="https://hubblesite.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">Hubble<span className="sr-only"> (opens in new tab)</span></a>, and ground-based observatories worldwide who make these incredible observations possible.
                   </p>
                 </div>
                 <div>
                   <p className="text-[11px] text-[#6070a0] leading-relaxed">
                     To the{' '}
-                    <a href="https://opensource.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">open source community</a>{' '}
+                    <a href="https://opensource.org/" target="_blank" rel="noopener noreferrer" className="text-[#d4af37] hover:text-[#e0c060] hover:underline transition-colors">open source community<span className="sr-only"> (opens in new tab)</span></a>{' '}
                     for building and maintaining the tools that make projects like this possible.
                   </p>
                 </div>
@@ -171,6 +172,7 @@ export default function CreditsPage() {
                     >
                       {title}
                       <ExternalLink className="w-3 h-3 opacity-60" />
+                      <span className="sr-only">(opens in new tab)</span>
                     </a>
                     <div className="text-[10px] text-[#4a5580] mt-0.5 leading-relaxed">{body}</div>
                   </div>
@@ -196,6 +198,7 @@ export default function CreditsPage() {
                   <Github className="w-3.5 h-3.5" />
                   View source on GitHub
                   <ExternalLink className="w-3 h-3 opacity-60" />
+                  <span className="sr-only">(opens in new tab)</span>
                 </a>
               </div>
             </div>

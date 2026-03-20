@@ -192,6 +192,7 @@ export default function AccessibilityPage() {
                   <Github className="w-3.5 h-3.5" />
                   Report via GitHub
                   <ExternalLink className="w-3 h-3 opacity-60" />
+                  <span className="sr-only">(opens in new tab)</span>
                 </a>
               </div>
             </div>
