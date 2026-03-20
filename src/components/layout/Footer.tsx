@@ -207,6 +207,40 @@ export function Footer() {
         </div>
       </div>
 
+      {/* Verified quality scores */}
+      <div className="border-t border-white/5 px-4 md:px-6 lg:px-8 py-6">
+        <div className="max-w-7xl mx-auto">
+          <p className="mb-4 text-xs font-medium uppercase tracking-widest text-gray-600 text-center">
+            Independently verified - click to audit live
+          </p>
+          <div className="grid grid-cols-3 gap-3 md:grid-cols-6">
+            {[
+              { score: '100', label: 'Accessibility', sub: 'Lighthouse', href: 'https://pagespeed.web.dev/analysis?url=https://cosmos-collective.com.au&form_factor=mobile&category=accessibility' },
+              { score: '100', label: 'Best Practices', sub: 'Lighthouse', href: 'https://pagespeed.web.dev/analysis?url=https://cosmos-collective.com.au&form_factor=mobile&category=best-practices' },
+              { score: '100', label: 'SEO', sub: 'Lighthouse', href: 'https://pagespeed.web.dev/analysis?url=https://cosmos-collective.com.au&form_factor=mobile&category=seo' },
+              { score: 'A+', label: 'Security', sub: 'Observatory', href: 'https://developer.mozilla.org/en-US/observatory/analyze?host=cosmos-collective.com.au' },
+              { score: 'A+', label: 'SSL/TLS', sub: 'SSL Labs', href: 'https://www.ssllabs.com/ssltest/analyze.html?d=cosmos-collective.com.au' },
+              { score: '0', label: 'Vulnerabilities', sub: 'Browser JS', href: 'https://github.com/m4cd4r4/cosmos-collective-v2' },
+            ].map((item) => (
+              <a
+                key={item.label}
+                href={item.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group text-center py-3 px-2 rounded-lg hover:bg-white/5 transition-colors"
+              >
+                <div className="font-mono text-2xl font-semibold text-cosmos-gold">
+                  {item.score}
+                </div>
+                <div className="mt-0.5 text-xs font-medium text-gray-300">{item.label}</div>
+                <div className="text-xs text-gray-600">{item.sub}</div>
+                <span className="sr-only"> (opens in new tab)</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* Bottom bar */}
       <div className="border-t border-white/5 bg-cosmos-void/50">
         <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-4">
