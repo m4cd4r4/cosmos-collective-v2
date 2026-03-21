@@ -4462,19 +4462,127 @@
             galaxyGroup = new THREE.Group();
             galaxyGroup.position.copy(GALAXY_CENTER);
 
-            // ---- NASA/JPL-Caltech/R. Hurt Milky Way illustration (lo-res initial) ----
-            const imgTex = textureLoader.load('textures/milky_way.jpg');
-            imgTex.minFilter = THREE.LinearFilter;
-            imgTex.magFilter = THREE.LinearFilter;
-            const diskGeo = new THREE.PlaneGeometry(GALAXY_RADIUS * 2.2, GALAXY_RADIUS * 2.2);
-            galaxyDiskMaterial = new THREE.MeshBasicMaterial({
-                map: imgTex, transparent: true, opacity: 0,
-                side: THREE.DoubleSide, depthWrite: false,
-            });
-            galaxyDisk = new THREE.Mesh(diskGeo, galaxyDiskMaterial);
-            galaxyDisk.rotation.x = -Math.PI / 2;
-            galaxyDisk.position.y = -2;
-            galaxyGroup.add(galaxyDisk);
+            // ---- Procedural Milky Way disk texture with spiral arm structure ----
+            (function() {
+                const SZ = 2048;
+                const dc = document.createElement('canvas');
+                dc.width = dc.height = SZ;
+                const dctx = dc.getContext('2d');
+                const cx = SZ / 2, cy = SZ / 2, R = SZ / 2;
+
+                dctx.fillStyle = '#000';
+                dctx.fillRect(0, 0, SZ, SZ);
+
+                // Circular clip for clean disk edge
+                dctx.save();
+                dctx.beginPath();
+                dctx.arc(cx, cy, R * 0.97, 0, Math.PI * 2);
+                dctx.clip();
+
+                // Outer disk background — cool dusty glow
+                const diskBg = dctx.createRadialGradient(cx, cy, 0, cx, cy, R);
+                diskBg.addColorStop(0,    'rgba(180,150,90,0.22)');
+                diskBg.addColorStop(0.18, 'rgba(140,110,60,0.16)');
+                diskBg.addColorStop(0.45, 'rgba(90,70,40,0.10)');
+                diskBg.addColorStop(0.72, 'rgba(50,40,28,0.06)');
+                diskBg.addColorStop(1,    'rgba(0,0,0,0)');
+                dctx.fillStyle = diskBg;
+                dctx.fillRect(0, 0, SZ, SZ);
+
+                // Galactic bulge — bright golden core
+                const bulge = dctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.16);
+                bulge.addColorStop(0,    'rgba(255,248,210,0.98)');
+                bulge.addColorStop(0.12, 'rgba(255,230,160,0.90)');
+                bulge.addColorStop(0.30, 'rgba(240,200,110,0.70)');
+                bulge.addColorStop(0.55, 'rgba(200,155,75,0.45)');
+                bulge.addColorStop(0.80, 'rgba(150,100,45,0.20)');
+                bulge.addColorStop(1,    'rgba(100,60,20,0)');
+                dctx.fillStyle = bulge;
+                dctx.fillRect(0, 0, SZ, SZ);
+
+                // Inner bar (Milky Way has a central bar ~27,000 ly long)
+                dctx.save();
+                dctx.globalAlpha = 0.35;
+                dctx.translate(cx, cy);
+                dctx.rotate(Math.PI * 0.62); // bar orientation
+                const barGrad = dctx.createLinearGradient(-R * 0.15, 0, R * 0.15, 0);
+                barGrad.addColorStop(0,   'rgba(255,240,180,0)');
+                barGrad.addColorStop(0.2, 'rgba(255,235,170,0.5)');
+                barGrad.addColorStop(0.5, 'rgba(255,240,185,0.7)');
+                barGrad.addColorStop(0.8, 'rgba(255,235,170,0.5)');
+                barGrad.addColorStop(1,   'rgba(255,240,180,0)');
+                dctx.fillStyle = barGrad;
+                dctx.fillRect(-R * 0.15, -R * 0.03, R * 0.30, R * 0.06);
+                dctx.restore();
+
+                // 4 logarithmic spiral arms in screen mode
+                dctx.save();
+                dctx.globalCompositeOperation = 'screen';
+                const armDefs = [
+                    { off: 0,               cr: 140, cg: 180, cb: 255, al: 0.22 }, // Perseus (our arm vicinity)
+                    { off: Math.PI / 2,     cr: 160, cg: 200, cb: 255, al: 0.20 }, // Sagittarius
+                    { off: Math.PI,         cr: 130, cg: 170, cb: 255, al: 0.18 }, // Norma-Cygnus
+                    { off: Math.PI * 1.5,   cr: 170, cg: 190, cb: 255, al: 0.16 }, // Scutum-Centaurus
+                ];
+                armDefs.forEach(function(arm) {
+                    const STEPS = 280;
+                    for (let s = 0; s < STEPS - 1; s++) {
+                        const t0 = s / STEPS, t1 = (s + 1) / STEPS;
+                        const th0 = arm.off + t0 * 4.8, th1 = arm.off + t1 * 4.8;
+                        const rr0 = R * (0.08 + Math.pow(t0, 0.62) * 0.86);
+                        const rr1 = R * (0.08 + Math.pow(t1, 0.62) * 0.86);
+                        const x0 = cx + Math.cos(th0) * rr0, y0 = cy + Math.sin(th0) * rr0;
+                        const x1 = cx + Math.cos(th1) * rr1, y1 = cy + Math.sin(th1) * rr1;
+                        const width = R * (0.028 + t0 * 0.13);
+                        const fade = arm.al * (0.6 + 0.4 * (1 - t0 * 0.5));
+                        dctx.beginPath();
+                        dctx.moveTo(x0, y0);
+                        dctx.lineTo(x1, y1);
+                        dctx.lineWidth = width * 2;
+                        dctx.strokeStyle = 'rgba(' + arm.cr + ',' + arm.cg + ',' + arm.cb + ',' + fade.toFixed(3) + ')';
+                        dctx.stroke();
+                    }
+                });
+                dctx.restore();
+
+                // HII region bright knots (ionized gas clouds along arms)
+                dctx.save();
+                dctx.globalCompositeOperation = 'screen';
+                for (let k = 0; k < 120; k++) {
+                    const armOff = (k % 4) * Math.PI / 2;
+                    const t = 0.05 + Math.random() * 0.90;
+                    const theta = armOff + t * 4.8;
+                    const r = R * (0.08 + Math.pow(t, 0.62) * 0.86);
+                    const kx = cx + Math.cos(theta) * r;
+                    const ky = cy + Math.sin(theta) * r;
+                    const kr = R * (0.005 + Math.random() * 0.018) * (0.4 + t * 0.6);
+                    const kg = dctx.createRadialGradient(kx, ky, 0, kx, ky, kr);
+                    const hue = Math.random() < 0.6 ? '180,220,255' : '255,200,130';
+                    kg.addColorStop(0,   'rgba(' + hue + ',0.45)');
+                    kg.addColorStop(0.5, 'rgba(' + hue + ',0.18)');
+                    kg.addColorStop(1,   'rgba(' + hue + ',0)');
+                    dctx.fillStyle = kg;
+                    dctx.beginPath();
+                    dctx.arc(kx, ky, kr, 0, Math.PI * 2);
+                    dctx.fill();
+                }
+                dctx.restore();
+
+                dctx.restore(); // remove circular clip
+
+                const procTex = new THREE.CanvasTexture(dc);
+                procTex.minFilter = THREE.LinearFilter;
+                procTex.magFilter = THREE.LinearFilter;
+                const diskGeo = new THREE.PlaneGeometry(GALAXY_RADIUS * 2.2, GALAXY_RADIUS * 2.2);
+                galaxyDiskMaterial = new THREE.MeshBasicMaterial({
+                    map: procTex, transparent: true, opacity: 0,
+                    side: THREE.DoubleSide, depthWrite: false,
+                });
+                galaxyDisk = new THREE.Mesh(diskGeo, galaxyDiskMaterial);
+                galaxyDisk.rotation.x = -Math.PI / 2;
+                galaxyDisk.position.y = -2;
+                galaxyGroup.add(galaxyDisk);
+            })();
 
             // ---- Light sparkle particles on top for 3D depth ----
             // Circular soft-glow texture so points render as circles, not squares
@@ -4576,30 +4684,64 @@
             edgeMesh.userData.isGalaxyLayer = true;
             galaxyGroup.add(edgeMesh);
 
-            // ---- 4. Star particles — denser field (40k disk + 12k core) ----
-            // Sparse bright sparkle stars scattered across the disk
-            addParticles(40000, (i, pos, col) => {
-                const r = Math.pow(Math.random(), 0.5) * GALAXY_RADIUS * 0.95;
-                const theta = Math.random() * Math.PI * 2;
-                pos[i*3]   = Math.cos(theta) * r;
-                pos[i*3+1] = (Math.random()-0.5) * 6;
-                pos[i*3+2] = Math.sin(theta) * r;
-                const c = new THREE.Color();
-                c.setHSL(0.6 + Math.random()*0.1, 0.2, 0.6 + Math.random()*0.4);
-                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 1.0);
+            // ---- 4. Star particles — logarithmic spiral arms (Milky Way structure) ----
+            // Based on real Milky Way: Perseus, Sagittarius, Norma-Cygnus, Scutum-Centaurus arms
+            const INNER_R = GALAXY_RADIUS * 0.07;
+            const OUTER_R = GALAXY_RADIUS * 0.93;
 
-            // Brighter core sparkles
-            addParticles(12000, (i, pos, col) => {
-                const r = Math.pow(Math.random(), 2.5) * GALAXY_RADIUS * 0.2;
+            // Generate a point on one logarithmic spiral arm
+            // armOff = starting angle; returns [x, y, z] in galaxyGroup local space
+            function spiralPt(armOff) {
+                const t = Math.pow(Math.random(), 0.7); // cluster inward slightly
+                const theta = armOff + t * 4.5;         // ~0.7 full rotations per arm
+                const r = INNER_R + Math.pow(t, 0.6) * (OUTER_R - INNER_R);
+                // perpendicular scatter increases with radius
+                const scatter = (Math.random() - 0.5) * 2 * (GALAXY_RADIUS * 0.08 + r * 0.14);
+                return [
+                    Math.cos(theta) * r - Math.sin(theta) * scatter,
+                    (Math.random() - 0.5) * (4 + t * 5),
+                    Math.sin(theta) * r + Math.cos(theta) * scatter
+                ];
+            }
+
+            // 4 spiral arms — arm stars (blue-white HII regions toward outer, warm inner)
+            addParticles(65000, (i, pos, col) => {
+                const armIdx = i % 4;
+                const armOffset = armIdx * Math.PI / 2;
+                const [px, py, pz] = spiralPt(armOffset);
+                const d = Math.sqrt(px * px + pz * pz);
+                const s = d > GALAXY_RADIUS ? GALAXY_RADIUS / d : 1;
+                pos[i*3] = px * s; pos[i*3+1] = py; pos[i*3+2] = pz * s;
+                const warmth = Math.max(0, 1 - d / GALAXY_RADIUS);
+                const c = new THREE.Color();
+                c.setHSL(0.58 + warmth * 0.10 + (armIdx % 2) * 0.06 + Math.random() * 0.04,
+                         0.15 + warmth * 0.12, 0.60 + Math.random() * 0.35);
+                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
+            }, 0.85);
+
+            // Inter-arm diffuse population (older red/orange disk stars)
+            addParticles(15000, (i, pos, col) => {
+                const r = Math.pow(Math.random(), 0.55) * GALAXY_RADIUS * 0.88;
                 const theta = Math.random() * Math.PI * 2;
                 pos[i*3]   = Math.cos(theta) * r;
-                pos[i*3+1] = (Math.random()-0.5) * 3;
+                pos[i*3+1] = (Math.random() - 0.5) * 10;
                 pos[i*3+2] = Math.sin(theta) * r;
                 const c = new THREE.Color();
-                c.setHSL(0.12, 0.5, 0.5 + Math.random()*0.4);
+                c.setHSL(0.60 + Math.random() * 0.08, 0.08, 0.28 + Math.random() * 0.20);
                 col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 1.8);
+            }, 0.5);
+
+            // Galactic core / bulge — warm golden/orange packed stars
+            addParticles(20000, (i, pos, col) => {
+                const r = Math.pow(Math.random(), 2.2) * GALAXY_RADIUS * 0.22;
+                const theta = Math.random() * Math.PI * 2;
+                pos[i*3]   = Math.cos(theta) * r;
+                pos[i*3+1] = (Math.random() - 0.5) * 4;
+                pos[i*3+2] = Math.sin(theta) * r;
+                const c = new THREE.Color();
+                c.setHSL(0.10 + Math.random() * 0.06, 0.5 + Math.random() * 0.2, 0.6 + Math.random() * 0.35);
+                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
+            }, 2.2);
 
             // ---- Spiral arm labels (3D sprites, visible at zoom >= 1.5) ----
             const armData = [
@@ -5023,18 +5165,8 @@
             galaxyGroup.visible = false;
         }
 
-        // Load hi-res texture when user zooms in past threshold
-        function loadGalaxyHiRes() {
-            if (galaxyHiResLoaded || !galaxyDiskMaterial) return;
-            galaxyHiResLoaded = true;
-            const hiTex = textureLoader.load('textures/milky_way_huge.jpg', () => {
-                galaxyDiskMaterial.map = hiTex;
-                galaxyDiskMaterial.needsUpdate = true;
-                console.log('Galaxy hi-res texture loaded (1600x1600)');
-            });
-            hiTex.minFilter = THREE.LinearFilter;
-            hiTex.magFilter = THREE.LinearFilter;
-        }
+        // Procedural texture is already high quality — no JPEG swap needed
+        function loadGalaxyHiRes() { galaxyHiResLoaded = true; }
 
         function setGalaxyOpacity(opacity) {
             if (!galaxyGroup) return;
