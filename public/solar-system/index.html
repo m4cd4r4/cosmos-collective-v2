@@ -3460,7 +3460,12 @@
             if (galaxyViewActive && galaxyTransition?.phase === 'idle-galaxy') {
                 const zoomDelta = e.deltaY * -0.002;
                 galaxyZoom = Math.max(GALAXY_ZOOM_MIN, Math.min(GALAXY_ZOOM_MAX, galaxyZoom + zoomDelta * galaxyZoom));
-                // Trigger hi-res load at zoom > 1.5
+                // Pan lookAt toward Sun's position as user zooms in (not toward galactic center)
+                const _spx = Math.cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R;
+                const _spz = Math.sin(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R;
+                const _panT = Math.max(0, Math.min(1, (galaxyZoom - 1.0) / 2.5));
+                galaxyLookOffset.x = _spx * _panT;
+                galaxyLookOffset.z = _spz * _panT;
                 if (galaxyZoom > 1.5) loadGalaxyHiRes();
                 updateGalaxyZoomUI();
                 return;
@@ -3560,6 +3565,11 @@
                     if (galaxyViewActive && galaxyTransition?.phase === 'idle-galaxy') {
                         const zoomDelta = (1 - scale) * 0.5;
                         galaxyZoom = Math.max(GALAXY_ZOOM_MIN, Math.min(GALAXY_ZOOM_MAX, galaxyZoom + zoomDelta * galaxyZoom));
+                        const _spx2 = Math.cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R;
+                        const _spz2 = Math.sin(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R;
+                        const _panT2 = Math.max(0, Math.min(1, (galaxyZoom - 1.0) / 2.5));
+                        galaxyLookOffset.x = _spx2 * _panT2;
+                        galaxyLookOffset.z = _spz2 * _panT2;
                         if (galaxyZoom > 1.5) loadGalaxyHiRes();
                         updateGalaxyZoomUI();
                     } else {
@@ -4965,7 +4975,7 @@
                 gaiaLine.userData.isGaiaRing = true;
                 galaxyGroup.add(gaiaLine);
 
-                const gaiaLbl = makeGalLabel('Gaia Catalogue Reach', '#88ccff', '1.7 billion stars mapped');
+                const gaiaLbl = makeGalLabel('Gaia Space Telescope', '#88ccff', '1.7 billion stars — positions, distances, velocities');
                 gaiaLbl.position.set(_sunLX + GAIA_R * 0.72, 18, _sunLZ - GAIA_R * 0.72);
                 gaiaLbl.scale.set(115, 14, 1);
                 gaiaLbl.userData.isGaiaRing = true;
@@ -5042,9 +5052,9 @@
                         child.material.opacity = featOp;
                         return;
                     }
-                    // GHZ: visible at overview, strong enough to read clearly
+                    // GHZ: visible at overview, subtle enough not to drown the galaxy texture
                     if (child.userData?.isGHZ) {
-                        child.material.opacity = opacity * 0.55;
+                        child.material.opacity = opacity * 0.32;
                         return;
                     }
                     // Globular clusters: visible from zoom >= 0.7
@@ -5143,9 +5153,14 @@
                 // ZOOM OUT to galaxy
                 galaxyViewActive = true;
                 galaxyGroup.visible = true;
-                // Hide planet meshes and rings so they don't bleed through
+                // Hide ALL solar system objects so nothing bleeds into galaxy view
                 planets.forEach(p => { if (p.mesh) p.mesh.visible = false; });
                 if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = false;
+                if (sun) sun.visible = false;
+                glowLayers.forEach(g => { if (g) g.visible = false; });
+                if (asteroidBelt) asteroidBelt.visible = false;
+                if (referenceGrid) referenceGrid.visible = false;
+                trailLines.forEach(l => { l.visible = false; });
                 document.querySelectorAll('.planet-label').forEach(l => l.style.display = 'none');
                 // Hide dive HUD in case user entered galaxy mid-dive
                 document.getElementById('dive-hud').classList.remove('visible');
@@ -5307,9 +5322,14 @@
                     // Restore solar system fully
                     galaxyViewActive = false;
                     galaxyGroup.visible = false;
-                    // Restore planet meshes and rings
+                    // Restore ALL solar system objects
                     planets.forEach(p => { if (p.mesh) p.mesh.visible = true; });
                     if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = true;
+                    if (sun) sun.visible = true;
+                    glowLayers.forEach(g => { if (g) g.visible = true; });
+                    if (asteroidBelt) asteroidBelt.visible = true;
+                    if (referenceGrid) referenceGrid.visible = showGrid;
+                    trailLines.forEach(l => { l.visible = true; });
                     setSolarSystemOpacity(1);
                     camera.fov = 60;
                     camera.updateProjectionMatrix();
