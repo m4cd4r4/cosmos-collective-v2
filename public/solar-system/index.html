@@ -1667,7 +1667,7 @@
         console.log('[SolarSystem] WebGL renderer created, canvas appended. GL context:', renderer.getContext() ? 'OK' : 'MISSING');
 
         // Lighting
-        const ambientLight = new THREE.AmbientLight(0x333344, 0.4);
+        const ambientLight = new THREE.AmbientLight(0x111122, 0.15);
         scene.add(ambientLight);
 
         const diveFillLight = new THREE.HemisphereLight(0x223366, 0x110022, 0);
@@ -2259,9 +2259,9 @@
             const material = new THREE.MeshStandardMaterial({
                 map: proceduralTex,
                 emissive: data.emissive,
-                emissiveIntensity: 0.1,
-                metalness: 0.05,
-                roughness: 0.8
+                emissiveIntensity: 0.0,
+                metalness: 0.0,
+                roughness: 0.9
             });
 
             // Load real texture
@@ -2429,7 +2429,7 @@
             asteroidPositions[i3+2] = 0;
         }
         asteroidGeo.setAttribute('position', new THREE.BufferAttribute(asteroidPositions, 3));
-        const asteroidMat = new THREE.PointsMaterial({ color: 0x998877, size: 0.25, transparent: true, opacity: 0.5, sizeAttenuation: true, depthWrite: false });
+        const asteroidMat = new THREE.PointsMaterial({ color: 0xbbaa99, size: 0.35, transparent: true, opacity: 0.6, sizeAttenuation: true, depthWrite: false, map: roundPointTex, alphaTest: 0.01, blending: THREE.AdditiveBlending });
         const asteroidBelt = new THREE.Points(asteroidGeo, asteroidMat);
         scene.add(asteroidBelt);
 
@@ -3020,6 +3020,8 @@
         // =====================================================================
         let lastTime = performance.now();
         let frameCount = 0;
+        let pausedAt = 0;       // performance.now() when pause started
+        let pausedOffset = 0;   // total ms spent paused (for animation-time continuity)
 
         function animate(now) {
             requestAnimationFrame(animate);
@@ -3400,7 +3402,9 @@
 
         function updateCameraPosition() {
             const tx = cameraTarget.x, ty = cameraTarget.y, tz = cameraTarget.z;
-            const t = performance.now() * 0.001; // seconds, for continuous animation
+            // Use paused-aware time so camera modes freeze when simulation is paused
+            const rawMs = isPaused ? pausedAt : performance.now();
+            const t = (rawMs - pausedOffset) * 0.001;
 
             if (cameraMode === 'cinematic') {
                 // Lemniscate (figure-of-eight) path with slow elevation breathing.
@@ -3522,6 +3526,11 @@
         });
         document.getElementById('toggle-pause').addEventListener('click', (e) => {
             isPaused = !isPaused;
+            if (isPaused) {
+                pausedAt = performance.now();
+            } else {
+                pausedOffset += performance.now() - pausedAt;
+            }
             e.target.textContent = isPaused ? 'Resume' : 'Pause';
         });
         document.getElementById('reset-view').addEventListener('click', () => {
@@ -3579,6 +3588,7 @@
             // Unpause if paused
             if (isPaused) {
                 isPaused = false;
+                pausedOffset += performance.now() - pausedAt;
                 document.getElementById('toggle-pause').textContent = 'Pause';
             }
 
@@ -4005,6 +4015,7 @@
                 btn.textContent = 'Close Scrubber';
                 btn.style.background = 'linear-gradient(135deg, #d4af37 0%, #b8860b 100%)';
                 isPaused = true;
+                pausedAt = performance.now();
                 document.getElementById('toggle-pause').textContent = 'Resume';
                 document.getElementById('scrubber-slider').value = Math.round(simulationDays);
                 updateScrubberDisplay();
@@ -5474,6 +5485,7 @@
                 // Ensure running
                 if (isPaused) {
                     isPaused = false;
+                    pausedOffset += performance.now() - pausedAt;
                     document.getElementById('toggle-pause').textContent = 'Pause';
                 }
 

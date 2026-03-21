@@ -44,31 +44,16 @@ export function LandingHero() {
         className="relative z-10 rounded-2xl overflow-hidden border border-white/10 group cursor-pointer shadow-[0_0_60px_rgba(212,175,55,0.08)] w-[90vw] h-[50vh] md:w-[75vw] md:h-[62vh]"
         aria-label="Open Solar System Explorer"
       >
-        {/* Mobile: preloaded WebP via next/image priority — avoids 15MB iframe on mobile */}
-        <div className="relative w-full h-full md:hidden">
-          <Image
-            src="/images/hero-solar-system.webp"
-            alt="Solar System Preview"
-            fill
-            priority
-            unoptimized
-            className="object-cover"
-            sizes="90vw"
-          />
-        </div>
-        {/* Desktop: vortex animation — eliminates 15MB Three.js texture load on homepage */}
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover hidden md:block"
-          poster="/images/hero-solar-system.webp"
-          aria-label="Solar System vortex animation"
-        >
-          <source src="/images/hero-vortex.webm" type="video/webm" />
-          <source src="/images/hero-vortex.mp4" type="video/mp4" />
-        </video>
+        {/* Hero: Earth close-up with Moon — screenshot from the live solar system app */}
+        <Image
+          src="/images/hero-earth-close.webp"
+          alt="Earth and Moon as seen from the Solar System Explorer"
+          fill
+          priority
+          unoptimized
+          className="object-cover"
+          sizes="(max-width: 768px) 90vw, 75vw"
+        />
         {/* Hover/tap overlay with CTA */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
           <span className="opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm border border-[rgba(212,175,55,0.3)] rounded-lg px-6 py-3 text-white font-medium flex items-center gap-2">
