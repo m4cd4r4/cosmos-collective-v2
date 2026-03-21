@@ -5160,6 +5160,7 @@
                 glowLayers.forEach(g => { if (g) g.visible = false; });
                 if (asteroidBelt) asteroidBelt.visible = false;
                 if (referenceGrid) referenceGrid.visible = false;
+                orbitRingLines.forEach(l => { l.visible = false; });
                 trailLines.forEach(l => { l.visible = false; });
                 document.querySelectorAll('.planet-label').forEach(l => l.style.display = 'none');
                 // Hide dive HUD in case user entered galaxy mid-dive
@@ -5329,6 +5330,7 @@
                     glowLayers.forEach(g => { if (g) g.visible = true; });
                     if (asteroidBelt) asteroidBelt.visible = true;
                     if (referenceGrid) referenceGrid.visible = showGrid;
+                    orbitRingLines.forEach(l => { l.visible = showOrbitRings; });
                     trailLines.forEach(l => { l.visible = true; });
                     setSolarSystemOpacity(1);
                     camera.fov = 60;
