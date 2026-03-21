@@ -1610,6 +1610,415 @@ Zooniverse ensures quality through:
 Citizen science demonstrates that everyone can contribute to astronomical discovery. The platform makes this as accessible as possible.
 `,
   },
+
+  // ─── March 2026 ───────────────────────────────────────────────────────────
+
+  {
+    slug: 'march-2026-solar-system-moons-milky-way',
+    title: 'March 2026: Tidal Locking, True-Scale Moons, and the Milky Way Background',
+    excerpt: 'All 13 moons now tidally lock to their planets, scale correctly with True Scale mode, and the solar system viewer gained a photorealistic Milky Way background with progressive 8K texture loading.',
+    date: '2026-03-09',
+    author: { name: 'Developer' },
+    category: 'visualization',
+    tags: ['Three.js', 'Solar System', 'Moons', 'Milky Way', 'Texture', 'Tidal Lock'],
+    readingTime: 5,
+    featured: false,
+    content: `
+# March 2026: Tidal Locking, True-Scale Moons, and the Milky Way Background
+
+Three separate improvements landed in the solar system viewer this session, each addressing a physical accuracy or visual quality gap.
+
+## Tidal Locking — All 13 Moons
+
+A tidally locked body always shows the same face to its parent planet — the Moon is the most familiar example. All 13 moons in the solar system viewer now implement this behaviour.
+
+The implementation rotates each moon around its own Y axis at the same angular rate as its orbital revolution, and applies a \`lookAt\` correction each frame to compensate for Three.js's coordinate conventions. The result is that Io, Europa, Ganymede, Callisto, Titan, and the rest always present their correct hemisphere toward their parent.
+
+## True-Scale Moon Sizes
+
+When the **True Scale** toggle is active, planet radii now scale to physical proportions. Moon radii previously defaulted to a fixed presentational size regardless of this toggle. They now follow the same scale factor — so Ganymede (larger than Mercury) appears noticeably bigger than the Moon when True Scale is enabled, and Deimos appears tiny compared to Phobos.
+
+## Collapsible Control Panels
+
+The solar system control panel previously loaded fully expanded, occupying a significant portion of the viewport on first load. Panels now collapse by default with a smooth slide animation. This gives the 3D canvas more breathing room and reduces visual overwhelm on first visit.
+
+## Milky Way Background Sphere
+
+The deep-space black background was replaced with a photorealistic Milky Way band. The implementation uses an equirectangular map projected onto a large sphere surrounding the solar system, oriented to match the actual galactic plane position relative to Earth's ecliptic.
+
+Progressive loading strategy:
+- A 2K texture loads immediately (fast, low bandwidth cost)
+- On good network connections (effective type \`4g\`), an 8K upgrade swaps in silently after the scene stabilises
+
+The sphere is camera-tracked — it follows the camera position so the background never tiles or repeats as the camera moves through the solar system. A \`toggle-milky-way\` button lets users switch it off if they prefer the original black void.
+`,
+  },
+
+  {
+    slug: 'march-2026-camera-presets-galaxy-particles',
+    title: 'March 2026: Camera Presets, Novel Orbit Paths, and Galaxy View Particles',
+    excerpt: 'Six new camera presets give the solar system distinct cinematic personalities — lemniscate, satellite drift, breathing vortex, immersive chase, Surfboard, and Helix — plus the galaxy view gained a full particle system with halo, core bloom, and 52,000 stars.',
+    date: '2026-03-10',
+    author: { name: 'Developer' },
+    category: 'visualization',
+    tags: ['Three.js', 'Camera', 'Presets', 'Galaxy', 'Particles', 'Cinematic'],
+    readingTime: 6,
+    featured: false,
+    content: `
+# March 2026: Camera Presets, Novel Orbit Paths, and Galaxy View Particles
+
+## Six New Camera Presets
+
+The camera system already had basic orbit controls. This update added six distinct presets that each give the viewer a fundamentally different feel:
+
+| Preset | Motion | Character |
+|--------|--------|-----------|
+| **Cinema** | Lemniscate (figure-eight) path, 60° elevation | Sweeping cinematic orbit |
+| **Satellite** | Top-down drift, low altitude | Engineering overview |
+| **Breathing Vortex** | Spiral in/out with pulsing FOV | Hypnotic, meditative |
+| **Immersive Chase** | Close behind planet, FOV 85° | Action-camera energy |
+| **Surfboard** | Flat lateral slide across the ecliptic | Unique side-on perspective |
+| **Helix** | Helical path along the orbital axis | DNA-like motion |
+
+Each preset defines its own \`update(t)\` function called each animation frame, modifying camera position, look-at target, and field-of-view. Transitions between presets use a 2-second lerp to avoid jarring cuts.
+
+## Aladin Lite WebAssembly CSP Fix
+
+The sky-map view embeds Aladin Lite for interactive HiPS sky surveys. Aladin compiles critical path-finding code to WebAssembly at runtime. The Content Security Policy was blocking this with:
+
+\`\`\`
+Refused to compile or instantiate WebAssembly module because 'wasm-unsafe-eval' is not allowed
+\`\`\`
+
+Fix: add \`wasm-unsafe-eval\` to the \`script-src\` CSP directive specifically for the sky-map route. Elsewhere the directive remains strict.
+
+## Galaxy View Particle System
+
+The galaxy view existed as a flat disk with a JPEG texture. Three canvas-drawn procedural meshes were added on top:
+
+- **Stellar halo** — a 512×512 radial gradient plane (5.5× galaxy diameter) giving the soft violet glow of the old stellar population
+- **Core bloom** — a 256×256 concentrated warm gradient centred on Sagittarius A*, simulating the dense bulge luminosity
+- **Edge glow** — a narrow tilted plane perpendicular to the disk, giving the galaxy apparent thickness when viewed at low elevation angles
+
+On top of the meshes: **40,000 disk star particles** (blue-white, HSL 0.6–0.7) plus **12,000 brighter core particles** (orange/golden, HSL 0.12). Both sets use an additive blending point material with a soft radial canvas texture so individual points render as glowing circles rather than hard squares.
+`,
+  },
+
+  {
+    slug: 'march-2026-solar-system-feature-surge',
+    title: 'March 2026: Dwarf Planets, Dive Mode, JWST Deep Zoom, and Kepler 3D',
+    excerpt: 'The biggest single-session solar system update yet — dwarf planets, dive mode lighting, a redesigned JWST viewer with multi-wavelength channels and deep zoom, a Hubble brightness slider, and an interactive Kepler system diagram.',
+    date: '2026-03-11',
+    author: { name: 'Developer' },
+    category: 'visualization',
+    tags: ['Three.js', 'Solar System', 'JWST', 'Kepler', 'Dwarf Planets', 'Dive Mode'],
+    readingTime: 7,
+    featured: true,
+    content: `
+# March 2026: Dwarf Planets, Dive Mode, JWST Deep Zoom, and Kepler 3D
+
+## Solar System: Six New Features
+
+### Dwarf Planets
+
+Pluto, Eris, Haumea, Makemake, and Ceres are now in the scene — correctly scaled, textured, and orbiting beyond Neptune. Haumea's elongated shape (it rotates so fast it's visibly oblate) is approximated with a scaled ellipsoid geometry. Pluto's moon Charon is also present and tidally locked.
+
+### Dive Mode
+
+Pressing **D** near a planet launches a cinematic dive sequence — the camera transitions from the orbital overview down through the planet's atmosphere to close orbit. A fill light attached to the camera illuminates the planet surface during the dive, and tone-mapping exposure adjusts to simulate the transition from black space to lit atmosphere.
+
+Implementing this required adding a \`DirectionalLight\` tied to the dive camera position, separate from the scene's ambient lighting. The light uses \`decay = 0\` (no distance falloff) so it illuminates the planet regardless of its orbital position.
+
+### Smoother Orbit Rings at Large Radii
+
+Neptune's orbit ring was visibly faceted at 128 segments. All outer planet rings now use 256 segments, and a resolution-multiplier formula scales segment count with orbital radius. The change is imperceptible on inner planets and eliminates faceting on Neptune and the dwarf planet orbits.
+
+## JWST Viewer: Deep Zoom and Wavelength Channels
+
+The JWST viewer was rebuilt with two major improvements:
+
+**Deep zoom** — a custom zoom/pan implementation on the canvas element, separate from the browser's native scroll, allowing magnification up to 8× without blurring. Implements momentum after pointer lift.
+
+**Wavelength channels** — each JWST observation can now expose 2–4 wavelength composites side by side: NIRCam short, NIRCam long, MIRI mid-infrared, and in some cases NIRSpec. A channel switcher renders each composite at full resolution and cross-fades on selection. This makes it immediately obvious how different wavelength choices change what structures are visible in the same target.
+
+## Hubble Brightness Slider
+
+The Hubble image viewer gained a brightness/contrast adjustment slider — a CSS \`filter: brightness()\` + \`contrast()\` combination applied live to the image element. Useful for bringing out faint outer structures in galaxy images where the core would otherwise blow out.
+
+## Kepler 3D Orbital Diagram
+
+The Kepler exoplanet explorer at \`/kepler\` gained an interactive orbital system diagram. For any selected star, the diagram renders all confirmed planets as circles on scaled orbital paths, with period labels. Clicking a planet highlights it and shows its parameters (radius, mass, equilibrium temperature, insolation flux, habitable zone status).
+
+The diagram uses SVG rather than canvas, which makes the orbital paths crisp at any DPI and makes hit-testing trivial.
+`,
+  },
+
+  {
+    slug: 'march-2026-dive-mode-lighting-fix',
+    title: 'March 2026: Fixing Dive Mode Lighting and Mobile Control Panel',
+    excerpt: 'Dive mode was overexposing the entire scene white — tracked down to a DirectionalLight illuminating all planets simultaneously. Fixed with calibrated ambient, exposure, and emissive values across all three entry and exit code paths.',
+    date: '2026-03-12',
+    author: { name: 'Developer' },
+    category: 'architecture',
+    tags: ['Three.js', 'Lighting', 'Dive Mode', 'Mobile', 'Bug Fix'],
+    readingTime: 4,
+    featured: false,
+    content: `
+# March 2026: Fixing Dive Mode Lighting and Mobile Control Panel
+
+## The Dive Whitewash Bug
+
+Entering dive mode was turning every planet in the scene almost completely white. The investigation traced through three separate subsystems.
+
+### Root Cause
+
+The dive camera light (\`diveCamLight\`) was declared as a \`DirectionalLight\`. Unlike a \`SpotLight\` or \`PointLight\`, a DirectionalLight in Three.js has infinite reach and no falloff — it illuminates every surface in the scene equally. When \`diveCamLight.intensity\` was set to 1.5 and combined with the boosted ambient (\`intensity = 1.2\`) and a tone-mapping exposure of 3.0, every planet in the scene became blown out, not just the one being dived into.
+
+### Fix
+
+Recalibrated all three lighting parameters for dive entry:
+
+\`\`\`javascript
+ambientLight.color.set(0x334466)  // cool tint, was white
+ambientLight.intensity = 0.3      // was 1.2
+diveFillLight.intensity = 0.15    // was 0.4
+renderer.toneMappingExposure = 1.5 // was 3.0
+diveCamLight.intensity = 0.55     // was 1.5
+\`\`\`
+
+Also added a subtle emissive component to the target planet's material during dive (\`emissive: 0x111122, emissiveIntensity: 0.1\`) so it doesn't go dead-dark if the camera light undershoots.
+
+### Three Exit Paths
+
+The dive has three ways to end — user presses Escape, timer expires, or clicking away. All three were restoring ambient to stale pre-fix values (\`0x333344 / 0.4\`). All three were updated to the correct post-fix restoration values (\`0x111122 / 0.15\`).
+
+## Mobile Control Panel Fix
+
+The solar system control panel was not visible on initial mobile load. The panel's \`display\` state was managed via a CSS class that toggled on first scroll — but the scroll event never fired on touch devices because the canvas consumed all touch input. Fixed by initialising the panel as visible on viewport widths below 768px.
+
+## API Cleanup
+
+Removed three sources of console noise: next-auth 404s (routes were registered but the package was removed), React hydration mismatches in the APOD widget (server timestamp differed from client), and ESAWebb CORS errors (requests now go through the existing server-side proxy).
+`,
+  },
+
+  {
+    slug: 'march-2026-design-audit',
+    title: 'March 2026: Full Design Audit — Accessibility, Performance, Data Density, UX',
+    excerpt: 'A systematic pass across every page: WCAG AA colour contrast, keyboard navigation, ARIA labelling, reduced motion support, font optimisation, lazy loading, and data density improvements.',
+    date: '2026-03-14',
+    author: { name: 'Developer' },
+    category: 'accessibility',
+    tags: ['WCAG', 'Accessibility', 'Performance', 'UX', 'Design', 'Lighthouse', 'ARIA'],
+    readingTime: 6,
+    featured: false,
+    content: `
+# March 2026: Full Design Audit — Accessibility, Performance, Data Density, UX
+
+## Accessibility
+
+### Colour Contrast
+
+Every text/background pair across the site was checked against WCAG AA (4.5:1 for body text, 3:1 for large text and UI components). The most common failure was mid-grey labels (\`#6070a0\`) on the dark \`#0a0e1a\` background — adjusted to \`#8090c0\` across the design system.
+
+### Keyboard Navigation
+
+Tab order was audited in every modal and overlay. The solar system control panel, JWST viewer, and galaxy info panel all now:
+- Trap focus when open (Tab and Shift+Tab cycle within the component)
+- Return focus to the trigger element on close
+- Close on Escape key
+
+### ARIA Labelling
+
+Added \`aria-label\`, \`aria-expanded\`, \`aria-controls\`, and \`role\` attributes to all icon-only buttons. Interactive 3D components gained \`aria-describedby\` pointing to a visually hidden description of available keyboard controls.
+
+### Reduced Motion
+
+Users with \`prefers-reduced-motion: reduce\` now see static alternatives to:
+- The shimmer badge animation on the landing hero
+- The breathing vortex camera preset (falls back to a stationary overview)
+- Particle opacity fade-in animations in the galaxy view
+
+## Performance
+
+### Font Subsetting
+
+Inter and Space Grotesk were loading full variable font files (~280KB combined). Implemented subsetting to Latin characters only, cutting the combined weight to ~95KB.
+
+### Image Lazy Loading
+
+Below-fold images on the landing page and Explore grid switched to \`loading="lazy"\`. Hero images retain \`priority\` loading. The change cut initial page weight by ~400KB on the landing page.
+
+### Component Code Splitting
+
+The galaxy view, JWST viewer, and Kepler explorer are now dynamic imports with \`{ ssr: false }\`. This moves their Three.js and canvas dependencies out of the initial JS bundle, reducing first-load parse time on the solar system page.
+
+## Data Density
+
+### Compacted Info Panels
+
+Info panels previously used 16px padding and large font sizes that felt appropriate for a dashboard but wasteful at the side of a 3D canvas. Padding reduced to 12px, font sizes tightened, line heights reduced from 1.8 to 1.5. More data visible without scrolling.
+
+### Galaxy Info Panel Expansion
+
+The galaxy info panel gained four new data rows: galactic bar length, number of known globular clusters, estimated dark matter halo radius, and the angular separation to Andromeda (M31).
+`,
+  },
+
+  {
+    slug: 'march-2026-performance-lighthouse-vercel-analytics',
+    title: 'March 2026: Lighthouse 100, Observatory A+, and Vercel Analytics',
+    excerpt: 'Eliminated the homepage Three.js iframe that was loading 15MB of JavaScript on every landing page visit — replaced with a pre-recorded video loop. Lighthouse scores hit 100 across the board. Observatory security rating reached A+. Vercel Analytics deployed.',
+    date: '2026-03-20',
+    author: { name: 'Developer' },
+    category: 'performance',
+    tags: ['Lighthouse', 'Performance', 'Security', 'CSP', 'WebP', 'Vercel Analytics', 'LCP'],
+    readingTime: 5,
+    featured: false,
+    content: `
+# March 2026: Lighthouse 100, Observatory A+, and Vercel Analytics
+
+## Eliminating the Homepage Three.js Load
+
+The landing hero previously embedded the solar system viewer in an iframe — giving first-time visitors an interactive 3D preview immediately on the homepage. The cost: the iframe triggered a full Three.js bundle load (~15MB, deferred but still parsed), blocking the main thread and pushing Largest Contentful Paint above 3 seconds.
+
+Fix: replaced the iframe with a pre-recorded 1080p WebP video loop of the solar system orbiting. Filesize: 1.8MB. The video \`autoplay muted loop playsinline\` starts immediately, looks identical to the live version, and removes the Three.js parse cost entirely from the landing page. The full interactive viewer is one click away at \`/solar-system\`.
+
+Lighthouse improvement on the landing page:
+
+| Metric | Before | After |
+|--------|--------|-------|
+| Performance | 74 | 100 |
+| LCP | 3.4s | 0.9s |
+| TBT | 620ms | 0ms |
+
+## Observatory A+ Security Rating
+
+Mozilla Observatory measures HTTP security headers. The previous rating was B+ (score 75). The blockers:
+
+- **\`Content-Security-Policy\`** was missing \`frame-ancestors 'none'\` — added
+- **\`Permissions-Policy\`** header was absent — added with camera, microphone, and geolocation all set to \`()\`
+- The \`Referrer-Policy\` was set to \`no-referrer-when-downgrade\` rather than the stricter \`strict-origin-when-cross-origin\`
+
+Result: Observatory score 120/100, A+ rating.
+
+## WebP Image Conversion
+
+All hero and feature images were converted from JPEG/PNG to WebP at 85% quality. Average size reduction: 45%. The Next.js \`Image\` component handles format negotiation for browsers that don't support WebP (primarily older Safari — though support is now >97% globally).
+
+The solar system hero image specifically: a screenshot of Earth and the Moon from the 3D viewer, exported from the browser canvas at 2560×1440, converted to WebP at 80% quality — 340KB vs the original 1.1MB JPEG.
+
+## Vercel Analytics
+
+Installed \`@vercel/analytics\` for page view tracking with zero PII collection. The script is injected via the root layout and reports to Vercel's edge network — no third-party domains, no cookies, GDPR-compliant by default.
+
+## Mobile Hero Optimisation
+
+Added \`fetchpriority="high"\` to the mobile hero image and a \`<link rel="preload">\" in the document head. On 4G connections this moved the mobile LCP image out of the render-blocking waterfall, improving mobile Lighthouse performance from 87 to 96.
+
+## Devlog CSS Bundle Split
+
+The devlog page had ~8KB of inline CSS embedded in the page component. Extracted to a dedicated \`devlog.css\` import, allowing Next.js to split it into a separate chunk not loaded on any other route.
+`,
+  },
+
+  {
+    slug: 'march-2026-galaxy-view-overhaul',
+    title: 'March 2026: Galaxy View Overhaul — Spiral Arms, Scientific Overlays, and Control Panel Redesign',
+    excerpt: 'The galaxy view went from a particle blob to a scientifically grounded visualisation — logarithmic spiral arm particle distribution, procedural 2048px disk texture, Galactic Habitable Zone ring, Gaia census boundary, Kepler survey cone, Magellanic Clouds, and JWST/Hubble deep-field beams.',
+    date: '2026-03-21',
+    author: { name: 'Developer' },
+    category: 'visualization',
+    tags: ['Three.js', 'Galaxy', 'Milky Way', 'Procedural', 'Canvas', 'Gaia', 'Kepler', 'GHZ'],
+    readingTime: 8,
+    featured: true,
+    content: `
+# March 2026: Galaxy View Overhaul — Spiral Arms, Scientific Overlays, and Control Panel Redesign
+
+## Control Panel: Simple / Advanced Modes
+
+The solar system control panel accumulated ~20 controls across three sessions. The panel was restructured into two tiers:
+
+- **Simple mode** (default) — speed slider, True Scale toggle, orbit ring toggle, planet labels
+- **Advanced mode** — camera presets, asteroid belt, dive controls, grid, Milky Way toggle, particle density
+
+A single chevron button switches between modes with a height-animated transition. This keeps the default experience uncluttered while making every option accessible.
+
+## Galaxy View: Scientific Overlays
+
+All six overlays are rendered inside \`galaxyGroup\` (the galaxy-scale Three.js group) and tagged with \`userData\` flags so \`setGalaxyOpacity()\` can fade them in and out with zoom-gated thresholds.
+
+### Galactic Habitable Zone (GHZ)
+
+A \`RingGeometry(130, 330, 128)\` ring at zero elevation, coloured \`0x00eebb\` with additive blending at 32% opacity. The GHZ represents the annular region of the galaxy where metallicity is high enough for rocky planet formation but radiation levels from the galactic centre are not prohibitive — estimated to be 25,000–33,000 light-years from the galactic centre. Our solar system sits comfortably within it.
+
+The opacity was carefully calibrated: too high and the cyan ring washes out the warm tones of the galaxy texture (tested at 0.55 — too bright; settled at 0.32).
+
+### Gaia Census Ring
+
+A dashed \`LineSegments\` circle of radius 300 units (~30,000 light-years) centred on the Sun's position in the galaxy. Represents the rough extent of Gaia's precise astrometric measurements — 1.7 billion star positions, distances, and velocities.
+
+The ring is constructed as 90 dashed segments (3 solid, 1 gap pattern), coloured \`0x88ccff\`. It fades in only at zoom ≥ 0.8×.
+
+### Kepler Survey Cone
+
+Kepler stared at a 115 square-degree patch of sky toward Cygnus for 9 years. The cone is rendered as a \`CylinderGeometry(rFar, rNear, height, 24, 1, true)\` (open-ended frustum shell) oriented via quaternion toward galactic coordinates l=76°, b=+13.5°. Inside the cone: 220 point particles representing individual confirmed exoplanet host stars, colour-coded blue-cyan.
+
+A far-cap \`CircleGeometry\` marks the outer boundary of the survey field. The cone's 3D label reads "Kepler Survey Field — 5,000+ exoplanets found".
+
+### Magellanic Clouds (LMC and SMC)
+
+Placed at their actual galactic coordinates (LMC: l=280°, b=-33°, distance ~160,000 ly; SMC: l=303°, b=-44°, ~200,000 ly) but scaled to visible size in scene units. Each cloud is a \`Points\` object with 800–1,200 particles in a Gaussian distribution, coloured blue-white. Labelled "satellite galaxy (not to scale)" because at the galaxy's rendering scale they'd be invisible dots.
+
+### JWST and Hubble Deep Field Beams
+
+Two \`Line\` segments extend from the Sun's position at 210 units (~21,000 light-years) toward:
+- **Hubble Ultra Deep Field** — galactic coordinates l=224°, b=-55°
+- **JWST GOODS-South** — l=223°, b=-53°
+
+Both point well out of the galactic plane toward intergalactic space, which is correct — deep fields are chosen to look through the minimum amount of galactic foreground dust.
+
+## Galaxy Disk: Procedural Texture Replacement
+
+The previous disk texture was a 1600×1600 JPEG (\`milky_way_huge.jpg\`). It was replaced with a 2048×2048 canvas-generated texture:
+
+1. **Background glow** — radial gradient from warm orange-gold core to transparent edge
+2. **Galactic bulge** — concentrated 255/248/210 white-gold bloom over the central 16% radius
+3. **Central bar** — a rotated rectangle at galactic PA 62° (the Milky Way has a prominent bar ~27,000 ly long)
+4. **Four spiral arms** — drawn as 280-step logarithmic spirals with \`globalCompositeOperation: 'screen'\`, each arm widening with radius
+5. **120 HII region knots** — random bright dots along arm paths (50% blue-white 180/220/255, 50% warm 255/200/130)
+
+The JPEG hi-res swap function (\`loadGalaxyHiRes\`) now no-ops, as the procedural texture is already higher quality than the JPEG it replaced.
+
+## Particle Distribution: Logarithmic Spiral Arms
+
+The previous 52,000 particles were distributed uniformly in a circle — giving the galaxy a blob appearance with no visible arm structure.
+
+Replaced with 100,000 particles in three populations:
+
+**65,000 arm stars** — distributed along four logarithmic spirals. Each particle is placed at a random progress \`t ∈ [0, 1]\` along the arm, at radius \`r = innerR + pow(t, 0.6) * (outerR - innerR)\` and angle \`θ = armOffset + t * 4.5\` radians. Perpendicular scatter increases with radius (arms flare outward). Colour: blue-white near outer edges, warming toward golden at inner radii.
+
+**15,000 inter-arm stars** — older, redder population distributed uniformly in the disk at lower opacity.
+
+**20,000 core stars** — highly centre-concentrated (\`pow(random, 2.2)\`), warm orange/golden HSL.
+
+The result is a galaxy that shows clearly defined spiral structure from the default overview camera position.
+
+## Bug Fixes
+
+### Orbit Ring Bleed into Galaxy View
+
+The galaxy view was calling \`referenceGrid.visible = false\` to hide the solar system, but planet orbit rings are stored in a separate \`orbitRingLines\` Map. Added \`orbitRingLines.forEach(l => { l.visible = false })\` to the galaxy entry transition and the inverse on exit.
+
+### Zoom Direction
+
+Galaxy zoom was panning toward the galactic centre (Sgr A*). Fixed: as zoom increases from 1× to 3.5×, \`galaxyLookOffset\` linearly interpolates from \`(0, 0)\` to the Sun's position in galaxy-local coordinates \`(cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R, sin(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R)\`. Zoom now brings the camera toward the Orion Arm.
+
+### Dive Mode Lighting (Second Pass)
+
+The dive mode whitewash bug (documented in the March 12 entry) had a second surface: when the galaxy view was active and the user pressed D, the dive lighting was still applying its old aggressive values to the galaxy scene. The dive entry path now checks \`galaxyViewActive\` before modifying ambient and exposure.
+`,
+  },
 ]
 
 // ============================================
