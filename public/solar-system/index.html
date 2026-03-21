@@ -1274,6 +1274,176 @@
                 pointer-events: auto !important;
             }
         }
+        /* ===== RESTRUCTURED PANEL ===== */
+        .views-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
+        }
+        .views-grid .preset-btn {
+            width: 100%;
+            font-size: 12px;
+            padding: 8px 4px;
+        }
+        .playback-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .playback-row button {
+            flex-shrink: 0;
+        }
+        .playback-row .time-inline {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        .playback-row .time-inline input[type="range"] {
+            flex: 1;
+            min-width: 0;
+        }
+        .playback-row .time-inline .time-val {
+            font-size: 10px;
+            color: #888;
+            white-space: nowrap;
+            min-width: 32px;
+            text-align: right;
+        }
+        .advanced-toggle {
+            text-align: center;
+            padding: 8px 0 4px;
+            cursor: pointer;
+            color: #666;
+            font-size: 12px;
+            user-select: none;
+            transition: color 0.2s;
+        }
+        .advanced-toggle:hover {
+            color: #aaa;
+        }
+        #section-advanced {
+            border-top: 1px solid rgba(100,150,255,0.15);
+            padding-top: 8px;
+            margin-top: 4px;
+        }
+        #section-advanced.collapsed {
+            display: none;
+        }
+        .adv-group {
+            margin-bottom: 10px;
+        }
+        .adv-group-label {
+            display: block;
+            color: #6495ff;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 6px;
+            padding-bottom: 3px;
+            border-bottom: 1px solid rgba(100,150,255,0.1);
+        }
+        .adv-group .checkbox-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px 8px;
+        }
+        .adv-group .checkbox-grid .checkbox-label {
+            font-size: 12px;
+        }
+
+        /* Welcome prompt overlay */
+        #welcome-prompt {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(8px);
+        }
+        .welcome-card {
+            background: rgba(10,14,26,0.95);
+            border: 1px solid rgba(100,150,255,0.3);
+            border-radius: 16px;
+            padding: 32px 40px;
+            text-align: center;
+            max-width: 380px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 0 80px rgba(100,150,255,0.1);
+        }
+        .welcome-card h3 {
+            color: #fff;
+            font-size: 22px;
+            margin: 0 0 8px;
+        }
+        .welcome-card p {
+            color: #888;
+            font-size: 14px;
+            margin: 0 0 24px;
+            line-height: 1.5;
+        }
+        .welcome-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+        .welcome-actions button {
+            padding: 10px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            min-height: auto;
+        }
+        #welcome-tour {
+            background: linear-gradient(135deg, #ff6b35 0%, #d63384 100%);
+            color: #fff;
+            font-weight: 600;
+        }
+        #welcome-skip {
+            background: rgba(255,255,255,0.08);
+            color: #aaa;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+        }
+        #welcome-skip:hover { color: #fff; }
+
+        /* Shortcuts tooltip */
+        #shortcuts-popup {
+            display: none;
+            position: absolute;
+            top: 36px;
+            right: 0;
+            background: rgba(10,14,26,0.95);
+            border: 1px solid rgba(100,150,255,0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 11px;
+            color: #aaa;
+            line-height: 1.8;
+            white-space: nowrap;
+            z-index: 200;
+            backdrop-filter: blur(10px);
+        }
+        #shortcuts-popup kbd {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 3px;
+            padding: 1px 5px;
+            font-size: 10px;
+            color: #ccc;
+            font-family: monospace;
+        }
+
+        /* Hide standalone stats panel */
+        #stats { display: none !important; }
+
+        @media (max-width: 768px) {
+            .views-grid { gap: 4px; }
+            .views-grid .preset-btn { padding: 10px 4px; font-size: 13px; }
+            .playback-row { flex-wrap: wrap; }
+        }
     </style>
 </head>
 <body>
@@ -1316,23 +1486,108 @@
     </div>
 
     <div id="controls">
-        <h3>&#x26A1; Solar Vortex</h3>
+        <!-- Header -->
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; position:relative;">
+            <h3 style="margin:0; font-size:16px;">&#x26A1; Solar Vortex</h3>
+            <button id="shortcuts-hint" title="Keyboard shortcuts" style="background:none; border:1px solid rgba(100,150,255,0.2); color:#666; font-size:11px; padding:2px 7px; border-radius:4px; cursor:pointer; min-height:auto; line-height:1.4;">?</button>
+            <div id="shortcuts-popup">
+                <kbd>Space</kbd> Pause / Resume<br>
+                <kbd>R</kbd> Reset view<br>
+                <kbd>E</kbd> Dive into planet<br>
+                <kbd>G</kbd> Galaxy view<br>
+                <kbd>+</kbd> / <kbd>-</kbd> Zoom<br>
+                <kbd>Esc</kbd> Exit mode<br>
+                Drag to rotate &middot; Scroll to zoom<br>
+                Shift+drag to pan &middot; Click label for info
+            </div>
+        </div>
 
-        <!-- Presets & Camera — always visible, most used -->
+        <!-- ==================== SIMPLE MODE ==================== -->
+
+        <!-- Focus: what are you looking at? -->
+        <div class="ctrl-section" id="section-focus">
+            <div class="control-group">
+                <label style="display:block; margin-bottom:4px; color:#ccc; font-size:13px;">Focus:</label>
+                <select id="follow-target" style="width:100%; padding:6px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(100,150,255,0.3); border-radius:6px; font-size:13px;">
+                    <option value="sun" style="background:#1a1a2e;color:#fff;" selected>Sun (default)</option>
+                    <optgroup label="Planets" style="background:#1a1a2e;color:#fff;">
+                        <option value="mercury" style="background:#1a1a2e;color:#fff;">Mercury</option>
+                        <option value="venus" style="background:#1a1a2e;color:#fff;">Venus</option>
+                        <option value="earth" style="background:#1a1a2e;color:#fff;">Earth</option>
+                        <option value="mars" style="background:#1a1a2e;color:#fff;">Mars</option>
+                        <option value="jupiter" style="background:#1a1a2e;color:#fff;">Jupiter</option>
+                        <option value="saturn" style="background:#1a1a2e;color:#fff;">Saturn</option>
+                        <option value="uranus" style="background:#1a1a2e;color:#fff;">Uranus</option>
+                        <option value="neptune" style="background:#1a1a2e;color:#fff;">Neptune</option>
+                    </optgroup>
+                    <optgroup label="Other" style="background:#1a1a2e;color:#fff;">
+                        <option value="moon" style="background:#1a1a2e;color:#fff;">Moon</option>
+                        <option value="ceres" style="background:#1a1a2e;color:#fff;">Ceres (dwarf)</option>
+                        <option value="pluto" style="background:#1a1a2e;color:#fff;">Pluto (dwarf)</option>
+                    </optgroup>
+                    <option value="none" style="background:#1a1a2e;color:#fff;">None (free roam)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Views: how are you looking at it? -->
         <div class="ctrl-section" id="section-presets">
             <div class="control-group">
-                <label>Presets:</label>
-                <div class="preset-group">
-                    <button type="button" class="preset-btn" data-preset="vortex" title="Side view — full helix ribbon with gentle pan">⚡ Vortex</button>
-                    <button type="button" class="preset-btn" data-preset="cinema" title="Figure-of-eight orbit with rising/falling elevation">🎬 Cinema</button>
-                    <button type="button" class="preset-btn" data-preset="overview" title="Steep bird's-eye — full vortex coil spread below">🔭 Overview</button>
-                    <button type="button" class="preset-btn" data-preset="moon-watch" title="Earth-locked close-up — moons in full detail">🌙 Moon Watch</button>
-                    <button type="button" class="preset-btn" data-preset="surfboard" title="Ultra-low grazing angle — ecliptic disk has visible thickness">🏄 Surfboard</button>
-                    <button type="button" class="preset-btn" data-preset="helix" title="Inside the helix tube — planets cross the sky above you">🌀 Helix</button>
+                <label>Views:</label>
+                <div class="views-grid">
+                    <button type="button" class="preset-btn" data-preset="overview" title="Bird's-eye view of the full system">Overview</button>
+                    <button type="button" class="preset-btn" data-preset="vortex" title="Side view showing the vortex helix">Vortex</button>
+                    <button type="button" class="preset-btn" data-preset="cinema" title="Sweeping cinematic camera orbit">Cinema</button>
+                    <button type="button" class="preset-btn" data-preset="moon-watch" title="Close-up of Earth with moons visible">Moon Watch</button>
                 </div>
             </div>
-            <div class="control-group">
-                <label>Camera Mode:</label>
+        </div>
+
+        <!-- Playback: pause, time, reset -->
+        <div class="ctrl-section" id="section-playback">
+            <div class="playback-row">
+                <button id="toggle-pause" style="flex-shrink:0;">Pause</button>
+                <div class="time-inline">
+                    <button type="button" class="slider-arrow" data-target="time-speed" data-dir="-1" aria-label="Slower" style="min-height:auto; padding:3px 6px;">&#x25C0;</button>
+                    <input type="range" id="time-speed" min="1" max="100" step="1" value="49">
+                    <button type="button" class="slider-arrow" data-target="time-speed" data-dir="1" aria-label="Faster" style="min-height:auto; padding:3px 6px;">&#x25B6;</button>
+                    <span class="time-val"><span id="time-speed-val">49</span> d/s</span>
+                </div>
+                <button id="reset-view" style="flex-shrink:0;">Reset</button>
+            </div>
+        </div>
+
+        <!-- Primary actions -->
+        <div class="ctrl-section" id="section-actions">
+            <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                <button id="planet-dive-btn" title="Dive into orbit around the focused planet" style="flex:1;">Dive Into Earth</button>
+                <button id="export-screenshot" title="Save screenshot" style="font-size:12px; padding:7px 10px; min-width:auto;">&#x1F4F7;</button>
+                <button id="export-video-start" title="Record video" style="font-size:12px; padding:7px 10px; min-width:auto;">&#x23FA;</button>
+                <button id="export-video-stop" style="font-size:12px; padding:7px 10px; min-width:auto; display:none; background:linear-gradient(135deg, #ea4444 0%, #a22222 100%);">Stop</button>
+            </div>
+            <div id="recording-indicator" style="display:none; margin-top:6px; color:#ff4444; font-size:11px; animation: blink 1s infinite;">Recording...</div>
+        </div>
+
+        <!-- Advanced toggle -->
+        <div id="advanced-toggle" class="advanced-toggle">
+            <span id="advanced-toggle-text">Show advanced</span> <span id="advanced-toggle-arrow">&#x25BC;</span>
+        </div>
+
+        <!-- ==================== ADVANCED MODE ==================== -->
+        <div id="section-advanced" class="collapsed">
+
+            <!-- More view presets -->
+            <div class="adv-group">
+                <label style="color:#ccc; font-size:12px;">More views:</label>
+                <div style="display:flex; gap:5px; margin-top:4px;">
+                    <button type="button" class="preset-btn" data-preset="surfboard" title="Ultra-low grazing angle along the ecliptic">Surfboard</button>
+                    <button type="button" class="preset-btn" data-preset="helix" title="Inside the helix tube, planets cross above">Helix</button>
+                </div>
+            </div>
+
+            <!-- Camera mode (manual override) -->
+            <div class="adv-group">
+                <label class="adv-group-label">Camera (manual)</label>
                 <div class="cam-mode-group">
                     <button type="button" class="cam-btn active" data-mode="free">Free</button>
                     <button type="button" class="cam-btn" data-mode="cinematic">Cinema</button>
@@ -1344,28 +1599,18 @@
                 </div>
                 <select id="camera-mode" style="display:none;">
                     <option value="free">Free Camera</option>
-                    <option value="cinematic">Cinematic (Figure-of-Eight)</option>
-                    <option value="orbital">Orbital (Top-Down)</option>
-                    <option value="side">Side View (Vortex)</option>
-                    <option value="chase">Chase Cam (Behind Sun)</option>
-                    <option value="surfboard">Surfboard (Grazing Ecliptic)</option>
-                    <option value="helix">Helix (Inside Tube)</option>
+                    <option value="cinematic">Cinematic</option>
+                    <option value="orbital">Top-Down</option>
+                    <option value="side">Vortex</option>
+                    <option value="chase">Chase</option>
+                    <option value="surfboard">Surfboard</option>
+                    <option value="helix">Helix</option>
                 </select>
-                <p style="font-size:10px; color:#555; margin:5px 0 0; line-height:1.4;">Drag canvas to rotate — switches to Free mode</p>
             </div>
-            <div class="control-group">
-                <button id="toggle-pause">Pause</button>
-                <button id="reset-view">Reset View</button>
-            </div>
-        </div>
 
-        <!-- Simulation — collapsible, open by default -->
-        <div class="ctrl-section" id="section-simulation">
-            <div class="ctrl-section-header" data-section="section-simulation">
-                <span class="ctrl-section-label">Simulation</span>
-                <span class="ctrl-section-chevron">&#x25BC;</span>
-            </div>
-            <div class="ctrl-section-body">
+            <!-- Simulation speeds -->
+            <div class="adv-group" id="section-simulation">
+                <label class="adv-group-label">Simulation</label>
                 <div class="control-group">
                     <label>Sun Speed: <span id="sun-speed-val">4.19</span>x</label>
                     <div class="slider-row">
@@ -1382,29 +1627,27 @@
                         <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="1" aria-label="Increase orbital speed">&#x25B6;</button>
                     </div>
                 </div>
-                <div class="control-group">
-                    <label>Time Speed: <span id="time-speed-val">49</span> days/sec</label>
-                    <div class="slider-row">
-                        <button type="button" class="slider-arrow" data-target="time-speed" data-dir="-1" aria-label="Decrease time speed">&#x25C0;</button>
-                        <input type="range" id="time-speed" min="1" max="100" step="1" value="49">
-                        <button type="button" class="slider-arrow" data-target="time-speed" data-dir="1" aria-label="Increase time speed">&#x25B6;</button>
-                    </div>
+            </div>
+
+            <!-- Scene toggles -->
+            <div class="adv-group" id="section-visuals">
+                <label class="adv-group-label">Scene</label>
+                <div class="checkbox-grid">
+                    <label class="checkbox-label"><input type="checkbox" id="show-labels" checked><span>Labels</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="show-orbit-rings" checked><span>Orbit Lines</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Moons</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="show-milky-way" checked><span>Milky Way</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Grid</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Corona</span></label>
+                    <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits" checked><span>Elliptical</span></label>
                 </div>
             </div>
-        </div>
 
-        <!-- Visuals — collapsible, closed by default -->
-        <div class="ctrl-section collapsed" id="section-visuals">
-            <div class="ctrl-section-header" data-section="section-visuals">
-                <span class="ctrl-section-label">
-                    <span class="ctrl-section-hint">More Options</span>
-                    <span class="ctrl-section-hint-detail"> — trails, moons, effects</span>
-                </span>
-                <span class="ctrl-section-chevron">&#x25BC;</span>
-            </div>
-            <div class="ctrl-section-body">
+            <!-- Trail controls -->
+            <div class="adv-group">
+                <label class="adv-group-label">Trails</label>
                 <div class="control-group">
-                    <label>Trail Length: <span id="trail-length-val">800</span></label>
+                    <label>Length: <span id="trail-length-val">800</span></label>
                     <div class="slider-row">
                         <button type="button" class="slider-arrow" data-target="trail-length" data-dir="-1" aria-label="Decrease trail length">&#x25C0;</button>
                         <input type="range" id="trail-length" min="100" max="2000" step="50" value="800">
@@ -1412,55 +1655,14 @@
                     </div>
                 </div>
                 <div class="control-group">
-                    <label>Trail Opacity: <span id="trail-opacity-val">0.7</span></label>
+                    <label>Opacity: <span id="trail-opacity-val">0.7</span></label>
                     <div class="slider-row">
                         <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="-1" aria-label="Decrease trail opacity">&#x25C0;</button>
                         <input type="range" id="trail-opacity" min="0.2" max="1" step="0.05" value="0.7">
                         <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="1" aria-label="Increase trail opacity">&#x25B6;</button>
                     </div>
                 </div>
-                <label class="checkbox-label"><input type="checkbox" id="show-labels" checked><span>Show Planet Labels</span></label>
-                <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Show Moons</span></label>
-                <label class="checkbox-label"><input type="checkbox" id="show-milky-way" checked><span>Milky Way Background</span></label>
-                <label class="checkbox-label" title="Concentric rings show each planet&#39;s orbital distance from the Sun, plus scale markers at 10 AU intervals"><input type="checkbox" id="show-grid" checked><span>Show Reference Grid <span style="font-size:10px; color:#888; cursor:help;" title="Concentric rings show each planet&#39;s orbital distance from the Sun, plus scale markers at 10 AU intervals">ⓘ</span></span></label>
-                <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Sun Corona Particles</span></label>
-                <label class="checkbox-label"><input type="checkbox" id="show-orbit-rings" checked><span>Show Orbit Lines</span></label>
-                <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits" checked><span>Elliptical Orbits</span></label>
             </div>
-        </div>
-
-        <!-- Follow & Actions — always visible -->
-        <div class="ctrl-section" id="section-actions">
-            <div style="margin-top:4px;">
-                <label style="display:block; margin-bottom:4px; color:#ccc; font-size:13px;">Follow:</label>
-                <select id="follow-target" style="width:100%; padding:6px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(100,150,255,0.3); border-radius:6px; font-size:13px;">
-                    <option value="sun" style="background:#1a1a2e;color:#fff;" selected>Sun (default)</option>
-                    <option value="mercury" style="background:#1a1a2e;color:#fff;">Mercury</option>
-                    <option value="venus" style="background:#1a1a2e;color:#fff;">Venus</option>
-                    <option value="earth" style="background:#1a1a2e;color:#fff;">Earth</option>
-                    <option value="moon" style="background:#1a1a2e;color:#fff;">Moon</option>
-                    <option value="mars" style="background:#1a1a2e;color:#fff;">Mars</option>
-                    <option value="jupiter" style="background:#1a1a2e;color:#fff;">Jupiter</option>
-                    <option value="saturn" style="background:#1a1a2e;color:#fff;">Saturn</option>
-                    <option value="uranus" style="background:#1a1a2e;color:#fff;">Uranus</option>
-                    <option value="neptune" style="background:#1a1a2e;color:#fff;">Neptune</option>
-                    <option value="ceres" style="background:#1a1a2e;color:#fff;">Ceres (dwarf)</option>
-                    <option value="pluto" style="background:#1a1a2e;color:#fff;">Pluto (dwarf)</option>
-                    <option value="none" style="background:#1a1a2e;color:#fff;">None (free cam)</option>
-                </select>
-            </div>
-            <div style="margin-top:8px;">
-                <button id="planet-dive-btn" title="Dive into orbit around the selected planet">Dive Into Earth</button>
-                <button id="export-screenshot" style="font-size:12px; padding:7px 12px;">Screenshot</button>
-                <button id="export-video-start" style="font-size:12px; padding:7px 12px;">Record</button>
-                <button id="export-video-stop" style="font-size:12px; padding:7px 12px; display:none; background:linear-gradient(135deg, #ea4444 0%, #a22222 100%);">Stop Rec</button>
-                <div id="recording-indicator" style="display:none; margin-top:6px; color:#ff4444; font-size:11px; animation: blink 1s infinite;">Recording...</div>
-            </div>
-        </div>
-
-        <div class="info">
-            &#x1F5B1;&#xFE0F; Drag: Rotate | Scroll: Zoom<br>
-            Hold Shift: Pan | Click label: Info
         </div>
     </div>
 
@@ -4903,26 +5105,10 @@
         // COLLAPSIBLE CONTROL SECTIONS
         // =====================================================================
         (function initCollapsibleSections() {
-            document.querySelectorAll('.ctrl-section-header').forEach(header => {
-                header.addEventListener('click', () => {
-                    const section = header.closest('.ctrl-section');
-                    section.classList.toggle('collapsed');
-                    // Update hint text for the Visuals section
-                    const hint = section.querySelector('.ctrl-section-hint');
-                    if (hint) {
-                        hint.textContent = section.classList.contains('collapsed') ? 'More Options' : 'Visuals';
-                    }
-                });
-            });
+            // Old section-header collapse code removed - replaced by advanced toggle
         })();
 
-        // Expand Visuals section by default on non-mobile
-        if (window.innerWidth >= 768) {
-            const visuals = document.getElementById('section-visuals');
-            if (visuals) visuals.classList.remove('collapsed');
-            const hint = visuals && visuals.querySelector('.ctrl-section-hint');
-            if (hint) hint.textContent = 'Visuals';
-        }
+        // Advanced section persistence handled by localStorage toggle in advanced-toggle code
 
         // =====================================================================
         // GUIDED DEMO TOUR
@@ -5032,10 +5218,10 @@
                     position: 'right',
                     duration: 5000,
                     action: function() {
-                        // Expand the simulation section if collapsed
-                        var simSection = document.getElementById('section-simulation');
-                        if (simSection.classList.contains('collapsed')) {
-                            simSection.classList.remove('collapsed');
+                        // Expand advanced section so simulation sliders are visible
+                        var advSection = document.getElementById('section-advanced');
+                        if (advSection.classList.contains('collapsed')) {
+                            document.getElementById('advanced-toggle').click();
                         }
                         animateSlider('sun-speed', 5, 2000, function() {
                             animateSlider('sun-speed', 2.047 * 2.047, 2000);
@@ -5052,10 +5238,10 @@
                     position: 'right',
                     duration: 5000,
                     action: function() {
-                        // Expand visuals section
-                        var visSection = document.getElementById('section-visuals');
-                        if (visSection.classList.contains('collapsed')) {
-                            visSection.classList.remove('collapsed');
+                        // Expand advanced section so scene toggles are visible
+                        var advSection = document.getElementById('section-advanced');
+                        if (advSection.classList.contains('collapsed')) {
+                            document.getElementById('advanced-toggle').click();
                         }
                         var cb = document.getElementById('elliptical-orbits');
                         if (!cb.checked) {
@@ -5073,6 +5259,11 @@
                     position: 'right',
                     duration: 4000,
                     action: function() {
+                        // Expand advanced section so scene toggles are visible
+                        var advSection = document.getElementById('section-advanced');
+                        if (advSection.classList.contains('collapsed')) {
+                            document.getElementById('advanced-toggle').click();
+                        }
                         var cb = document.getElementById('show-particles');
                         if (!cb.checked) {
                             cb.checked = true;
@@ -5089,6 +5280,11 @@
                     position: 'right',
                     duration: 5000,
                     action: function() {
+                        // Expand advanced section so camera mode buttons are visible
+                        var advSection = document.getElementById('section-advanced');
+                        if (advSection.classList.contains('collapsed')) {
+                            document.getElementById('advanced-toggle').click();
+                        }
                         document.querySelector('.cam-btn[data-mode="chase"]').click();
                         var select = document.getElementById('follow-target');
                         select.value = 'sun';
@@ -5667,6 +5863,79 @@
                 eventsEl.classList.toggle('panel-collapsed', rightCollapsed);
                 rightBtn.innerHTML = rightCollapsed ? '&#x276E;' : '&#x276F;';
             });
+        })();
+
+        // =====================================================================
+        // ADVANCED TOGGLE (with localStorage persistence)
+        // =====================================================================
+        (function() {
+            var toggle = document.getElementById('advanced-toggle');
+            var section = document.getElementById('section-advanced');
+            var text = document.getElementById('advanced-toggle-text');
+            var arrow = document.getElementById('advanced-toggle-arrow');
+            var expanded = localStorage.getItem('solar-vortex-advanced') === '1';
+            if (expanded) {
+                section.classList.remove('collapsed');
+                text.textContent = 'Hide advanced';
+                arrow.innerHTML = '&#x25B2;';
+            }
+            toggle.addEventListener('click', function() {
+                var isCollapsed = section.classList.toggle('collapsed');
+                text.textContent = isCollapsed ? 'Show advanced' : 'Hide advanced';
+                arrow.innerHTML = isCollapsed ? '&#x25BC;' : '&#x25B2;';
+                localStorage.setItem('solar-vortex-advanced', isCollapsed ? '0' : '1');
+            });
+        })();
+
+        // =====================================================================
+        // SHORTCUTS HINT TOGGLE
+        // =====================================================================
+        (function() {
+            var btn = document.getElementById('shortcuts-hint');
+            var popup = document.getElementById('shortcuts-popup');
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+            });
+            document.addEventListener('click', function() {
+                popup.style.display = 'none';
+            });
+        })();
+
+        // =====================================================================
+        // WELCOME PROMPT (first visit only)
+        // =====================================================================
+        (function() {
+            if (localStorage.getItem('solar-vortex-visited')) return;
+            // Wait for loading to finish before showing
+            var checkLoaded = setInterval(function() {
+                var overlay = document.getElementById('loading-overlay');
+                if (!overlay || overlay.style.display === 'none' || parseFloat(getComputedStyle(overlay).opacity) < 0.1) {
+                    clearInterval(checkLoaded);
+                    setTimeout(showWelcome, 800);
+                }
+            }, 500);
+            function showWelcome() {
+                var el = document.createElement('div');
+                el.id = 'welcome-prompt';
+                el.innerHTML = '<div class="welcome-card">' +
+                    '<h3>Solar Vortex</h3>' +
+                    '<p>An interactive journey through our solar system as it hurtles through space at 220 km/s.</p>' +
+                    '<div class="welcome-actions">' +
+                    '<button id="welcome-tour">Take the Tour</button>' +
+                    '<button id="welcome-skip">Jump In</button>' +
+                    '</div></div>';
+                document.body.appendChild(el);
+                document.getElementById('welcome-tour').addEventListener('click', function() {
+                    el.remove();
+                    localStorage.setItem('solar-vortex-visited', '1');
+                    document.getElementById('start-demo-tour').click();
+                });
+                document.getElementById('welcome-skip').addEventListener('click', function() {
+                    el.remove();
+                    localStorage.setItem('solar-vortex-visited', '1');
+                });
+            }
         })();
     </script>
 </body>
