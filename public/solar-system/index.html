@@ -4773,7 +4773,7 @@
             const _ghzMesh = new THREE.Mesh(
                 new THREE.RingGeometry(130, 330, 128),
                 new THREE.MeshBasicMaterial({
-                    color: 0x33cc88, transparent: true, opacity: 0,
+                    color: 0x00eebb, transparent: true, opacity: 0,
                     side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
                 })
             );
@@ -4782,7 +4782,7 @@
             _ghzMesh.userData.isGHZ = true;
             galaxyGroup.add(_ghzMesh);
 
-            const _ghzLbl = makeGalLabel('Galactic Habitable Zone', '#55dd99', '13,000–33,000 ly from center');
+            const _ghzLbl = makeGalLabel('Galactic Habitable Zone', '#00eebb', '13,000–33,000 ly from center');
             _ghzLbl.position.set(Math.cos(Math.PI * 1.25) * 240, 10, Math.sin(Math.PI * 1.25) * 240);
             _ghzLbl.scale.set(120, 15, 1);
             _ghzLbl.userData.isGHZ = true;
@@ -5042,38 +5042,38 @@
                         child.material.opacity = featOp;
                         return;
                     }
-                    // GHZ: always on, subtle (max 28% opacity to stay readable)
+                    // GHZ: visible at overview, strong enough to read clearly
                     if (child.userData?.isGHZ) {
-                        child.material.opacity = opacity * 0.28;
+                        child.material.opacity = opacity * 0.55;
                         return;
                     }
-                    // Globular clusters: fade in from zoom >= 0.8
+                    // Globular clusters: visible from zoom >= 0.7
                     if (child.userData?.isGlobular) {
-                        const gOp = galaxyZoom >= 0.8 ? Math.min(opacity * 0.85, (galaxyZoom - 0.8) / 0.4) : 0;
+                        const gOp = galaxyZoom >= 0.7 ? Math.min(opacity * 0.9, (galaxyZoom - 0.7) / 0.3) : 0;
                         child.material.opacity = gOp;
                         return;
                     }
-                    // Magellanic Clouds: fade in from zoom >= 0.7
+                    // Magellanic Clouds: visible at overview
                     if (child.userData?.isMagellanicCloud) {
-                        const mcOp = galaxyZoom >= 0.7 ? Math.min(opacity * 0.75, (galaxyZoom - 0.7) / 0.3) : 0;
+                        const mcOp = galaxyZoom >= 0.7 ? Math.min(opacity * 0.85, (galaxyZoom - 0.7) / 0.3) : 0;
                         child.material.opacity = mcOp;
                         return;
                     }
-                    // Gaia ring: fade in from zoom >= 1.5 (zoomed into Sun's neighbourhood)
+                    // Gaia ring: visible at overview zoom (Sun's position is on the disk)
                     if (child.userData?.isGaiaRing) {
-                        const gaOp = galaxyZoom >= 1.5 ? Math.min(opacity * 0.7, (galaxyZoom - 1.5) / 0.5) : 0;
+                        const gaOp = galaxyZoom >= 0.8 ? Math.min(opacity * 0.8, (galaxyZoom - 0.8) / 0.4) : 0;
                         child.material.opacity = gaOp;
                         return;
                     }
-                    // Kepler cone: fade in from zoom >= 2.0 (very zoomed in)
+                    // Kepler cone: visible from zoom >= 0.8
                     if (child.userData?.isKeplerCone) {
-                        const kOp = galaxyZoom >= 2.0 ? Math.min(opacity * 0.45, (galaxyZoom - 2.0) / 0.5) : 0;
+                        const kOp = galaxyZoom >= 0.8 ? Math.min(opacity * 0.55, (galaxyZoom - 0.8) / 0.4) : 0;
                         child.material.opacity = kOp;
                         return;
                     }
-                    // Deep field beams: fade in from zoom >= 1.5
+                    // Deep field beams: visible from zoom >= 0.8
                     if (child.userData?.isDeepFieldBeam) {
-                        const dbOp = galaxyZoom >= 1.5 ? Math.min(opacity * 0.65, (galaxyZoom - 1.5) / 0.5) : 0;
+                        const dbOp = galaxyZoom >= 0.8 ? Math.min(opacity * 0.75, (galaxyZoom - 0.8) / 0.4) : 0;
                         child.material.opacity = dbOp;
                         return;
                     }
