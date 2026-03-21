@@ -3029,18 +3029,18 @@
             diveState = 'diving';
             diveProgress = 0;
             cameraMode = 'dive';
-            ambientLight.color.set(0x888888);
-            ambientLight.intensity = 1.2;
-            diveFillLight.intensity = 0.4;
-            renderer.toneMappingExposure = 3.0;
+            ambientLight.color.set(0x334466);
+            ambientLight.intensity = 0.3;
+            diveFillLight.intensity = 0.15;
+            renderer.toneMappingExposure = 1.5;
 
             // Subtle emissive fallback so dark-side surface is never pure black during dive
             if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
                 const _m = diveTarget.mesh.material;
                 _m._diveEmissive = _m.emissive.clone();
                 _m._diveEmissiveInt = _m.emissiveIntensity;
-                _m.emissive.set(0x334455);
-                _m.emissiveIntensity = 0.3;
+                _m.emissive.set(0x111122);
+                _m.emissiveIntensity = 0.1;
                 _m.needsUpdate = true;
             }
 
@@ -3098,7 +3098,7 @@
                 camera.lookAt(targetPos.x, targetPos.y, targetPos.z);
                 diveCamLight.position.copy(camera.position);
                 diveCamLight.target.position.copy(targetPos);
-                diveCamLight.intensity = 1.5 * eased;
+                diveCamLight.intensity = 0.55 * eased;
 
                 const altitude = ((dist - targetRadius) * kmPerUnit).toFixed(0);
                 document.getElementById('dive-altitude').textContent = `ALT ${Number(altitude).toLocaleString()} km | ${(dist/targetRadius).toFixed(1)}${info.symbol}`;
@@ -3118,7 +3118,7 @@
                 camera.lookAt(targetPos.x, targetPos.y, targetPos.z);
                 diveCamLight.position.copy(camera.position);
                 diveCamLight.target.position.copy(targetPos);
-                diveCamLight.intensity = 1.5;
+                diveCamLight.intensity = 0.55;
 
                 const altitude = ((orbitDist - targetRadius) * kmPerUnit).toFixed(0);
                 document.getElementById('dive-altitude').textContent = `ALT ${Number(altitude).toLocaleString()} km | ORBIT ${(diveProgress * 180 / Math.PI % 360).toFixed(0)}\u00B0`;
@@ -3147,14 +3147,14 @@
                 camera.lookAt(lookX, lookY, lookZ);
                 diveCamLight.position.copy(camera.position);
                 diveCamLight.target.position.set(lookX, lookY, lookZ);
-                diveCamLight.intensity = 1.5 * (1 - eased);
+                diveCamLight.intensity = 0.55 * (1 - eased);
 
                 document.getElementById('dive-altitude').textContent = `RETURNING... ${((1-eased)*100).toFixed(0)}%`;
 
                 if (t >= 1) {
                     diveState = 'none';
-                    ambientLight.color.set(0x333344);
-                    ambientLight.intensity = 0.4;
+                    ambientLight.color.set(0x111122);
+                    ambientLight.intensity = 0.15;
                     diveFillLight.intensity = 0;
                     diveCamLight.intensity = 0;
                     renderer.toneMappingExposure = 1.2;
@@ -3823,8 +3823,8 @@
             // If currently diving, instantly exit dive and switch to new target
             if (diveState !== 'none') {
                 diveState = 'none';
-                ambientLight.color.set(0x333344);
-                ambientLight.intensity = 0.4;
+                ambientLight.color.set(0x111122);
+                ambientLight.intensity = 0.15;
                 diveFillLight.intensity = 0;
                 diveCamLight.intensity = 0;
                 renderer.toneMappingExposure = 1.2;
@@ -4321,8 +4321,8 @@
             // If in dive, exit it
             if (diveState !== 'none') {
                 diveState = 'none';
-                ambientLight.color.set(0x333344);
-                ambientLight.intensity = 0.4;
+                ambientLight.color.set(0x111122);
+                ambientLight.intensity = 0.15;
                 diveFillLight.intensity = 0;
                 diveCamLight.intensity = 0;
                 renderer.toneMappingExposure = 1.2;
