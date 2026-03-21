@@ -110,3 +110,11 @@ Planned settings:
 - NEXTAUTH_SECRET is already configured in production
 - All auth routes are working, just the UI is hidden
 - Re-enabling requires only uncommenting the Header UI elements and adding OAuth credentials
+
+---
+
+## Known Bugs
+
+### Landing Page - Explore card not loading (Mar 18, 2026)
+
+One of the 6 feature cards in the "Explore Every Corner of the Universe" section fails to load its image. The **Explore** card (top-right, 3rd card) shows a broken/missing image while the other 5 cards (Observatory, Sky Map, Live Events, Kepler Explorer, Solar System) load correctly. The card title and description text still render.

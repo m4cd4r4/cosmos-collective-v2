@@ -51,7 +51,10 @@ export async function getAstronomyPictureOfTheDay(): Promise<ApiResponse<APODDat
       },
     }
   } catch (error) {
-    console.error('NASA APOD error:', error)
+    const msg = error instanceof Error ? error.message : String(error)
+    if (!msg.includes('timeout') && !msg.includes('cancel') && !msg.includes('abort')) {
+      console.error('NASA APOD error:', error)
+    }
     return {
       success: false,
       error: {

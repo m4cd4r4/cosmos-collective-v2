@@ -152,13 +152,14 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Critical Resource Hints - Preconnect for immediate needs */}
+        {/* Critical Resource Hints - Preconnect for homepage-critical origins only (max 4) */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
         <link rel="preconnect" href="https://images-api.nasa.gov" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://images-assets.nasa.gov" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://mast.stsci.edu" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://aladin.cds.unistra.fr" crossOrigin="anonymous" />
 
-        {/* DNS Prefetch - Lower priority external domains */}
+        {/* DNS Prefetch - Sub-page origins and lower priority domains */}
+        <link rel="dns-prefetch" href="https://mast.stsci.edu" />
+        <link rel="dns-prefetch" href="https://aladin.cds.unistra.fr" />
         <link rel="dns-prefetch" href="https://api.nasa.gov" />
         <link rel="dns-prefetch" href="https://www.nasa.gov" />
         <link rel="dns-prefetch" href="https://apod.nasa.gov" />

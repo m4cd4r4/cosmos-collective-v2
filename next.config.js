@@ -118,8 +118,6 @@ const nextConfig = {
   typescript: { ignoreBuildErrors: true },
 
   images: {
-    loader: 'custom',
-    loaderFile: './image-loader.js',
     remotePatterns: [
       { protocol: 'https', hostname: '**.stsci.edu' },
       { protocol: 'https', hostname: 'mast.stsci.edu' },

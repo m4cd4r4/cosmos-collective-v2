@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ChevronDown, Sparkles, Orbit, ArrowRight } from 'lucide-react'
 
 export function LandingHero() {
@@ -43,23 +44,15 @@ export function LandingHero() {
         className="relative z-10 rounded-2xl overflow-hidden border border-white/10 group cursor-pointer shadow-[0_0_60px_rgba(212,175,55,0.08)] w-[90vw] h-[50vh] md:w-[75vw] md:h-[62vh]"
         aria-label="Open Solar System Explorer"
       >
-        {/* Mobile: static image to avoid loading 11MB of Three.js textures */}
-        <picture className="w-full h-full md:hidden">
-          <source srcSet="/images/hero-solar-system.webp" type="image/webp" />
-          <img
-            src="/images/hero-solar-system.png"
-            alt="Solar System Preview"
-            className="w-full h-full object-cover"
-            fetchPriority="high"
-          />
-        </picture>
-        {/* Desktop: live Three.js iframe */}
-        <iframe
-          src="/solar-system/index.html"
-          title="Interactive Solar System"
-          className="w-full h-full border-0 pointer-events-none hidden md:block"
-          loading="lazy"
-          sandbox="allow-scripts allow-same-origin"
+        {/* Hero: Earth close-up with Moon — screenshot from the live solar system app */}
+        <Image
+          src="/images/hero-earth-close.webp"
+          alt="Earth and Moon as seen from the Solar System Explorer"
+          fill
+          priority
+          unoptimized
+          className="object-cover"
+          sizes="(max-width: 768px) 90vw, 75vw"
         />
         {/* Hover/tap overlay with CTA */}
         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
