@@ -2110,7 +2110,8 @@
             // Concentric rings at each planet's orbital distance
             const ringDistances = planetsData.map(p => p.distance);
             ringDistances.forEach(dist => {
-                const segments = 128;
+                // More segments at larger radii to keep curves smooth
+                const segments = Math.max(128, Math.round(dist * 6));
                 const pts = [];
                 for (let j = 0; j <= segments; j++) {
                     const theta = (j / segments) * Math.PI * 2;
@@ -2125,9 +2126,10 @@
             // Scale reference rings every 10 AU (skip near orbital distances)
             for (let r = 10; r <= maxDist; r += 10) {
                 if (ringDistances.some(d => Math.abs(d - r) < 2)) continue;
+                const scaleSegs = Math.max(128, Math.round(r * 6));
                 const pts = [];
-                for (let j = 0; j <= 64; j++) {
-                    const theta = (j / 64) * Math.PI * 2;
+                for (let j = 0; j <= scaleSegs; j++) {
+                    const theta = (j / scaleSegs) * Math.PI * 2;
                     pts.push(new THREE.Vector3(Math.cos(theta) * r, Math.sin(theta) * r, 0));
                 }
                 const geo = new THREE.BufferGeometry().setFromPoints(pts);
@@ -5379,6 +5381,8 @@
                     showOrbitRingsVal: showOrbitRings,
                     ellipticalOrbitsVal: ellipticalOrbits,
                     isPaused: isPaused,
+                    panelCollapsed: document.getElementById('controls').classList.contains('panel-collapsed'),
+                    advancedCollapsed: document.getElementById('section-advanced').classList.contains('collapsed'),
                     sunSpeedRaw: document.getElementById('sun-speed').value,
                     orbitSpeedRaw: document.getElementById('orbit-speed').value,
                     trailLengthVal: document.getElementById('trail-length').value,
@@ -5448,6 +5452,20 @@
 
                 // Clear preset active states
                 document.querySelectorAll('.preset-btn').forEach(function(b) { b.classList.remove('active'); });
+
+                // Restore panel collapsed state
+                var controlsEl = document.getElementById('controls');
+                if (state.panelCollapsed && !controlsEl.classList.contains('panel-collapsed')) {
+                    var leftBtn = document.getElementById('left-panel-toggle');
+                    if (leftBtn) leftBtn.click();
+                }
+                // Restore advanced collapsed state
+                var advSection = document.getElementById('section-advanced');
+                if (state.advancedCollapsed && !advSection.classList.contains('collapsed')) {
+                    document.getElementById('advanced-toggle').click();
+                } else if (!state.advancedCollapsed && advSection.classList.contains('collapsed')) {
+                    document.getElementById('advanced-toggle').click();
+                }
 
                 updateCameraPosition();
                 updateDiveButtonText();
@@ -5677,6 +5695,13 @@
 
                 tourActive = true;
                 preTourState = saveTourState();
+
+                // Expand control panel so tour tooltips can target panel elements
+                var controlsEl = document.getElementById('controls');
+                if (controlsEl && controlsEl.classList.contains('panel-collapsed')) {
+                    var leftBtn = document.getElementById('left-panel-toggle');
+                    if (leftBtn) leftBtn.click();
+                }
 
                 // Ensure running
                 if (isPaused) {
