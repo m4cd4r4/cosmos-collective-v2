@@ -1762,6 +1762,13 @@
                 Our solar system sits in the <strong style="color:#aaa;">Orion Arm</strong> (Orion Spur), a minor spiral arm between the larger Perseus and Sagittarius-Carina arms. We orbit the galactic center once every ~225 million years &mdash; a journey called a <em>galactic year</em>.
             </p>
         </div>
+        <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.08);">
+            <div class="stat"><span class="stat-label">Exoplanets confirmed</span><span class="stat-val" style="color:#ffcc44">5,800+</span></div>
+            <div class="stat"><span class="stat-label">Galaxy surveyed for planets</span><span class="stat-val" style="color:#ff8844">&lt;0.001%</span></div>
+            <p style="color:#666; font-size:10px; margin:8px 0 0; line-height:1.5;">
+                Zoom in to see: the <span style="color:#ffcc44">Kepler</span> survey cone toward Cygnus, the <span style="color:#88ccff">Gaia</span> star catalogue reach, and the <span style="color:#55dd99">Galactic Habitable Zone</span> where life is most likely.
+            </p>
+        </div>
     </div>
     <button id="galaxy-info-toggle" aria-label="Toggle galaxy info" style="display:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
     <button id="galaxy-return-btn">&#x2190; Return to Solar System</button>
@@ -4713,6 +4720,295 @@
             yahSprite.scale.set(80, 12, 1);
             galaxyGroup.add(yahSprite);
 
+            // ============================================================
+            // GALAXY ENHANCEMENTS: Kepler cone, Gaia ring, GHZ, etc.
+            // ============================================================
+
+            // Sun's local position within galaxyGroup (galaxyGroup is centered at GALAXY_CENTER)
+            const _sunLX = Math.cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R;
+            const _sunLY = 2;
+            const _sunLZ = Math.sin(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R;
+            // Direction from Sun toward galactic center (in the XZ plane)
+            const _sunToCenter = SUN_GALACTIC_ANGLE + Math.PI;
+
+            // Helper: galactic (l, b) direction from Sun → normalised Three.js Vector3
+            function galDir(l_deg, b_deg) {
+                const l = l_deg * Math.PI / 180;
+                const b = b_deg * Math.PI / 180;
+                const a = _sunToCenter + l;
+                return new THREE.Vector3(
+                    Math.cos(a) * Math.cos(b),
+                    Math.sin(b),
+                    Math.sin(a) * Math.cos(b)
+                ).normalize();
+            }
+
+            // Helper: build a simple label sprite
+            function makeGalLabel(text, color, subtext) {
+                const W = 512, H = subtext ? 80 : 56;
+                const cv = document.createElement('canvas');
+                cv.width = W; cv.height = H;
+                const cx = cv.getContext('2d');
+                cx.font = 'bold 22px sans-serif';
+                cx.fillStyle = color;
+                cx.strokeStyle = 'rgba(0,0,0,0.85)';
+                cx.lineWidth = 3;
+                cx.textAlign = 'center';
+                cx.strokeText(text, W / 2, 34);
+                cx.fillText(text, W / 2, 34);
+                if (subtext) {
+                    cx.font = '15px sans-serif';
+                    cx.fillStyle = 'rgba(200,200,200,0.75)';
+                    cx.strokeText(subtext, W / 2, 58);
+                    cx.fillText(subtext, W / 2, 58);
+                }
+                const mat = new THREE.SpriteMaterial({
+                    map: new THREE.CanvasTexture(cv), transparent: true, opacity: 0, depthWrite: false
+                });
+                return new THREE.Sprite(mat);
+            }
+
+            // ---- 1. Galactic Habitable Zone (130–330 units from galactic center) ----
+            // Annular band where stellar density and metallicity favour complex life
+            const _ghzMesh = new THREE.Mesh(
+                new THREE.RingGeometry(130, 330, 128),
+                new THREE.MeshBasicMaterial({
+                    color: 0x33cc88, transparent: true, opacity: 0,
+                    side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
+                })
+            );
+            _ghzMesh.rotation.x = -Math.PI / 2;
+            _ghzMesh.position.y = -1.5;
+            _ghzMesh.userData.isGHZ = true;
+            galaxyGroup.add(_ghzMesh);
+
+            const _ghzLbl = makeGalLabel('Galactic Habitable Zone', '#55dd99', '13,000–33,000 ly from center');
+            _ghzLbl.position.set(Math.cos(Math.PI * 1.25) * 240, 10, Math.sin(Math.PI * 1.25) * 240);
+            _ghzLbl.scale.set(120, 15, 1);
+            _ghzLbl.userData.isGHZ = true;
+            galaxyGroup.add(_ghzLbl);
+
+            // ---- 2. Globular cluster halo (~50 ancient star clusters in spherical halo) ----
+            {
+                const GC = 50;
+                const gcPos = new Float32Array(GC * 3);
+                const gcCol = new Float32Array(GC * 3);
+                // Golden-ratio spiral on sphere for even distribution
+                for (let i = 0; i < GC; i++) {
+                    const phi = Math.acos(1 - 2 * ((i * 0.6180339887) % 1));
+                    const theta = (i * 2.399963) % (Math.PI * 2);
+                    const r = 80 + Math.pow((i + 1) / GC, 0.4) * 380;
+                    gcPos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
+                    gcPos[i * 3 + 1] = r * Math.cos(phi) * 0.6; // flatten toward disk
+                    gcPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
+                    const gc = new THREE.Color().setHSL(0.10 + (i % 5) * 0.02, 0.4, 0.65 + (i % 3) * 0.1);
+                    gcCol[i * 3] = gc.r; gcCol[i * 3 + 1] = gc.g; gcCol[i * 3 + 2] = gc.b;
+                }
+                const gcGeo = new THREE.BufferGeometry();
+                gcGeo.setAttribute('position', new THREE.BufferAttribute(gcPos, 3));
+                gcGeo.setAttribute('color', new THREE.BufferAttribute(gcCol, 3));
+                const gcPoints = new THREE.Points(gcGeo, new THREE.PointsMaterial({
+                    size: 7, vertexColors: true, transparent: true, opacity: 0,
+                    sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending,
+                    map: _starTex, alphaTest: 0.01
+                }));
+                gcPoints.userData.isGlobular = true;
+                galaxyGroup.add(gcPoints);
+            }
+
+            // ---- 3. Magellanic Cloud blobs (satellite galaxies, not to scale) ----
+            [
+                { name: 'Large Magellanic Cloud', l: 280, b: -33, dist: 700, size: 28, color: 0xddccff },
+                { name: 'Small Magellanic Cloud', l: 303, b: -44, dist: 860, size: 18, color: 0xbbaaee },
+            ].forEach(function(mc) {
+                const mcDir = galDir(mc.l, mc.b);
+                const mcX = _sunLX + mcDir.x * mc.dist;
+                const mcY = _sunLY + mcDir.y * mc.dist;
+                const mcZ = _sunLZ + mcDir.z * mc.dist;
+                const mcCount = 280;
+                const mcPos = new Float32Array(mcCount * 3);
+                const mcCol = new Float32Array(mcCount * 3);
+                for (let i = 0; i < mcCount; i++) {
+                    const spread = mc.size * (0.3 + Math.sqrt(Math.random()) * 0.7);
+                    mcPos[i * 3]     = mcX + (Math.random() - 0.5) * spread;
+                    mcPos[i * 3 + 1] = mcY + (Math.random() - 0.5) * spread * 0.45;
+                    mcPos[i * 3 + 2] = mcZ + (Math.random() - 0.5) * spread;
+                    const mc2 = new THREE.Color().setHSL(0.65 + Math.random() * 0.1, 0.3, 0.5 + Math.random() * 0.45);
+                    mcCol[i * 3] = mc2.r; mcCol[i * 3 + 1] = mc2.g; mcCol[i * 3 + 2] = mc2.b;
+                }
+                const mcGeo = new THREE.BufferGeometry();
+                mcGeo.setAttribute('position', new THREE.BufferAttribute(mcPos, 3));
+                mcGeo.setAttribute('color', new THREE.BufferAttribute(mcCol, 3));
+                const mcPts = new THREE.Points(mcGeo, new THREE.PointsMaterial({
+                    size: 5, vertexColors: true, transparent: true, opacity: 0,
+                    sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending,
+                    map: _starTex, alphaTest: 0.01
+                }));
+                mcPts.userData.isMagellanicCloud = true;
+                galaxyGroup.add(mcPts);
+                const mcLbl = makeGalLabel(mc.name, '#ccbbff', 'Satellite galaxy (not to scale)');
+                mcLbl.position.set(mcX, mcY + 32, mcZ);
+                mcLbl.scale.set(130, 16, 1);
+                mcLbl.userData.isMagellanicCloud = true;
+                galaxyGroup.add(mcLbl);
+            });
+
+            // ---- 4. Kepler survey cone (l=76°, b=+13.5° toward Cygnus) ----
+            // Kepler stared at this patch for 9 years, finding 5,000+ exoplanets
+            {
+                const kepDir = galDir(76, 13.5);
+                const KEPLER_NEAR = 8, KEPLER_FAR = 28;
+                const halfAngle = 6 * Math.PI / 180;
+                const coneH = KEPLER_FAR - KEPLER_NEAR;
+                const rNear = Math.tan(halfAngle) * KEPLER_NEAR;
+                const rFar  = Math.tan(halfAngle) * KEPLER_FAR;
+                const mid   = KEPLER_NEAR + coneH / 2;
+
+                // Rotate Y axis onto kepDir
+                const _quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), kepDir);
+
+                // Frustum shell
+                const kepConeMesh = new THREE.Mesh(
+                    new THREE.CylinderGeometry(rFar, rNear, coneH, 24, 1, true),
+                    new THREE.MeshBasicMaterial({
+                        color: 0xffcc44, transparent: true, opacity: 0,
+                        side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
+                    })
+                );
+                kepConeMesh.position.set(
+                    _sunLX + kepDir.x * mid,
+                    _sunLY + kepDir.y * mid,
+                    _sunLZ + kepDir.z * mid
+                );
+                kepConeMesh.quaternion.copy(_quat);
+                kepConeMesh.userData.isKeplerCone = true;
+                galaxyGroup.add(kepConeMesh);
+
+                // Far-end cap circle
+                const kepCapMesh = new THREE.Mesh(
+                    new THREE.CircleGeometry(rFar, 24),
+                    new THREE.MeshBasicMaterial({
+                        color: 0xffcc44, transparent: true, opacity: 0,
+                        side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
+                    })
+                );
+                kepCapMesh.position.set(
+                    _sunLX + kepDir.x * KEPLER_FAR,
+                    _sunLY + kepDir.y * KEPLER_FAR,
+                    _sunLZ + kepDir.z * KEPLER_FAR
+                );
+                kepCapMesh.quaternion.copy(_quat);
+                kepCapMesh.userData.isKeplerCone = true;
+                galaxyGroup.add(kepCapMesh);
+
+                // Exoplanet dots inside the cone
+                const kRight = new THREE.Vector3().crossVectors(kepDir, new THREE.Vector3(0, 1, 0)).normalize();
+                if (kRight.lengthSq() < 0.001) kRight.crossVectors(kepDir, new THREE.Vector3(1, 0, 0)).normalize();
+                const kUp = new THREE.Vector3().crossVectors(kepDir, kRight).normalize();
+                const kCount = 220;
+                const kPos = new Float32Array(kCount * 3);
+                const kCol = new Float32Array(kCount * 3);
+                for (let i = 0; i < kCount; i++) {
+                    const depth = KEPLER_NEAR + Math.random() * coneH;
+                    const cR = Math.tan(halfAngle) * depth;
+                    const ang = Math.random() * Math.PI * 2;
+                    const rr = Math.sqrt(Math.random()) * cR;
+                    kPos[i * 3]     = _sunLX + kepDir.x * depth + kRight.x * rr * Math.cos(ang) + kUp.x * rr * Math.sin(ang);
+                    kPos[i * 3 + 1] = _sunLY + kepDir.y * depth + kRight.y * rr * Math.cos(ang) + kUp.y * rr * Math.sin(ang);
+                    kPos[i * 3 + 2] = _sunLZ + kepDir.z * depth + kRight.z * rr * Math.cos(ang) + kUp.z * rr * Math.sin(ang);
+                    const kc = new THREE.Color().setHSL(0.55 + Math.random() * 0.12, 0.7, 0.6 + Math.random() * 0.3);
+                    kCol[i * 3] = kc.r; kCol[i * 3 + 1] = kc.g; kCol[i * 3 + 2] = kc.b;
+                }
+                const kGeo = new THREE.BufferGeometry();
+                kGeo.setAttribute('position', new THREE.BufferAttribute(kPos, 3));
+                kGeo.setAttribute('color', new THREE.BufferAttribute(kCol, 3));
+                const kPoints = new THREE.Points(kGeo, new THREE.PointsMaterial({
+                    size: 3, vertexColors: true, transparent: true, opacity: 0,
+                    sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending,
+                    map: _starTex, alphaTest: 0.01
+                }));
+                kPoints.userData.isKeplerCone = true;
+                galaxyGroup.add(kPoints);
+
+                // Label at far end
+                const kepLbl = makeGalLabel('Kepler Survey Field', '#ffcc44', '5,000+ exoplanets found');
+                kepLbl.position.set(
+                    _sunLX + kepDir.x * KEPLER_FAR * 1.35,
+                    _sunLY + kepDir.y * KEPLER_FAR * 1.35,
+                    _sunLZ + kepDir.z * KEPLER_FAR * 1.35
+                );
+                kepLbl.scale.set(100, 14, 1);
+                kepLbl.userData.isKeplerCone = true;
+                galaxyGroup.add(kepLbl);
+            }
+
+            // ---- 5. Gaia census ring (dashed, 300-unit radius around Sun) ----
+            // Gaia has precisely mapped ~1.7 billion stars within ~30,000 ly
+            {
+                const GAIA_R = 300;
+                const gaiaPts = [];
+                const NDASH = 120;
+                for (let i = 0; i < NDASH; i++) {
+                    if (i % 4 === 3) continue; // 3 solid, 1 gap = dashed
+                    const a1 = (i / NDASH) * Math.PI * 2;
+                    const a2 = ((i + 1) / NDASH) * Math.PI * 2;
+                    gaiaPts.push(new THREE.Vector3(_sunLX + Math.cos(a1) * GAIA_R, 0, _sunLZ + Math.sin(a1) * GAIA_R));
+                    gaiaPts.push(new THREE.Vector3(_sunLX + Math.cos(a2) * GAIA_R, 0, _sunLZ + Math.sin(a2) * GAIA_R));
+                }
+                const gaiaLine = new THREE.LineSegments(
+                    new THREE.BufferGeometry().setFromPoints(gaiaPts),
+                    new THREE.LineBasicMaterial({
+                        color: 0x88ccff, transparent: true, opacity: 0,
+                        depthWrite: false, blending: THREE.AdditiveBlending
+                    })
+                );
+                gaiaLine.userData.isGaiaRing = true;
+                galaxyGroup.add(gaiaLine);
+
+                const gaiaLbl = makeGalLabel('Gaia Catalogue Reach', '#88ccff', '1.7 billion stars mapped');
+                gaiaLbl.position.set(_sunLX + GAIA_R * 0.72, 18, _sunLZ - GAIA_R * 0.72);
+                gaiaLbl.scale.set(115, 14, 1);
+                gaiaLbl.userData.isGaiaRing = true;
+                galaxyGroup.add(gaiaLbl);
+            }
+
+            // ---- 6. JWST and Hubble deep field beams (out of galactic plane) ----
+            [
+                { name: 'Hubble Ultra Deep Field', l: 224, b: -55, color: 0x44aaff },
+                { name: 'JWST GOODS-South',        l: 223, b: -53, color: 0xff9944 },
+            ].forEach(function(df) {
+                const bDir = galDir(df.l, df.b);
+                const BEAM_LEN = 210;
+                const bPts = [
+                    new THREE.Vector3(_sunLX, _sunLY, _sunLZ),
+                    new THREE.Vector3(_sunLX + bDir.x * BEAM_LEN, _sunLY + bDir.y * BEAM_LEN, _sunLZ + bDir.z * BEAM_LEN)
+                ];
+                const beamLine = new THREE.Line(
+                    new THREE.BufferGeometry().setFromPoints(bPts),
+                    new THREE.LineBasicMaterial({
+                        color: df.color, transparent: true, opacity: 0,
+                        depthWrite: false, blending: THREE.AdditiveBlending
+                    })
+                );
+                beamLine.userData.isDeepFieldBeam = true;
+                galaxyGroup.add(beamLine);
+
+                const hex6 = df.color.toString(16).padStart(6, '0');
+                const bLbl = makeGalLabel(df.name, '#' + hex6, 'Billions of galaxies visible');
+                bLbl.position.set(
+                    _sunLX + bDir.x * (BEAM_LEN + 22),
+                    _sunLY + bDir.y * (BEAM_LEN + 22),
+                    _sunLZ + bDir.z * (BEAM_LEN + 22)
+                );
+                bLbl.scale.set(120, 14, 1);
+                bLbl.userData.isDeepFieldBeam = true;
+                galaxyGroup.add(bLbl);
+            });
+
+            // ============================================================
+            // END GALAXY ENHANCEMENTS
+            // ============================================================
+
             scene.add(galaxyGroup);
             galaxyGroup.visible = false;
         }
@@ -4744,6 +5040,41 @@
                     if (child.userData?.isFeature) {
                         const featOp = galaxyZoom >= 1.0 ? Math.min(opacity, (galaxyZoom - 1.0) / 0.5) : 0;
                         child.material.opacity = featOp;
+                        return;
+                    }
+                    // GHZ: always on, subtle (max 28% opacity to stay readable)
+                    if (child.userData?.isGHZ) {
+                        child.material.opacity = opacity * 0.28;
+                        return;
+                    }
+                    // Globular clusters: fade in from zoom >= 0.8
+                    if (child.userData?.isGlobular) {
+                        const gOp = galaxyZoom >= 0.8 ? Math.min(opacity * 0.85, (galaxyZoom - 0.8) / 0.4) : 0;
+                        child.material.opacity = gOp;
+                        return;
+                    }
+                    // Magellanic Clouds: fade in from zoom >= 0.7
+                    if (child.userData?.isMagellanicCloud) {
+                        const mcOp = galaxyZoom >= 0.7 ? Math.min(opacity * 0.75, (galaxyZoom - 0.7) / 0.3) : 0;
+                        child.material.opacity = mcOp;
+                        return;
+                    }
+                    // Gaia ring: fade in from zoom >= 1.5 (zoomed into Sun's neighbourhood)
+                    if (child.userData?.isGaiaRing) {
+                        const gaOp = galaxyZoom >= 1.5 ? Math.min(opacity * 0.7, (galaxyZoom - 1.5) / 0.5) : 0;
+                        child.material.opacity = gaOp;
+                        return;
+                    }
+                    // Kepler cone: fade in from zoom >= 2.0 (very zoomed in)
+                    if (child.userData?.isKeplerCone) {
+                        const kOp = galaxyZoom >= 2.0 ? Math.min(opacity * 0.45, (galaxyZoom - 2.0) / 0.5) : 0;
+                        child.material.opacity = kOp;
+                        return;
+                    }
+                    // Deep field beams: fade in from zoom >= 1.5
+                    if (child.userData?.isDeepFieldBeam) {
+                        const dbOp = galaxyZoom >= 1.5 ? Math.min(opacity * 0.65, (galaxyZoom - 1.5) / 0.5) : 0;
+                        child.material.opacity = dbOp;
                         return;
                     }
                     child.material.opacity = opacity;
