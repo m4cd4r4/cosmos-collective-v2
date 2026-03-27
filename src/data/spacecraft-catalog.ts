@@ -51,8 +51,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'NASA / ESA / CSA',
     launchDate: '2021-12-25',
-    imageUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e002172/GSFC_20171208_Archive_e002172~medium.jpg',
-    thumbnailUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e002172/GSFC_20171208_Archive_e002172~small.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000356/GSFC_20171208_Archive_e000356~medium.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000356/GSFC_20171208_Archive_e000356~thumb.jpg',
     summary:
       'The largest and most powerful space telescope ever built. JWST observes the universe in infrared, peering through dust clouds to study the earliest galaxies, star formation, and exoplanet atmospheres. Its 6.5-meter gold-coated primary mirror is composed of 18 hexagonal beryllium segments.',
     specs: [
@@ -87,8 +87,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'NASA / ESA',
     launchDate: '1990-04-24',
-    imageUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000139/GSFC_20171208_Archive_e000139~medium.jpg',
-    thumbnailUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e000139/GSFC_20171208_Archive_e000139~small.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/s90-34002/s90-34002~medium.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/s90-34002/s90-34002~thumb.jpg',
     summary:
       'One of the most productive scientific instruments ever built. Hubble has been observing the universe in ultraviolet, visible, and near-infrared light since 1990. Serviced five times by Space Shuttle crews, it continues to produce groundbreaking science after 35+ years in orbit.',
     specs: [
@@ -124,8 +124,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'NASA',
     launchDate: '1999-07-23',
-    imageUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001327/GSFC_20171208_Archive_e001327~medium.jpg',
-    thumbnailUrl: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001327/GSFC_20171208_Archive_e001327~small.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/9906646/9906646~medium.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/9906646/9906646~thumb.jpg',
     summary:
       "NASA's flagship X-ray observatory, named after Nobel laureate Subrahmanyan Chandrasekhar. Chandra detects X-ray emissions from extremely hot regions of the universe such as exploded stars, galaxy clusters, and matter around black holes. Its angular resolution of 0.5 arcseconds is unmatched in X-ray astronomy.",
     specs: [
@@ -160,8 +160,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'retired',
     agency: 'NASA',
     launchDate: '2003-08-25',
-    imageUrl: '/images/spacecraft/spitzer.jpg',
-    thumbnailUrl: '/images/spacecraft/spitzer-thumb.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/PIA23643/PIA23643~medium.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA23643/PIA23643~thumb.jpg',
     summary:
       "NASA's infrared Great Observatory, Spitzer operated for over 16 years before decommissioning on 2020-01-30. It observed the universe in infrared light, revealing cool objects invisible to optical telescopes including brown dwarfs, exoplanets, and distant dusty galaxies. Its cryogenic helium supply was exhausted in 2009 but it continued in warm mode.",
     specs: [
@@ -195,8 +195,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'retired',
     agency: 'NASA',
     launchDate: '2009-03-07',
-    imageUrl: '/images/spacecraft/kepler.jpg',
-    thumbnailUrl: '/images/spacecraft/kepler-thumb.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/PIA11824/PIA11824~orig.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA11824/PIA11824~thumb.jpg',
     summary:
       'Kepler revolutionized exoplanet science by discovering thousands of planets beyond our solar system using the transit method. After two reaction wheels failed in 2013, the mission was reinvented as K2, using solar radiation pressure for stabilization. Decommissioned on 2018-10-30 after running out of fuel.',
     specs: [
@@ -232,8 +232,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'NASA',
     launchDate: '2018-04-18',
-    imageUrl: '/images/spacecraft/tess.jpg',
-    thumbnailUrl: '/images/spacecraft/tess-thumb.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/c/c2/Transiting_Exoplanet_Survey_Satellite_artist_concept_%28transparent_background%29.png',
+    thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Transiting_Exoplanet_Survey_Satellite_artist_concept_%28transparent_background%29.png/330px-Transiting_Exoplanet_Survey_Satellite_artist_concept_%28transparent_background%29.png',
     summary:
       "TESS is surveying the entire sky for exoplanets orbiting bright, nearby stars using the transit photometry method. Unlike Kepler's deep stare at one field, TESS scans 85% of the sky with four wide-field cameras. It targets stars 30-100 times brighter than Kepler's, making follow-up spectroscopy far easier.",
     specs: [
@@ -272,8 +272,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'CSIRO',
     launchDate: null,
-    imageUrl: '/images/spacecraft/askap.jpg',
-    thumbnailUrl: '/images/spacecraft/askap-thumb.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/0/04/CSIRO_ScienceImage_11438_The_first_antenna_to_be_assembled_as_part_of_the_Australia_Square_Kilometre_Array_Pathfinder_ASKAP_telescope.jpg',
+    thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/04/CSIRO_ScienceImage_11438_The_first_antenna_to_be_assembled_as_part_of_the_Australia_Square_Kilometre_Array_Pathfinder_ASKAP_telescope.jpg/330px-CSIRO_ScienceImage_11438_The_first_antenna_to_be_assembled_as_part_of_the_Australia_Square_Kilometre_Array_Pathfinder_ASKAP_telescope.jpg',
     summary:
       'ASKAP is a next-generation radio interferometer at the Murchison Radio-astronomy Observatory in Western Australia. Its 36 identical 12-metre dishes use innovative phased array feed (PAF) receivers that give each antenna a 30 square degree field of view, enabling rapid wide-field surveys of the radio sky.',
     specs: [
@@ -306,8 +306,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'International Consortium (Curtin University lead)',
     launchDate: null,
-    imageUrl: '/images/spacecraft/mwa.jpg',
-    thumbnailUrl: '/images/spacecraft/mwa-thumb.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/8/8e/MWA_32T_Tile.jpg',
+    thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/MWA_32T_Tile.jpg/330px-MWA_32T_Tile.jpg',
     summary:
       'The MWA is a low-frequency radio telescope and SKA-Low precursor located at the Murchison Radio-astronomy Observatory. It uses 4,096 dual-polarization dipole antenna tiles spread across several km to observe the sky between 80-300 MHz. Key science goals include detecting the Epoch of Reionization, surveying the radio sky, and monitoring solar and space weather.',
     specs: [
@@ -340,8 +340,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'CSIRO',
     launchDate: null,
-    imageUrl: '/images/spacecraft/parkes.jpg',
-    thumbnailUrl: '/images/spacecraft/parkes-thumb.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/PIA17248/PIA17248~medium.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA17248/PIA17248~thumb.jpg',
     summary:
       'One of the most iconic radio telescopes in the world, Murriyang (its Wiradjuri name) has been operating since 1961. Its 64-metre dish famously received the Apollo 11 moonwalk TV broadcast. It remains a world-leading instrument for pulsar timing, fast radio burst detection, and spectral line surveys thanks to its new ultra-wideband receiver.',
     specs: [
@@ -375,8 +375,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'CSIRO',
     launchDate: null,
-    imageUrl: '/images/spacecraft/atca.jpg',
-    thumbnailUrl: '/images/spacecraft/atca-thumb.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/e/e8/CSIRO_ScienceImage_3881_Five_Antennas_at_Narrabri.jpg',
+    thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/CSIRO_ScienceImage_3881_Five_Antennas_at_Narrabri.jpg/330px-CSIRO_ScienceImage_3881_Five_Antennas_at_Narrabri.jpg',
     summary:
       'ATCA is a radio interferometer near Narrabri in New South Wales, consisting of six 22-metre dishes on a 6 km east-west baseline plus a north-south spur. Five dishes move along a rail track to vary the array configuration. It operates from centimetre to millimetre wavelengths and is the most versatile radio interferometer in the southern hemisphere.',
     specs: [
@@ -409,8 +409,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'under-construction',
     agency: 'SKAO (International)',
     launchDate: null,
-    imageUrl: '/images/spacecraft/ska.jpg',
-    thumbnailUrl: '/images/spacecraft/ska-thumb.jpg',
+    imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/3/35/SKA-MPI-2.jpg',
+    thumbnailUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/35/SKA-MPI-2.jpg/330px-SKA-MPI-2.jpg',
     summary:
       "The SKA will be the world's largest and most sensitive radio telescope, split across two sites: SKA-Low (low-frequency dipole antennas) in Western Australia and SKA-Mid (dish antennas) in South Africa. Construction began in 2022, with first science expected around 2027. It will address fundamental questions about dark energy, gravitational waves, cosmic magnetism, and the origins of life.",
     specs: [
@@ -448,8 +448,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'NASA / Roscosmos / ESA / JAXA / CSA',
     launchDate: '1998-11-20',
-    imageUrl: 'https://images-assets.nasa.gov/image/iss064e048983/iss064e048983~medium.jpg',
-    thumbnailUrl: 'https://images-assets.nasa.gov/image/iss064e048983/iss064e048983~small.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/iss032e010639/iss032e010639~medium.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/iss032e010639/iss032e010639~thumb.jpg',
     summary:
       'The largest modular space station in low Earth orbit, continuously occupied since November 2000. A joint project among five space agencies, it serves as a microgravity laboratory for research in biology, physics, astronomy, and technology. Over 270 people from 21 countries have visited the station.',
     specs: [
@@ -487,8 +487,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'NASA / JPL',
     launchDate: '1977-09-05',
-    imageUrl: 'https://images-assets.nasa.gov/image/PIA21474/PIA21474~medium.jpg',
-    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA21474/PIA21474~small.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/PIA14111/PIA14111~orig.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA14111/PIA14111~thumb.jpg',
     summary:
       'The most distant human-made object in existence. Voyager 1 flew past Jupiter (1979) and Saturn (1980) before heading toward interstellar space, which it entered in August 2012. Still transmitting data back to Earth via its 23-watt radio, it carries a Golden Record with sounds and images of life on Earth.',
     specs: [
@@ -523,8 +523,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'NASA / JPL',
     launchDate: '1977-08-20',
-    imageUrl: 'https://images-assets.nasa.gov/image/PIA21474/PIA21474~medium.jpg',
-    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA21474/PIA21474~small.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/PIA22915/PIA22915~orig.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA22915/PIA22915~thumb.jpg',
     summary:
       'The only spacecraft to have visited all four giant planets - Jupiter, Saturn, Uranus, and Neptune. Launched 16 days before Voyager 1, it took a slower trajectory that enabled the Grand Tour flybys. Voyager 2 crossed into interstellar space on November 5, 2018, and continues to return science data.',
     specs: [
@@ -559,8 +559,8 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     status: 'active',
     agency: 'NASA / JPL',
     launchDate: '2020-07-30',
-    imageUrl: 'https://images-assets.nasa.gov/image/PIA23764/PIA23764~medium.jpg',
-    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA23764/PIA23764~small.jpg',
+    imageUrl: 'https://images-assets.nasa.gov/image/PIA24343/PIA24343~medium.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA24343/PIA24343~thumb.jpg',
     summary:
       "NASA's Mars 2020 rover, exploring Jezero Crater - a 45 km wide ancient lake bed. Perseverance is searching for signs of ancient microbial life, characterizing Mars' geology and climate, and collecting rock/soil samples for future return to Earth. It carried the Ingenuity helicopter, which demonstrated powered flight on another planet.",
     specs: [
@@ -596,7 +596,7 @@ export const SPACECRAFT_CATALOG: SpacecraftEntry[] = [
     agency: 'NASA / JPL',
     launchDate: '2011-11-26',
     imageUrl: 'https://images-assets.nasa.gov/image/PIA16239/PIA16239~medium.jpg',
-    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA16239/PIA16239~small.jpg',
+    thumbnailUrl: 'https://images-assets.nasa.gov/image/PIA16239/PIA16239~thumb.jpg',
     summary:
       "NASA's Mars Science Laboratory rover, exploring Gale Crater since landing on August 6, 2012. Curiosity's primary mission was to determine if Mars ever had conditions suitable for microbial life - a question it answered affirmatively within its first year. It has been climbing Mount Sharp (Aeolis Mons) since 2014, reading billions of years of Martian geological history in its layered sediments.",
     specs: [
