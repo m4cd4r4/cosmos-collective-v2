@@ -9,13 +9,13 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Telescope, Calendar, Globe, Orbit, Sun, Hexagon } from 'lucide-react'
+import { Telescope, Calendar, Globe, Orbit, Sun, Hexagon, Satellite } from 'lucide-react'
 
 const navItems = [
   { label: 'Explore', href: '/explore', icon: Telescope, description: 'Browse JWST, Hubble, and radio telescope observations' },
   { label: 'Live', href: '/events', icon: Calendar, description: 'ISS tracker, solar weather, and real-time events' },
+  { label: 'Spacecraft', href: '/spacecraft', icon: Satellite, description: 'Space telescopes, probes, and stations encyclopedia' },
   { label: 'Solar System', href: '/solar-system', icon: Sun, description: 'Interactive 3D solar system' },
-  { label: 'Sky Map', href: '/sky-map', icon: Globe, description: 'Interactive celestial map' },
   { label: 'Kepler', href: '/kepler', icon: Orbit, description: '2,600+ Kepler exoplanets' },
   { label: 'JWST', href: '/jwst', icon: Hexagon, description: 'JWST observation explorer' },
 ]
@@ -160,6 +160,7 @@ function DesktopNav() {
 const mobileNavItems = [
   { label: 'Explore', href: '/explore', icon: Telescope },
   { label: 'Live', href: '/events', icon: Calendar },
+  { label: 'Hardware', href: '/spacecraft', icon: Satellite },
   { label: 'Solar', href: '/solar-system', icon: Sun },
   { label: 'Kepler', href: '/kepler', icon: Orbit },
   { label: 'Webb', href: '/jwst', icon: Hexagon },

@@ -11,6 +11,9 @@ import {
   type APODData,
 } from '@/services/real-time-events'
 import type { AstronomicalEvent } from '@/types/astronomy'
+import { fetchUpcomingLaunches, type LiveLaunch } from '@/services/launch-api'
+
+export type { LiveLaunch } from '@/services/launch-api'
 
 export interface LiveTelemetry {
   issPosition: { lat: number; lon: number; alt: number } | null
@@ -20,6 +23,7 @@ export interface LiveTelemetry {
   solarWeather: { flareLevel: string; currentFlux: number } | null
   events: AstronomicalEvent[]
   upcomingEvents: AstronomicalEvent[]
+  launches: LiveLaunch[]
   utcTime: string
   isLoading: boolean
 }
@@ -81,6 +85,15 @@ export function useLiveTelemetry(): LiveTelemetry {
     staleTime: 5 * 60 * 1000,
   })
 
+  // Upcoming launches - refresh every 15 min (API limit: 15 req/hr)
+  const launches = useQuery({
+    queryKey: ['upcoming-launches'],
+    queryFn: fetchUpcomingLaunches,
+    staleTime: 15 * 60 * 1000,
+    refetchInterval: 15 * 60 * 1000,
+    retry: 1,
+  })
+
   // Upcoming events (static, computed once)
   const [upcomingEvents] = useState(() => getUpcomingEvents(10))
 
@@ -102,6 +115,7 @@ export function useLiveTelemetry(): LiveTelemetry {
     solarWeather: solar.data ?? null,
     events: events.data ?? [],
     upcomingEvents,
+    launches: launches.data ?? [],
     utcTime,
     isLoading,
   }
