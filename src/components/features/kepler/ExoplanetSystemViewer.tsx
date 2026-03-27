@@ -349,7 +349,7 @@ export function ExoplanetSystemViewer({ star }: Props) {
             <button
               key={s}
               onClick={() => setSpeedIdx(i)}
-              className={`text-[9px] px-1.5 py-0.5 rounded border transition-colors ${
+              className={`text-[11px] px-1.5 py-0.5 rounded border transition-colors ${
                 i === speedIdx
                   ? 'bg-[rgba(74,144,226,0.3)] border-[rgba(74,144,226,0.6)] text-[#a0c4ff]'
                   : 'border-[rgba(74,144,226,0.15)] text-[#4a5580] hover:border-[rgba(74,144,226,0.3)]'
@@ -370,7 +370,7 @@ export function ExoplanetSystemViewer({ star }: Props) {
         {hasHZ && (
           <div className="absolute bottom-2 left-2 flex items-center gap-1.5 pointer-events-none">
             <span className="inline-block w-2.5 h-2.5 rounded-sm" style={{ background: 'rgba(68,255,136,0.25)', border: '1px solid rgba(68,255,136,0.5)' }} />
-            <span className="text-[9px] text-[#44ff88]">Habitable zone</span>
+            <span className="text-[11px] text-[#44ff88]">Habitable zone</span>
           </div>
         )}
 

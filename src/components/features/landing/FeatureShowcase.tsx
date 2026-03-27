@@ -7,22 +7,6 @@ import { Telescope, Globe, Search, Radio, Orbit, Sun } from 'lucide-react'
 
 const FEATURES = [
   {
-    title: 'Observatory',
-    href: '/observatory',
-    description: '33 iconic observations plotted on an all-sky Aitoff chart',
-    image: PLANET_HERO_IMAGES.pillars,
-    icon: Telescope,
-    color: '#4a90e2',
-  },
-  {
-    title: 'Sky Map',
-    href: '/sky-map',
-    description: 'Real-time interactive sky with multi-wavelength switching',
-    image: PLANET_HERO_IMAGES.deepField,
-    icon: Globe,
-    color: '#8b5cf6',
-  },
-  {
     title: 'Explore',
     href: '/explore',
     description: '132+ JWST, Hubble, and Australian radio observations',
@@ -39,12 +23,12 @@ const FEATURES = [
     color: '#ef4444',
   },
   {
-    title: 'Kepler Explorer',
-    href: '/kepler',
-    description: '2,600+ exoplanets in an interactive stellar field',
-    image: PLANET_HERO_IMAGES.jupiter,
-    icon: Sun,
-    color: '#f59e0b',
+    title: 'Sky Map',
+    href: '/sky-map',
+    description: 'Interactive sky atlas with multi-wavelength switching',
+    image: PLANET_HERO_IMAGES.deepField,
+    icon: Globe,
+    color: '#8b5cf6',
   },
   {
     title: 'Solar System',
@@ -54,6 +38,22 @@ const FEATURES = [
     icon: Orbit,
     color: '#22c55e',
   },
+  {
+    title: 'Kepler Explorer',
+    href: '/kepler',
+    description: '2,600+ exoplanets in an interactive stellar field',
+    image: PLANET_HERO_IMAGES.jupiter,
+    icon: Sun,
+    color: '#f59e0b',
+  },
+  {
+    title: 'JWST',
+    href: '/jwst',
+    description: 'Deep space observations with wavelength band switching',
+    image: PLANET_HERO_IMAGES.pillars,
+    icon: Telescope,
+    color: '#4a90e2',
+  },
 ]
 
 export function FeatureShowcase() {
@@ -62,7 +62,7 @@ export function FeatureShowcase() {
       <div className="max-w-5xl mx-auto">
         {/* Section header */}
         <div className="text-center mb-10">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Features</span>
+          <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580]">Features</span>
           <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">
             Explore Every Corner of the Universe
           </h2>

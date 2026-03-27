@@ -48,7 +48,7 @@ export function ExploreWidget() {
       {/* Current observation name */}
       <div className="absolute top-2.5 right-3">
         <span
-          className="text-[9px] font-mono tracking-wider text-white/60 transition-opacity duration-500"
+          className="text-[11px] font-mono tracking-wider text-white/60 transition-opacity duration-500"
           key={activeIndex}
         >
           {featured[activeIndex].name}

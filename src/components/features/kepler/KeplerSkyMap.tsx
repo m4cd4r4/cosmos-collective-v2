@@ -134,7 +134,7 @@ export const KeplerSkyMap = forwardRef<
         <div className="absolute inset-0 bg-[#050810] flex items-center justify-center z-10">
           <div className="text-center">
             <div className="w-6 h-6 border-2 border-[#4a90e2] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-[9px] text-[#4a5580] uppercase tracking-[0.15em]">Loading Kepler Field…</p>
+            <p className="text-[11px] text-[#4a5580] uppercase tracking-[0.15em]">Loading Kepler Field…</p>
           </div>
         </div>
       )}
@@ -145,11 +145,11 @@ export const KeplerSkyMap = forwardRef<
       {/* Field label */}
       {isLoaded && (
         <div className="absolute top-2 left-2 z-20 pointer-events-none flex flex-col gap-1">
-          <span className="text-[9px] text-[#4a90e2] bg-[rgba(4,6,18,0.8)] px-2 py-1 rounded backdrop-blur-sm uppercase tracking-[0.15em]">
+          <span className="text-[11px] text-[#4a90e2] bg-[rgba(4,6,18,0.8)] px-2 py-1 rounded backdrop-blur-sm uppercase tracking-[0.15em]">
             Kepler Field · Cygnus
           </span>
           {selectedStar && (
-            <span className="text-[9px] text-[#d4af37] bg-[rgba(4,6,18,0.8)] px-2 py-1 rounded backdrop-blur-sm">
+            <span className="text-[11px] text-[#d4af37] bg-[rgba(4,6,18,0.8)] px-2 py-1 rounded backdrop-blur-sm">
               ◎ {selectedStar.name}
             </span>
           )}
@@ -159,7 +159,7 @@ export const KeplerSkyMap = forwardRef<
       {/* Reset button */}
       {isLoaded && selectedStar && (
         <button
-          className="absolute bottom-2 right-2 z-20 text-[9px] text-[#4a90e2] bg-[rgba(4,6,18,0.8)] px-2 py-1 rounded backdrop-blur-sm uppercase tracking-[0.15em] hover:text-[#7fbfff] transition-colors"
+          className="absolute bottom-2 right-2 z-20 text-[11px] text-[#4a90e2] bg-[rgba(4,6,18,0.8)] px-2 py-1 rounded backdrop-blur-sm uppercase tracking-[0.15em] hover:text-[#7fbfff] transition-colors"
           onClick={() => {
             if (!aladinRef.current) return
             aladinRef.current.gotoRaDec(KEPLER_FIELD.ra, KEPLER_FIELD.dec)
@@ -173,7 +173,7 @@ export const KeplerSkyMap = forwardRef<
       {/* Legend */}
       {isLoaded && (
         <div className="absolute bottom-2 left-2 z-20 pointer-events-none">
-          <div className="flex items-center gap-1.5 text-[9px] text-[#c8d4f0] bg-[rgba(4,6,18,0.75)] px-2 py-0.5 rounded backdrop-blur-sm">
+          <div className="flex items-center gap-1.5 text-[11px] text-[#c8d4f0] bg-[rgba(4,6,18,0.75)] px-2 py-0.5 rounded backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full inline-block shrink-0 bg-[#d4af37]" />
             Selected star
           </div>

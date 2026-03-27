@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useCountUp } from '@/hooks/useCountUp'
-import { LayoutDashboard, BookMarked, BookOpen, Heart } from 'lucide-react'
+import { Telescope, BookOpen, Heart, ShieldCheck } from 'lucide-react'
 
 const STATS = [
   { label: 'Live Data Sources', target: 11, suffix: '' },
@@ -13,10 +13,10 @@ const STATS = [
 ]
 
 const QUICK_LINKS = [
-  { label: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { label: 'Mission Control', href: '/mission-control', icon: BookMarked },
+  { label: 'Explore', href: '/explore', icon: Telescope },
   { label: 'Dev Log', href: '/devlog', icon: BookOpen },
   { label: 'Credits', href: '/credits', icon: Heart },
+  { label: 'Accessibility', href: '/accessibility', icon: ShieldCheck },
 ]
 
 function CountUpCell({ target, suffix, label, enabled, delay }: {
@@ -26,7 +26,7 @@ function CountUpCell({ target, suffix, label, enabled, delay }: {
   return (
     <div className="text-center px-4 py-3">
       <div className="text-xl sm:text-2xl font-bold text-white tabular-nums font-mono">{display}</div>
-      <div className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-1">{label}</div>
+      <div className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-1">{label}</div>
     </div>
   )
 }
@@ -81,7 +81,7 @@ export function LandingFooter() {
         </div>
 
         {/* Attribution */}
-        <p className="text-center text-[9px] uppercase tracking-[0.12em] text-[#4a5580]/50">
+        <p className="text-center text-[11px] uppercase tracking-[0.12em] text-[#4a5580]/50">
           Made with real NASA, ESA, CSIRO, and STScI data &middot; Open source under MIT
         </p>
       </div>

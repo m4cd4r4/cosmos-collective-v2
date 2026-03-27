@@ -11,7 +11,9 @@ import { ExploreFilters } from '@/components/features/explore/ExploreFilters'
 import { ExploreSearch } from '@/components/features/explore/ExploreSearch'
 import { getFeaturedJWSTImages, getFeaturedHubbleImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
-import { Telescope, Radio, Eye, Layers } from 'lucide-react'
+import { Telescope, Layers } from 'lucide-react'
+import { PageHeader } from '@/components/ui/PageHeader'
+import { StatsBar } from '@/components/ui/StatsBar'
 
 export const metadata: Metadata = {
   title: 'Explore',
@@ -47,42 +49,30 @@ export default function ExplorePage({
   const totalCount = jwstCount + hubbleCount + radioCount
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
+    <div className="min-h-[100dvh] flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
 
       {/* ── App Header Strip ──────────────────────────────────────────────── */}
-      <div className="bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] px-5 h-[52px] flex items-center justify-between shrink-0">
-        <div className="flex items-center gap-3">
-          <Telescope className="w-4 h-4 text-[#d4af37]" />
-          <span className="text-base font-bold tracking-[0.15em] uppercase text-[#e0e8ff]">Explore</span>
-          <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)]">
-            <Eye className="w-3 h-3 text-[#d4af37]" />
-            <span className="text-[9px] uppercase tracking-[0.15em] text-[#d4af37]">{totalCount} Observations</span>
+      <PageHeader
+        icon={Telescope}
+        title="Explore"
+        badge={{ text: `${totalCount} Observations`, color: '#d4af37' }}
+        subtitle="JWST · Hubble · Radio"
+        rightContent={
+          <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-gray-500">
+            <Layers className="w-3 h-3" />
+            <span className="hidden sm:inline">Multi-source Archive</span>
           </div>
-          <span className="hidden sm:inline text-[9px] uppercase tracking-[0.12em] text-[#4a5580] border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
-            JWST · Hubble · Radio
-          </span>
-        </div>
-        <div className="flex items-center gap-2 text-[9px] uppercase tracking-wider text-[#4a5580]">
-          <Layers className="w-3 h-3" />
-          <span className="hidden sm:inline">Multi-source Archive</span>
-        </div>
-      </div>
+        }
+      />
 
       {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
-      <div className="bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.08)] flex shrink-0">
-        {[
-          { label: 'JWST', value: String(jwstCount), color: '#e040fb' },
-          { label: 'Hubble', value: String(hubbleCount), color: '#4a90e2' },
-          { label: 'Radio', value: String(radioCount), color: '#f59e0b' },
-          { label: 'Total', value: String(totalCount), color: '#d4af37' },
-        ].map(({ label, value, color }) => (
-          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
-            <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
-            <span className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5">{label}</span>
-          </div>
-        ))}
-      </div>
+      <StatsBar items={[
+        { label: 'JWST', value: String(jwstCount), color: '#e040fb' },
+        { label: 'Hubble', value: String(hubbleCount), color: '#4a90e2' },
+        { label: 'Radio', value: String(radioCount), color: '#f59e0b' },
+        { label: 'Total', value: String(totalCount), color: '#d4af37' },
+      ]} />
 
       <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-7xl mx-auto w-full">
 

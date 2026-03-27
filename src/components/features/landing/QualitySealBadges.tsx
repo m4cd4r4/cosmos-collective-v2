@@ -51,7 +51,7 @@ export function QualitySealBadges() {
       <div className="max-w-5xl mx-auto">
         {/* Section header */}
         <div className="text-center mb-8">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Quality</span>
+          <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580]">Quality</span>
           <h2 className="text-xl sm:text-2xl font-display font-bold text-white mt-2">
             Built to the Highest Standards
           </h2>
@@ -75,7 +75,7 @@ export function QualitySealBadges() {
               </span>
 
               <h3 className="text-[11px] font-semibold text-[#c8d4f0] mt-1">{label}</h3>
-              <p className="text-[9px] text-[#4a5580] mt-0.5">{detail}</p>
+              <p className="text-[11px] text-[#4a5580] mt-0.5">{detail}</p>
             </div>
           ))}
         </div>
@@ -84,7 +84,7 @@ export function QualitySealBadges() {
         <div className="text-center mt-6">
           <Link
             href="/accessibility"
-            className="text-[10px] uppercase tracking-[0.15em] text-[#4a5580] hover:text-[#d4af37] transition-colors"
+            className="text-xs uppercase tracking-[0.15em] text-[#4a5580] hover:text-[#d4af37] transition-colors"
           >
             View full accessibility report &rarr;
           </Link>

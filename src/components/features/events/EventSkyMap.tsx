@@ -181,7 +181,7 @@ export const EventSkyMap = forwardRef<
         <div className="absolute inset-0 bg-[#060a18] flex items-center justify-center z-10">
           <div className="text-center">
             <div className="w-6 h-6 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-[9px] text-[#4a5580] uppercase tracking-[0.15em]">Loading Sky Map…</p>
+            <p className="text-[11px] text-[#4a5580] uppercase tracking-[0.15em]">Loading Sky Map…</p>
           </div>
         </div>
       )}
@@ -192,11 +192,11 @@ export const EventSkyMap = forwardRef<
       {/* Legend */}
       {isLoaded && (
         <div className="absolute bottom-2 left-2 z-20 flex items-center gap-3 pointer-events-none">
-          <div className="flex items-center gap-1 text-[9px] text-[#c8d4f0] bg-[rgba(4,6,18,0.7)] px-2 py-1 rounded backdrop-blur-sm">
+          <div className="flex items-center gap-1 text-[11px] text-[#c8d4f0] bg-[rgba(4,6,18,0.7)] px-2 py-1 rounded backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full bg-[#ef4444] inline-block" />
             Active
           </div>
-          <div className="flex items-center gap-1 text-[9px] text-[#c8d4f0] bg-[rgba(4,6,18,0.7)] px-2 py-1 rounded backdrop-blur-sm">
+          <div className="flex items-center gap-1 text-[11px] text-[#c8d4f0] bg-[rgba(4,6,18,0.7)] px-2 py-1 rounded backdrop-blur-sm">
             <span className="w-2 h-2 rounded-full bg-[#d4af37] inline-block" />
             Upcoming
           </div>
@@ -225,13 +225,13 @@ export const EventSkyMap = forwardRef<
                   ☄️ {hoveredMarker.name}
                 </div>
                 {hoveredMarker.subtitle && (
-                  <div className="text-[#d4af37] text-[9px] mt-0.5 drop-shadow-lg">
+                  <div className="text-[#d4af37] text-[11px] mt-0.5 drop-shadow-lg">
                     {hoveredMarker.subtitle}
                   </div>
                 )}
               </div>
             </div>
-            <div className="px-3 py-1.5 text-[9px] text-[#4a5580] uppercase tracking-[0.12em]">
+            <div className="px-3 py-1.5 text-[11px] text-[#4a5580] uppercase tracking-[0.12em]">
               Meteor radiant position
             </div>
           </div>

@@ -235,7 +235,7 @@ export function SKASection() {
                       </p>
 
                       {item.status === 'in-progress' && (
-                        <span className="text-[9px] bg-cosmos-gold/20 text-cosmos-gold px-1.5 py-0.5 rounded-full mt-1">
+                        <span className="text-[11px] bg-cosmos-gold/20 text-cosmos-gold px-1.5 py-0.5 rounded-full mt-1">
                           Now
                         </span>
                       )}

@@ -81,7 +81,7 @@ export function CreditsWidget() {
               boxShadow: allChecked && onlineCount === sources.length ? '0 0 6px #22c55e' : undefined,
             }}
           />
-          <span className="text-[9px] font-mono text-[#4a5580]">
+          <span className="text-[11px] font-mono text-[#4a5580]">
             {allChecked ? `${onlineCount}/${sources.length}` : '...'}
           </span>
         </div>
@@ -106,14 +106,14 @@ export function CreditsWidget() {
 
             {/* Name */}
             <span
-              className="text-[10px] font-semibold tracking-wider flex-1"
+              className="text-xs font-semibold tracking-wider flex-1"
               style={{ color: src.color }}
             >
               {src.abbr}
             </span>
 
             {/* Latency */}
-            <span className="text-[9px] font-mono text-[#4a5580] tabular-nums w-[42px] text-right">
+            <span className="text-[11px] font-mono text-[#4a5580] tabular-nums w-[42px] text-right">
               {src.status === 'checking' ? '---'
                 : src.latencyMs !== null ? `${src.latencyMs}ms`
                 : 'ERR'

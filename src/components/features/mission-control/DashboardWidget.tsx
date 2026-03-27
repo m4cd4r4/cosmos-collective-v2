@@ -66,7 +66,7 @@ export function DashboardWidget({ apod, issPosition, utcTime }: DashboardWidgetP
                 boxShadow: issPosition ? '0 0 6px #22c55e' : undefined,
               }}
             />
-            <span className="text-[9px] font-mono text-[#22c55e]/70">
+            <span className="text-[11px] font-mono text-[#22c55e]/70">
               {issPosition
                 ? `ISS ${issPosition.lat.toFixed(1)}° ${issPosition.lon.toFixed(1)}°`
                 : 'ISS ---'
@@ -76,7 +76,7 @@ export function DashboardWidget({ apod, issPosition, utcTime }: DashboardWidgetP
 
           {/* Favourites */}
           <div className="flex items-center gap-1">
-            <span className="text-[9px] font-mono text-[#ec4899]/70">
+            <span className="text-[11px] font-mono text-[#ec4899]/70">
               {favouriteCount} ★
             </span>
           </div>

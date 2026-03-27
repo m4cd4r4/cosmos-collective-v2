@@ -71,13 +71,13 @@ export default async function DevlogPage() {
           <Code2 className="w-4 h-4 text-[#d4af37]" />
           <span className="text-base font-bold tracking-[0.15em] uppercase text-[#e0e8ff]">Dev Log</span>
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)]">
-            <span className="text-[9px] uppercase tracking-[0.15em] text-[#d4af37]">{posts.length} Posts</span>
+            <span className="text-[11px] uppercase tracking-[0.15em] text-[#d4af37]">{posts.length} Posts</span>
           </div>
-          <span className="hidden sm:inline text-[9px] uppercase tracking-[0.12em] text-[#4a5580] border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
+          <span className="hidden sm:inline text-[11px] uppercase tracking-[0.12em] text-[#4a5580] border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
             Building Cosmos Collective
           </span>
         </div>
-        <span className="hidden sm:block text-[9px] uppercase tracking-wider text-[#4a5580]">
+        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-[#4a5580]">
           Technical Deep-Dives
         </span>
       </div>
@@ -92,7 +92,7 @@ export default async function DevlogPage() {
         ].map(({ label, value, color }) => (
           <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
             <span className="text-lg sm:text-xl font-bold truncate max-w-[120px]" style={{ color }}>{value}</span>
-            <span className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
+            <span className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
           </div>
         ))}
       </div>
@@ -109,7 +109,7 @@ export default async function DevlogPage() {
               {/* Year divider */}
               <div className="flex items-center gap-3 mb-3">
                 <span className="flex-1 border-t border-[rgba(212,175,55,0.08)]" />
-                <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580] px-1">{year}</span>
+                <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580] px-1">{year}</span>
                 <span className="flex-1 border-t border-[rgba(212,175,55,0.08)]" />
               </div>
 
@@ -144,9 +144,9 @@ function FeaturedPost({ post }: { post: DevlogPost }) {
       <div className="rounded-xl border border-[rgba(212,175,55,0.25)] bg-[rgba(8,12,28,0.7)] overflow-hidden hover:border-[rgba(212,175,55,0.45)] transition-colors">
         <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#d4af37] animate-pulse" />
-          <span className="text-[10px] uppercase tracking-[0.15em] text-[#d4af37]">Latest</span>
+          <span className="text-xs uppercase tracking-[0.15em] text-[#d4af37]">Latest</span>
           {post.featured && (
-            <span className="ml-auto text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[rgba(224,64,251,0.12)] text-[#e040fb] border border-[rgba(224,64,251,0.25)]">
+            <span className="ml-auto text-[11px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[rgba(224,64,251,0.12)] text-[#e040fb] border border-[rgba(224,64,251,0.25)]">
               Featured
             </span>
           )}
@@ -156,7 +156,7 @@ function FeaturedPost({ post }: { post: DevlogPost }) {
             <Icon className="w-5 h-5" style={{ color }} />
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[9px] uppercase tracking-[0.15em] mb-1.5" style={{ color }}>
+            <div className="text-[11px] uppercase tracking-[0.15em] mb-1.5" style={{ color }}>
               {post.category.replace(/-/g, ' ')}
             </div>
             <h2 className="text-[15px] font-bold text-[#e0e8ff] group-hover:text-[#d4af37] transition-colors leading-snug mb-1.5">
@@ -203,7 +203,7 @@ function PostRow({ post }: { post: DevlogPost }) {
             {post.title}
           </span>
           {post.featured && (
-            <span className="text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.12)] text-[#d4af37] border border-[rgba(212,175,55,0.25)] shrink-0">
+            <span className="text-[11px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.12)] text-[#d4af37] border border-[rgba(212,175,55,0.25)] shrink-0">
               Featured
             </span>
           )}

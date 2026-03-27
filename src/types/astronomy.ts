@@ -268,105 +268,8 @@ export interface AstronomicalEvent {
 }
 
 // ============================================
-// Citizen Science Types
+// User & Stats Types
 // ============================================
-
-export type ClassificationTaskType =
-  | 'galaxy-morphology'
-  | 'radio-source-matching'
-  | 'transient-identification'
-  | 'feature-marking'
-  | 'quality-assessment'
-
-export interface ClassificationQuestion {
-  id: string
-  question: string
-  helpText?: string
-  type: 'single-choice' | 'multi-choice' | 'slider' | 'drawing' | 'yes-no'
-  options?: {
-    id: string
-    label: string
-    description?: string
-    icon?: string
-  }[]
-  /** For slider type */
-  range?: {
-    min: number
-    max: number
-    step: number
-    labels?: Record<number, string>
-  }
-}
-
-export interface ClassificationTask {
-  id: string
-  type: ClassificationTaskType | string
-  /** Subject/observation ID this task is for */
-  observationId?: string
-  title?: string
-  description?: string
-  instructions: string
-  questions?: ClassificationQuestion[]
-  /** Classification options (for simple tasks) */
-  options?: ClassificationOption[]
-  /** Subject image URL */
-  subjectUrl?: string
-  /** Estimated time to complete in seconds */
-  estimatedTime?: number
-  /** Estimated time to complete in minutes */
-  estimatedMinutes?: number
-  /** Difficulty level */
-  difficulty: 'beginner' | 'intermediate' | 'advanced'
-  /** Points awarded for completion */
-  points?: number
-  /** Project this task belongs to */
-  projectId: string
-  projectName: string
-  /** Additional metadata for the subject */
-  metadata?: Record<string, string | number | boolean>
-}
-
-export interface ClassificationOption {
-  value: string
-  label: string
-  description?: string
-  icon?: string
-}
-
-export interface ClassificationSubmission {
-  id: string
-  taskId: string
-  userId: string
-  answers: Record<string, string | string[] | number | DrawingData>
-  submittedAt: string
-  /** Time spent on task in seconds */
-  timeSpent: number
-  /** User's confidence in their answers */
-  selfConfidence?: 'low' | 'medium' | 'high'
-}
-
-export interface DrawingData {
-  type: 'point' | 'rectangle' | 'ellipse' | 'polygon' | 'freehand'
-  coordinates: number[][]
-  label?: string
-}
-
-// ============================================
-// User & Contribution Types
-// ============================================
-
-export interface UserContribution {
-  id: string
-  userId: string
-  type: 'classification' | 'feature-mark' | 'comment' | 'favorite'
-  observationId: string
-  data: ClassificationSubmission | DetectedFeature | string
-  createdAt: string
-  /** Whether this contribution was verified */
-  isVerified?: boolean
-  /** Points earned */
-  pointsEarned?: number
-}
 
 export interface UserStats {
   /** Total number of classifications made */
@@ -511,7 +414,7 @@ export interface AnalyticsSummary {
   topSearchTerms: { term: string; count: number }[]
   classificationStats: {
     total: number
-    byType: Record<ClassificationTaskType, number>
+    byType: Record<string, number>
   }
   userEngagement: {
     averageSessionDuration: number

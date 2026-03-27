@@ -110,13 +110,13 @@ export function KeplerViewer() {
       <div className="flex lg:hidden bg-[rgba(4,6,18,0.97)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
         <button
           onClick={() => setMobileTab('view')}
-          className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'view' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'view' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
         >
           Star Map
         </button>
         <button
           onClick={() => setMobileTab('filters')}
-          className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'filters' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'filters' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
         >
           Filters · Details
         </button>
@@ -152,7 +152,7 @@ export function KeplerViewer() {
                     key={v}
                     onClick={() => setViewMode(v)}
                     title={title}
-                    className={`flex-1 min-w-[48%] py-1.5 text-[10px] uppercase tracking-wider transition-colors rounded border ${
+                    className={`flex-1 min-w-[48%] py-1.5 text-xs uppercase tracking-wider transition-colors rounded border ${
                       viewMode === v
                         ? v === 'aladin'
                           ? 'bg-[rgba(212,175,55,0.18)] text-[#d4af37] border-[rgba(212,175,55,0.3)]'
@@ -387,7 +387,7 @@ function Stat({ label, value, color, loading }: { label: string; value: number |
   }
   return (
     <div className="flex-1 px-3.5 py-[7px] border-r border-[rgba(74,144,226,0.15)] last:border-r-0 flex flex-col gap-0.5">
-      <div className="text-[10px] uppercase tracking-[0.14em] text-[#4a5580]">{label}</div>
+      <div className="text-xs uppercase tracking-[0.14em] text-[#4a5580]">{label}</div>
       <div className={`font-bold ${color === 'dim' ? 'text-[15px]' : 'text-lg'} ${loading ? 'text-[#4a5580]' : ''}`}
         style={{ color: loading ? undefined : colorMap[color] }}>
         {loading ? '—' : typeof value === 'number' ? value.toLocaleString() : value}
@@ -399,7 +399,7 @@ function Stat({ label, value, color, loading }: { label: string; value: number |
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-[10px] uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.12)]">
+      <div className="text-xs uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.12)]">
         {title}
       </div>
       {children}
@@ -464,7 +464,7 @@ function StarDetail({ star }: { star: StarSystem }) {
       </div>
 
       <section>
-        <div className="text-[10px] uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-1">Host Star</div>
+        <div className="text-xs uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-1">Host Star</div>
         {[
           { label: 'Temperature', value: star.teff ? `${star.teff.toLocaleString()} K` : '—', style: { color: tempToColor(star.teff) } },
           { label: 'Radius',      value: star.srad  ? `${star.srad.toFixed(2)} R☉` : '—' },
@@ -474,18 +474,18 @@ function StarDetail({ star }: { star: StarSystem }) {
         ].map(p => (
           <div key={p.label} className="flex justify-between items-center py-[5px] border-b border-white/[0.03] text-xs">
             <span className="text-[#4a5580]">{p.label}</span>
-            <span className={`font-medium ${p.small ? 'text-[9px]' : ''}`} style={p.style}>{p.value}</span>
+            <span className={`font-medium ${p.small ? 'text-[11px]' : ''}`} style={p.style}>{p.value}</span>
           </div>
         ))}
       </section>
 
       <section>
-        <div className="text-[10px] uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">Orbital System</div>
+        <div className="text-xs uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">Orbital System</div>
         <ExoplanetSystemViewer star={star} />
       </section>
 
       <section>
-        <div className="text-[10px] uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">
+        <div className="text-xs uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">
           Planets ({star.planets.length})
         </div>
         <div className="flex flex-col gap-1.5">

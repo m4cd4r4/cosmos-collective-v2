@@ -83,10 +83,10 @@ export default function AccessibilityPage() {
           <Accessibility className="w-4 h-4 text-[#d4af37]" />
           <span className="text-base font-bold tracking-[0.15em] uppercase text-[#e0e8ff]">Accessibility</span>
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[rgba(74,144,226,0.12)] border border-[rgba(74,144,226,0.25)]">
-            <span className="text-[9px] uppercase tracking-[0.15em] text-[#4a90e2]">WCAG 2.1 AA</span>
+            <span className="text-[11px] uppercase tracking-[0.15em] text-[#4a90e2]">WCAG 2.1 AA</span>
           </div>
         </div>
-        <span className="hidden sm:block text-[9px] uppercase tracking-wider text-[#4a5580]">
+        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-[#4a5580]">
           Universal Design
         </span>
       </div>
@@ -101,7 +101,7 @@ export default function AccessibilityPage() {
         ].map(({ label, value, color }) => (
           <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
             <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
-            <span className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5">{label}</span>
+            <span className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5">{label}</span>
           </div>
         ))}
       </div>
@@ -116,7 +116,7 @@ export default function AccessibilityPage() {
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#4caf93]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-[#4caf93]">Our Commitment</span>
+                <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#4caf93]">Our Commitment</span>
               </div>
               <div className="px-4 py-4 space-y-2.5">
                 <p className="text-[12px] text-[#8090b0] leading-relaxed">
@@ -159,7 +159,7 @@ export default function AccessibilityPage() {
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#4caf93]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-[#4caf93]">Technical Standards</span>
+                <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#4caf93]">Technical Standards</span>
               </div>
               <div className="px-4 py-3">
                 <ul className="space-y-2.5">
@@ -177,7 +177,7 @@ export default function AccessibilityPage() {
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                 <Volume2 className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-[#d4af37]">Feedback</span>
+                <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#d4af37]">Feedback</span>
               </div>
               <div className="px-4 py-4">
                 <p className="text-[11px] text-[#6070a0] leading-relaxed mb-3">

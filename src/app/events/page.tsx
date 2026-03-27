@@ -11,14 +11,8 @@ import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
 import { NeoApproachDiagram } from '@/components/features/events/NeoApproachDiagram'
 import { SolarGauge } from '@/components/features/events/SolarGauge'
 import { EventSkyMap, type EventSkyMapHandle } from '@/components/features/events/EventSkyMap'
-import {
-  getAllCurrentEvents,
-  getISSPosition,
-  getSolarWeather,
-  getMeteorShowers,
-  getAstronomyPictureOfTheDay,
-  type APODData,
-} from '@/services/real-time-events'
+import { useLiveTelemetry } from '@/hooks/useLiveTelemetry'
+import { getMeteorShowers } from '@/services/real-time-events'
 import type { AstronomicalEvent } from '@/types'
 import {
   Calendar,
@@ -26,17 +20,11 @@ import {
   Globe,
   Star,
   AlertTriangle,
-  RefreshCw,
   ExternalLink,
   Loader2,
   Sparkles,
-  Radio,
   Satellite,
   Video,
-  Eye,
-  Moon,
-  Sun,
-  Rocket,
   ChevronDown,
   ChevronUp,
   MapPin,
@@ -114,15 +102,11 @@ function getEventThumbnail(type: string) {
 // ── Page ────────────────────────────────────────────────────────────────────
 
 export default function EventsPage() {
-  const [events, setEvents] = useState<AstronomicalEvent[]>([])
-  const [apod, setApod] = useState<APODData | null>(null)
-  const [issPosition, setIssPosition] = useState<{ lat: number; lon: number } | null>(null)
-  const [issError, setIssError] = useState(false)
-  const [isLoading, setIsLoading] = useState(true)
-  const [lastUpdated, setLastUpdated] = useState<Date | null>(null)
+  const telemetry = useLiveTelemetry()
+  const { events, apod, issPosition, issError, isLoading, solarWeather: solarData } = telemetry
+
   const [selectedCamera, setSelectedCamera] = useState(ISS_CAMERAS[0])
   const [displayCount, setDisplayCount] = useState(INITIAL_EVENT_COUNT)
-  const [solarData, setSolarData] = useState<{ flareLevel: string; currentFlux: number } | null>(null)
   const [apodExpanded, setApodExpanded] = useState(false)
   const [highlightedEvent, setHighlightedEvent] = useState<string | null>(null)
 
@@ -133,49 +117,6 @@ export default function EventsPage() {
 
   const switchToCamera2 = useCallback(() => {
     setSelectedCamera((prev) => (prev.id === 'iss-live-1' ? ISS_CAMERAS[1] : prev))
-  }, [])
-
-  const fetchData = async () => {
-    setIsLoading(true)
-    try {
-      const [eventsResult, apodResult, issResult, solarResult] = await Promise.allSettled([
-        getAllCurrentEvents(),
-        getAstronomyPictureOfTheDay(),
-        getISSPosition(),
-        getSolarWeather(),
-      ])
-      if (eventsResult.status === 'fulfilled' && eventsResult.value.success)
-        setEvents(eventsResult.value.data || [])
-      if (apodResult.status === 'fulfilled' && apodResult.value.success)
-        setApod(apodResult.value.data || null)
-      if (issResult.status === 'fulfilled' && issResult.value.success && issResult.value.data) {
-        setIssPosition({ lat: issResult.value.data.position.lat, lon: issResult.value.data.position.lon })
-        setIssError(false)
-      } else {
-        setIssError(true)
-      }
-      if (solarResult.status === 'fulfilled' && solarResult.value.success && solarResult.value.data)
-        setSolarData({ flareLevel: solarResult.value.data.flareLevel, currentFlux: solarResult.value.data.currentFlux })
-      setLastUpdated(new Date())
-    } catch (error) {
-      console.error('Error fetching events:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    fetchData()
-    const issInterval = setInterval(async () => {
-      const result = await getISSPosition()
-      if (result.success && result.data) {
-        setIssPosition({ lat: result.data.position.lat, lon: result.data.position.lon })
-        setIssError(false)
-      } else {
-        setIssError(true)
-      }
-    }, 30000)
-    return () => clearInterval(issInterval)
   }, [])
 
   useEffect(() => {
@@ -248,7 +189,7 @@ export default function EventsPage() {
     !!(event.coordinates || event.type === 'conjunction')
 
   return (
-    <div className="h-screen overflow-hidden flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
+    <div className="min-h-[100dvh] flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
 
       {/* ── App Header Strip ──────────────────────────────────────────────── */}
@@ -258,28 +199,13 @@ export default function EventsPage() {
           <span className="text-base font-bold tracking-[0.15em] uppercase text-[#e0e8ff]">Live Events</span>
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-500/20 border border-red-500/30">
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            <span className="text-[9px] uppercase tracking-[0.15em] text-red-400">Live</span>
+            <span className="text-[11px] uppercase tracking-[0.15em] text-red-400">Live</span>
           </div>
-          <span className="hidden sm:inline text-[9px] uppercase tracking-[0.12em] text-[#4a5580] border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
+          <span className="hidden sm:inline text-[11px] uppercase tracking-[0.12em] text-[#4a5580] border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
             Astronomical · Space Weather · ISS
           </span>
         </div>
-        <div className="flex items-center gap-3">
-          {lastUpdated && (
-            <span className="text-[10px] text-[#4a5580] uppercase tracking-wider hidden sm:block">
-              {formatDate(lastUpdated.toISOString(), { hour: 'numeric', minute: 'numeric' })}
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={fetchData}
-            disabled={isLoading}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[rgba(212,175,55,0.2)] text-[#d4af37] text-[10px] uppercase tracking-wider hover:bg-[rgba(212,175,55,0.08)] transition-colors disabled:opacity-40"
-          >
-            {isLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <RefreshCw className="w-3 h-3" />}
-            Refresh
-          </button>
-        </div>
+
       </div>
 
       {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
@@ -292,7 +218,7 @@ export default function EventsPage() {
         ].map(({ label, value, color }) => (
           <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
             <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
-            <span className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
+            <span className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
           </div>
         ))}
       </div>
@@ -311,12 +237,12 @@ export default function EventsPage() {
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Telescope className="w-3.5 h-3.5 text-[#d4af37]" />
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">
+                  <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">
                     Sky Events Map
                   </span>
-                  <span className="text-[9px] text-[#4a5580]">· Meteor radiant positions</span>
+                  <span className="text-[11px] text-[#4a5580]">· Meteor radiant positions</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[9px] text-[#4a5580]">
+                <div className="flex items-center gap-1.5 text-[11px] text-[#4a5580]">
                   <MapPin className="w-3 h-3 text-[#d4af37]" />
                   Hover markers · click Locate on events below
                 </div>
@@ -333,8 +259,8 @@ export default function EventsPage() {
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Video className="w-3.5 h-3.5 text-[#d4af37]" />
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">ISS Live Feed</span>
-                  <span className="text-[9px] text-[#4a5580]">· Earth from 408 km</span>
+                  <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">ISS Live Feed</span>
+                  <span className="text-[11px] text-[#4a5580]">· Earth from 408 km</span>
                 </div>
                 <div className="flex items-center gap-1">
                   {ISS_CAMERAS.map((camera) => (
@@ -343,7 +269,7 @@ export default function EventsPage() {
                       type="button"
                       onClick={() => setSelectedCamera(camera)}
                       className={cn(
-                        'px-2.5 py-0.5 rounded text-[9px] uppercase tracking-wider transition-colors',
+                        'px-2.5 py-0.5 rounded text-[11px] uppercase tracking-wider transition-colors',
                         selectedCamera.id === camera.id
                           ? 'bg-[rgba(212,175,55,0.15)] text-[#d4af37] border border-[rgba(212,175,55,0.3)]'
                           : 'text-[#4a5580] hover:text-[#c8d4f0]',
@@ -354,7 +280,7 @@ export default function EventsPage() {
                   ))}
                   <div className="flex items-center gap-1 ml-2 px-2 py-0.5 rounded bg-red-500/20 border border-red-500/30">
                     <span className="w-1 h-1 rounded-full bg-red-500 animate-pulse" />
-                    <span className="text-[9px] text-red-400">Live</span>
+                    <span className="text-[11px] text-red-400">Live</span>
                   </div>
                 </div>
               </div>
@@ -390,7 +316,7 @@ export default function EventsPage() {
             <section>
               <div className="flex items-center gap-2 mb-3">
                 <AlertTriangle className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">
+                <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">
                   Current &amp; Upcoming Events
                 </span>
                 {!isLoading && (
@@ -466,7 +392,7 @@ export default function EventsPage() {
                             </p>
                             <div className="flex items-center justify-between mt-2.5 gap-2">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <span className="text-[9px] text-[#4a5580] whitespace-nowrap">
+                                <span className="text-[11px] text-[#4a5580] whitespace-nowrap">
                                   {formatDate(event.eventTime, { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
                                 {event.references?.[0] && (
@@ -474,7 +400,7 @@ export default function EventsPage() {
                                     href={event.references[0].url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex items-center gap-0.5 text-[9px] text-[#d4af37] hover:underline shrink-0"
+                                    className="flex items-center gap-0.5 text-[11px] text-[#d4af37] hover:underline shrink-0"
                                     onClick={(e) => e.stopPropagation()}
                                   >
                                     {event.references[0].label}
@@ -487,7 +413,7 @@ export default function EventsPage() {
                                 <button
                                   type="button"
                                   onClick={() => handleLocate(event)}
-                                  className="flex items-center gap-1 text-[9px] text-[#d4af37] hover:text-white transition-colors shrink-0 px-2 py-0.5 rounded hover:bg-[rgba(212,175,55,0.1)]"
+                                  className="flex items-center gap-1 text-[11px] text-[#d4af37] hover:text-white transition-colors shrink-0 px-2 py-0.5 rounded hover:bg-[rgba(212,175,55,0.1)]"
                                 >
                                   <MapPin className="w-2.5 h-2.5" />
                                   Locate
@@ -504,7 +430,7 @@ export default function EventsPage() {
                     <button
                       type="button"
                       onClick={() => setDisplayCount((c) => c + LOAD_MORE_COUNT)}
-                      className="w-full mt-3 py-2.5 text-[10px] uppercase tracking-[0.15em] text-[#d4af37] hover:bg-[rgba(212,175,55,0.05)] rounded-xl border border-[rgba(212,175,55,0.1)] transition-colors flex items-center justify-center gap-2"
+                      className="w-full mt-3 py-2.5 text-xs uppercase tracking-[0.15em] text-[#d4af37] hover:bg-[rgba(212,175,55,0.05)] rounded-xl border border-[rgba(212,175,55,0.1)] transition-colors flex items-center justify-center gap-2"
                     >
                       <ChevronDown className="w-3.5 h-3.5" />
                       Show {events.length - displayCount} more events
@@ -527,7 +453,7 @@ export default function EventsPage() {
             <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                 <Satellite className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">ISS Position</span>
+                <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">ISS Position</span>
               </div>
               <div className="p-3">
                 {issPosition ? (
@@ -537,7 +463,7 @@ export default function EventsPage() {
                       <div className="flex justify-between"><span className="text-[#4a5580]">Lat</span><span className="text-[#c8d4f0]">{issPosition.lat.toFixed(2)}°</span></div>
                       <div className="flex justify-between"><span className="text-[#4a5580]">Lon</span><span className="text-[#c8d4f0]">{issPosition.lon.toFixed(2)}°</span></div>
                     </div>
-                    <p className="text-[9px] text-[#4a5580]">↻ Updates every 30 seconds</p>
+                    <p className="text-[11px] text-[#4a5580]">↻ Updates every 30 seconds</p>
                   </div>
                 ) : issError ? (
                   <div className="py-2 space-y-1.5">
@@ -560,11 +486,11 @@ export default function EventsPage() {
               <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                   <Zap className="w-3.5 h-3.5 text-[#d4af37]" />
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">Solar Activity</span>
+                  <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">Solar Activity</span>
                 </div>
                 <div className="p-3">
                   <SolarGauge flareLevel={solarData.flareLevel} currentFlux={solarData.currentFlux} />
-                  <a href="https://www.swpc.noaa.gov/" target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#d4af37] hover:underline flex items-center gap-1 mt-2">
+                  <a href="https://www.swpc.noaa.gov/" target="_blank" rel="noopener noreferrer" className="text-[11px] text-[#d4af37] hover:underline flex items-center gap-1 mt-2">
                     NOAA Space Weather <ExternalLink className="w-2.5 h-2.5" />
                     <span className="sr-only">(opens in new tab)</span>
                   </a>
@@ -577,7 +503,7 @@ export default function EventsPage() {
               <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
                 <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                   <Globe className="w-3.5 h-3.5 text-[#d4af37]" />
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">Near-Earth Objects</span>
+                  <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">Near-Earth Objects</span>
                 </div>
                 <div className="p-3"><NeoApproachDiagram events={events} /></div>
               </section>
@@ -587,7 +513,7 @@ export default function EventsPage() {
             <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                 <Star className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">Upcoming Showers</span>
+                <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">Upcoming Showers</span>
               </div>
               <div className="divide-y divide-[rgba(212,175,55,0.06)]">
                 {upcomingShowers.map((shower) => (
@@ -599,7 +525,7 @@ export default function EventsPage() {
                   >
                     <div>
                       <div className="text-[11px] text-[#c8d4f0] group-hover:text-[#d4af37] transition-colors">{shower.name}</div>
-                      <div className="text-[9px] text-[#4a5580] mt-0.5">Peak: {formatDate(shower.peakDate, { month: 'short', day: 'numeric' })}</div>
+                      <div className="text-[11px] text-[#4a5580] mt-0.5">Peak: {formatDate(shower.peakDate, { month: 'short', day: 'numeric' })}</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] font-bold text-[#d4af37]">{shower.zenithalHourlyRate}/hr</span>
@@ -616,9 +542,9 @@ export default function EventsPage() {
                 <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-[#e0e8ff]">Astronomy Picture</span>
+                    <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">Astronomy Picture</span>
                   </div>
-                  <span className="text-[9px] text-[#d4af37] px-1.5 py-0.5 rounded border border-[rgba(212,175,55,0.2)]">Today</span>
+                  <span className="text-[11px] text-[#d4af37] px-1.5 py-0.5 rounded border border-[rgba(212,175,55,0.2)]">Today</span>
                 </div>
                 {apod.media_type === 'image' ? (
                   <a href={apod.hdurl || apod.url} target="_blank" rel="noopener noreferrer" className="block" aria-label={`${apod.title} (opens in new tab)`}>
@@ -635,18 +561,18 @@ export default function EventsPage() {
                 ) : null}
                 <div className="px-4 py-3">
                   <div className="text-[11px] text-[#c8d4f0]">{apod.title}</div>
-                  {apod.copyright && <div className="text-[9px] text-[#4a5580] mt-0.5">© {apod.copyright}</div>}
+                  {apod.copyright && <div className="text-[11px] text-[#4a5580] mt-0.5">© {apod.copyright}</div>}
                   {apod.explanation && (
                     <div className="mt-2">
                       <p className={cn('text-[10px] text-[#4a5580] leading-relaxed', apodExpanded ? '' : 'line-clamp-3')}>
                         {apod.explanation}
                       </p>
-                      <button onClick={() => setApodExpanded(!apodExpanded)} className="text-[9px] text-[#d4af37] hover:text-white mt-1 flex items-center gap-1 transition-colors">
+                      <button onClick={() => setApodExpanded(!apodExpanded)} className="text-[11px] text-[#d4af37] hover:text-white mt-1 flex items-center gap-1 transition-colors">
                         {apodExpanded ? <>Less <ChevronUp className="w-2.5 h-2.5" /></> : <>More <ChevronDown className="w-2.5 h-2.5" /></>}
                       </button>
                     </div>
                   )}
-                  <a href="https://apod.nasa.gov/apod/astropix.html" target="_blank" rel="noopener noreferrer" className="text-[9px] text-[#d4af37] hover:underline flex items-center gap-0.5 mt-2">
+                  <a href="https://apod.nasa.gov/apod/astropix.html" target="_blank" rel="noopener noreferrer" className="text-[11px] text-[#d4af37] hover:underline flex items-center gap-0.5 mt-2">
                     NASA APOD <ExternalLink className="w-2.5 h-2.5" />
                     <span className="sr-only">(opens in new tab)</span>
                   </a>

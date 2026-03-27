@@ -12,7 +12,7 @@ export function LiveDataPreview() {
       <div className="max-w-5xl mx-auto">
         {/* Section header */}
         <div className="text-center mb-8">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Live Telemetry</span>
+          <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580]">Live Telemetry</span>
           <h2 className="text-xl sm:text-2xl font-display font-bold text-white mt-2">
             Real Data, Right Now
           </h2>
@@ -39,7 +39,7 @@ export function LiveDataPreview() {
                 <div className="w-full h-full bg-gradient-to-br from-[#1a1040] to-[#0a0e1a]" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(8,12,28,0.9)] to-transparent" />
-              <span className="absolute top-2 left-2 text-[7px] uppercase tracking-[0.12em] text-[#d4af37] font-semibold px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.2)]">
+              <span className="absolute top-2 left-2 text-[11px] uppercase tracking-[0.12em] text-[#d4af37] font-semibold px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.2)]">
                 NASA APOD
               </span>
             </div>
@@ -47,7 +47,7 @@ export function LiveDataPreview() {
               <p className="text-[11px] font-semibold text-white truncate">
                 {apod?.title ?? 'Loading...'}
               </p>
-              <p className="text-[9px] text-[#4a5580] mt-0.5">
+              <p className="text-[11px] text-[#4a5580] mt-0.5">
                 Astronomy Picture of the Day
               </p>
             </div>
@@ -55,7 +55,7 @@ export function LiveDataPreview() {
 
           {/* ISS Position */}
           <Link
-            href="/dashboard"
+            href="/events"
             className="rounded-xl border border-[rgba(212,175,55,0.08)] bg-[rgba(8,12,28,0.5)] px-4 py-4 flex flex-col justify-center hover:border-[rgba(212,175,55,0.2)] transition-colors"
           >
             <div className="flex items-center gap-2 mb-3">
@@ -67,7 +67,7 @@ export function LiveDataPreview() {
                   animation: isLoading ? 'pulse 1.5s ease-in-out infinite' : undefined,
                 }}
               />
-              <span className="text-[9px] uppercase tracking-[0.15em] text-[#4a5580] font-semibold">
+              <span className="text-[11px] uppercase tracking-[0.15em] text-[#4a5580] font-semibold">
                 ISS Tracker
               </span>
             </div>
@@ -75,19 +75,19 @@ export function LiveDataPreview() {
               <>
                 <div className="flex items-baseline gap-3 mb-1">
                   <div>
-                    <span className="text-[8px] uppercase text-[#4a5580] block">Lat</span>
+                    <span className="text-[11px] uppercase text-[#4a5580] block">Lat</span>
                     <span className="text-lg font-mono font-bold text-[#22c55e]">
                       {issPosition.lat.toFixed(2)}°
                     </span>
                   </div>
                   <div>
-                    <span className="text-[8px] uppercase text-[#4a5580] block">Lon</span>
+                    <span className="text-[11px] uppercase text-[#4a5580] block">Lon</span>
                     <span className="text-lg font-mono font-bold text-[#22c55e]">
                       {issPosition.lon.toFixed(2)}°
                     </span>
                   </div>
                 </div>
-                <span className="text-[8px] text-[#4a5580]">Alt ~408 km · Updated every 30s</span>
+                <span className="text-[11px] text-[#4a5580]">Alt ~408 km · Updated every 30s</span>
               </>
             ) : (
               <span className="text-sm font-mono text-[#4a5580]">
@@ -113,7 +113,7 @@ export function LiveDataPreview() {
                   boxShadow: solarWeather ? '0 0 6px rgba(245,158,11,0.5)' : undefined,
                 }}
               />
-              <span className="text-[9px] uppercase tracking-[0.15em] text-[#4a5580] font-semibold">
+              <span className="text-[11px] uppercase tracking-[0.15em] text-[#4a5580] font-semibold">
                 Solar Activity
               </span>
             </div>
@@ -122,7 +122,7 @@ export function LiveDataPreview() {
                 <span className="text-2xl font-mono font-bold text-[#f59e0b] mb-1">
                   {solarWeather.flareLevel}
                 </span>
-                <span className="text-[8px] text-[#4a5580]">
+                <span className="text-[11px] text-[#4a5580]">
                   Flux: {solarWeather.currentFlux.toFixed(2)} W/m² · NOAA SWPC
                 </span>
               </>
@@ -135,7 +135,7 @@ export function LiveDataPreview() {
         </div>
 
         {/* Footer text */}
-        <p className="text-center text-[9px] uppercase tracking-[0.15em] text-[#4a5580]/60 mt-6">
+        <p className="text-center text-[11px] uppercase tracking-[0.15em] text-[#4a5580]/60 mt-6">
           All powered by 11 live data sources from NASA, ESA, CSIRO, and more
         </p>
       </div>
