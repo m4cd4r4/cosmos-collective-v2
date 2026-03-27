@@ -83,7 +83,7 @@ export function TelemetryTile({
             style={{ background: `${badgeColor}18`, border: `1px solid ${badgeColor}28` }}
           >
             {badgePulse && <span className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: badgeColor }} />}
-            <span className="text-[9px] uppercase tracking-[0.12em] font-semibold" style={{ color: badgeColor }}>{badge}</span>
+            <span className="text-[11px] uppercase tracking-[0.12em] font-semibold" style={{ color: badgeColor }}>{badge}</span>
           </div>
         </div>
       </div>

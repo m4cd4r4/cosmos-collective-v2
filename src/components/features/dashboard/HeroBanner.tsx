@@ -45,7 +45,7 @@ export function HeroBanner({ apod, utcTime, issPosition, isLoading }: HeroBanner
             </h1>
             {!isLoading && apod && (
               <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-[9px] uppercase tracking-[0.12em] text-[#d4af37] font-semibold px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.2)]">
+                <span className="text-[11px] uppercase tracking-[0.12em] text-[#d4af37] font-semibold px-1.5 py-0.5 rounded bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.2)]">
                   NASA APOD
                 </span>
               </div>
@@ -55,7 +55,7 @@ export function HeroBanner({ apod, utcTime, issPosition, isLoading }: HeroBanner
           <div className="flex flex-col items-end gap-2">
             {/* UTC Clock */}
             <div className="px-3 py-1.5 rounded-lg bg-[rgba(255,255,255,0.06)] border border-[rgba(255,255,255,0.08)] backdrop-blur-sm">
-              <span className="text-[10px] uppercase tracking-[0.15em] text-[#4a5580] block">UTC</span>
+              <span className="text-xs uppercase tracking-[0.15em] text-[#4a5580] block">UTC</span>
               <span suppressHydrationWarning className="text-lg font-mono font-bold text-white tracking-wider">{utcTime}</span>
             </div>
 

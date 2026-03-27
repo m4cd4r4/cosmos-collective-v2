@@ -86,7 +86,7 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
           <Badge gold>JWST</Badge>
           <Badge>Hubble</Badge>
         </div>
-        <span className="text-[9px] text-[#4a5580] tracking-wider hidden sm:block">
+        <span className="text-[11px] text-[#4a5580] tracking-wider hidden sm:block">
           Data: NASA / STScI · {stats.total} observations
         </span>
       </header>
@@ -108,13 +108,13 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
         <div className="flex lg:hidden bg-[rgba(4,6,18,0.97)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
           <button
             onClick={() => setMobileTab('canvas')}
-            className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'canvas' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+            className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'canvas' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
           >
             Sky Map
           </button>
           <button
             onClick={() => setMobileTab('filters')}
-            className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'filters' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+            className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'filters' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
           >
             Filters · Detail
           </button>
@@ -217,12 +217,12 @@ export function ObservatoryViewer({ preview = false }: { preview?: boolean }) {
                 { c: '#b088f9', label: 'Optical (visible light)' },
                 { c: '#4af0e2', label: 'Radio' },
               ].map(({ c, label }) => (
-                <div key={c} className="flex items-center gap-2 text-[9px] text-[#4a5580]">
+                <div key={c} className="flex items-center gap-2 text-[11px] text-[#4a5580]">
                   <div className="w-2 h-2 rounded-full shrink-0" style={{ background: c, boxShadow: `0 0 5px ${c}` }} />
                   <span>{label}</span>
                 </div>
               ))}
-              <div className="flex items-center gap-2 text-[9px] text-[#4a5580] mt-1">
+              <div className="flex items-center gap-2 text-[11px] text-[#4a5580] mt-1">
                 <div className="w-2 h-2 rounded-full shrink-0 border border-dashed border-white/30" />
                 <span>Featured observation</span>
               </div>
@@ -314,7 +314,7 @@ function TelescopeLogo() {
 
 function Badge({ children, gold }: { children: React.ReactNode; gold?: boolean }) {
   return (
-    <span className={`text-[9px] px-2 py-0.5 rounded border tracking-[0.12em] uppercase ${
+    <span className={`text-[11px] px-2 py-0.5 rounded border tracking-[0.12em] uppercase ${
       gold
         ? 'bg-[rgba(212,175,55,0.1)] border-[rgba(212,175,55,0.25)] text-[#d4af37]'
         : 'bg-[rgba(176,136,249,0.1)] border-[rgba(176,136,249,0.25)] text-[#b088f9]'
@@ -367,7 +367,7 @@ function ChipGroup({
           key={o.value}
           onClick={() => onChange(o.value)}
           style={o.style}
-          className={`text-[9px] px-2.5 py-1 rounded-full border transition-all font-mono ${
+          className={`text-[11px] px-2.5 py-1 rounded-full border transition-all font-mono ${
             active === o.value
               ? 'bg-[rgba(74,144,226,0.18)] border-[#4a90e2] text-[#a0c8ff]'
               : 'bg-transparent border-[rgba(74,144,226,0.15)] text-[#4a5580] hover:border-[#4a90e2] hover:text-[#4a90e2]'
@@ -523,7 +523,7 @@ function ObservationDetail({ obs }: { obs: PlottedObservation }) {
           {obs.targetName}
         </div>
         {obs.aliases && obs.aliases.length > 0 && (
-          <div className="text-[9px] text-[#4a5580] mt-0.5">
+          <div className="text-[11px] text-[#4a5580] mt-0.5">
             {obs.aliases.join(' · ')}
           </div>
         )}
@@ -590,7 +590,7 @@ function ObservationDetail({ obs }: { obs: PlottedObservation }) {
           <SectionHeader>Fun Facts</SectionHeader>
           <div className="flex flex-col gap-1.5">
             {obs.analysis.funFacts.map((fact, i) => (
-              <div key={i} className="flex gap-2 text-[9px] text-[#7a8aaa]">
+              <div key={i} className="flex gap-2 text-[11px] text-[#7a8aaa]">
                 <span className="text-[#d4af37] shrink-0">*</span>
                 <span>{fact}</span>
               </div>
@@ -611,7 +611,7 @@ function ObservationDetail({ obs }: { obs: PlottedObservation }) {
         ].map(p => (
           <div key={p.label} className="flex justify-between items-center py-[5px] border-b border-white/[0.03] text-[10px]">
             <span className="text-[#4a5580]">{p.label}</span>
-            <span className={`font-medium text-right ${p.small ? 'text-[9px]' : ''}`}>{p.value}</span>
+            <span className={`font-medium text-right ${p.small ? 'text-[11px]' : ''}`}>{p.value}</span>
           </div>
         ))}
       </section>

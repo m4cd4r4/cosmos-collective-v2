@@ -231,7 +231,7 @@ export function MissionControlFAB() {
                 className="flex items-center justify-center gap-2 py-2 rounded-lg border border-[rgba(212,175,55,0.15)] hover:border-[rgba(212,175,55,0.3)] hover:bg-[rgba(212,175,55,0.06)] transition-all group"
               >
                 <BookMarked className="w-3.5 h-3.5 text-[#d4af37]" />
-                <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#d4af37] group-hover:text-[#e0c060] transition-colors">
+                <span className="text-xs font-bold uppercase tracking-[0.12em] text-[#d4af37] group-hover:text-[#e0c060] transition-colors">
                   Open Full Mission Control
                 </span>
                 <ExternalLinkIcon className="w-3 h-3 text-[#d4af37] opacity-50" />

@@ -37,7 +37,7 @@ export function SkyMapWidget() {
 
       {/* Mode label */}
       <div className="absolute top-2.5 right-3">
-        <span className="text-[9px] font-mono tracking-wider text-white/40">Multi-wavelength</span>
+        <span className="text-[11px] font-mono tracking-wider text-white/40">Multi-wavelength</span>
       </div>
     </div>
   )

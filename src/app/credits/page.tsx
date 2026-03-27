@@ -64,7 +64,7 @@ function Section({ title, icon: Icon, color, children }: { title: string; icon: 
     <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
       <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
         <Icon className="w-3.5 h-3.5" style={{ color }} />
-        <span className="text-[10px] uppercase tracking-[0.15em] font-semibold" style={{ color }}>{title}</span>
+        <span className="text-xs uppercase tracking-[0.15em] font-semibold" style={{ color }}>{title}</span>
       </div>
       <div>{children}</div>
     </div>
@@ -82,10 +82,10 @@ export default function CreditsPage() {
           <Heart className="w-4 h-4 text-[#e040fb]" />
           <span className="text-base font-bold tracking-[0.15em] uppercase text-[#e0e8ff]">Credits</span>
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)]">
-            <span className="text-[9px] uppercase tracking-[0.15em] text-[#d4af37]">Open Source</span>
+            <span className="text-[11px] uppercase tracking-[0.15em] text-[#d4af37]">Open Source</span>
           </div>
         </div>
-        <span className="hidden sm:block text-[9px] uppercase tracking-wider text-[#4a5580]">
+        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-[#4a5580]">
           Acknowledgments &amp; Attributions
         </span>
       </div>
@@ -100,7 +100,7 @@ export default function CreditsPage() {
         ].map(({ label, value, color }) => (
           <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
             <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
-            <span className="text-[9px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5">{label}</span>
+            <span className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5">{label}</span>
           </div>
         ))}
       </div>
@@ -127,7 +127,7 @@ export default function CreditsPage() {
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                 <Heart className="w-3.5 h-3.5 text-[#e040fb]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-[#e040fb]">Special Thanks</span>
+                <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#e040fb]">Special Thanks</span>
               </div>
               <div className="px-4 py-4 space-y-3">
                 <div>
@@ -153,7 +153,7 @@ export default function CreditsPage() {
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                 <span className="w-3.5 h-3.5 text-[10px] text-[#f59e0b]">✦</span>
-                <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-[#f59e0b]">Imagery Credits</span>
+                <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#f59e0b]">Imagery Credits</span>
               </div>
               <div className="px-4 py-3 space-y-2.5">
                 {[
@@ -183,7 +183,7 @@ export default function CreditsPage() {
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
               <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
                 <Github className="w-3.5 h-3.5 text-[#c8d4f0]" />
-                <span className="text-[10px] uppercase tracking-[0.15em] font-semibold text-[#c8d4f0]">License</span>
+                <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#c8d4f0]">License</span>
               </div>
               <div className="px-4 py-4">
                 <p className="text-[11px] text-[#6070a0] leading-relaxed mb-3">

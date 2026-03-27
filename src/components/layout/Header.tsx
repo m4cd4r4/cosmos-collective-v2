@@ -9,44 +9,15 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Globe, Orbit, Sun, Hexagon, BookMarked } from 'lucide-react'
-import { useMCStore } from '@/lib/mc-store'
-
-// ============================================
-// Navigation Items
-// ============================================
+import { Telescope, Calendar, Globe, Orbit, Sun, Hexagon } from 'lucide-react'
 
 const navItems = [
-  {
-    label: 'Mission Control',
-    href: '/mission-control',
-    icon: BookMarked,
-    description: 'Hub for Explore, Live Events, Devlog, Observatory and more',
-  },
-  {
-    label: 'Solar System',
-    href: '/solar-system',
-    icon: Sun,
-    description: 'Interactive 3D solar system with real orbital data',
-  },
-  {
-    label: 'Sky Map',
-    href: '/sky-map',
-    icon: Globe,
-    description: 'Interactive celestial coordinate viewer',
-  },
-  {
-    label: 'Kepler',
-    href: '/kepler',
-    icon: Orbit,
-    description: 'Interactive map of 2,600+ Kepler exoplanets',
-  },
-  {
-    label: 'JWST',
-    href: '/jwst',
-    icon: Hexagon,
-    description: 'James Webb Space Telescope observation explorer',
-  },
+  { label: 'Explore', href: '/explore', icon: Telescope, description: 'Browse JWST, Hubble, and radio telescope observations' },
+  { label: 'Live', href: '/events', icon: Calendar, description: 'ISS tracker, solar weather, and real-time events' },
+  { label: 'Solar System', href: '/solar-system', icon: Sun, description: 'Interactive 3D solar system' },
+  { label: 'Sky Map', href: '/sky-map', icon: Globe, description: 'Interactive celestial map' },
+  { label: 'Kepler', href: '/kepler', icon: Orbit, description: '2,600+ Kepler exoplanets' },
+  { label: 'JWST', href: '/jwst', icon: Hexagon, description: 'JWST observation explorer' },
 ]
 
 // ============================================
@@ -186,38 +157,16 @@ function DesktopNav() {
 // Mobile Bottom Navigation Bar
 // ============================================
 
-// Bottom nav items — Solar Sys and Sky Map on left, Kepler and JWST on right
-// MC button is the centre element rendered separately
-const bottomNavLeft = [
+const mobileNavItems = [
+  { label: 'Explore', href: '/explore', icon: Telescope },
+  { label: 'Live', href: '/events', icon: Calendar },
   { label: 'Solar', href: '/solar-system', icon: Sun },
-  { label: 'Sky Map', href: '/sky-map', icon: Globe },
-]
-const bottomNavRight = [
   { label: 'Kepler', href: '/kepler', icon: Orbit },
   { label: 'Webb', href: '/jwst', icon: Hexagon },
 ]
 
 function MobileBottomNav() {
   const pathname = usePathname()
-  const { open, toggle } = useMCStore()
-
-  function NavLink({ label, href, icon: Icon }: { label: string; href: string; icon: typeof Sun }) {
-    const isActive = pathname === href || pathname.startsWith(href)
-    return (
-      <Link
-        href={href}
-        prefetch={true}
-        className={cn(
-          'flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors',
-          isActive ? 'text-cosmos-gold' : 'text-gray-400 hover:text-white'
-        )}
-        aria-current={isActive ? 'page' : undefined}
-      >
-        <Icon className="w-5 h-5" aria-hidden="true" />
-        <span className="text-[10px] mt-1 font-medium">{label}</span>
-      </Link>
-    )
-  }
 
   return (
     <nav
@@ -225,27 +174,24 @@ function MobileBottomNav() {
       aria-label="Mobile navigation"
     >
       <div className="flex items-center justify-around h-16">
-        {bottomNavLeft.map((item) => (
-          <NavLink key={item.href} {...item} />
-        ))}
-
-        {/* ── Mission Control centre button (inline with other tabs) ── */}
-        <button
-          onClick={toggle}
-          aria-label={open ? 'Close Mission Control' : 'Open Mission Control'}
-          aria-expanded={open}
-          className={cn(
-            'flex flex-col items-center justify-center flex-1 h-full py-2 cursor-pointer transition-colors',
-            open ? 'text-cosmos-gold' : 'text-gray-400 hover:text-white'
-          )}
-        >
-          <BookMarked className="w-5 h-5" aria-hidden="true" />
-          <span className="text-[10px] mt-1 font-medium">Hub</span>
-        </button>
-
-        {bottomNavRight.map((item) => (
-          <NavLink key={item.href} {...item} />
-        ))}
+        {mobileNavItems.map(({ label, href, icon: Icon }) => {
+          const isActive = pathname === href || pathname.startsWith(href)
+          return (
+            <Link
+              key={href}
+              href={href}
+              prefetch={true}
+              className={cn(
+                'flex flex-col items-center justify-center flex-1 h-full py-2 transition-colors',
+                isActive ? 'text-cosmos-gold' : 'text-gray-400 hover:text-white'
+              )}
+              aria-current={isActive ? 'page' : undefined}
+            >
+              <Icon className="w-5 h-5" aria-hidden="true" />
+              <span className="text-[11px] mt-1 font-medium">{label}</span>
+            </Link>
+          )
+        })}
       </div>
     </nav>
   )

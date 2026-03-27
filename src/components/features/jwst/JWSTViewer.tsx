@@ -230,13 +230,13 @@ export function JWSTViewer() {
       <div className="flex lg:hidden bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] shrink-0">
         <button
           onClick={() => setMobileTab('list')}
-          className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'list' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
+          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'list' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
         >
           Gallery
         </button>
         <button
           onClick={() => setMobileTab('detail')}
-          className={`flex-1 py-2.5 text-[10px] font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'detail' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
+          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'detail' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
         >
           Image · Details
         </button>
@@ -263,7 +263,7 @@ export function JWSTViewer() {
 
           {/* Category chips */}
           <div className="px-3 py-2 border-b border-[rgba(212,175,55,0.08)]">
-            <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Category</div>
+            <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Category</div>
             <div className="flex flex-wrap gap-1">
               <Chip active={filters.category === 'all'} onClick={() => setFilter('category', 'all')}>All</Chip>
               {categories.map(cat => (
@@ -276,7 +276,7 @@ export function JWSTViewer() {
 
           {/* Instrument chips */}
           <div className="px-3 py-2 border-b border-[rgba(212,175,55,0.08)]">
-            <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Instrument</div>
+            <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Instrument</div>
             <div className="flex flex-wrap gap-1">
               <Chip active={filters.instrument === 'all'} onClick={() => setFilter('instrument', 'all')}>All</Chip>
               {instruments.map(inst => (
@@ -316,7 +316,7 @@ export function JWSTViewer() {
                     <div className="flex-1 min-w-0">
                       <div className={`text-[11px] font-bold truncate ${selected.id === obs.id ? 'text-[#d4af37]' : 'text-[#e0e8ff]'}`}>
                         {obs.targetName}
-                        {obs.hubbleUrl && <span className="ml-1 text-[9px] text-[#4a90e2] opacity-70">⟺</span>}
+                        {obs.hubbleUrl && <span className="ml-1 text-[11px] text-[#4a90e2] opacity-70">⟺</span>}
                       </div>
                       <div className="text-[10px] text-[#4a5580] flex items-center gap-1.5 mt-0.5">
                         <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: INSTRUMENT_INFO[obs.instrument || '']?.color || '#666' }} />
@@ -333,7 +333,7 @@ export function JWSTViewer() {
 
           {/* Instrument legend */}
           <div className="p-3 border-t border-[rgba(212,175,55,0.08)]">
-            <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Instruments</div>
+            <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Instruments</div>
             {Object.entries(INSTRUMENT_INFO).map(([name, info]) => (
               <div key={name} className="flex items-center gap-2 text-[10px] text-[#4a5580] mb-1">
                 <div className="w-2 h-2 rounded-full shrink-0" style={{ background: info.color, boxShadow: `0 0 4px ${info.color}` }} />
@@ -351,7 +351,7 @@ export function JWSTViewer() {
           {!imgLoaded && !imgError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none z-10">
               <div className="w-8 h-8 rounded-full border border-[rgba(212,175,55,0.2)] border-t-[#d4af37] animate-spin" />
-              <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Loading image…</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580]">Loading image…</span>
             </div>
           )}
 
@@ -359,7 +359,7 @@ export function JWSTViewer() {
           {imgError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none z-10">
               <span className="text-4xl opacity-30">🔭</span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-[#4a5580]">Image unavailable</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580]">Image unavailable</span>
             </div>
           )}
 
@@ -461,7 +461,7 @@ export function JWSTViewer() {
                     style={{ bottom: 48, right: 8, zIndex: 20 }}
                   >
                     {tier === 'high' && (
-                      <span className="text-[9px] font-bold text-[#d4af37] border border-[rgba(212,175,55,0.4)] rounded px-1.5 py-0.5 bg-black/60 mr-1">HD</span>
+                      <span className="text-[11px] font-bold text-[#d4af37] border border-[rgba(212,175,55,0.4)] rounded px-1.5 py-0.5 bg-black/60 mr-1">HD</span>
                     )}
                     <span className="text-[10px] text-[#4a5580] bg-black/60 px-1.5 py-0.5 rounded tabular-nums">
                       {Math.round(scale * 100)}%
@@ -502,7 +502,7 @@ export function JWSTViewer() {
             {selected.hubbleUrl && (
               <button
                 onClick={() => setShowHubble(true)}
-                className="px-2.5 py-1.5 rounded text-[10px] uppercase tracking-wider bg-[rgba(74,144,226,0.15)] text-[#4a90e2] border border-[rgba(74,144,226,0.3)] hover:bg-[rgba(74,144,226,0.25)] transition-all backdrop-blur-sm"
+                className="px-2.5 py-1.5 rounded text-xs uppercase tracking-wider bg-[rgba(74,144,226,0.15)] text-[#4a90e2] border border-[rgba(74,144,226,0.3)] hover:bg-[rgba(74,144,226,0.25)] transition-all backdrop-blur-sm"
                 title="Compare this view with a Hubble image"
               >
                 ⟺ Hubble
@@ -512,7 +512,7 @@ export function JWSTViewer() {
             {selected.features && selected.features.length > 0 && (
               <button
                 onClick={() => setShowFeatures(!showFeatures)}
-                className={`px-2.5 py-1.5 rounded text-[10px] uppercase tracking-wider transition-all backdrop-blur-sm ${
+                className={`px-2.5 py-1.5 rounded text-xs uppercase tracking-wider transition-all backdrop-blur-sm ${
                   showFeatures
                     ? 'bg-[rgba(212,175,55,0.2)] text-[#d4af37] border border-[rgba(212,175,55,0.3)]'
                     : 'bg-black/50 text-[#4a5580] border border-white/10 hover:text-[#d4af37]'
@@ -556,7 +556,7 @@ export function JWSTViewer() {
           {/* Wavelength switcher — bottom right */}
           {selected.images.wavelengthVersions && selected.images.wavelengthVersions.length > 1 && (
             <div className="absolute bottom-3 right-3 flex items-center gap-2 z-10">
-              <span className="text-[9px] uppercase tracking-[0.18em] text-white/40 mr-1">Band</span>
+              <span className="text-[11px] uppercase tracking-[0.18em] text-white/40 mr-1">Band</span>
               {selected.images.wavelengthVersions.map((wv, i) => (
                 <button
                   key={i}
@@ -602,7 +602,7 @@ export function JWSTViewer() {
 
             {/* Coordinates */}
             <div className="bg-white/[0.02] rounded-lg p-2.5 border border-[rgba(212,175,55,0.08)] mb-4">
-              <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Coordinates (J2000)</div>
+              <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Coordinates (J2000)</div>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <div>
                   <span className="text-[#4a5580]">RA: </span>
@@ -625,7 +625,7 @@ export function JWSTViewer() {
             {/* Filters used */}
             {selected.filters && selected.filters.length > 0 && (
               <div className="mb-4">
-                <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Filters Used</div>
+                <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Filters Used</div>
                 <div className="flex flex-wrap gap-1">
                   {selected.filters.map(f => (
                     <span key={f} className="px-2 py-0.5 rounded bg-white/[0.04] border border-[rgba(212,175,55,0.1)] text-[10px] text-[#8090b0]">
@@ -644,7 +644,7 @@ export function JWSTViewer() {
                 onClick={() => setChannelsExpanded(v => !v)}
                 className="flex items-center justify-between w-full mb-2 group"
               >
-                <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] group-hover:text-[#d4af37] transition-colors">
+                <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] group-hover:text-[#d4af37] transition-colors">
                   Wavelength Channels
                 </div>
                 <span className="text-[#4a5580] text-[10px]">{channelsExpanded ? '▲' : '▼'}</span>
@@ -679,9 +679,9 @@ export function JWSTViewer() {
                               <span className="text-[10px] font-bold text-[#e0e8ff]">{ch.name}</span>
                               <span className="text-[10px] text-[#4a5580]">{ch.wavelength}</span>
                             </div>
-                            <div className="text-[9px] text-[#6a7890] leading-tight mt-0.5 truncate">{ch.description}</div>
+                            <div className="text-[11px] text-[#6a7890] leading-tight mt-0.5 truncate">{ch.description}</div>
                           </div>
-                          {isOff && <span className="text-[9px] text-[#4a5580] shrink-0">OFF</span>}
+                          {isOff && <span className="text-[11px] text-[#4a5580] shrink-0">OFF</span>}
                         </button>
                       )
                     })}
@@ -697,7 +697,7 @@ export function JWSTViewer() {
                   )}
 
                   <div className="bg-white/[0.01] rounded p-2 border border-[rgba(212,175,55,0.05)]">
-                    <div className="text-[9px] uppercase tracking-[0.15em] text-[#4a5580] mb-1">What am I looking at?</div>
+                    <div className="text-[11px] uppercase tracking-[0.15em] text-[#4a5580] mb-1">What am I looking at?</div>
                     <p className="text-[10px] text-[#6a7890] leading-relaxed">
                       JWST images are false-color composites. Each filter captures a specific wavelength of light invisible to human eyes.
                       Scientists assign colors (R/G/B) to each channel to create the final image. Toggle channels above to see what each wavelength reveals.
@@ -711,7 +711,7 @@ export function JWSTViewer() {
           {/* Features section */}
           {selected.features && selected.features.length > 0 && (
             <div className="px-4 pb-3">
-              <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">
                 Detected Features ({selected.features.length})
               </div>
               <div className="flex flex-col gap-1.5">
@@ -731,19 +731,19 @@ export function JWSTViewer() {
           {/* Analysis section */}
           {selected.analysis && (
             <div className="px-4 pb-4 border-t border-[rgba(212,175,55,0.08)] pt-3">
-              <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Analysis</div>
+              <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Analysis</div>
               <p className="text-[11px] text-[#8090b0] leading-relaxed mb-3">{selected.analysis.summary}</p>
 
               {selected.analysis.scientificContext && (
                 <>
-                  <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Scientific Context</div>
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Scientific Context</div>
                   <p className="text-[11px] text-[#6a7890] leading-relaxed mb-3">{selected.analysis.scientificContext}</p>
                 </>
               )}
 
               {selected.analysis.keyFeatures && selected.analysis.keyFeatures.length > 0 && (
                 <>
-                  <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Key Features</div>
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Key Features</div>
                   <ul className="mb-3">
                     {selected.analysis.keyFeatures.map((kf, i) => (
                       <li key={i} className="text-[11px] text-[#6a7890] flex items-start gap-1.5 mb-0.5">
@@ -757,7 +757,7 @@ export function JWSTViewer() {
 
               {selected.analysis.funFacts && selected.analysis.funFacts.length > 0 && (
                 <>
-                  <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Fun Facts</div>
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Fun Facts</div>
                   <ul className="mb-3">
                     {selected.analysis.funFacts.map((ff, i) => (
                       <li key={i} className="text-[11px] text-[#6a7890] flex items-start gap-1.5 mb-1">
@@ -774,7 +774,7 @@ export function JWSTViewer() {
           {/* External links */}
           {selected.externalLinks && selected.externalLinks.length > 0 && (
             <div className="px-4 pb-4 border-t border-[rgba(212,175,55,0.08)] pt-3 mt-auto">
-              <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">External Links</div>
+              <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">External Links</div>
               <div className="flex flex-col gap-1.5">
                 {selected.externalLinks.map((link, i) => (
                   <a
@@ -872,7 +872,7 @@ function Stat({ label, value, color }: { label: string; value: string | number; 
       <div className="text-lg font-bold tabular-nums" style={{ color: colors[color] || colors.dim }}>
         {typeof value === 'number' ? value.toLocaleString() : value}
       </div>
-      <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mt-0.5">{label}</div>
+      <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mt-0.5">{label}</div>
     </div>
   )
 }
@@ -897,7 +897,7 @@ function Chip({ children, active, onClick, color, title }: { children: React.Rea
 function MetaItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div>
-      <div className="flex items-center gap-1 text-[9px] uppercase tracking-[0.15em] text-[#4a5580] mb-0.5">
+      <div className="flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-[#4a5580] mb-0.5">
         {icon}
         {label}
       </div>

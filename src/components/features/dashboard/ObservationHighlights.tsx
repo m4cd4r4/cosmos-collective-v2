@@ -40,7 +40,7 @@ export function ObservationHighlights() {
         </h2>
         <Link
           href="/explore"
-          className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-[#d4af37] hover:text-[#e8c64a] transition-colors"
+          className="flex items-center gap-1 text-xs uppercase tracking-wider text-[#d4af37] hover:text-[#e8c64a] transition-colors"
         >
           Explore All <ArrowRight className="w-3 h-3" />
         </Link>
@@ -87,7 +87,7 @@ function ObservationCard({ observation }: { observation: Observation }) {
           <p className="text-[11px] font-semibold text-white truncate group-hover:text-[#d4af37] transition-colors">
             {observation.targetName}
           </p>
-          <p className="text-[9px] text-[#4a5580] capitalize mt-0.5">
+          <p className="text-[11px] text-[#4a5580] capitalize mt-0.5">
             {observation.wavelengthBand} · {observation.category.replace('-', ' ')}
           </p>
         </div>

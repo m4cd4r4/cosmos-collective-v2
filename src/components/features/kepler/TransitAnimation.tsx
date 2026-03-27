@@ -271,7 +271,7 @@ export function TransitAnimation({ planet, star }: Props) {
 
   return (
     <div className="bg-white/[0.02] rounded-lg border border-[rgba(74,144,226,0.12)] p-3">
-      <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">
+      <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">
         Transit Detection
         <span className="ml-2 normal-case text-[#3a4560]">how Kepler found this planet</span>
       </div>
@@ -291,7 +291,7 @@ export function TransitAnimation({ planet, star }: Props) {
         />
       </div>
 
-      <div className="flex justify-between mt-2 text-[9px] text-[#4a5580]">
+      <div className="flex justify-between mt-2 text-[11px] text-[#4a5580]">
         <span>Transit depth: {(depth * 100).toFixed(4)}%</span>
         <span>Duration: ~{durHours.toFixed(1)} h</span>
         <span>Period: {period.toFixed(1)} d</span>

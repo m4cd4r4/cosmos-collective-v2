@@ -61,7 +61,7 @@ export function EventsTimeline({ events, upcomingEvents }: EventsTimelineProps) 
         </h2>
         <Link
           href="/events"
-          className="flex items-center gap-1 text-[10px] uppercase tracking-wider text-[#d4af37] hover:text-[#e8c64a] transition-colors"
+          className="flex items-center gap-1 text-xs uppercase tracking-wider text-[#d4af37] hover:text-[#e8c64a] transition-colors"
         >
           View All <ArrowRight className="w-3 h-3" />
         </Link>

@@ -31,7 +31,7 @@ export function PlanetScaleCard({ planet, starName }: Props) {
 
   return (
     <div className="bg-white/[0.02] rounded-lg border border-[rgba(74,144,226,0.12)] p-3">
-      <div className="text-[9px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Scale vs Earth</div>
+      <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Scale vs Earth</div>
 
       <div className="flex items-end justify-center gap-6" style={{ height: svgH + 8 }}>
         {/* Earth */}
@@ -54,7 +54,7 @@ export function PlanetScaleCard({ planet, starName }: Props) {
             />
           </svg>
           <div className="text-[10px] text-[#8090b0] text-center -mt-1">Earth</div>
-          <div className="text-[9px] text-[#4a5580]">1.0 R⊕</div>
+          <div className="text-[11px] text-[#4a5580]">1.0 R⊕</div>
         </div>
 
         {/* Planet */}
@@ -90,7 +90,7 @@ export function PlanetScaleCard({ planet, starName }: Props) {
             />
           </svg>
           <div className="text-[10px] font-bold text-[#e0e8ff] text-center -mt-1 max-w-[80px] truncate">{planet.name}</div>
-          <div className="text-[9px] text-[#4a5580]">{rade.toFixed(2)} R⊕</div>
+          <div className="text-[11px] text-[#4a5580]">{rade.toFixed(2)} R⊕</div>
         </div>
       </div>
 

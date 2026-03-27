@@ -23,7 +23,6 @@ interface ViewState {
   currentView: 'gallery' | 'viewer' | 'sky-map' | 'events'
   sidebarOpen: boolean
   selectedObservationId: string | null
-  comparisonObservationIds: string[]
 }
 
 interface FilterState {
@@ -68,9 +67,6 @@ interface CosmosStore extends ViewState, FilterState, DataState, UserState {
   setCurrentView: (view: ViewState['currentView']) => void
   toggleSidebar: () => void
   selectObservation: (id: string | null) => void
-  addToComparison: (id: string) => void
-  removeFromComparison: (id: string) => void
-  clearComparison: () => void
 
   // Filter actions
   setSearchQuery: (query: string) => void
@@ -105,7 +101,6 @@ interface CosmosStore extends ViewState, FilterState, DataState, UserState {
   getFilteredObservations: () => Observation[]
   getSelectedObservation: () => Observation | undefined
   getFavoriteObservations: () => Observation[]
-  getComparisonObservations: () => Observation[]
 }
 
 // ============================================
@@ -144,7 +139,6 @@ export const useCosmosStore = create<CosmosStore>()(
       currentView: 'gallery',
       sidebarOpen: true,
       selectedObservationId: null,
-      comparisonObservationIds: [],
 
       // Initial filter state
       ...defaultFilters,
@@ -172,18 +166,6 @@ export const useCosmosStore = create<CosmosStore>()(
           get().addToRecentlyViewed(id)
         }
       },
-      addToComparison: (id) =>
-        set((state) => ({
-          comparisonObservationIds: state.comparisonObservationIds.includes(id)
-            ? state.comparisonObservationIds
-            : [...state.comparisonObservationIds, id].slice(0, 4), // Max 4 comparisons
-        })),
-      removeFromComparison: (id) =>
-        set((state) => ({
-          comparisonObservationIds: state.comparisonObservationIds.filter((i) => i !== id),
-        })),
-      clearComparison: () => set({ comparisonObservationIds: [] }),
-
       // Filter actions
       setSearchQuery: (query) => set({ searchQuery: query }),
       setCategories: (categories) => set({ categories }),
@@ -326,12 +308,6 @@ export const useCosmosStore = create<CosmosStore>()(
         return state.observations.filter((obs) => state.favorites.includes(obs.id))
       },
 
-      getComparisonObservations: () => {
-        const state = get()
-        return state.comparisonObservationIds
-          .map((id) => state.observations.find((obs) => obs.id === id))
-          .filter((obs): obs is Observation => obs !== undefined)
-      },
     }),
     {
       name: 'cosmos-collective-storage',

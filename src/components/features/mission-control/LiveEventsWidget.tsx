@@ -49,7 +49,7 @@ export function LiveEventsWidget({ issPosition, solarWeather, upcomingEvents }: 
         />
         {!issPosition && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-[9px] text-[#4a5580] uppercase tracking-wider">Acquiring signal...</span>
+            <span className="text-[11px] text-[#4a5580] uppercase tracking-wider">Acquiring signal...</span>
           </div>
         )}
       </div>

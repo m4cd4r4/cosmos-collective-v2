@@ -260,7 +260,7 @@ export const JWSTSkyMap = forwardRef<
         <div className="absolute inset-0 bg-[#060a18] flex items-center justify-center z-10">
           <div className="text-center">
             <div className="w-6 h-6 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-[9px] text-[#4a5580] uppercase tracking-[0.15em]">Loading Sky Map…</p>
+            <p className="text-[11px] text-[#4a5580] uppercase tracking-[0.15em]">Loading Sky Map…</p>
           </div>
         </div>
       )}
@@ -271,7 +271,7 @@ export const JWSTSkyMap = forwardRef<
       {/* Label */}
       {isLoaded && (
         <div className="absolute top-2 left-2 z-20 pointer-events-none">
-          <span className="text-[9px] text-[#d4af37] bg-[rgba(4,6,18,0.8)] px-2 py-1 rounded backdrop-blur-sm uppercase tracking-[0.15em]">
+          <span className="text-[11px] text-[#d4af37] bg-[rgba(4,6,18,0.8)] px-2 py-1 rounded backdrop-blur-sm uppercase tracking-[0.15em]">
             JWST Target Positions
           </span>
         </div>
@@ -283,7 +283,7 @@ export const JWSTSkyMap = forwardRef<
           {legendCategories.map(cat => (
             <div
               key={cat}
-              className="flex items-center gap-1.5 text-[9px] text-[#c8d4f0] bg-[rgba(4,6,18,0.75)] px-2 py-0.5 rounded backdrop-blur-sm"
+              className="flex items-center gap-1.5 text-[11px] text-[#c8d4f0] bg-[rgba(4,6,18,0.75)] px-2 py-0.5 rounded backdrop-blur-sm"
             >
               <span
                 className="w-2 h-2 rounded-full inline-block shrink-0"
@@ -315,7 +315,7 @@ export const JWSTSkyMap = forwardRef<
               <div className="absolute inset-0 bg-gradient-to-t from-[#07090f] via-[#07090f]/30 to-transparent" />
               {/* Category badge */}
               <div
-                className="absolute top-2 right-2 text-[8px] px-1.5 py-0.5 rounded uppercase tracking-widest font-bold backdrop-blur-sm"
+                className="absolute top-2 right-2 text-[11px] px-1.5 py-0.5 rounded uppercase tracking-widest font-bold backdrop-blur-sm"
                 style={{
                   background: `${JWST_CATEGORY_COLORS[hoveredMarker.category] ?? '#d4af37'}22`,
                   color: JWST_CATEGORY_COLORS[hoveredMarker.category] ?? '#d4af37',
@@ -330,7 +330,7 @@ export const JWSTSkyMap = forwardRef<
                   {hoveredMarker.name}
                 </div>
                 {hoveredMarker.constellation && (
-                  <div className="text-white/50 text-[9px] mt-0.5">
+                  <div className="text-white/50 text-[11px] mt-0.5">
                     {hoveredMarker.constellation}
                   </div>
                 )}
@@ -344,12 +344,12 @@ export const JWSTSkyMap = forwardRef<
                 </p>
               )}
               {hoveredMarker.distanceLightYears && hoveredMarker.distanceLightYears > 0 && (
-                <div className="flex items-center justify-between text-[9px]">
+                <div className="flex items-center justify-between text-[11px]">
                   <span className="text-[#4a5580] uppercase tracking-wider">Distance</span>
                   <span className="text-[#8090b0]">{formatDistance(hoveredMarker.distanceLightYears)}</span>
                 </div>
               )}
-              <div className="text-[9px] text-[#d4af37] uppercase tracking-[0.12em] pt-0.5 border-t border-white/5">
+              <div className="text-[11px] text-[#d4af37] uppercase tracking-[0.12em] pt-0.5 border-t border-white/5">
                 Click to explore →
               </div>
             </div>

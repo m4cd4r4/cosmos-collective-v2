@@ -75,16 +75,16 @@ export default async function DevlogPostPage({ params }: PageProps) {
 
       {/* App Header Strip */}
       <div className="relative z-10 bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] px-5 h-[52px] flex items-center gap-3 shrink-0">
-        <Link href="/devlog" className="text-[10px] uppercase tracking-wider text-[#4a5580] hover:text-[#d4af37] transition-colors flex items-center gap-1">
+        <Link href="/devlog" className="text-xs uppercase tracking-wider text-[#4a5580] hover:text-[#d4af37] transition-colors flex items-center gap-1">
           <ArrowLeft className="w-3 h-3" /> Dev Log
         </Link>
         <span className="text-[#3a4560]">/</span>
         <span className="text-[11px] font-semibold text-[#c8d4f0] truncate">{post.title}</span>
         <div className="ml-auto flex items-center gap-2">
-          <span className="text-[9px] uppercase tracking-wider px-2 py-0.5 rounded border border-[rgba(212,175,55,0.25)] text-[#d4af37]">
+          <span className="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded border border-[rgba(212,175,55,0.25)] text-[#d4af37]">
             {post.category.replace(/-/g, ' ')}
           </span>
-          <span className="text-[9px] text-[#4a5580] flex items-center gap-1">
+          <span className="text-[11px] text-[#4a5580] flex items-center gap-1">
             <Clock className="w-3 h-3" />{post.readingTime} min
           </span>
         </div>
@@ -175,7 +175,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <section className="container mx-auto px-4 max-w-4xl mt-10">
-            <div className="text-[10px] uppercase tracking-[0.15em] text-[#4a5580] mb-3">Related Posts</div>
+            <div className="text-xs uppercase tracking-[0.15em] text-[#4a5580] mb-3">Related Posts</div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {relatedPosts.map((related) => (
                 <RelatedPostCard key={related.slug} post={related} />
@@ -198,7 +198,7 @@ function RelatedPostCard({ post }: { post: DevlogPost }) {
       href={`/devlog/${post.slug}`}
       className="block group rounded-xl border border-[rgba(212,175,55,0.12)] bg-[rgba(8,12,28,0.7)] px-4 py-3.5 hover:border-[rgba(212,175,55,0.3)] transition-colors"
     >
-      <span className="text-[9px] uppercase tracking-[0.15em] text-[#d4af37]">
+      <span className="text-[11px] uppercase tracking-[0.15em] text-[#d4af37]">
         {post.category.replace(/-/g, ' ')}
       </span>
       <h3 className="text-[12px] font-semibold text-[#c8d4f0] mt-1.5 mb-1.5 group-hover:text-[#d4af37] transition-colors line-clamp-2 leading-snug">

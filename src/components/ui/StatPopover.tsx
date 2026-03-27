@@ -63,7 +63,7 @@ export function StatPopover({ items, children, className }: StatPopoverProps) {
                         {item.label}
                       </span>
                       {item.detail && (
-                        <span className="block text-[9px] text-[#4a5580] mt-0.5">{item.detail}</span>
+                        <span className="block text-[11px] text-[#4a5580] mt-0.5">{item.detail}</span>
                       )}
                     </div>
                     <ExternalLink className="w-3 h-3 text-[#4a5580] group-hover:text-[#d4af37] shrink-0 transition-colors" />
@@ -73,7 +73,7 @@ export function StatPopover({ items, children, className }: StatPopoverProps) {
                   <div>
                     <span className="text-[11px] font-semibold text-[#c8d4f0]">{item.label}</span>
                     {item.detail && (
-                      <span className="block text-[9px] text-[#4a5580] mt-0.5">{item.detail}</span>
+                      <span className="block text-[11px] text-[#4a5580] mt-0.5">{item.detail}</span>
                     )}
                   </div>
                 )}

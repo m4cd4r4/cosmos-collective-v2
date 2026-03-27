@@ -26,7 +26,7 @@ export default function SkyMapPage({
   const target = typeof searchParams.target === 'string' ? searchParams.target : undefined
 
   return (
-    <div className="flex flex-col h-screen pb-16 lg:pb-0">
+    <div className="flex flex-col min-h-[100dvh] pb-16 lg:pb-0">
       <Header />
 
       <main className="flex-1 relative overflow-hidden">

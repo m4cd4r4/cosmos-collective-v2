@@ -54,7 +54,7 @@ export function JWSTWidget() {
 
       {/* Current target */}
       <div className="absolute top-2.5 right-3">
-        <span className="text-[9px] font-mono tracking-wider text-white/60" key={activeIndex}>
+        <span className="text-[11px] font-mono tracking-wider text-white/60" key={activeIndex}>
           {featured[activeIndex].name}
         </span>
       </div>
