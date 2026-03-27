@@ -12,6 +12,7 @@ import { NeoApproachDiagram } from '@/components/features/events/NeoApproachDiag
 import { SolarGauge } from '@/components/features/events/SolarGauge'
 import { EventSkyMap, type EventSkyMapHandle } from '@/components/features/events/EventSkyMap'
 import { useLiveTelemetry } from '@/hooks/useLiveTelemetry'
+import { LaunchTracker } from '@/components/features/events/LaunchTracker'
 import { getMeteorShowers } from '@/services/real-time-events'
 import type { AstronomicalEvent } from '@/types'
 import {
@@ -103,7 +104,7 @@ function getEventThumbnail(type: string) {
 
 export default function EventsPage() {
   const telemetry = useLiveTelemetry()
-  const { events, apod, issPosition, issError, isLoading, solarWeather: solarData } = telemetry
+  const { events, apod, issPosition, issError, isLoading, solarWeather: solarData, launches } = telemetry
 
   const [selectedCamera, setSelectedCamera] = useState(ISS_CAMERAS[0])
   const [displayCount, setDisplayCount] = useState(INITIAL_EVENT_COUNT)
@@ -311,6 +312,9 @@ export default function EventsPage() {
                 </a>
               </div>
             </section>
+
+            {/* ── Upcoming Launches ─────────────────────────────────────── */}
+            <LaunchTracker launches={launches} isLoading={isLoading} />
 
             {/* ── Events Gallery ───────────────────────────────────────── */}
             <section>
