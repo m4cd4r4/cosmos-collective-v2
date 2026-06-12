@@ -79,6 +79,8 @@ tests/screenshots/
 screenshots/
 screenshots-analysis/
 test-screenshots/
+docs/solar-system/audit-screenshots/
+.playwright-mcp/
 
 # Temp reports & analysis files
 ACCESSIBILITY_REPORT.md
