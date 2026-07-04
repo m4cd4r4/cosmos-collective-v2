@@ -4,6 +4,7 @@
 **Audience (widened in v2):** ages 6 to adult. The 6-year-old covenant is the floor; mastery strata are the ceiling. One game, layered depth - never separate modes she can get lost in.
 **v1 decided:** 2026-06-12, across three assessment rounds (audit, game pivot, surface racing expansion). Research traces in `.claude/traces/2026-06-12-*.jsonl`.
 **v2:** 2026-07-04 - proofread (numbering, effort units), audience widened to 6-adult, compression doctrine formalized, physics-true fun catalogue added, Nintendo-warmth tone covenant named, and the game separated from the website entirely (standalone repo). W1-W3 scope unchanged.
+**v2.1:** 2026-07-05 - Launch Pad Earth (launch, booster catch, orbital refueling), historical Mission Replays on real trajectories, the S5 Pearl String sun-lens finale, vehicle IP policy (NASA free, SpaceX cautioned).
 
 A space game built on the cosmos-collective solar system: drive and jump on real planetary terrain with real per-planet gravity, fly between planets, and eventually earn the Dyson Drive - the power to escape orbital mechanics entirely. Built kid-first for one specific 6-year-old; everyone older is served by depth she grows into, not menus she must route around.
 
@@ -32,6 +33,10 @@ A space game built on the cosmos-collective solar system: drive and jump on real
 | 17 | **(v2) The game separates from the website entirely** | Macdara, 2026-07-04: the solar-system page was always the site's standout; the rest is not important. Standalone repo + own static deploy replaces the nested `public/solar-system/pilot/` location. Cross-links become optional marketing, not architecture. Ports from the monolith are copies, never imports |
 | 18 | **(v2) Retro arcade cabinets as easter eggs** | Hidden 1979-style minigame cabinets (Asteroids in the belt, Lunar Lander on the Moon, a friendly Space Invaders inversion on Mars) found in the world, played through a CRT shader. Tiny to build (2D canvas, ~1 weekend each), enormous per-byte delight, and each one smuggles in a real lesson. Menu-gated like everything else |
 | 19 | **(v2) Education by mechanic, never by lecture** | Every lesson is something you DO first and read second: gravity is felt through the same jump button, escape velocity through the Phobos hop, light-lag through a delayed mission-control voice. Facts arrive as stickers, fact cards, and hidden real-history artifacts - rewards, not homework |
+| 20 | **(v2.1) Vehicle IP policy: facts are free, NASA is free, SpaceX is a caution flag** | Physics, mission profiles, and history cannot be owned. NASA craft (Saturn V, Voyager, Cassini, Parker) are US government works with free models on NASA 3D Resources - the entire historical fleet costs nothing. "SpaceX", "Falcon 9", "Starship" are trademarks and the vehicle look is trade dress; a free fan game is low-risk but it is NOT a granted right. The launch mechanic ships vehicle-agnostic: real SpaceX skins only after a licence check, else warm-named lookalikes (the Chopstick Tower catches the Big Silver One) |
+| 21 | **(v2.1) Mission Replays ride baked JPL Horizons rails** | The parked instrument plan already speced bake-time Horizons vectors to static JSON. Replays reuse that exact pattern: real trajectories, time-compressed, zero backend. Watch first; take-the-stick moments for S2+ |
+| 22 | **(v2.1) The Pearl String is the true finale** | The real Solar Gravitational Lens mission (NIAC Phase III study, Turyshev/JPL): sailcraft strings dive past the Sun, exit at ~25 AU/yr, and from ~550 AU use the Sun itself as a telescope - sampling an Einstein ring to develop a megapixel portrait of an exoplanet. Facts corrected from the ask: the focal line starts ~550 AU (not 150), and the targets are planets of OTHER stars, which is better. The Dyson Drive gives power over gravity; the Pearl String gives sight across light-years |
+| 23 | **(v2.1) Tap the Telescopes pulls from the archives, never from the website** | Flying to Hubble and Webb and borrowing their eyes is the game's bridge to real astronomy imagery. Sources are MAST/STScI and ESA/Hubble with true pointing metadata (RA/Dec, observation date), baked at build time. The site's existing JWST pages are explicitly NOT a source - the audit found wrong-object Hubble pairs and mislabelled MIRI images there. The "hack" is a friendly GUEST MODE wink, not a crime scene |
 
 ## 2. The players
 
@@ -62,12 +67,15 @@ One world, layered. Each stratum is invisible until the player does the thing th
 | **S2 Flight school** | 10+ | P5 flight layer | Named, taught, and playable orbital mechanics: the Hohmann "lazy river" route, the gravity-assist "free trampoline", Oberth's "burn low, fly fast", and a landing challenge where overshoot = comedy bounce, never a crash screen |
 | **S3 The real numbers** | teen-adult | settings toggle | Hover any toy quantity for its real value. Arrival cards: "your 40-second cruise really takes 7 months". Photo mode with a JWST-infrared filter (site brand tie-in). "Space is silent" audio toggle: engine heard only through the kart body, everything outside muffled to honesty |
 | **S4 Grand Tour** | adult | P6 complete | Recreate Voyager 2's real Jupiter-Saturn-Uranus-Neptune assist chain on a delta-v budget. Daily seeded challenge run. Local-only leaderboard (no accounts, nothing leaves the device) |
+| **S5 The Pearl String** | adult | S4 Grand Tour complete | The endgame beyond the endgame: launch the sun-lens string, dive the corona, outrun a ghost Voyager, and develop humanity's first portrait of another world (section 5, decision 22) |
 
 **Hotseat party mode** (any age, 1 weekend, post-W3 candidate): pass-the-iPad time trials with name stamps. No networking, no accounts - the leaderboard is the living room.
 
 ### 2.3 Tone - Nintendo warmth, not Xbox grit (new in v2)
 
 The split that keeps both the brand and the fun honest: **photoreal awe in the world, toy warmth in everything you touch.**
+
+Resolved (Macdara, 2026-07-05): gameplay is **cartoony-first** - posterized, chunky, saturated. Photoreal renders are reserved for the awe beats: approach plates, Mission Replay close-ups, the Pale Blue Dot, the Einstein ring. The tech for "both" already exists in the plan: the morph's `uMix` uniform blends a real photograph into its own posterized 4-6 band version, so cartoon and photo are one texture and one slider, not two art pipelines.
 
 - The world is real: NASA terrain, true skies, photographic approach plates. That layer is allowed to be breathtaking and accurate.
 - Everything interactive is warm and chunky: rounded geometry, saturated posterized palettes, squash-and-stretch on the kart (landing squish, jump stretch - render-only, physics untouched), idle wiggles, big rounded UI with press-wobble.
@@ -162,6 +170,58 @@ The game never lectures. Every fact is DONE first, read second, and half of them
 - **Names are real, spoken aloud.** Every crater, mons, and planitia on every track uses its IAU name with pronunciation audio. "Tycho" becomes a place she has jumped, not a word in a book.
 - **Golden Record cameo.** Somewhere far out, a tiny gleaming disc drifts by. Catch it and it plays a snippet of the real Voyager record. One-time, unrepeatable, whispered about.
 
+### Launch Pad Earth - rockets, catches, and orbital refueling (new in v2.1)
+
+Earth enters the game as a launchpad, not a racetrack (1g is the world she already lives in; the game is about everywhere else). Gate: P5, because it needs the orbital scene.
+
+- **One-button launch.** Hold to throttle, feel the rumble, staging is a felt THUNK plus a cheer. Covenant applies: a wobbly ascent arcs into ocean spray and a giggling recovery barge, never an explosion screen.
+- **Catch the booster.** The tower-arms catch as a one-button timing game; droneship landings as its sea-level sibling. Inherently Nintendo-warm spectacle: a skyscraper catching a skyscraper.
+- **Orbital refueling is the docking dance.** Gentle approach, match speed, soft-capture boop. Each tanker fills the delta-v meter toward departure. Kid mode: 3 tankers and you are fueled. S3 caption: "the real ship needs 10+ tanker flights; we gave you 3 so bedtime still happens." The lesson underneath: orbit is halfway to anywhere (Heinlein), and the tank is why.
+- **Then GO.** A full tank unlocks the departure burn to the Moon, Mars, and the rest of the flight layer. The launch loop is also how S5 builds its pearl string.
+- Vehicles per decision 20: the NASA fleet flies real and free; the modern super-heavy ships fly as warm-named lookalikes until branding is cleared.
+
+### Mission Replays - ride the real voyages (new in v2.1)
+
+Pick a mission in the Explorer's Museum and ride alongside it: the real trajectory on baked Horizons rails (decision 21), time-compressed with honesty captions, a cinematic free-look camera orbiting a free NASA 3D model up close, milestone cards at every encounter. S2+ players get take-the-stick moments - fly the gravity assist yourself, and the rail catches you afterwards.
+
+| Replay | The moment that sells it |
+|--------|--------------------------|
+| **Voyager 2** | The only Grand Tour ever flown - four planets, one spacecraft, assists chaining like billiards |
+| **Voyager 1** | At the real 1990 position the camera turns home: the Pale Blue Dot, recreated in-engine. Links the Golden Record cameo |
+| **Apollo 11** | Saturn V ascent (all NASA, all free), translunar coast, the landing - ends at the Tranquility Base artifact she can already visit |
+| **Parker Solar Probe** | Dive INTO the corona at 690,000 km/h, the fastest thing humans ever built. Trains the S5 sun-dive |
+| **Cassini** | Thirteen years at Saturn, then the Grand Finale: 22 dives through the ring gap, ending as part of the planet it studied |
+| **New Horizons** | Nine years of cruise for nine minutes of Pluto, and the heart reveal. Its 14 km/s would cross the whole Pluto track in a blink |
+| **Rosetta & Philae** | The comet chase, the bounce, the two-year hunt for the lander - the same hunt the player runs on 67P |
+| **Dawn** | The tortoise engine: ion thrust too weak to feel, patient enough to orbit TWO worlds (Vesta, then Ceres) |
+| **Live rails** | Lucy, Psyche, JUICE and friends flying RIGHT NOW - monthly rebaked positions, "in flight today" markers |
+
+### Tap the Telescopes - Hubble and Webb, borrowed (new in v2.1, decision 23)
+
+Fly to the real observatories and borrow their eyes. Hubble hums along in low Earth orbit; Webb sits 1.5 million km out at Sun-Earth L2 - the exact marker the parked instrument plan always wanted, now a destination you can park next to. Dock gently, knock politely, and the dish grants GUEST MODE with a friendly handshake beep. The "hack" is mischief-flavoured, never menacing (covenant).
+
+- **The sky has addresses.** Inside the eyepiece, the real star sphere glows with markers at the true RA/Dec of published observations. Slew to one, hold steady, and the real image develops in the frame - the same darkroom motif as the Pearl String.
+- **Real archives, baked at build time.** A curated observation set from MAST/STScI and ESA/Hubble with genuine pointing metadata and dates. Static tiles, no runtime API, honest "observed on [date]" captions. Never sourced from the site's old JWST pages (decision 23).
+- **Two eyes, one sky.** Where both scopes shot the same target (Pillars of Creation, Carina), a slider crossfades Hubble's visible light into Webb's infrared - the single best "why we built Webb" lesson, delivered by thumb.
+- **Look-back time.** Deep-field captures caption the light's travel time ("this light left before the Sun existed"). S3 adults get redshift on hover.
+- **Postcards from Deep Time.** Every developed image becomes a postcard sticker in the museum. Favourites go on the fridge page.
+
+Effort: 1-2 weekends for the slew UI + bake pipeline; the catalogue then grows by curation, not code. Gate: P5 (L2 is a flight-layer destination; Hubble can arrive earlier alongside Launch Pad Earth).
+
+### The Pearl String - the sun-lens finale (new in v2.1, decision 22)
+
+The endgame beyond the Dyson Drive, and it is real physics in development today: the Solar Gravitational Lens mission concept (NIAC Phase III, Turyshev et al., JPL). The Sun's gravity bends light to a focal line beginning ~550 AU out; a small telescope there can sample the Einstein ring of a planet orbiting another star and reconstruct a megapixel portrait - continents, clouds, weather, on a world light-years away. The flight architecture really is called a string of pearls: waves of small sailcraft launched in strings.
+
+The player flies it, post-Grand-Tour (S5):
+
+1. **Build the string.** The Launch Pad loop launches pearl after pearl.
+2. **The sun-dive.** Pilot the perihelion pass Parker taught you; sails bloom; exit at ~25 AU/yr while a ghost Voyager 1 (3.6 AU/yr) falls away astern.
+3. **The wait.** Time-warp with the honesty caption ("real pearls cruise ~27 years; yours took 90 seconds"). Crossing the heliopause rings Voyager's chime. The map zooms out past everything: 550 AU makes the whole game so far look like a front garden. The scale lesson of the entire game in one zoom.
+4. **The ring.** Put the Sun exactly behind you and the target star exactly ahead. The Einstein ring blooms around the black solar disc. Drift the pearls across it, sampling pixel by pixel, and another world's portrait develops like a photograph in a darkroom.
+5. **Name it.** Her call (covenant). Museum card: "This mission is a real NASA-funded study. Nobody has flown it yet. You flew it first."
+
+Facts kept honest: the focal line starts ~550 AU, not 150 (150 AU is barely past the heliopause, still inside the lens's blind zone); the targets are exoplanets, never our own outer planets (the geometry only works pointing away from the Sun); the status is a funded study, not an approved flight.
+
 ### Terrain pipeline (unchanged from v1)
 
 v1 Moon uses the CGI Moon Kit heightmap displaced at load - real data, no pipeline. From Mars onward, the full bake: GeoTIFF clip (Map a Planet 2 / Solar System Treks) -> 16-bit PNG heightmap (gdal or geotiff.js; mind LOLA's 0.5 scale factor) -> Blender: displace, 2-3x vertical exaggeration, decimate to 15-30k tris, flatten a smooth authored ribbon along the racing line (real terrain is scenery and jump features; the drivable line is authored) -> bake AO + posterized colour to one 1024px texture -> Draco GLB (~0.3-0.5 MB) + KTX2 albedo + one real-photo approach plate. ~1-1.5 MB per track, lazy-loaded per landing.
@@ -202,6 +262,11 @@ Red-team-corrected sequencing, unchanged at the front. The kart is first because
 | BELT BLASTER cabinet | 1 weekend | P5 shipped |
 | Explorer's Museum wave 1 (Apollo site + Perseverance/Ingenuity) | 1 weekend | W4 |
 | Constellation tracer + photon beacon | 1-2 weekends | P4 shipped |
+| Launch Pad Earth (launch + booster catch + refuel docking) | 2-3 weekends | P5 shipped |
+| Mission Replay engine | 1-2 weekends | P5 shipped |
+| Individual replays (Voyagers, Apollo 11, Parker, Cassini, New Horizons, Rosetta, Dawn, live rails) | ~0.5 weekend each | Replay engine shipped |
+| Tap the Telescopes (Hubble + Webb) | 1-2 weekends | P5 shipped |
+| S5 Pearl String finale | 2-3 weekends | P6 + S4 Grand Tour shipped |
 | v2-candidate bodies (Io, Europa, Titan, Enceladus, 67P, Ceres, Jupiter clouds, belt playground) | ~1 weekend each once pipeline exists | P6 shipped, and only the ones players actually ask for |
 
 **Parallel weeknight stream (off the critical path):** website Phase 0 fixes in the monolith - fixed-timestep accumulator, runaway clock, Reset, ghost overlay, mobile taps. See `docs/solar-system/AUDIT-2026-06-12.md`. The production site needs these regardless; they share no code with the game.
@@ -215,7 +280,7 @@ v1 inter-planet travel is tap-a-planet autopilot (a charming scripted arc she ca
 
 **Kept in v1 despite pressure:** the tunnel. It was in the original ask, it is a stretched arch, and bursting out of darkness is enormous per-byte delight.
 
-**Cut indefinitely:** AI opponents, lap counting, placements against others (no-fail collect-a-thon verdict; the S1 ghost is yourself and cannot beat you rudely); Venus; fake gas-giant ground; online multiplayer, accounts, cloud saves (privacy + scope - the party mode is a shared iPad).
+**Cut indefinitely:** AI opponents, lap counting, placements against others (no-fail collect-a-thon verdict; the S1 ghost is yourself and cannot beat you rudely); Venus; fake gas-giant ground; online multiplayer, accounts, cloud saves (privacy + scope - the party mode is a shared iPad); Earth as a racetrack (Earth is a launchpad and a photograph - the game is about everywhere else).
 
 **Rejected permanently:** true spherical-gravity driving (Mario Galaxy style - weekends of work for a wow delta a 6-year-old cannot perceive over the bend; revisit only if she asks to "drive all the way around"); chunked-LOD real-scale planets (confirmed multi-year trap; web prior art is immature).
 
@@ -223,7 +288,7 @@ v1 inter-planet travel is tap-a-planet autopilot (a charming scripted arc she ca
 
 1. **Kart feel is the gating unknown** (W1-W2). Timebox to the playtest gates. Cut obstacle variety before cutting feel polish.
 2. **The named failure mode: the bend-shader spike at 11pm in week 5.** When kart tuning feels bad, the spectacular morph is the sanctioned distraction - it produces a tweetable demo and a dead game. The morph is already de-risked on paper. Do not touch it until she replays the kart unprompted.
-3. **(v2) The catalogue is the new bend-shader.** Section 5 now contains a dozen tweetable mechanics (Titan wings! comet docking!) plus an entire retro arcade. Every one is gated for the same reason the morph is gated behind W2: nothing in the menu may jump its gate. If a weekend starts with "quick prototype of the Enceladus geysers" or "just a quick Asteroids clone", the plan has failed. The cabinets LOOK like sanctioned 1-weekend treats; they are only sanctioned AFTER their gates.
+3. **(v2) The catalogue is the new bend-shader.** Section 5 now contains a dozen tweetable mechanics (Titan wings! comet docking!) plus an entire retro arcade. Every one is gated for the same reason the morph is gated behind W2: nothing in the menu may jump its gate. If a weekend starts with "quick prototype of the Enceladus geysers" or "just a quick Asteroids clone", the plan has failed. The cabinets LOOK like sanctioned 1-weekend treats; they are only sanctioned AFTER their gates. v2.1 stacks a rocket program, a replay fleet, two space telescopes, and an interstellar lens onto the same menu: same rule, same gates.
 4. **The GIS pipeline is a hidden fourth project** (gdal, Blender, Draco, KTX2 each have learning curves). It is deliberately deferred to the Mars track and the first bake attempt is expected to fail.
 5. **iOS Safari memory.** Test on the actual family iPad at every gate, not just desktop. pixelRatio discipline during transitions. WebGPU stays behind its flag until proven on that device.
 6. **Design ages out - now partially mitigated.** She is 6 now; at 7-8 she will want scores and competition. v1 said "ship fast before she outgrows it"; v2 adds the answer for afterwards: S1 ghosts arrive exactly when score-hunger does, S2 flight school at 10, and the game grows with her instead of dying. The strata are the anti-aging plan.
@@ -233,7 +298,7 @@ v1 inter-planet travel is tap-a-planet autopilot (a charming scripted arc she ca
 - **The game is its own project** (decision 17). Own repo, own static deploy, own URL. No shared code, no shared build, no iframe. A "Play Pilot Mode" link on the solar-system page is optional marketing once the game exists, nothing more. This plan doc migrates to the game repo when it is minted at W1; a pointer stays here.
 - The site stays **frozen, not stripped** - still free, still true. Macdara's call (2026-07-04): the solar-system page has always been the site's standout; the rest is not important. The `/explore/jwst-*` pages keep whatever ranking they have without maintenance.
 - The weeknight P0 stream survives the separation because every P0 bug (runaway clock, broken Reset, ghost overlay, mobile taps) is ON the solar-system page itself - the one part of the site that still matters. Everything else in the parked instrument plan (`docs/solar-system/AUDIT-2026-06-12.md`) is now doubly parked.
-- The S3 photo mode's JWST-infrared filter is the only remaining brand thread between game and site, and it is a copy of an idea, not a dependency.
+- The S3 photo mode's JWST filter and Tap the Telescopes echo the site's JWST identity without depending on it: the game sources imagery straight from the archives (decision 23), never from the site's broken JWST pages.
 
 ## 10. References
 
@@ -242,8 +307,10 @@ v1 inter-planet travel is tap-a-planet autopilot (a charming scripted arc she ca
 - Key prior art: Angry Birds Space (readability devices), Mario Galaxy (Co-Star lap-play, spherical joy), Gravity Ghost (no-fail orbital, reward orbiting itself), Subway Surfers (curved-world shader, short-run retention), Outer Wilds (toy-scale internal consistency), Kerbal Space Program (flight-school joy, bounce-not-fail landings), Sissy's Magical Ponycorn Adventure (dad + daughter co-creation, tiny finished scope)
 - Tech references: rolling-log bend math (bevyengine discussion #10062, lynnpepin/rollinglogshader), three.js onBeforeCompile material extension, official three.js crossfade example, three.js WebGPURenderer, NASA CGI Moon Kit, USGS Map a Planet 2, USGS MESSENGER global DEM
 - Physics fact-check anchors (v2): lunar terminator ~15 km/h and Mercury terminator ~3.6 km/h (circumference / solar day); Phobos escape ~11 m/s, Deimos ~5.6 m/s, 67P ~1 m/s; Io plumes to 500 km (Pele); Daphnis vertical ring waves (Cassini, Keeler Gap); Titan human-powered-flight estimate (1.45 atm, 0.14g); Sputnik Planitia nitrogen-ice glacial flow (New Horizons); Occator faculae sodium carbonate (Dawn)
+- v2.1 references: NASA 3D Resources (free spacecraft models: Voyager, Cassini, Parker, and more), JPL Horizons ephemerides (bake-time replay rails), Turyshev et al. NIAC Phase III Solar Gravitational Lens reports (string-of-pearls sailcraft architecture, ~550 AU focal line, megapixel exoplanet imaging), MAST/STScI and ESA/Hubble archives (Tap the Telescopes pointing metadata), Pale Blue Dot (Voyager 1, 1990), Parker Solar Probe (690,000 km/h corona passes), Heinlein's "orbit is halfway to anywhere"
 
 ## Changelog
 
 - **v2 (2026-07-04):** Proofread: fixed W/P numbering drift (cut list referenced nonexistent "P3"), normalized effort units to weekends so the 13-17 total reconciles, unglued decision 2 phrasing. Enhanced: audience widened to 6-adult via depth strata (S0-S4), compression doctrine formalized (section 3), fun catalogue expanded with 8 physics-true unlock bodies plus the asteroid belt, Mercury re-admitted on MESSENGER data, WebGL2/WebGPU strategy set, sound design + accessibility floor added, catalogue-discipline risk added. Same-day additions from Macdara: Nintendo-warmth tone covenant (2.3, decision 16); full separation from the website into a standalone repo (decision 17, section 9); retro arcade cabinet easter eggs (decision 18); education-by-mechanic + hidden curriculum easter eggs (decision 19). W1-W3 scope unchanged from v1 throughout.
+- **v2.1 (2026-07-05):** Launch Pad Earth (one-button launch, booster catch, orbital-refuel docking, delta-v lesson). Mission Replays on baked Horizons rails (Voyagers with Pale Blue Dot, Apollo 11, Parker, Cassini Grand Finale, New Horizons, Rosetta/Philae, Dawn, live rails for missions in flight now). Tap the Telescopes: fly to Hubble and Webb, GUEST MODE in, develop real archive images at their true sky positions (MAST/STScI sourced, decision 23). S5 Pearl String sun-lens finale (real SGL study; facts corrected to ~550 AU focal line and exoplanet targets). Vehicle IP policy: NASA fleet free, SpaceX trademarked so the mechanic ships vehicle-agnostic (decision 20). Art direction resolved cartoony-first with photoreal awe beats (2.3). All new items menu-gated; W1-W3 still untouched.
 - **v1 (2026-06-12):** Initial plan from three assessment rounds.
