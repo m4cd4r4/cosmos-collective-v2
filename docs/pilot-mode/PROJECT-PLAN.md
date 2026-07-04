@@ -1,5 +1,7 @@
 # Pilot Mode - Project Plan (v2)
 
+> **This plan's home is now the standalone game repo:** `I:/Scratch/pilot-mode/docs/PROJECT-PLAN.md` (minted 2026-07-05 at W1, per decision 17). This copy is the v2.1 snapshot; make future updates in the game repo.
+
 **Status:** Approved, not started. **Owner:** Macdara. **Primary player:** his 6-year-old daughter.
 **Audience (widened in v2):** ages 6 to adult. The 6-year-old covenant is the floor; mastery strata are the ceiling. One game, layered depth - never separate modes she can get lost in.
 **v1 decided:** 2026-06-12, across three assessment rounds (audit, game pivot, surface racing expansion). Research traces in `.claude/traces/2026-06-12-*.jsonl`.
