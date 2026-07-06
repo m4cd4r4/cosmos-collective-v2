@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Kepler Exoplanet Explorer | Cosmos Collective',
     description: 'Interactive map of 2,600+ confirmed exoplanets discovered by NASA\'s Kepler mission — color-coded by stellar temperature, filterable by planet size and orbital period.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    images: [{ url: '/images/social-preview.png', width: 1200, height: 630 }],
   },
 }
 
@@ -41,14 +41,14 @@ export default function KeplerPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main
-        id="main-content"
+      <div
         className="flex-1 overflow-hidden pb-16 lg:pb-0"
         style={{ height: 'calc(100vh - 64px)' }}
         aria-label="Kepler Exoplanet Explorer"
+        role="region"
       >
         <KeplerViewer />
-      </main>
+      </div>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useEffect, useCallback, useMemo } from 'react'
+import { useRef, useEffect, useCallback, useMemo, useState } from 'react'
 import type { StarSystem, ViewMode } from './types'
 import {
   tempToRGB,
@@ -36,23 +36,15 @@ function ensureBgStars() {
 }
 
 function usePrefersReducedMotion(): boolean {
-  const ref = useRef(false)
+  const [reduced, setReduced] = useState(false)
   useEffect(() => {
     const mql = window.matchMedia('(prefers-reduced-motion: reduce)')
-    ref.current = mql.matches
-    const handler = (e: MediaQueryListEvent) => { ref.current = e.matches }
+    setReduced(mql.matches)
+    const handler = (e: MediaQueryListEvent) => setReduced(e.matches)
     mql.addEventListener('change', handler)
     return () => mql.removeEventListener('change', handler)
   }, [])
-  return ref.current
-}
-
-function useIsTouchDevice(): boolean {
-  const ref = useRef(false)
-  useEffect(() => {
-    ref.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0
-  }, [])
-  return ref.current
+  return reduced
 }
 
 export function StarCanvas({
@@ -70,7 +62,6 @@ export function StarCanvas({
   const sizeRef   = useRef<{ W: number; H: number }>({ W: 0, H: 0 })
   const hasRenderedStaticFrame = useRef(false)
   const prefersReducedMotion = usePrefersReducedMotion()
-  const _isTouchDevice = useIsTouchDevice()
 
   // Pre-built index map for O(1) lookup of star index in the full array
   const starIndexMap = useMemo(() => {

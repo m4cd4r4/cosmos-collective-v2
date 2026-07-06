@@ -25,7 +25,7 @@ export default function ExploreError({
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-1 flex items-center justify-center bg-cosmos-void px-4 py-16">
+      <div className="flex-1 flex items-center justify-center bg-cosmos-void px-4 py-16">
         <div className="max-w-md w-full text-center">
           {/* Error Icon */}
           <div className="mb-6">
@@ -93,7 +93,7 @@ export default function ExploreError({
             </Button>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

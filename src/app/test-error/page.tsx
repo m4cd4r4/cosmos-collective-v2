@@ -37,11 +37,11 @@ export default function TestErrorPage() {
     return (
       <div className="flex flex-col min-h-screen">
         <Header />
-        <main className="flex-1 flex items-center justify-center bg-cosmos-void px-4">
+        <div className="flex-1 flex items-center justify-center bg-cosmos-void px-4">
           <div className="text-center">
             <p className="text-gray-400">This page is only available in development mode.</p>
           </div>
-        </main>
+        </div>
       </div>
     )
   }
@@ -50,7 +50,7 @@ export default function TestErrorPage() {
     <div className="flex flex-col min-h-screen">
       <Header />
 
-      <main className="flex-1 bg-cosmos-void px-4 py-16">
+      <div className="flex-1 bg-cosmos-void px-4 py-16">
         <div className="max-w-2xl mx-auto">
           {/* Header */}
           <div className="mb-8 text-center">
@@ -161,7 +161,7 @@ export default function TestErrorPage() {
             </ul>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

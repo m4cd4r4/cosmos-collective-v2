@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'JWST Explorer | Cosmos Collective',
     description: 'Interactive explorer for James Webb Space Telescope observations — wavelength switching, feature annotations, and scientific analysis.',
-    images: [{ url: '/og-image.png', width: 1200, height: 630 }],
+    images: [{ url: '/images/social-preview.png', width: 1200, height: 630 }],
   },
 }
 
@@ -41,14 +41,14 @@ export default function JWSTPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main
-        id="main-content"
+      <div
         className="flex-1 overflow-hidden pb-16 lg:pb-0"
         style={{ height: 'calc(100vh - 64px)' }}
         aria-label="JWST Explorer"
+        role="region"
       >
         <JWSTViewer />
-      </main>
+      </div>
     </div>
   )
 }

@@ -19,8 +19,10 @@ export interface LiveTelemetry {
   issPosition: { lat: number; lon: number; alt: number } | null
   issVelocity: number | null
   issError: boolean
+  issUpdatedAt: number | null
   apod: APODData | null
   solarWeather: { flareLevel: string; currentFlux: number } | null
+  solarUpdatedAt: number | null
   events: AstronomicalEvent[]
   upcomingEvents: AstronomicalEvent[]
   launches: LiveLaunch[]
@@ -111,8 +113,10 @@ export function useLiveTelemetry(): LiveTelemetry {
       : null,
     issVelocity: iss.data?.velocity ?? null,
     issError: iss.isError,
+    issUpdatedAt: iss.dataUpdatedAt || null,
     apod: apod.data ?? null,
     solarWeather: solar.data ?? null,
+    solarUpdatedAt: solar.dataUpdatedAt || null,
     events: events.data ?? [],
     upcomingEvents,
     launches: launches.data ?? [],

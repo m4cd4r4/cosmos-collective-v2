@@ -1,80 +1,141 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ChevronDown, Sparkles, Orbit, ArrowRight } from 'lucide-react'
+import { ChevronDown, ArrowRight } from 'lucide-react'
+import { useTelemetryData } from '@/components/features/mission-control/useTelemetryData'
+
+/**
+ * Landing hero: the solar system as the centre of gravity.
+ * Full-bleed scene from the Solar System Explorer with live telemetry
+ * overlays (real UTC clock, real ISS position) so "live" is verifiable.
+ */
+
+const SECONDARY_LINKS = [
+  { label: 'Latest from JWST', href: '/jwst' },
+  { label: '2,600+ exoplanets', href: '/kepler' },
+  { label: 'Live sun', href: '/events' },
+]
 
 export function LandingHero() {
+  const { utcTime, issPosition, issVelocity } = useTelemetryData()
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => setMounted(true), [])
+
   return (
-    <section className="relative h-screen overflow-hidden flex flex-col items-center justify-between pt-6 pb-6" aria-labelledby="hero-heading">
-      {/* Nebula gradient overlays */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[rgba(74,144,226,0.08)] via-transparent to-[rgba(10,14,26,0.7)]" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[400px] rounded-full bg-[rgba(212,175,55,0.07)] blur-[120px]" />
-        <div className="absolute top-1/3 left-1/4 w-[400px] h-[300px] rounded-full bg-[rgba(255,107,107,0.04)] blur-[100px]" />
-      </div>
-
-      {/* Top: Badge + Title */}
-      <div className="relative z-10 text-center px-4 pt-2">
-        <div className="relative inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[rgba(212,175,55,0.1)] border border-[rgba(212,175,55,0.3)] mb-3 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[rgba(212,175,55,0.15)] to-transparent animate-shimmer bg-[length:200%_100%]" />
-          <Sparkles className="w-3.5 h-3.5 text-[#d4af37] relative z-10" />
-          <span className="text-xs sm:text-sm text-[#d4af37] font-medium relative z-10">
-            Live Multi-Wavelength Observatory
-          </span>
-        </div>
-
-        <h1
-          id="hero-heading"
-          className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-display font-bold mb-1"
-        >
-          <span className="text-white">Explore the </span>
-          <span className="text-gradient-stellar">Cosmos</span>
-          <span className="text-white"> in Real Time</span>
-        </h1>
-        <p className="text-sm sm:text-base lg:text-lg text-gray-400 font-light tracking-wide max-w-2xl mx-auto">
-          Track the ISS, browse JWST observations, monitor solar weather - powered by 11 live data sources
-        </p>
-      </div>
-
-      {/* Center: Solar System preview — 3/4 of viewport */}
-      {/* Desktop: Live Solar System iframe | Mobile: Static poster */}
-      <Link
-        href="/solar-system"
-        className="relative z-10 rounded-2xl overflow-hidden border border-white/10 group cursor-pointer shadow-[0_0_60px_rgba(212,175,55,0.08)] w-[90vw] h-[50vh] md:w-[75vw] md:h-[62vh]"
-        aria-label="Open Solar System Explorer"
-      >
-        {/* Hero: Earth close-up with Moon — screenshot from the live solar system app */}
+    <section
+      className="relative h-[100svh] min-h-[560px] overflow-hidden -mt-16"
+      aria-labelledby="hero-heading"
+    >
+      {/* Scene: Earth and Moon from the Solar System Explorer */}
+      <div className="absolute inset-0">
         <Image
           src="/images/hero-earth-close.webp"
-          alt="Earth and Moon as seen from the Solar System Explorer"
+          alt=""
+          aria-hidden="true"
           fill
           priority
           unoptimized
-          className="object-cover"
-          sizes="(max-width: 768px) 90vw, 75vw"
+          className="object-cover object-[70%_center]"
+          sizes="100vw"
         />
-        {/* Hover/tap overlay with CTA */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-colors duration-300 flex items-center justify-center">
-          <span className="opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/60 backdrop-blur-sm border border-[rgba(212,175,55,0.3)] rounded-lg px-6 py-3 text-white font-medium flex items-center gap-2">
-            <Orbit className="w-5 h-5 text-[#d4af37]" />
-            Open Solar System Explorer
-            <ArrowRight className="w-4 h-4" />
-          </span>
-        </div>
-      </Link>
+        {/* Scrim: readable text on the left, scene untouched on the right */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[rgba(10,14,26,0.88)] via-[rgba(10,14,26,0.45)] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0e1a] to-transparent" />
+      </div>
 
-      {/* Scroll-down chevron */}
-      <div className="relative z-10 animate-bounce">
+      {/* Content */}
+      <div className="relative z-10 h-full max-w-7xl mx-auto px-4 md:px-6 lg:px-8 flex flex-col justify-center pb-20">
+        <div className="max-w-2xl">
+          {/* Live status line: real clock, not a badge */}
+          <div className="flex items-center gap-2.5 mb-5">
+            <span className="relative flex h-2 w-2" aria-hidden="true">
+              <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+            </span>
+            <span className="text-xs uppercase tracking-[0.2em] text-emerald-300/90 font-semibold">
+              Live
+            </span>
+            <span
+              className="text-xs font-mono tabular-nums text-gray-400"
+              suppressHydrationWarning
+            >
+              {mounted ? `${utcTime} UTC` : 'UTC'}
+            </span>
+          </div>
+
+          <h1
+            id="hero-heading"
+            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white leading-[1.05] mb-5"
+          >
+            The solar system,
+            <br />
+            right now.
+          </h1>
+
+          <p className="text-base sm:text-lg text-gray-300 leading-relaxed max-w-xl mb-8">
+            Planetary positions, JWST imagery, and solar weather from NASA,
+            ESA, and CSIRO. Real data from 11 live sources, updated
+            continuously.
+          </p>
+
+          <div className="flex flex-wrap items-center gap-4">
+            <Link
+              href="/solar-system"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-cosmos-gold text-cosmos-void font-semibold text-sm sm:text-base hover:bg-cosmos-amber transition-colors focus-visible:ring-2 focus-visible:ring-cosmos-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void"
+            >
+              Enter the Solar System
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+
+            <nav aria-label="Featured destinations" className="flex flex-wrap items-center gap-x-5 gap-y-2">
+              {SECONDARY_LINKS.map(({ label, href }) => (
+                <Link
+                  key={href}
+                  href={href}
+                  className="text-sm text-gray-300 hover:text-white underline decoration-white/25 underline-offset-4 hover:decoration-cosmos-gold transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      {/* Instrument readout: real ISS telemetry, bottom-right */}
+      {issPosition && (
+        <div
+          className="absolute bottom-6 right-4 md:right-8 z-10 hidden sm:flex items-center gap-3 px-3.5 py-2 rounded-md border border-white/10 bg-[rgba(10,14,26,0.72)] backdrop-blur-sm"
+          role="status"
+          aria-label="Current International Space Station position"
+        >
+          <span className="text-[11px] uppercase tracking-[0.15em] text-gray-400 font-semibold">
+            ISS
+          </span>
+          <span className="text-xs font-mono tabular-nums text-gray-200">
+            {issPosition.lat.toFixed(2)}°, {issPosition.lon.toFixed(2)}°
+          </span>
+          {issVelocity != null && (
+            <span className="text-xs font-mono tabular-nums text-gray-400 border-l border-white/10 pl-3">
+              {Math.round(issVelocity).toLocaleString()} km/h
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* Scroll cue */}
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
         <button
           onClick={() => {
-            const next = document.getElementById('features')
-            next?.scrollIntoView({ behavior: 'smooth' })
+            document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
           }}
-          className="p-2 rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm"
-          aria-label="Scroll to content"
+          className="p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors motion-safe:animate-bounce"
+          aria-label="Scroll to features"
         >
-          <ChevronDown className="w-5 h-5 text-white" />
+          <ChevronDown className="w-5 h-5 text-gray-300" aria-hidden="true" />
         </button>
       </div>
     </section>

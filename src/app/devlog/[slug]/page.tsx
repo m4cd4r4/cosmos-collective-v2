@@ -90,7 +90,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
         </div>
       </div>
 
-      <main className="relative z-10 flex-1 overflow-auto py-8 pb-16">
+      <div className="relative z-10 flex-1 overflow-auto py-8 pb-16">
         <article className="container mx-auto px-4 max-w-4xl">
           {/* Header */}
           <header className="mb-8">
@@ -183,7 +183,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
             </div>
           </section>
         )}
-      </main>
+      </div>
     </div>
   )
 }

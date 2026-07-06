@@ -25,7 +25,7 @@ export default function SkyMapError({
     <div className="flex flex-col h-screen">
       <Header />
 
-      <main className="flex-1 flex items-center justify-center bg-cosmos-void px-4">
+      <div className="flex-1 flex items-center justify-center bg-cosmos-void px-4">
         <div className="max-w-md w-full text-center">
           {/* Error Icon */}
           <div className="mb-6">
@@ -84,7 +84,7 @@ export default function SkyMapError({
             </Button>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

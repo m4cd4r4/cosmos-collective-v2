@@ -74,7 +74,7 @@ export default function ExplorePage({
         { label: 'Total', value: String(totalCount), color: '#d4af37' },
       ]} />
 
-      <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-7xl mx-auto w-full">
+      <div className="flex-1 overflow-auto px-4 sm:px-5 py-5 pb-20 lg:pb-5 max-w-7xl mx-auto w-full">
 
         {/* ── Search + Filters ──────────────────────────────────────────── */}
         <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden mb-5">
@@ -99,7 +99,7 @@ export default function ExplorePage({
             query={query}
           />
         </Suspense>
-      </main>
+      </div>
 
     </div>
   )

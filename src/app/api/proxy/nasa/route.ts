@@ -39,9 +39,9 @@ export async function GET(request: NextRequest) {
     const baseUrl = ENDPOINTS[endpoint]
     const params = new URLSearchParams({ api_key: NASA_API_KEY })
 
-    // Forward relevant query params (excluding our internal ones)
+    // Forward relevant query params, never letting callers override the server key
     for (const [key, value] of searchParams.entries()) {
-      if (key !== 'endpoint') {
+      if (key !== 'endpoint' && key !== 'api_key') {
         params.set(key, value)
       }
     }

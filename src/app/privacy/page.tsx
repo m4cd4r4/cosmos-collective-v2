@@ -72,7 +72,7 @@ export default function PrivacyPage() {
         ))}
       </div>
 
-      <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-5xl mx-auto w-full">
+      <div className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-5xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
 
           {/* Privacy Principles */}
@@ -171,7 +171,7 @@ export default function PrivacyPage() {
           </div>
 
         </div>
-      </main>
+      </div>
     </div>
   )
 }

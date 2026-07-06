@@ -20,9 +20,9 @@ const footerLinks = {
     { label: 'Live Events', href: '/events' },
   ],
   interactive: [
-    { label: 'Observatory', href: '/observatory' },
     { label: 'Solar System', href: '/solar-system' },
     { label: 'Kepler Exoplanets', href: '/kepler' },
+    { label: 'Spacecraft', href: '/spacecraft' },
   ],
   learn: [
     { label: 'About SKA', href: 'https://www.skao.int/', external: true },
