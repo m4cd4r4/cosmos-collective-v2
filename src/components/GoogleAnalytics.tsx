@@ -18,7 +18,7 @@ interface Props {
 }
 
 export default function GoogleAnalytics({ nonce }: Props) {
-  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? 'G-EFL048RDVK'
+  const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
   const [shouldLoad, setShouldLoad] = useState(false)
 
   useEffect(() => {
@@ -43,8 +43,8 @@ export default function GoogleAnalytics({ nonce }: Props) {
     }
   }, [])
 
-  // Don't render anything if we shouldn't load GA
-  if (!shouldLoad) {
+  // Don't render anything if we shouldn't load GA or no ID is configured
+  if (!shouldLoad || !measurementId) {
     return null
   }
 

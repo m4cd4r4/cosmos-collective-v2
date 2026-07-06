@@ -2,14 +2,32 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { PLANET_HERO_IMAGES } from '@/components/features/HeroSection'
+import { PLANET_HERO_IMAGES } from '@/components/features/planet-hero-images'
 import { Telescope, Globe, Search, Radio, Orbit, Sun } from 'lucide-react'
 
 const FEATURES = [
   {
+    title: 'Solar System',
+    href: '/solar-system',
+    description: 'Photorealistic 3D orbits of all 8 planets and 16 moons, with an Earth Dive descent',
+    image: PLANET_HERO_IMAGES.saturnRings,
+    icon: Orbit,
+    color: '#d4af37',
+    featured: true,
+  },
+  {
+    title: 'JWST',
+    href: '/jwst',
+    description: 'Webb observations with infrared wavelength band switching',
+    image: PLANET_HERO_IMAGES.pillars,
+    icon: Telescope,
+    color: '#4a90e2',
+    featured: true,
+  },
+  {
     title: 'Explore',
     href: '/explore',
-    description: '132+ JWST, Hubble, and Australian radio observations',
+    description: '132 curated JWST, Hubble, and Australian radio observations',
     image: PLANET_HERO_IMAGES.carina,
     icon: Search,
     color: '#d4af37',
@@ -17,7 +35,7 @@ const FEATURES = [
   {
     title: 'Live Events',
     href: '/events',
-    description: 'ISS tracker, solar weather, meteor showers in real time',
+    description: 'ISS position, solar flares, and meteor showers as they happen',
     image: PLANET_HERO_IMAGES.earthBlueMarble,
     icon: Radio,
     color: '#ef4444',
@@ -25,95 +43,73 @@ const FEATURES = [
   {
     title: 'Sky Map',
     href: '/sky-map',
-    description: 'Interactive sky atlas with multi-wavelength switching',
+    description: 'Interactive sky atlas across radio, infrared, visible, and X-ray',
     image: PLANET_HERO_IMAGES.deepField,
     icon: Globe,
     color: '#8b5cf6',
   },
   {
-    title: 'Solar System',
-    href: '/solar-system',
-    description: 'Photorealistic 3D orbits with Earth Dive experience',
-    image: PLANET_HERO_IMAGES.saturnRings,
-    icon: Orbit,
-    color: '#22c55e',
-  },
-  {
-    title: 'Kepler Explorer',
+    title: 'Kepler Exoplanets',
     href: '/kepler',
-    description: '2,600+ exoplanets in an interactive stellar field',
+    description: '2,600+ confirmed worlds in an interactive stellar field',
     image: PLANET_HERO_IMAGES.jupiter,
     icon: Sun,
     color: '#f59e0b',
-  },
-  {
-    title: 'JWST',
-    href: '/jwst',
-    description: 'Deep space observations with wavelength band switching',
-    image: PLANET_HERO_IMAGES.pillars,
-    icon: Telescope,
-    color: '#4a90e2',
   },
 ]
 
 export function FeatureShowcase() {
   return (
-    <section id="features" className="bg-[#0a0e1a] px-4 sm:px-6 py-16 sm:py-20">
-      <div className="max-w-5xl mx-auto">
-        {/* Section header */}
-        <div className="text-center mb-10">
-          <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580]">Features</span>
+    <section id="features" className="bg-[#0a0e1a] px-4 sm:px-6 py-16 sm:py-24">
+      <div className="max-w-6xl mx-auto">
+        <div className="mb-10">
+          <span className="text-xs uppercase tracking-[0.2em] text-gray-500">
+            The instruments
+          </span>
           <h2 className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">
-            Explore Every Corner of the Universe
+            Six ways into the universe
           </h2>
         </div>
 
-        {/* Feature grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {FEATURES.map(({ title, href, description, image, icon: Icon, color }) => (
+        {/* 2 featured + 4 standard */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {FEATURES.map(({ title, href, description, image, icon: Icon, color, featured }) => (
             <Link
               key={href}
               href={href}
-              aria-label={`${title} - ${description}`}
-              className="group relative rounded-xl overflow-hidden border border-[rgba(212,175,55,0.08)] bg-[rgba(8,12,28,0.6)] hover:border-[rgba(212,175,55,0.25)] transition-all duration-300"
+              className={
+                'group relative rounded-xl overflow-hidden border border-white/[0.08] bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.05] transition-colors duration-300 focus-visible:ring-2 focus-visible:ring-cosmos-gold ' +
+                (featured ? 'sm:col-span-2 lg:col-span-2' : '')
+              }
             >
-              {/* Image */}
-              <div className="relative h-36 sm:h-40 overflow-hidden">
+              <div className={'relative overflow-hidden ' + (featured ? 'h-44 sm:h-56' : 'h-36 sm:h-40')}>
                 <Image
                   src={image.url}
                   alt=""
                   aria-hidden="true"
                   fill
-                  className="object-cover group-hover:scale-105 transition-transform duration-500"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  loading="lazy"
+                  className="object-cover motion-safe:group-hover:scale-105 transition-transform duration-500"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   unoptimized
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[rgba(8,12,28,0.9)] via-[rgba(8,12,28,0.3)] to-transparent" />
-
-                {/* Icon badge */}
+                <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,14,26,0.92)] via-[rgba(10,14,26,0.25)] to-transparent" />
                 <div
-                  className="absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center backdrop-blur-sm"
-                  style={{ background: `${color}20`, border: `1px solid ${color}30` }}
+                  className="absolute top-3 right-3 w-8 h-8 rounded-lg flex items-center justify-center backdrop-blur-sm bg-black/40 border border-white/15"
+                  aria-hidden="true"
                 >
                   <Icon className="w-4 h-4" style={{ color }} />
                 </div>
               </div>
 
-              {/* Text */}
-              <div className="px-4 py-3">
-                <h3 className="text-sm font-bold text-white group-hover:text-[#d4af37] transition-colors">
+              <div className="px-4 py-3.5">
+                <h3 className="text-base font-display font-bold text-white group-hover:text-cosmos-gold transition-colors">
                   {title}
                 </h3>
-                <p className="text-[11px] text-[#4a5580] mt-1 leading-relaxed">
+                <p className="text-sm text-gray-400 mt-1 leading-relaxed">
                   {description}
                 </p>
               </div>
-
-              {/* Hover glow */}
-              <div
-                className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                style={{ boxShadow: `inset 0 0 30px ${color}08, 0 0 20px ${color}06` }}
-              />
             </Link>
           ))}
         </div>

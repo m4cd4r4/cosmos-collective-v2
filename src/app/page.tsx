@@ -2,14 +2,13 @@
 
 /**
  * Cosmos Collective — Landing Page
- * Full scrolling page: Solar System hero → feature showcase → live data → quality badges → footer
+ * Solar System hero → feature showcase → live telemetry → footer
  */
 
 import { Header } from '@/components/layout/Header'
 import { LandingHero } from '@/components/features/landing/LandingHero'
 import { FeatureShowcase } from '@/components/features/landing/FeatureShowcase'
 import { LiveDataPreview } from '@/components/features/landing/LiveDataPreview'
-import { QualitySealBadges } from '@/components/features/landing/QualitySealBadges'
 import { LandingFooter } from '@/components/features/landing/LandingFooter'
 
 export default function HomePage() {
@@ -19,7 +18,6 @@ export default function HomePage() {
       <LandingHero />
       <FeatureShowcase />
       <LiveDataPreview />
-      <QualitySealBadges />
       <LandingFooter />
     </div>
   )

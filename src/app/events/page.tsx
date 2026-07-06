@@ -182,8 +182,9 @@ export default function EventsPage() {
     }
   }, [])
 
-  const meteorShowers = getMeteorShowers()
   const now = new Date()
+  // Include next year's showers so late December still shows the upcoming Quadrantids
+  const meteorShowers = [...getMeteorShowers(), ...getMeteorShowers(now.getFullYear() + 1)]
   const upcomingShowers = meteorShowers.filter((s) => new Date(s.peakDate) >= now).slice(0, 3)
 
   const canLocate = (event: AstronomicalEvent) =>
@@ -224,7 +225,7 @@ export default function EventsPage() {
         ))}
       </div>
 
-      <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-7xl mx-auto w-full">
+      <div className="flex-1 overflow-auto px-4 sm:px-5 py-5 pb-20 lg:pb-5 max-w-7xl mx-auto w-full">
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-5">
 
           {/* ── LEFT ────────────────────────────────────────────────────── */}
@@ -585,7 +586,7 @@ export default function EventsPage() {
             )}
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }

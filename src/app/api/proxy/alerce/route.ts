@@ -19,8 +19,13 @@ export async function GET(request: NextRequest) {
 
   try {
     const searchParams = request.nextUrl.searchParams
-    const classifier = searchParams.get('classifier') || 'lc_classifier'
-    const className = searchParams.get('class_name') || 'SNIa'
+    // Validate against known ALeRCE values so nothing unvetted reaches the upstream URL
+    const ALLOWED_CLASSIFIERS = ['lc_classifier', 'stamp_classifier']
+    const ALLOWED_CLASSES = ['SNIa', 'SNII', 'SNIbc', 'SLSN', 'QSO', 'AGN', 'Blazar', 'CV/Nova', 'YSO']
+    const rawClassifier = searchParams.get('classifier') || 'lc_classifier'
+    const rawClassName = searchParams.get('class_name') || 'SNIa'
+    const classifier = ALLOWED_CLASSIFIERS.includes(rawClassifier) ? rawClassifier : 'lc_classifier'
+    const className = ALLOWED_CLASSES.includes(rawClassName) ? rawClassName : 'SNIa'
     const limit = String(Math.min(Math.max(parseInt(searchParams.get('limit') || '5', 10) || 5, 1), 100))
 
     // Build query with correct ALeRCE v1 parameters

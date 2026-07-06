@@ -11,13 +11,12 @@ import { SEVERITY_ORDER } from '@/lib/event-utils'
 // Configuration
 // ============================================
 
-const NASA_API_KEY = process.env.NEXT_PUBLIC_NASA_API_KEY ?? 'DEMO_KEY'
-
+// NASA calls go through the server proxy so the API key stays server-side
 const API_ENDPOINTS = {
-  nasaApod: `https://api.nasa.gov/planetary/apod?api_key=${NASA_API_KEY}`,
-  nasaNeo: `https://api.nasa.gov/neo/rest/v1/feed?api_key=${NASA_API_KEY}`,
+  nasaApod: '/api/proxy/nasa?endpoint=apod',
+  nasaNeo: '/api/proxy/nasa?endpoint=neo',
   issPosition: 'https://api.wheretheiss.at/v1/satellites/25544',
-  solarWeather: 'https://services.swpc.noaa.gov/json/goes/primary/xrays-7-day.json',
+  solarWeather: 'https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json',
   transients: '/api/proxy/alerce',
   gcnNotices: '/api/proxy/gcn',
 }
@@ -252,7 +251,10 @@ export async function getSolarWeather(): Promise<ApiResponse<{
       timeout: 10000,
     })
 
-    const latestData = response.data[response.data.length - 1]
+    // Flare classes are defined on the long-wavelength (0.1-0.8nm) channel;
+    // the feed interleaves both GOES channels, so filter before taking the latest
+    const longChannel = response.data.filter((d) => d.energy === '0.1-0.8nm')
+    const latestData = longChannel[longChannel.length - 1]
     const flux = latestData?.observed_flux || 0
 
     // Classify solar activity level based on X-ray flux
@@ -682,7 +684,7 @@ export function getPlanetaryConjunctions(year: number = new Date().getFullYear()
         date: '2026-10-04',
         bodies: ['Saturn'],
         separation: 'N/A',
-        description: 'Saturn at its closest and brightest for 2026. Rings increasingly edge-on as we approach 2025 ring crossing.',
+        description: 'Saturn at its closest and brightest for 2026. Rings still near edge-on following the March 2025 ring-plane crossing.',
         bestViewingTime: 'all-night',
         magnitude: 0.3,
       },
@@ -735,8 +737,13 @@ export interface RocketLaunch {
 }
 
 export function getUpcomingLaunches(): RocketLaunch[] {
-  // Notable upcoming launches - includes both 2025 and 2026 missions
-  return [
+  // Static fallback list (used when Launch Library 2 is unavailable).
+  // Filtered so past launches are never presented as upcoming.
+  const today = new Date().toISOString().slice(0, 10)
+  return NOTABLE_LAUNCHES.filter((l) => l.date >= today)
+}
+
+const NOTABLE_LAUNCHES: RocketLaunch[] = [
     // Late 2025
     {
       name: 'SpaceX Starship Flight 8',
@@ -794,8 +801,7 @@ export function getUpcomingLaunches(): RocketLaunch[] {
       isCrewed: true,
       webcastUrl: 'https://www.nasa.gov/artemis-ii',
     },
-  ]
-}
+]
 
 // ============================================
 // Upcoming Astronomical Events
@@ -812,9 +818,6 @@ export function getUpcomingEvents(limit: number = 10): AstronomicalEvent[] {
     const diffDays = (peakDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
 
     if (diffDays > -7 && diffDays < 60) {
-      // Generate IMO meteor shower URL slug
-      const imoSlug = shower.name.toLowerCase().replace(/\s/g, '-')
-
       events.push({
         id: `meteor-${shower.name.toLowerCase().replace(/\s/g, '-')}`,
         type: 'meteor-shower',

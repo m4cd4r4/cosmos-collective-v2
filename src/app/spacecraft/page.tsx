@@ -55,9 +55,9 @@ export default function SpacecraftPage() {
         })),
         { label: 'Active', value: String(activeCount), color: '#22c55e' },
       ]} />
-      <main className="flex-1 px-4 sm:px-5 py-5 max-w-7xl mx-auto w-full">
+      <div className="flex-1 px-4 sm:px-5 py-5 pb-20 lg:pb-5 max-w-7xl mx-auto w-full">
         <SpacecraftExplorer />
-      </main>
+      </div>
     </div>
   )
 }

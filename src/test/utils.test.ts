@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { cn, formatCoordinates, debounce } from '@/lib/utils'
 
 describe('Utils', () => {
@@ -13,15 +13,21 @@ describe('Utils', () => {
   })
 
   describe('formatCoordinates', () => {
-    it('should format RA and Dec correctly', () => {
-      const result = formatCoordinates(180, 45)
+    it('should format decimal RA and Dec correctly', () => {
+      const result = formatCoordinates({ ra: 180, dec: 45 }, 'decimal')
       expect(result).toContain('180')
-      expect(result).toContain('45')
+      expect(result).toContain('+45')
     })
 
-    it('should handle negative coordinates', () => {
-      const result = formatCoordinates(-90, -30)
-      expect(result).toBeTruthy()
+    it('should format sexagesimal coordinates', () => {
+      const result = formatCoordinates({ ra: 180, dec: 45 })
+      expect(result).toContain('12h')
+      expect(result).toContain('Dec:')
+    })
+
+    it('should handle negative declination', () => {
+      const result = formatCoordinates({ ra: 90, dec: -30 }, 'decimal')
+      expect(result).toContain('-30')
     })
   })
 

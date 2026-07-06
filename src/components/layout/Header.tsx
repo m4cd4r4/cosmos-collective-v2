@@ -160,7 +160,7 @@ function DesktopNav() {
 const mobileNavItems = [
   { label: 'Explore', href: '/explore', icon: Telescope },
   { label: 'Live', href: '/events', icon: Calendar },
-  { label: 'Hardware', href: '/spacecraft', icon: Satellite },
+  { label: 'Craft', href: '/spacecraft', icon: Satellite },
   { label: 'Solar', href: '/solar-system', icon: Sun },
   { label: 'Kepler', href: '/kepler', icon: Orbit },
   { label: 'Webb', href: '/jwst', icon: Hexagon },

@@ -209,7 +209,13 @@ export function formatDate(
     day: 'numeric',
   }
 ): string {
-  return new Date(dateString).toLocaleDateString('en-US', options)
+  // Date-only strings parse as UTC midnight; render them in UTC too,
+  // otherwise viewers west of UTC see every date one day early
+  const isDateOnly = /^\d{4}-\d{2}-\d{2}$/.test(dateString)
+  return new Date(dateString).toLocaleDateString(
+    'en-US',
+    isDateOnly ? { ...options, timeZone: 'UTC' } : options
+  )
 }
 
 /**

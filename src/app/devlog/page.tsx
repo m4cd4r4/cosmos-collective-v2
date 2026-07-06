@@ -97,7 +97,7 @@ export default async function DevlogPage() {
         ))}
       </div>
 
-      <main className="flex-1 overflow-auto px-4 sm:px-5 py-5 max-w-5xl mx-auto w-full">
+      <div className="flex-1 overflow-auto px-4 sm:px-5 py-5 pb-20 lg:pb-5 max-w-5xl mx-auto w-full">
 
         {/* Featured (latest) post */}
         {posts[0] && <FeaturedPost post={posts[0]} />}
@@ -128,7 +128,7 @@ export default async function DevlogPage() {
             <p className="text-[12px] text-[#4a5580]">Development posts coming soon</p>
           </div>
         )}
-      </main>
+      </div>
 
     </div>
   )

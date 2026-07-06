@@ -4,6 +4,7 @@
  */
 
 import { Suspense } from 'react'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { Header } from '@/components/layout/Header'
@@ -83,14 +84,14 @@ export default function ObservationPage({
 
       {/* App Header Strip */}
       <div className="bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] px-5 h-[52px] flex items-center gap-3 shrink-0">
-        <a href="/explore" className="text-xs uppercase tracking-wider text-[#4a5580] hover:text-[#c8d4f0] transition-colors">
+        <Link href="/explore" className="text-xs uppercase tracking-wider text-[#4a5580] hover:text-[#c8d4f0] transition-colors">
           ← Explore
-        </a>
+        </Link>
         <span className="text-[#3a4560]">/</span>
         <span className="text-[11px] font-semibold text-[#c8d4f0] truncate">{observation.targetName}</span>
       </div>
 
-      <main className="flex-1 overflow-auto px-4 md:px-5 py-4">
+      <div className="flex-1 overflow-auto px-4 md:px-5 py-4 pb-20 lg:pb-4">
         <div className="max-w-7xl mx-auto h-full">
           {/* Main content grid */}
           <div className="grid lg:grid-cols-3 gap-5 h-full">
@@ -107,7 +108,7 @@ export default function ObservationPage({
             </aside>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   )
 }
