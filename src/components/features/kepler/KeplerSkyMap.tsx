@@ -134,7 +134,7 @@ export const KeplerSkyMap = forwardRef<
         <div className="absolute inset-0 bg-[#050810] flex items-center justify-center z-10">
           <div className="text-center">
             <div className="w-6 h-6 border-2 border-[#4a90e2] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-[11px] text-[#4a5580] uppercase tracking-[0.15em]">Loading Kepler Field…</p>
+            <p className="text-[11px] text-cosmos-muted uppercase tracking-[0.15em]">Loading Kepler Field…</p>
           </div>
         </div>
       )}

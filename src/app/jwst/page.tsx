@@ -29,7 +29,7 @@ const JWSTViewer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex flex-col items-center justify-center h-full gap-4 text-[#4a5580]">
+      <div className="flex flex-col items-center justify-center h-full gap-4 text-cosmos-muted">
         <div className="w-10 h-10 rounded-full border-2 border-[rgba(212,175,55,0.15)] border-t-[#d4af37] animate-spin" />
         <span className="font-mono text-xs tracking-wider">Loading JWST Explorer…</span>
       </div>

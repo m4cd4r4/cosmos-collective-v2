@@ -28,7 +28,7 @@ const dataSources = [
 
 function SectionHeader({ icon: Icon, title, color }: { icon: React.ComponentType<{ className?: string; style?: React.CSSProperties }>, title: string; color: string }) {
   return (
-    <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+    <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
       <Icon className="w-3.5 h-3.5" style={{ color }} />
       <span className="text-xs uppercase tracking-[0.15em] font-semibold" style={{ color }}>{title}</span>
     </div>
@@ -49,22 +49,22 @@ export default function TermsPage() {
             <span className="text-[11px] uppercase tracking-[0.15em] text-[#d4af37]">MIT Licensed</span>
           </div>
         </div>
-        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-[#4a5580]">
+        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-cosmos-muted">
           Last updated: Dec 7, 2025
         </span>
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.08)] flex shrink-0">
+      <div className="bg-[rgba(8,12,28,0.9)] border-b border-white/[0.08] flex shrink-0">
         {[
           { label: 'Permitted Uses', value: String(permitted.length), color: '#4caf93' },
           { label: 'Data Sources', value: String(dataSources.length), color: '#d4af37' },
           { label: 'License', value: 'MIT', color: '#4a90e2' },
           { label: 'Warranties', value: 'None', color: '#f59e0b' },
         ].map(({ label, value, color }) => (
-          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
+          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-white/[0.06] last:border-0">
             <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
-            <span className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5">{label}</span>
+            <span className="text-[11px] uppercase tracking-[0.13em] text-cosmos-muted mt-0.5">{label}</span>
           </div>
         ))}
       </div>
@@ -126,11 +126,11 @@ export default function TermsPage() {
               <div className="px-4 py-4 space-y-3">
                 <div>
                   <div className="text-[11px] font-semibold text-[#c8d4f0] mb-1">Astronomical Imagery</div>
-                  <p className="text-[10px] text-[#4a5580] leading-relaxed">Images from NASA, ESA, CSA, and STScI are in the public domain or used under their respective policies. Credit is provided where applicable.</p>
+                  <p className="text-[10px] text-cosmos-muted leading-relaxed">Images from NASA, ESA, CSA, and STScI are in the public domain or used under their respective policies. Credit is provided where applicable.</p>
                 </div>
-                <div className="border-t border-[rgba(212,175,55,0.06)] pt-3">
+                <div className="border-t border-white/[0.06] pt-3">
                   <div className="text-[11px] font-semibold text-[#c8d4f0] mb-1">Platform Code</div>
-                  <p className="text-[10px] text-[#4a5580] leading-relaxed mb-2">The platform is open source under the MIT License.</p>
+                  <p className="text-[10px] text-cosmos-muted leading-relaxed mb-2">The platform is open source under the MIT License.</p>
                   <a href="https://github.com/m4cd4r4/cosmos-collective-v2" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-[10px] text-[#d4af37] hover:text-[#e0c060]">
                     <Github className="w-3 h-3" />
                     View on GitHub
@@ -138,9 +138,9 @@ export default function TermsPage() {
                     <span className="sr-only">(opens in new tab)</span>
                   </a>
                 </div>
-                <div className="border-t border-[rgba(212,175,55,0.06)] pt-3">
+                <div className="border-t border-white/[0.06] pt-3">
                   <div className="text-[11px] font-semibold text-[#c8d4f0] mb-1">Third-Party Content</div>
-                  <p className="text-[10px] text-[#4a5580] leading-relaxed">Some features embed content from YouTube and CDS Aladin Lite, subject to their respective terms of service.</p>
+                  <p className="text-[10px] text-cosmos-muted leading-relaxed">Some features embed content from YouTube and CDS Aladin Lite, subject to their respective terms of service.</p>
                 </div>
               </div>
             </div>
@@ -155,7 +155,7 @@ export default function TermsPage() {
             </div>
 
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+              <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
                 <Github className="w-3.5 h-3.5 text-[#c8d4f0]" />
                 <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#c8d4f0]">Contact</span>
               </div>

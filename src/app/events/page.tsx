@@ -203,7 +203,7 @@ export default function EventsPage() {
             <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
             <span className="text-[11px] uppercase tracking-[0.15em] text-red-400">Live</span>
           </div>
-          <span className="hidden sm:inline text-[11px] uppercase tracking-[0.12em] text-[#4a5580] border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
+          <span className="hidden sm:inline text-[11px] uppercase tracking-[0.12em] text-cosmos-muted border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
             Astronomical · Space Weather · ISS
           </span>
         </div>
@@ -211,16 +211,16 @@ export default function EventsPage() {
       </div>
 
       {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
-      <div className="bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.08)] flex shrink-0">
+      <div className="bg-[rgba(8,12,28,0.9)] border-b border-white/[0.08] flex shrink-0">
         {[
           { label: 'Active Events', value: isLoading ? '—' : String(events.length), color: '#d4af37' },
           { label: 'ISS Altitude', value: '~408 km', color: '#4a90e2' },
           { label: 'Solar Activity', value: solarData ? solarData.flareLevel : '—', color: '#f59e0b' },
           { label: 'Next Shower', value: upcomingShowers[0]?.name ?? '—', color: '#e040fb' },
         ].map(({ label, value, color }) => (
-          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
+          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-white/[0.06] last:border-0">
             <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
-            <span className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
+            <span className="text-[11px] uppercase tracking-[0.13em] text-cosmos-muted mt-0.5 whitespace-nowrap">{label}</span>
           </div>
         ))}
       </div>
@@ -236,15 +236,15 @@ export default function EventsPage() {
               ref={skyMapSectionRef}
               className="rounded-xl border border-[rgba(212,175,55,0.15)] overflow-hidden bg-[rgba(8,12,28,0.7)]"
             >
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
+              <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Telescope className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">
                     Sky Events Map
                   </span>
-                  <span className="text-[11px] text-[#4a5580]">· Meteor radiant positions</span>
+                  <span className="text-[11px] text-cosmos-muted">· Meteor radiant positions</span>
                 </div>
-                <div className="flex items-center gap-1.5 text-[11px] text-[#4a5580]">
+                <div className="flex items-center gap-1.5 text-[11px] text-cosmos-muted">
                   <MapPin className="w-3 h-3 text-[#d4af37]" />
                   Hover markers · click Locate on events below
                 </div>
@@ -258,11 +258,11 @@ export default function EventsPage() {
 
             {/* ISS Live Feed — compact */}
             <section className="rounded-xl border border-[rgba(212,175,55,0.15)] overflow-hidden bg-[rgba(8,12,28,0.7)]">
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
+              <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Video className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff] font-semibold">ISS Live Feed</span>
-                  <span className="text-[11px] text-[#4a5580]">· Earth from 408 km</span>
+                  <span className="text-[11px] text-cosmos-muted">· Earth from 408 km</span>
                 </div>
                 <div className="flex items-center gap-1">
                   {ISS_CAMERAS.map((camera) => (
@@ -274,7 +274,7 @@ export default function EventsPage() {
                         'px-2.5 py-0.5 rounded text-[11px] uppercase tracking-wider transition-colors',
                         selectedCamera.id === camera.id
                           ? 'bg-[rgba(212,175,55,0.15)] text-[#d4af37] border border-[rgba(212,175,55,0.3)]'
-                          : 'text-[#4a5580] hover:text-[#c8d4f0]',
+                          : 'text-cosmos-muted hover:text-[#c8d4f0]',
                       )}
                     >
                       {camera.name}
@@ -296,11 +296,11 @@ export default function EventsPage() {
                   allowFullScreen
                 />
               </div>
-              <div className="px-4 py-2 border-t border-[rgba(212,175,55,0.08)] flex items-center justify-between flex-wrap gap-2 text-[10px]">
+              <div className="px-4 py-2 border-t border-white/[0.08] flex items-center justify-between flex-wrap gap-2 text-[10px]">
                 <div className="flex items-center gap-4">
-                  <span className="text-[#4a5580]"><span className="text-[#d4af37] font-bold">~27,600</span> km/h</span>
-                  <span className="text-[#4a5580]"><span className="text-[#d4af37] font-bold">~408</span> km alt</span>
-                  <span className="text-[#4a5580]"><span className="text-[#e040fb] font-bold">92</span> min/orbit</span>
+                  <span className="text-cosmos-muted"><span className="text-[#d4af37] font-bold">~27,600</span> km/h</span>
+                  <span className="text-cosmos-muted"><span className="text-[#d4af37] font-bold">~408</span> km alt</span>
+                  <span className="text-cosmos-muted"><span className="text-[#e040fb] font-bold">92</span> min/orbit</span>
                 </div>
                 <a
                   href={selectedCamera.directUrl}
@@ -325,12 +325,12 @@ export default function EventsPage() {
                   Current &amp; Upcoming Events
                 </span>
                 {!isLoading && (
-                  <span className="text-[10px] text-[#4a5580]">({events.length})</span>
+                  <span className="text-[10px] text-cosmos-muted">({events.length})</span>
                 )}
               </div>
 
               {isLoading ? (
-                <div className="flex items-center justify-center py-12 rounded-xl border border-[rgba(212,175,55,0.08)]">
+                <div className="flex items-center justify-center py-12 rounded-xl border border-white/[0.08]">
                   <Loader2 className="w-6 h-6 text-[#d4af37] animate-spin" />
                 </div>
               ) : events.length > 0 ? (
@@ -392,12 +392,12 @@ export default function EventsPage() {
                             <div className="text-[12px] text-[#c8d4f0] font-semibold line-clamp-1 mb-1">
                               {event.title}
                             </div>
-                            <p className="text-[10px] text-[#4a5580] line-clamp-2 leading-relaxed">
+                            <p className="text-[10px] text-cosmos-muted line-clamp-2 leading-relaxed">
                               {event.description}
                             </p>
                             <div className="flex items-center justify-between mt-2.5 gap-2">
                               <div className="flex items-center gap-2 flex-1 min-w-0">
-                                <span className="text-[11px] text-[#4a5580] whitespace-nowrap">
+                                <span className="text-[11px] text-cosmos-muted whitespace-nowrap">
                                   {formatDate(event.eventTime, { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
                                 {event.references?.[0] && (
@@ -443,9 +443,9 @@ export default function EventsPage() {
                   )}
                 </>
               ) : (
-                <div className="text-center py-12 rounded-xl border border-[rgba(212,175,55,0.08)]">
-                  <Sparkles className="w-8 h-8 text-[#4a5580] mx-auto mb-3" />
-                  <p className="text-[12px] text-[#4a5580]">No active events — check back soon</p>
+                <div className="text-center py-12 rounded-xl border border-white/[0.08]">
+                  <Sparkles className="w-8 h-8 text-cosmos-muted mx-auto mb-3" />
+                  <p className="text-[12px] text-cosmos-muted">No active events — check back soon</p>
                 </div>
               )}
             </section>
@@ -456,7 +456,7 @@ export default function EventsPage() {
 
             {/* ISS Position */}
             <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+              <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
                 <Satellite className="w-3.5 h-3.5 text-[#d4af37]" />
                 <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">ISS Position</span>
               </div>
@@ -465,21 +465,21 @@ export default function EventsPage() {
                   <div className="space-y-2">
                     <WorldMapSVG issPosition={issPosition} className="w-full rounded bg-white/5 p-1" />
                     <div className="grid grid-cols-2 gap-x-4 text-[11px]">
-                      <div className="flex justify-between"><span className="text-[#4a5580]">Lat</span><span className="text-[#c8d4f0]">{issPosition.lat.toFixed(2)}°</span></div>
-                      <div className="flex justify-between"><span className="text-[#4a5580]">Lon</span><span className="text-[#c8d4f0]">{issPosition.lon.toFixed(2)}°</span></div>
+                      <div className="flex justify-between"><span className="text-cosmos-muted">Lat</span><span className="text-[#c8d4f0]">{issPosition.lat.toFixed(2)}°</span></div>
+                      <div className="flex justify-between"><span className="text-cosmos-muted">Lon</span><span className="text-[#c8d4f0]">{issPosition.lon.toFixed(2)}°</span></div>
                     </div>
-                    <p className="text-[11px] text-[#4a5580]">↻ Updates every 30 seconds</p>
+                    <p className="text-[11px] text-cosmos-muted">↻ Updates every 30 seconds</p>
                   </div>
                 ) : issError ? (
                   <div className="py-2 space-y-1.5">
-                    <p className="text-[11px] text-[#4a5580]">Tracking unavailable</p>
+                    <p className="text-[11px] text-cosmos-muted">Tracking unavailable</p>
                     <a href="https://spotthestation.nasa.gov/" target="_blank" rel="noopener noreferrer" className="text-[10px] text-[#d4af37] hover:underline">
                       NASA Spot the Station →
                       <span className="sr-only">(opens in new tab)</span>
                     </a>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 py-2 text-[11px] text-[#4a5580]">
+                  <div className="flex items-center gap-2 py-2 text-[11px] text-cosmos-muted">
                     <Loader2 className="w-3.5 h-3.5 animate-spin" /> Loading…
                   </div>
                 )}
@@ -489,7 +489,7 @@ export default function EventsPage() {
             {/* Solar Activity */}
             {solarData && (
               <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+                <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
                   <Zap className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">Solar Activity</span>
                 </div>
@@ -506,7 +506,7 @@ export default function EventsPage() {
             {/* NEO Approach */}
             {events.some((e) => e.type === 'asteroid') && (
               <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+                <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
                   <Globe className="w-3.5 h-3.5 text-[#d4af37]" />
                   <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">Near-Earth Objects</span>
                 </div>
@@ -516,7 +516,7 @@ export default function EventsPage() {
 
             {/* Meteor Showers */}
             <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+              <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
                 <Star className="w-3.5 h-3.5 text-[#d4af37]" />
                 <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">Upcoming Showers</span>
               </div>
@@ -530,11 +530,11 @@ export default function EventsPage() {
                   >
                     <div>
                       <div className="text-[11px] text-[#c8d4f0] group-hover:text-[#d4af37] transition-colors">{shower.name}</div>
-                      <div className="text-[11px] text-[#4a5580] mt-0.5">Peak: {formatDate(shower.peakDate, { month: 'short', day: 'numeric' })}</div>
+                      <div className="text-[11px] text-cosmos-muted mt-0.5">Peak: {formatDate(shower.peakDate, { month: 'short', day: 'numeric' })}</div>
                     </div>
                     <div className="flex items-center gap-2">
                       <span className="text-[11px] font-bold text-[#d4af37]">{shower.zenithalHourlyRate}/hr</span>
-                      <MapPin className="w-3 h-3 text-[#4a5580] group-hover:text-[#d4af37] transition-colors" />
+                      <MapPin className="w-3 h-3 text-cosmos-muted group-hover:text-[#d4af37] transition-colors" />
                     </div>
                   </button>
                 ))}
@@ -544,7 +544,7 @@ export default function EventsPage() {
             {/* APOD */}
             {apod && (
               <section className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-                <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center justify-between">
+                <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-3.5 h-3.5 text-[#d4af37]" />
                     <span className="text-xs uppercase tracking-[0.15em] text-[#e0e8ff]">Astronomy Picture</span>
@@ -566,10 +566,10 @@ export default function EventsPage() {
                 ) : null}
                 <div className="px-4 py-3">
                   <div className="text-[11px] text-[#c8d4f0]">{apod.title}</div>
-                  {apod.copyright && <div className="text-[11px] text-[#4a5580] mt-0.5">© {apod.copyright}</div>}
+                  {apod.copyright && <div className="text-[11px] text-cosmos-muted mt-0.5">© {apod.copyright}</div>}
                   {apod.explanation && (
                     <div className="mt-2">
-                      <p className={cn('text-[10px] text-[#4a5580] leading-relaxed', apodExpanded ? '' : 'line-clamp-3')}>
+                      <p className={cn('text-[10px] text-cosmos-muted leading-relaxed', apodExpanded ? '' : 'line-clamp-3')}>
                         {apod.explanation}
                       </p>
                       <button onClick={() => setApodExpanded(!apodExpanded)} className="text-[11px] text-[#d4af37] hover:text-white mt-1 flex items-center gap-1 transition-colors">

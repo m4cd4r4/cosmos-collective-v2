@@ -31,7 +31,7 @@ export function PlanetScaleCard({ planet, starName }: Props) {
 
   return (
     <div className="bg-white/[0.02] rounded-lg border border-[rgba(74,144,226,0.12)] p-3">
-      <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Scale vs Earth</div>
+      <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-2">Scale vs Earth</div>
 
       <div className="flex items-end justify-center gap-6" style={{ height: svgH + 8 }}>
         {/* Earth */}
@@ -54,7 +54,7 @@ export function PlanetScaleCard({ planet, starName }: Props) {
             />
           </svg>
           <div className="text-[10px] text-[#8090b0] text-center -mt-1">Earth</div>
-          <div className="text-[11px] text-[#4a5580]">1.0 R⊕</div>
+          <div className="text-[11px] text-cosmos-muted">1.0 R⊕</div>
         </div>
 
         {/* Planet */}
@@ -90,7 +90,7 @@ export function PlanetScaleCard({ planet, starName }: Props) {
             />
           </svg>
           <div className="text-[10px] font-bold text-[#e0e8ff] text-center -mt-1 max-w-[80px] truncate">{planet.name}</div>
-          <div className="text-[11px] text-[#4a5580]">{rade.toFixed(2)} R⊕</div>
+          <div className="text-[11px] text-cosmos-muted">{rade.toFixed(2)} R⊕</div>
         </div>
       </div>
 
@@ -112,13 +112,13 @@ export function PlanetScaleCard({ planet, starName }: Props) {
 
       {/* Extra context */}
       {planet.rade && planet.rade > 6 && (
-        <p className="text-[10px] text-[#4a5580] mt-1.5 leading-relaxed">
+        <p className="text-[10px] text-cosmos-muted mt-1.5 leading-relaxed">
           Gas giant — about {Math.round(planet.rade ** 3)}× Earth&apos;s volume.
         </p>
       )}
       {planet.eqt && (
         <div className="flex justify-between text-[10px] mt-1.5 border-t border-[rgba(74,144,226,0.06)] pt-1.5">
-          <span className="text-[#4a5580]">Eq. temperature</span>
+          <span className="text-cosmos-muted">Eq. temperature</span>
           <span style={{ color: planet.eqt > 800 ? '#ff7744' : planet.eqt < 200 ? '#aaddff' : '#88cc88' }}>
             {Math.round(planet.eqt)} K
           </span>

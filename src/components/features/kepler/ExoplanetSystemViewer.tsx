@@ -352,7 +352,7 @@ export function ExoplanetSystemViewer({ star }: Props) {
               className={`text-[11px] px-1.5 py-0.5 rounded border transition-colors ${
                 i === speedIdx
                   ? 'bg-[rgba(74,144,226,0.3)] border-[rgba(74,144,226,0.6)] text-[#a0c4ff]'
-                  : 'border-[rgba(74,144,226,0.15)] text-[#4a5580] hover:border-[rgba(74,144,226,0.3)]'
+                  : 'border-[rgba(74,144,226,0.15)] text-cosmos-muted hover:border-[rgba(74,144,226,0.3)]'
               }`}
             >
               {s}×

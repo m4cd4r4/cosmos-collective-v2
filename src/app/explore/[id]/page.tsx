@@ -84,10 +84,10 @@ export default function ObservationPage({
 
       {/* App Header Strip */}
       <div className="bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] px-5 h-[52px] flex items-center gap-3 shrink-0">
-        <Link href="/explore" className="text-xs uppercase tracking-wider text-[#4a5580] hover:text-[#c8d4f0] transition-colors">
+        <Link href="/explore" className="text-xs uppercase tracking-wider text-cosmos-muted hover:text-[#c8d4f0] transition-colors">
           ← Explore
         </Link>
-        <span className="text-[#3a4560]">/</span>
+        <span className="text-cosmos-faint">/</span>
         <span className="text-[11px] font-semibold text-[#c8d4f0] truncate">{observation.targetName}</span>
       </div>
 

@@ -73,26 +73,26 @@ export default async function DevlogPage() {
           <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[rgba(212,175,55,0.12)] border border-[rgba(212,175,55,0.25)]">
             <span className="text-[11px] uppercase tracking-[0.15em] text-[#d4af37]">{posts.length} Posts</span>
           </div>
-          <span className="hidden sm:inline text-[11px] uppercase tracking-[0.12em] text-[#4a5580] border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
+          <span className="hidden sm:inline text-[11px] uppercase tracking-[0.12em] text-cosmos-muted border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
             Building Cosmos Collective
           </span>
         </div>
-        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-[#4a5580]">
+        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-cosmos-muted">
           Technical Deep-Dives
         </span>
       </div>
 
       {/* ── Stats Bar ─────────────────────────────────────────────────── */}
-      <div className="bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.08)] flex shrink-0">
+      <div className="bg-[rgba(8,12,28,0.9)] border-b border-white/[0.08] flex shrink-0">
         {[
           { label: 'Total Posts',   value: String(posts.length),       color: '#d4af37' },
           { label: 'Featured',      value: String(featuredCount),       color: '#e040fb' },
           { label: 'Total Read',    value: `${totalReadTime} min`,      color: '#4a90e2' },
           { label: 'Latest',        value: posts[0] ? formatPostDate(posts[0].date) : '—', color: '#4caf93' },
         ].map(({ label, value, color }) => (
-          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
+          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-white/[0.06] last:border-0">
             <span className="text-lg sm:text-xl font-bold truncate max-w-[120px]" style={{ color }}>{value}</span>
-            <span className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5 whitespace-nowrap">{label}</span>
+            <span className="text-[11px] uppercase tracking-[0.13em] text-cosmos-muted mt-0.5 whitespace-nowrap">{label}</span>
           </div>
         ))}
       </div>
@@ -108,9 +108,9 @@ export default async function DevlogPage() {
             <div key={year}>
               {/* Year divider */}
               <div className="flex items-center gap-3 mb-3">
-                <span className="flex-1 border-t border-[rgba(212,175,55,0.08)]" />
-                <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580] px-1">{year}</span>
-                <span className="flex-1 border-t border-[rgba(212,175,55,0.08)]" />
+                <span className="flex-1 border-t border-white/[0.08]" />
+                <span className="text-xs uppercase tracking-[0.2em] text-cosmos-muted px-1">{year}</span>
+                <span className="flex-1 border-t border-white/[0.08]" />
               </div>
 
               <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden divide-y divide-[rgba(212,175,55,0.06)]">
@@ -123,9 +123,9 @@ export default async function DevlogPage() {
         </div>
 
         {posts.length === 0 && (
-          <div className="text-center py-16 rounded-xl border border-[rgba(212,175,55,0.08)]">
-            <Code2 className="w-8 h-8 text-[#4a5580] mx-auto mb-3" />
-            <p className="text-[12px] text-[#4a5580]">Development posts coming soon</p>
+          <div className="text-center py-16 rounded-xl border border-white/[0.08]">
+            <Code2 className="w-8 h-8 text-cosmos-muted mx-auto mb-3" />
+            <p className="text-[12px] text-cosmos-muted">Development posts coming soon</p>
           </div>
         )}
       </div>
@@ -142,7 +142,7 @@ function FeaturedPost({ post }: { post: DevlogPost }) {
   return (
     <Link href={`/devlog/${post.slug}`} className="block group mb-6">
       <div className="rounded-xl border border-[rgba(212,175,55,0.25)] bg-[rgba(8,12,28,0.7)] overflow-hidden hover:border-[rgba(212,175,55,0.45)] transition-colors">
-        <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+        <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[#d4af37] animate-pulse" />
           <span className="text-xs uppercase tracking-[0.15em] text-[#d4af37]">Latest</span>
           {post.featured && (
@@ -165,7 +165,7 @@ function FeaturedPost({ post }: { post: DevlogPost }) {
             <p className="text-[11px] text-[#6070a0] line-clamp-2 leading-relaxed mb-2.5">
               {post.excerpt}
             </p>
-            <div className="flex items-center gap-3 flex-wrap text-[10px] text-[#4a5580]">
+            <div className="flex items-center gap-3 flex-wrap text-[10px] text-cosmos-muted">
               <span className="flex items-center gap-1">
                 <Calendar className="w-3 h-3" />{formatPostDate(post.date)}
               </span>
@@ -174,7 +174,7 @@ function FeaturedPost({ post }: { post: DevlogPost }) {
                 <Clock className="w-3 h-3" />{post.readingTime} min
               </span>
               {post.tags.slice(0, 4).map((tag) => (
-                <span key={tag} className="px-1.5 py-0.5 rounded bg-white/[0.04] text-[#4a5580]">{tag}</span>
+                <span key={tag} className="px-1.5 py-0.5 rounded bg-white/[0.04] text-cosmos-muted">{tag}</span>
               ))}
               <span className="ml-auto flex items-center gap-1 text-[#d4af37] group-hover:gap-2 transition-all">
                 Read post <ArrowRight className="w-3 h-3" />
@@ -208,15 +208,15 @@ function PostRow({ post }: { post: DevlogPost }) {
             </span>
           )}
         </div>
-        <p className="text-[11px] text-[#4a5580] mt-0.5 line-clamp-1">{post.excerpt}</p>
-        <div className="flex items-center gap-2 mt-1.5 text-[10px] text-[#3a4560] flex-wrap">
+        <p className="text-[11px] text-cosmos-muted mt-0.5 line-clamp-1">{post.excerpt}</p>
+        <div className="flex items-center gap-2 mt-1.5 text-[10px] text-cosmos-faint flex-wrap">
           <span style={{ color }}>{post.category.replace(/-/g, ' ')}</span>
           <span>·</span>
           <span className="flex items-center gap-1"><Calendar className="w-2.5 h-2.5" />{formatPostDate(post.date)}</span>
           <span>·</span>
           <span className="flex items-center gap-1"><Clock className="w-2.5 h-2.5" />{post.readingTime} min</span>
           {post.tags.slice(0, 3).map((tag) => (
-            <span key={tag} className="px-1.5 py-0.5 rounded bg-white/[0.03] text-[#3a4560]">{tag}</span>
+            <span key={tag} className="px-1.5 py-0.5 rounded bg-white/[0.03] text-cosmos-faint">{tag}</span>
           ))}
         </div>
       </div>

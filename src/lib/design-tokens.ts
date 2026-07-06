@@ -11,8 +11,9 @@ export const COSMOS_COLORS = {
   text: {
     primary: '#e0e8ff',
     secondary: '#c8d4f0',
-    dim: '#4a5580',
-    muted: '#6070a0',
+    // Readable on the void background (AA); dim < muted brightness preserved
+    dim: '#7c88a8',
+    muted: '#9aa6c4',
   },
   spectrum: {
     radio: '#22c55e',

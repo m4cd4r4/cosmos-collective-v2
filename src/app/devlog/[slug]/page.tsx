@@ -75,16 +75,16 @@ export default async function DevlogPostPage({ params }: PageProps) {
 
       {/* App Header Strip */}
       <div className="relative z-10 bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] px-5 h-[52px] flex items-center gap-3 shrink-0">
-        <Link href="/devlog" className="text-xs uppercase tracking-wider text-[#4a5580] hover:text-[#d4af37] transition-colors flex items-center gap-1">
+        <Link href="/devlog" className="text-xs uppercase tracking-wider text-cosmos-muted hover:text-[#d4af37] transition-colors flex items-center gap-1">
           <ArrowLeft className="w-3 h-3" /> Dev Log
         </Link>
-        <span className="text-[#3a4560]">/</span>
+        <span className="text-cosmos-faint">/</span>
         <span className="text-[11px] font-semibold text-[#c8d4f0] truncate">{post.title}</span>
         <div className="ml-auto flex items-center gap-2">
           <span className="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded border border-[rgba(212,175,55,0.25)] text-[#d4af37]">
             {post.category.replace(/-/g, ' ')}
           </span>
-          <span className="text-[11px] text-[#4a5580] flex items-center gap-1">
+          <span className="text-[11px] text-cosmos-muted flex items-center gap-1">
             <Clock className="w-3 h-3" />{post.readingTime} min
           </span>
         </div>
@@ -100,7 +100,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
             </h1>
 
             {/* Meta */}
-            <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#4a5580] mb-4">
+            <div className="flex flex-wrap items-center gap-3 text-[11px] text-cosmos-muted mb-4">
               <span className="flex items-center gap-1">
                 <User className="w-3 h-3" />
                 {post.author.name}
@@ -122,7 +122,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
               {post.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.04] text-[10px] text-[#4a5580] border border-[rgba(212,175,55,0.08)]"
+                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-white/[0.04] text-[10px] text-cosmos-muted border border-white/[0.08]"
                 >
                   <Tag className="w-2.5 h-2.5" />
                   {tag}
@@ -142,9 +142,9 @@ export default async function DevlogPostPage({ params }: PageProps) {
           </div>
 
           {/* Share */}
-          <footer className="mt-10 pt-6 border-t border-[rgba(212,175,55,0.08)]">
+          <footer className="mt-10 pt-6 border-t border-white/[0.08]">
             <div className="flex items-center justify-between flex-wrap gap-4">
-              <div className="flex items-center gap-2 text-[#4a5580] text-[11px]">
+              <div className="flex items-center gap-2 text-cosmos-muted text-[11px]">
                 <Share2 className="w-3.5 h-3.5" />
                 Share this post:
               </div>
@@ -154,7 +154,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Share on Twitter (opens in new tab)"
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[rgba(212,175,55,0.15)] text-[#4a5580] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] text-[10px] transition-colors"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[rgba(212,175,55,0.15)] text-cosmos-muted hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] text-[10px] transition-colors"
                 >
                   <Twitter className="w-3 h-3" /> X / Twitter
                 </a>
@@ -163,7 +163,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Share on LinkedIn (opens in new tab)"
-                  className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[rgba(212,175,55,0.15)] text-[#4a5580] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] text-[10px] transition-colors"
+                  className="flex items-center gap-1.5 px-2.5 py-1 rounded border border-[rgba(212,175,55,0.15)] text-cosmos-muted hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.3)] text-[10px] transition-colors"
                 >
                   <Linkedin className="w-3 h-3" /> LinkedIn
                 </a>
@@ -175,7 +175,7 @@ export default async function DevlogPostPage({ params }: PageProps) {
         {/* Related Posts */}
         {relatedPosts.length > 0 && (
           <section className="container mx-auto px-4 max-w-4xl mt-10">
-            <div className="text-xs uppercase tracking-[0.15em] text-[#4a5580] mb-3">Related Posts</div>
+            <div className="text-xs uppercase tracking-[0.15em] text-cosmos-muted mb-3">Related Posts</div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {relatedPosts.map((related) => (
                 <RelatedPostCard key={related.slug} post={related} />
@@ -204,8 +204,8 @@ function RelatedPostCard({ post }: { post: DevlogPost }) {
       <h3 className="text-[12px] font-semibold text-[#c8d4f0] mt-1.5 mb-1.5 group-hover:text-[#d4af37] transition-colors line-clamp-2 leading-snug">
         {post.title}
       </h3>
-      <p className="text-[10px] text-[#4a5580] line-clamp-2 leading-relaxed">{post.excerpt}</p>
-      <div className="flex items-center gap-1.5 mt-2 text-[10px] text-[#3a4560]">
+      <p className="text-[10px] text-cosmos-muted line-clamp-2 leading-relaxed">{post.excerpt}</p>
+      <div className="flex items-center gap-1.5 mt-2 text-[10px] text-cosmos-faint">
         <Clock className="w-3 h-3" />
         {post.readingTime} min read
       </div>

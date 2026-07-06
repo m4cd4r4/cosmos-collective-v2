@@ -57,10 +57,10 @@ export function HubbleComparison({ jwstUrl, hubbleUrl, targetName, onClose }: Pr
       <div className="flex items-center justify-between px-5 py-2.5 bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.2)] shrink-0">
         <div className="flex items-center gap-3">
           <span className="text-[11px] uppercase tracking-[0.2em] text-[#d4af37] font-bold">{targetName}</span>
-          <span className="text-[10px] text-[#4a5580]">Hubble vs JWST</span>
+          <span className="text-[10px] text-cosmos-muted">Hubble vs JWST</span>
         </div>
         <div className="flex items-center gap-3">
-          <span className="text-[10px] text-[#4a5580]">Drag to compare · Esc to close</span>
+          <span className="text-[10px] text-cosmos-muted">Drag to compare · Esc to close</span>
           <button
             onClick={onClose}
             className="w-7 h-7 rounded flex items-center justify-center text-[#8090b0] hover:text-white hover:bg-white/10 transition-colors text-lg leading-none"
@@ -144,9 +144,9 @@ export function HubbleComparison({ jwstUrl, hubbleUrl, targetName, onClose }: Pr
       </div>
 
       {/* Footer */}
-      <div className="px-5 py-2 bg-[rgba(4,6,18,0.97)] border-t border-[rgba(212,175,55,0.08)] shrink-0 flex items-center justify-between">
-        <span className="text-[10px] text-[#4a5580]">Images: NASA / ESA / CSA / STScI</span>
-        <span className="text-[10px] text-[#4a5580]">Hubble launched 1990 · JWST launched 2021</span>
+      <div className="px-5 py-2 bg-[rgba(4,6,18,0.97)] border-t border-white/[0.08] shrink-0 flex items-center justify-between">
+        <span className="text-[10px] text-cosmos-muted">Images: NASA / ESA / CSA / STScI</span>
+        <span className="text-[10px] text-cosmos-muted">Hubble launched 1990 · JWST launched 2021</span>
       </div>
     </div>,
     document.body

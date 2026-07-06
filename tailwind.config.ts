@@ -19,6 +19,10 @@ const config: Config = {
           elevated: '#2a2f3e',    // Elevated elements
           border: '#2a2f3e',      // Cosmic dust lanes
 
+          // Secondary/tertiary text (blue-tinted neutrals, WCAG AA on void)
+          muted: '#7c88a8',       // Secondary text - ~5.5:1 on void
+          faint: '#5a6684',       // Tertiary/decorative labels - ~3.6:1
+
           // Primary: Stellar Gold (Real star cores ~5000K)
           gold: {
             DEFAULT: '#d4af37',   // 24k gold - stellar cores

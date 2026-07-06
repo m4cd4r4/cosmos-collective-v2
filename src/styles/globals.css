@@ -20,6 +20,10 @@
   --cosmos-nebula-blue: #4a90e2;
   --cosmos-hydrogen: #ff6b6b;
 
+  /* Secondary/tertiary text (WCAG AA on void) */
+  --cosmos-muted: #7c88a8;
+  --cosmos-faint: #5a6684;
+
   /* Spacing scale */
   --space-unit: 4px;
 
@@ -48,6 +52,8 @@
     --cosmos-surface: #1a1a1a;
     --cosmos-gold: #ffd700;
     --cosmos-amber: #ffaa00;
+    --cosmos-muted: #9aa6c4;
+    --cosmos-faint: #7a86a4;
     --focus-ring-width: 4px;
   }
 }

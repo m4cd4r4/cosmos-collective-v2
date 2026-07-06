@@ -29,7 +29,7 @@ const KeplerViewer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="flex flex-col items-center justify-center h-full gap-4 text-[#4a5580]">
+      <div className="flex flex-col items-center justify-center h-full gap-4 text-cosmos-muted">
         <div className="w-10 h-10 rounded-full border-2 border-[rgba(74,144,226,0.15)] border-t-[#4a90e2] animate-spin" />
         <span className="font-mono text-xs tracking-wider">Loading Kepler Explorer…</span>
       </div>

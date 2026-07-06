@@ -201,7 +201,7 @@ export function TransitAnimation({ planet, star }: Props) {
       cCtx.stroke()
 
       // Y-axis labels
-      cCtx.fillStyle = '#4a5580'
+      cCtx.fillStyle = '#7c88a8'
       cCtx.font = '8px monospace'
       cCtx.textAlign = 'right'
       cCtx.fillText('1.000', padL - 3, padT + 4)
@@ -211,7 +211,7 @@ export function TransitAnimation({ planet, star }: Props) {
 
       // X-axis label
       cCtx.textAlign = 'center'
-      cCtx.fillStyle = '#4a5580'
+      cCtx.fillStyle = '#7c88a8'
       cCtx.font = '8px monospace'
       cCtx.fillText('Time', padL + plotW / 2, CH - 3)
       cCtx.textAlign = 'left'
@@ -271,9 +271,9 @@ export function TransitAnimation({ planet, star }: Props) {
 
   return (
     <div className="bg-white/[0.02] rounded-lg border border-[rgba(74,144,226,0.12)] p-3">
-      <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">
+      <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-2">
         Transit Detection
-        <span className="ml-2 normal-case text-[#3a4560]">how Kepler found this planet</span>
+        <span className="ml-2 normal-case text-cosmos-faint">how Kepler found this planet</span>
       </div>
 
       <div className="flex gap-2">
@@ -291,7 +291,7 @@ export function TransitAnimation({ planet, star }: Props) {
         />
       </div>
 
-      <div className="flex justify-between mt-2 text-[11px] text-[#4a5580]">
+      <div className="flex justify-between mt-2 text-[11px] text-cosmos-muted">
         <span>Transit depth: {(depth * 100).toFixed(4)}%</span>
         <span>Duration: ~{durHours.toFixed(1)} h</span>
         <span>Period: {period.toFixed(1)} d</span>
