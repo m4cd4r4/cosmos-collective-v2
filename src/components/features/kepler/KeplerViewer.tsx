@@ -9,7 +9,7 @@ import { KeplerSkyMap } from './KeplerSkyMap'
 
 const ExoplanetSystemViewer = dynamic(
   () => import('./ExoplanetSystemViewer').then(m => ({ default: m.ExoplanetSystemViewer })),
-  { ssr: false, loading: () => <div className="h-80 flex items-center justify-center text-[#4a5580] text-[11px]">Loading 3D viewer...</div> }
+  { ssr: false, loading: () => <div className="h-80 flex items-center justify-center text-cosmos-muted text-[11px]">Loading 3D viewer...</div> }
 )
 import type { KeplerSkyMapHandle } from './KeplerSkyMap'
 import { useKeplerData } from './useKeplerData'
@@ -93,7 +93,7 @@ export function KeplerViewer() {
           <span className="hidden sm:inline"><Badge>NASA · 2009–2018</Badge></span>
           <span className="hidden sm:inline"><Badge gold>Cygnus Field</Badge></span>
         </div>
-        <span className="text-[11px] text-[#4a5580] tracking-wider">Data: NASA Exoplanet Archive · TAP API</span>
+        <span className="text-[11px] text-cosmos-muted tracking-wider">Data: NASA Exoplanet Archive · TAP API</span>
       </header>
 
       {/* ── STATS BAR ──────────────────────────────────────────────────── */}
@@ -110,13 +110,13 @@ export function KeplerViewer() {
       <div className="flex lg:hidden bg-[rgba(4,6,18,0.97)] border-b border-[rgba(74,144,226,0.15)] shrink-0">
         <button
           onClick={() => setMobileTab('view')}
-          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'view' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'view' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-cosmos-muted border-transparent'}`}
         >
           Star Map
         </button>
         <button
           onClick={() => setMobileTab('filters')}
-          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'filters' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-[#4a5580] border-transparent'}`}
+          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'filters' ? 'text-[#4a90e2] border-[#4a90e2]' : 'text-cosmos-muted border-transparent'}`}
         >
           Filters · Details
         </button>
@@ -157,7 +157,7 @@ export function KeplerViewer() {
                         ? v === 'aladin'
                           ? 'bg-[rgba(212,175,55,0.18)] text-[#d4af37] border-[rgba(212,175,55,0.3)]'
                           : 'bg-[rgba(74,144,226,0.18)] text-[#a0c8ff] border-[rgba(74,144,226,0.3)]'
-                        : 'bg-transparent text-[#4a5580] border-[rgba(74,144,226,0.15)] hover:text-[#4a90e2] hover:border-[rgba(74,144,226,0.3)]'
+                        : 'bg-transparent text-cosmos-muted border-[rgba(74,144,226,0.15)] hover:text-[#4a90e2] hover:border-[rgba(74,144,226,0.3)]'
                     }`}
                   >
                     {label}
@@ -200,7 +200,7 @@ export function KeplerViewer() {
               className="w-full accent-[#4a90e2]"
               onChange={e => setFilter('periodMax', +e.target.value)}
             />
-            <div className="flex justify-between text-[10px] text-[#4a5580] mt-0.5">
+            <div className="flex justify-between text-[10px] text-cosmos-muted mt-0.5">
               <span>1 day</span>
               <span>≤ {filters.periodMax} days</span>
             </div>
@@ -234,7 +234,7 @@ export function KeplerViewer() {
               className="w-full accent-[#4a90e2]"
               onChange={e => setFilter('yearMin', +e.target.value)}
             />
-            <div className="flex justify-between text-[10px] text-[#4a5580] mt-0.5">
+            <div className="flex justify-between text-[10px] text-cosmos-muted mt-0.5">
               <span>2009</span><span>2018</span>
             </div>
           </FilterGroup>
@@ -247,12 +247,12 @@ export function KeplerViewer() {
               { c: '#ff8c00', label: 'Cool 3500–5000 K (K)' },
               { c: '#ff4500', label: 'Red dwarf <3500 K (M)' },
             ] as const).map(({ c, label }) => (
-              <div key={c} className="flex items-center gap-2 text-[11px] text-[#4a5580]">
+              <div key={c} className="flex items-center gap-2 text-[11px] text-cosmos-muted">
                 <div className="w-2 h-2 rounded-full shrink-0" style={{ background: c, boxShadow: `0 0 5px ${c}` }} />
                 <span>{label}</span>
               </div>
             ))}
-            <div className="flex items-center gap-2 text-[11px] text-[#4a5580] mt-1">
+            <div className="flex items-center gap-2 text-[11px] text-cosmos-muted mt-1">
               <div className="w-2.5 h-2.5 rounded-full shrink-0 border border-dashed border-[#7fbf7f]" />
               <span>Habitable zone planet</span>
             </div>
@@ -260,7 +260,7 @@ export function KeplerViewer() {
 
           <FilterGroup title="Planet Size Color">
             {(Object.entries(PLANET_COLORS) as [string, string][]).filter(([k]) => k !== 'unknown').map(([k, c]) => (
-              <div key={k} className="flex items-center gap-2 text-[11px] text-[#4a5580]">
+              <div key={k} className="flex items-center gap-2 text-[11px] text-cosmos-muted">
                 <div className="w-2 h-2 rounded-full shrink-0" style={{ background: c, boxShadow: `0 0 5px ${c}` }} />
                 <span>{k === 'earth' ? 'Earth ≤1.25 R⊕' : k === 'superearth' ? 'Super-Earth ≤2 R⊕' : k === 'neptune' ? 'Neptune ≤6 R⊕' : 'Jupiter +'}</span>
               </div>
@@ -296,7 +296,7 @@ export function KeplerViewer() {
 
           {/* Loading */}
           {status === 'loading' && viewMode !== 'aladin' && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-[#4a5580] text-sm tracking-wider">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-cosmos-muted text-sm tracking-wider">
               <div className="w-9 h-9 rounded-full border-2 border-[rgba(74,144,226,0.15)] border-t-[#4a90e2] animate-spin" />
               <span>Fetching Kepler data from NASA…</span>
             </div>
@@ -309,12 +309,12 @@ export function KeplerViewer() {
               style={{ left: tooltip.x + 14, top: tooltip.y - 10 }}
             >
               <div className="text-[13px] font-bold text-[#e0e8ff] mb-1">{hovered.name}</div>
-              <div className="flex justify-between gap-3"><span className="text-[#4a5580]">Planets</span><span>{hovered.pnum ?? hovered.planets.length}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-cosmos-muted">Planets</span><span>{hovered.pnum ?? hovered.planets.length}</span></div>
               <div className="flex justify-between gap-3">
-                <span className="text-[#4a5580]">Temperature</span>
+                <span className="text-cosmos-muted">Temperature</span>
                 <span style={{ color: hovered.color }}>{hovered.teff ? `${hovered.teff.toLocaleString()} K` : '—'}</span>
               </div>
-              <div className="flex justify-between gap-3"><span className="text-[#4a5580]">Distance</span><span>{hovered.dist ? `${Math.round(hovered.dist).toLocaleString()} pc` : '—'}</span></div>
+              <div className="flex justify-between gap-3"><span className="text-cosmos-muted">Distance</span><span>{hovered.dist ? `${Math.round(hovered.dist).toLocaleString()} pc` : '—'}</span></div>
               {hovered.hasHZ && <div className="text-[#7fbf7f] text-[11px] mt-1">◎ Habitable zone planet</div>}
             </div>
           )}
@@ -383,12 +383,12 @@ function Badge({ children, gold }: { children: React.ReactNode; gold?: boolean }
 
 function Stat({ label, value, color, loading }: { label: string; value: number | string; color: string; loading?: boolean }) {
   const colorMap: Record<string, string> = {
-    gold: '#d4af37', blue: '#7fbfff', orange: '#ff9a3c', green: '#7fff7f', sky: '#7fbfff', dim: '#4a5580',
+    gold: '#d4af37', blue: '#7fbfff', orange: '#ff9a3c', green: '#7fff7f', sky: '#7fbfff', dim: '#7c88a8',
   }
   return (
     <div className="flex-1 px-3.5 py-[7px] border-r border-[rgba(74,144,226,0.15)] last:border-r-0 flex flex-col gap-0.5">
-      <div className="text-xs uppercase tracking-[0.14em] text-[#4a5580]">{label}</div>
-      <div className={`font-bold ${color === 'dim' ? 'text-[15px]' : 'text-lg'} ${loading ? 'text-[#4a5580]' : ''}`}
+      <div className="text-xs uppercase tracking-[0.14em] text-cosmos-muted">{label}</div>
+      <div className={`font-bold ${color === 'dim' ? 'text-[15px]' : 'text-lg'} ${loading ? 'text-cosmos-muted' : ''}`}
         style={{ color: loading ? undefined : colorMap[color] }}>
         {loading ? '—' : typeof value === 'number' ? value.toLocaleString() : value}
       </div>
@@ -399,7 +399,7 @@ function Stat({ label, value, color, loading }: { label: string; value: number |
 function FilterGroup({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-xs uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.12)]">
+      <div className="text-xs uppercase tracking-[0.18em] text-cosmos-muted pb-1.5 border-b border-[rgba(74,144,226,0.12)]">
         {title}
       </div>
       {children}
@@ -425,7 +425,7 @@ function ChipGroup({
           className={`text-[11px] px-2.5 py-1 rounded-full border transition-all font-mono ${
             active === o.value
               ? 'bg-[rgba(74,144,226,0.18)] border-[#4a90e2] text-[#a0c8ff]'
-              : 'bg-transparent border-[rgba(74,144,226,0.15)] text-[#4a5580] hover:border-[#4a90e2] hover:text-[#4a90e2]'
+              : 'bg-transparent border-[rgba(74,144,226,0.15)] text-cosmos-muted hover:border-[#4a90e2] hover:text-[#4a90e2]'
           }`}
         >
           {o.label}
@@ -437,7 +437,7 @@ function ChipGroup({
 
 function EmptyDetail() {
   return (
-    <div className="flex flex-col items-center justify-center h-full text-[#4a5580] text-center gap-3">
+    <div className="flex flex-col items-center justify-center h-full text-cosmos-muted text-center gap-3">
       <svg width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden>
         <circle cx="26" cy="26" r="18" stroke="rgba(74,144,226,0.2)" strokeWidth="1.2"/>
         <circle cx="26" cy="26" r="5" fill="rgba(74,144,226,0.25)"/>
@@ -458,13 +458,13 @@ function StarDetail({ star }: { star: StarSystem }) {
     <>
       <div>
         <div className="text-[17px] font-bold text-[#e8f0ff] tracking-[0.04em]">{star.name}</div>
-        <div className="text-[11px] text-[#4a5580] mt-0.5">
+        <div className="text-[11px] text-cosmos-muted mt-0.5">
           {n} confirmed planet{n !== 1 ? 's' : ''} · Spectral type {spectral}
         </div>
       </div>
 
       <section>
-        <div className="text-xs uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-1">Host Star</div>
+        <div className="text-xs uppercase tracking-[0.18em] text-cosmos-muted pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-1">Host Star</div>
         {[
           { label: 'Temperature', value: star.teff ? `${star.teff.toLocaleString()} K` : '—', style: { color: tempToColor(star.teff) } },
           { label: 'Radius',      value: star.srad  ? `${star.srad.toFixed(2)} R☉` : '—' },
@@ -473,19 +473,19 @@ function StarDetail({ star }: { star: StarSystem }) {
           { label: 'Coordinates', value: star.ra != null ? `${star.ra.toFixed(3)}°, ${star.dec?.toFixed(3)}°` : '—', small: true },
         ].map(p => (
           <div key={p.label} className="flex justify-between items-center py-[5px] border-b border-white/[0.03] text-xs">
-            <span className="text-[#4a5580]">{p.label}</span>
+            <span className="text-cosmos-muted">{p.label}</span>
             <span className={`font-medium ${p.small ? 'text-[11px]' : ''}`} style={p.style}>{p.value}</span>
           </div>
         ))}
       </section>
 
       <section>
-        <div className="text-xs uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">Orbital System</div>
+        <div className="text-xs uppercase tracking-[0.18em] text-cosmos-muted pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">Orbital System</div>
         <ExoplanetSystemViewer star={star} />
       </section>
 
       <section>
-        <div className="text-xs uppercase tracking-[0.18em] text-[#4a5580] pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">
+        <div className="text-xs uppercase tracking-[0.18em] text-cosmos-muted pb-1.5 border-b border-[rgba(74,144,226,0.1)] mb-2">
           Planets ({star.planets.length})
         </div>
         <div className="flex flex-col gap-1.5">
@@ -520,7 +520,7 @@ function StarDetail({ star }: { star: StarSystem }) {
 
 function PlanetStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="text-[10px] text-[#4a5580]">
+    <div className="text-[10px] text-cosmos-muted">
       {label} <span className="text-[#c8d4f0] font-semibold">{value}</span>
     </div>
   )

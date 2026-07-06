@@ -86,22 +86,22 @@ export default function AccessibilityPage() {
             <span className="text-[11px] uppercase tracking-[0.15em] text-[#4a90e2]">WCAG 2.1 AA</span>
           </div>
         </div>
-        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-[#4a5580]">
+        <span className="hidden sm:block text-[11px] uppercase tracking-wider text-cosmos-muted">
           Universal Design
         </span>
       </div>
 
       {/* Stats Bar */}
-      <div className="bg-[rgba(8,12,28,0.9)] border-b border-[rgba(212,175,55,0.08)] flex shrink-0">
+      <div className="bg-[rgba(8,12,28,0.9)] border-b border-white/[0.08] flex shrink-0">
         {[
           { label: 'Features', value: String(features.length), color: '#d4af37' },
           { label: 'Standards', value: String(standards.length), color: '#4a90e2' },
           { label: 'Compliance', value: 'AA', color: '#4caf93' },
           { label: 'Guideline', value: 'WCAG 2.1', color: '#e040fb' },
         ].map(({ label, value, color }) => (
-          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-[rgba(212,175,55,0.06)] last:border-0">
+          <div key={label} className="flex flex-col items-center px-6 lg:px-10 py-2 border-r border-white/[0.06] last:border-0">
             <span className="text-lg sm:text-xl font-bold" style={{ color }}>{value}</span>
-            <span className="text-[11px] uppercase tracking-[0.13em] text-[#4a5580] mt-0.5">{label}</span>
+            <span className="text-[11px] uppercase tracking-[0.13em] text-cosmos-muted mt-0.5">{label}</span>
           </div>
         ))}
       </div>
@@ -114,7 +114,7 @@ export default function AccessibilityPage() {
 
             {/* Commitment */}
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+              <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#4caf93]" />
                 <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#4caf93]">Our Commitment</span>
               </div>
@@ -144,7 +144,7 @@ export default function AccessibilityPage() {
                     </div>
                     <div>
                       <div className="text-[11px] font-semibold text-[#c8d4f0] mb-0.5">{title}</div>
-                      <div className="text-[10px] text-[#4a5580] leading-relaxed">{description}</div>
+                      <div className="text-[10px] text-cosmos-muted leading-relaxed">{description}</div>
                     </div>
                   </div>
                 </div>
@@ -157,7 +157,7 @@ export default function AccessibilityPage() {
 
             {/* Technical Standards */}
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+              <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 text-[#4caf93]" />
                 <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#4caf93]">Technical Standards</span>
               </div>
@@ -175,7 +175,7 @@ export default function AccessibilityPage() {
 
             {/* Feedback */}
             <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden">
-              <div className="px-4 py-2.5 border-b border-[rgba(212,175,55,0.08)] flex items-center gap-2">
+              <div className="px-4 py-2.5 border-b border-white/[0.08] flex items-center gap-2">
                 <Volume2 className="w-3.5 h-3.5 text-[#d4af37]" />
                 <span className="text-xs uppercase tracking-[0.15em] font-semibold text-[#d4af37]">Feedback</span>
               </div>

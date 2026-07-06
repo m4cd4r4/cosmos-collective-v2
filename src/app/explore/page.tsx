@@ -78,7 +78,7 @@ export default function ExplorePage({
 
         {/* ── Search + Filters ──────────────────────────────────────────── */}
         <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden mb-5">
-          <div className="px-4 py-3 border-b border-[rgba(212,175,55,0.08)]">
+          <div className="px-4 py-3 border-b border-white/[0.08]">
             <ExploreSearch initialQuery={query} />
           </div>
           <div className="px-4 py-3">

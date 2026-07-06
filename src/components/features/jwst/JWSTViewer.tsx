@@ -214,7 +214,7 @@ export function JWSTViewer() {
           <span className="hidden sm:inline"><Badge gold>L2 Orbit · 1.5M km</Badge></span>
           <span className="hidden sm:inline"><Badge>Launched Dec 2021</Badge></span>
         </div>
-        <span className="text-[11px] text-[#4a5580] tracking-wider">Data: NASA/ESA/CSA/STScI</span>
+        <span className="text-[11px] text-cosmos-muted tracking-wider">Data: NASA/ESA/CSA/STScI</span>
       </header>
 
       {/* ── STATS BAR ──────────────────────────────────────────────────── */}
@@ -230,13 +230,13 @@ export function JWSTViewer() {
       <div className="flex lg:hidden bg-[rgba(4,6,18,0.97)] border-b border-[rgba(212,175,55,0.15)] shrink-0">
         <button
           onClick={() => setMobileTab('list')}
-          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'list' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
+          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'list' ? 'text-[#d4af37] border-[#d4af37]' : 'text-cosmos-muted border-transparent'}`}
         >
           Gallery
         </button>
         <button
           onClick={() => setMobileTab('detail')}
-          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'detail' ? 'text-[#d4af37] border-[#d4af37]' : 'text-[#4a5580] border-transparent'}`}
+          className={`flex-1 py-2.5 text-xs font-bold uppercase tracking-[0.15em] transition-colors border-b-2 ${mobileTab === 'detail' ? 'text-[#d4af37] border-[#d4af37]' : 'text-cosmos-muted border-transparent'}`}
         >
           Image · Details
         </button>
@@ -249,9 +249,9 @@ export function JWSTViewer() {
         <aside className={`bg-[rgba(13,18,35,0.92)] border-r border-[rgba(212,175,55,0.15)] overflow-y-auto flex-col ${mobileTab === 'list' ? 'flex' : 'hidden lg:flex'}`}>
 
           {/* Search */}
-          <div className="p-3 border-b border-[rgba(212,175,55,0.08)]">
+          <div className="p-3 border-b border-white/[0.08]">
             <div className="relative">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#4a5580]" />
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-cosmos-muted" />
               <input
                 className="w-full bg-white/[0.03] border border-[rgba(212,175,55,0.15)] rounded pl-7 pr-2.5 py-1.5 text-[#c8d4f0] text-xs font-mono outline-none focus:border-[#d4af37] transition-colors"
                 placeholder="Search targets…"
@@ -262,8 +262,8 @@ export function JWSTViewer() {
           </div>
 
           {/* Category chips */}
-          <div className="px-3 py-2 border-b border-[rgba(212,175,55,0.08)]">
-            <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Category</div>
+          <div className="px-3 py-2 border-b border-white/[0.08]">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-1.5">Category</div>
             <div className="flex flex-wrap gap-1">
               <Chip active={filters.category === 'all'} onClick={() => setFilter('category', 'all')}>All</Chip>
               {categories.map(cat => (
@@ -275,8 +275,8 @@ export function JWSTViewer() {
           </div>
 
           {/* Instrument chips */}
-          <div className="px-3 py-2 border-b border-[rgba(212,175,55,0.08)]">
-            <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Instrument</div>
+          <div className="px-3 py-2 border-b border-white/[0.08]">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-1.5">Instrument</div>
             <div className="flex flex-wrap gap-1">
               <Chip active={filters.instrument === 'all'} onClick={() => setFilter('instrument', 'all')}>All</Chip>
               {instruments.map(inst => (
@@ -296,7 +296,7 @@ export function JWSTViewer() {
           {/* Observation list */}
           <div ref={listRef} className="flex-1 overflow-y-auto p-1.5">
             {filtered.length === 0 ? (
-              <div className="text-center text-[#4a5580] text-xs py-8">No matching observations</div>
+              <div className="text-center text-cosmos-muted text-xs py-8">No matching observations</div>
             ) : (
               <div className="flex flex-col gap-1">
                 {filtered.map(obs => (
@@ -318,10 +318,10 @@ export function JWSTViewer() {
                         {obs.targetName}
                         {obs.hubbleUrl && <span className="ml-1 text-[11px] text-[#4a90e2] opacity-70">⟺</span>}
                       </div>
-                      <div className="text-[10px] text-[#4a5580] flex items-center gap-1.5 mt-0.5">
+                      <div className="text-[10px] text-cosmos-muted flex items-center gap-1.5 mt-0.5">
                         <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: INSTRUMENT_INFO[obs.instrument || '']?.color || '#666' }} />
                         <span title={INSTRUMENT_INFO[obs.instrument || '']?.fullName}>{obs.instrument || 'Multi'}</span>
-                        <span className="text-[#2a3050]">·</span>
+                        <span className="text-cosmos-faint">·</span>
                         {CATEGORY_LABELS[obs.category] || obs.category}
                       </div>
                     </div>
@@ -332,10 +332,10 @@ export function JWSTViewer() {
           </div>
 
           {/* Instrument legend */}
-          <div className="p-3 border-t border-[rgba(212,175,55,0.08)]">
-            <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Instruments</div>
+          <div className="p-3 border-t border-white/[0.08]">
+            <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-2">Instruments</div>
             {Object.entries(INSTRUMENT_INFO).map(([name, info]) => (
-              <div key={name} className="flex items-center gap-2 text-[10px] text-[#4a5580] mb-1">
+              <div key={name} className="flex items-center gap-2 text-[10px] text-cosmos-muted mb-1">
                 <div className="w-2 h-2 rounded-full shrink-0" style={{ background: info.color, boxShadow: `0 0 4px ${info.color}` }} />
                 <span className="text-[#8090b0]">{name}</span>
                 <span className="ml-auto">{info.range}</span>
@@ -351,7 +351,7 @@ export function JWSTViewer() {
           {!imgLoaded && !imgError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 pointer-events-none z-10">
               <div className="w-8 h-8 rounded-full border border-[rgba(212,175,55,0.2)] border-t-[#d4af37] animate-spin" />
-              <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580]">Loading image…</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-cosmos-muted">Loading image…</span>
             </div>
           )}
 
@@ -359,7 +359,7 @@ export function JWSTViewer() {
           {imgError && (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 pointer-events-none z-10">
               <span className="text-4xl opacity-30">🔭</span>
-              <span className="text-xs uppercase tracking-[0.2em] text-[#4a5580]">Image unavailable</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-cosmos-muted">Image unavailable</span>
             </div>
           )}
 
@@ -463,7 +463,7 @@ export function JWSTViewer() {
                     {tier === 'high' && (
                       <span className="text-[11px] font-bold text-[#d4af37] border border-[rgba(212,175,55,0.4)] rounded px-1.5 py-0.5 bg-black/60 mr-1">HD</span>
                     )}
-                    <span className="text-[10px] text-[#4a5580] bg-black/60 px-1.5 py-0.5 rounded tabular-nums">
+                    <span className="text-[10px] text-cosmos-muted bg-black/60 px-1.5 py-0.5 rounded tabular-nums">
                       {Math.round(scale * 100)}%
                     </span>
                     <button
@@ -515,7 +515,7 @@ export function JWSTViewer() {
                 className={`px-2.5 py-1.5 rounded text-xs uppercase tracking-wider transition-all backdrop-blur-sm ${
                   showFeatures
                     ? 'bg-[rgba(212,175,55,0.2)] text-[#d4af37] border border-[rgba(212,175,55,0.3)]'
-                    : 'bg-black/50 text-[#4a5580] border border-white/10 hover:text-[#d4af37]'
+                    : 'bg-black/50 text-cosmos-muted border border-white/10 hover:text-[#d4af37]'
                 }`}
               >
                 <Layers className="w-3 h-3 inline-block mr-1" />
@@ -524,7 +524,7 @@ export function JWSTViewer() {
             )}
             <button
               onClick={() => setFullscreen(!fullscreen)}
-              className="p-1.5 rounded bg-black/50 text-[#4a5580] border border-white/10 hover:text-[#d4af37] transition-colors backdrop-blur-sm"
+              className="p-1.5 rounded bg-black/50 text-cosmos-muted border border-white/10 hover:text-[#d4af37] transition-colors backdrop-blur-sm"
               title="Fullscreen"
             >
               <Maximize2 className="w-3.5 h-3.5" />
@@ -581,7 +581,7 @@ export function JWSTViewer() {
           <div className="p-4">
             <h2 className="text-[15px] font-bold text-[#e0e8ff] mb-1">{selected.targetName}</h2>
             {selected.aliases && selected.aliases.length > 0 && (
-              <div className="text-[10px] text-[#4a5580] mb-3">{selected.aliases.join(' · ')}</div>
+              <div className="text-[10px] text-cosmos-muted mb-3">{selected.aliases.join(' · ')}</div>
             )}
 
             {/* Metadata grid */}
@@ -601,15 +601,15 @@ export function JWSTViewer() {
             </div>
 
             {/* Coordinates */}
-            <div className="bg-white/[0.02] rounded-lg p-2.5 border border-[rgba(212,175,55,0.08)] mb-4">
-              <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Coordinates (J2000)</div>
+            <div className="bg-white/[0.02] rounded-lg p-2.5 border border-white/[0.08] mb-4">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-1.5">Coordinates (J2000)</div>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <div>
-                  <span className="text-[#4a5580]">RA: </span>
+                  <span className="text-cosmos-muted">RA: </span>
                   <span className="text-[#8090b0]">{selected.coordinates.ra.toFixed(4)}°</span>
                 </div>
                 <div>
-                  <span className="text-[#4a5580]">Dec: </span>
+                  <span className="text-cosmos-muted">Dec: </span>
                   <span className="text-[#8090b0]">{selected.coordinates.dec.toFixed(4)}°</span>
                 </div>
               </div>
@@ -625,7 +625,7 @@ export function JWSTViewer() {
             {/* Filters used */}
             {selected.filters && selected.filters.length > 0 && (
               <div className="mb-4">
-                <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Filters Used</div>
+                <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-1.5">Filters Used</div>
                 <div className="flex flex-wrap gap-1">
                   {selected.filters.map(f => (
                     <span key={f} className="px-2 py-0.5 rounded bg-white/[0.04] border border-[rgba(212,175,55,0.1)] text-[10px] text-[#8090b0]">
@@ -639,15 +639,15 @@ export function JWSTViewer() {
 
           {/* Wavelength Channels panel */}
           {selected.channels && selected.channels.length > 0 && (
-            <div className="px-4 pb-3 border-t border-[rgba(212,175,55,0.08)] pt-3">
+            <div className="px-4 pb-3 border-t border-white/[0.08] pt-3">
               <button
                 onClick={() => setChannelsExpanded(v => !v)}
                 className="flex items-center justify-between w-full mb-2 group"
               >
-                <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] group-hover:text-[#d4af37] transition-colors">
+                <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted group-hover:text-[#d4af37] transition-colors">
                   Wavelength Channels
                 </div>
-                <span className="text-[#4a5580] text-[10px]">{channelsExpanded ? '▲' : '▼'}</span>
+                <span className="text-cosmos-muted text-[10px]">{channelsExpanded ? '▲' : '▼'}</span>
               </button>
 
               {channelsExpanded && (
@@ -663,7 +663,7 @@ export function JWSTViewer() {
                           className={`flex items-center gap-2 p-2 rounded-lg border text-left transition-all ${
                             isOff
                               ? 'bg-black/30 border-[rgba(255,255,255,0.05)] opacity-50'
-                              : 'bg-white/[0.02] border-[rgba(212,175,55,0.08)] hover:border-[rgba(212,175,55,0.2)]'
+                              : 'bg-white/[0.02] border-white/[0.08] hover:border-[rgba(212,175,55,0.2)]'
                           }`}
                           title={isOff ? 'Click to restore this channel' : 'Click to suppress this channel'}
                         >
@@ -677,11 +677,11 @@ export function JWSTViewer() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
                               <span className="text-[10px] font-bold text-[#e0e8ff]">{ch.name}</span>
-                              <span className="text-[10px] text-[#4a5580]">{ch.wavelength}</span>
+                              <span className="text-[10px] text-cosmos-muted">{ch.wavelength}</span>
                             </div>
                             <div className="text-[11px] text-[#6a7890] leading-tight mt-0.5 truncate">{ch.description}</div>
                           </div>
-                          {isOff && <span className="text-[11px] text-[#4a5580] shrink-0">OFF</span>}
+                          {isOff && <span className="text-[11px] text-cosmos-muted shrink-0">OFF</span>}
                         </button>
                       )
                     })}
@@ -696,8 +696,8 @@ export function JWSTViewer() {
                     </button>
                   )}
 
-                  <div className="bg-white/[0.01] rounded p-2 border border-[rgba(212,175,55,0.05)]">
-                    <div className="text-[11px] uppercase tracking-[0.15em] text-[#4a5580] mb-1">What am I looking at?</div>
+                  <div className="bg-white/[0.01] rounded p-2 border border-white/[0.05]">
+                    <div className="text-[11px] uppercase tracking-[0.15em] text-cosmos-muted mb-1">What am I looking at?</div>
                     <p className="text-[10px] text-[#6a7890] leading-relaxed">
                       JWST images are false-color composites. Each filter captures a specific wavelength of light invisible to human eyes.
                       Scientists assign colors (R/G/B) to each channel to create the final image. Toggle channels above to see what each wavelength reveals.
@@ -711,7 +711,7 @@ export function JWSTViewer() {
           {/* Features section */}
           {selected.features && selected.features.length > 0 && (
             <div className="px-4 pb-3">
-              <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-2">
                 Detected Features ({selected.features.length})
               </div>
               <div className="flex flex-col gap-1.5">
@@ -730,20 +730,20 @@ export function JWSTViewer() {
 
           {/* Analysis section */}
           {selected.analysis && (
-            <div className="px-4 pb-4 border-t border-[rgba(212,175,55,0.08)] pt-3">
-              <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">Analysis</div>
+            <div className="px-4 pb-4 border-t border-white/[0.08] pt-3">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-2">Analysis</div>
               <p className="text-[11px] text-[#8090b0] leading-relaxed mb-3">{selected.analysis.summary}</p>
 
               {selected.analysis.scientificContext && (
                 <>
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Scientific Context</div>
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-1.5">Scientific Context</div>
                   <p className="text-[11px] text-[#6a7890] leading-relaxed mb-3">{selected.analysis.scientificContext}</p>
                 </>
               )}
 
               {selected.analysis.keyFeatures && selected.analysis.keyFeatures.length > 0 && (
                 <>
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Key Features</div>
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-1.5">Key Features</div>
                   <ul className="mb-3">
                     {selected.analysis.keyFeatures.map((kf, i) => (
                       <li key={i} className="text-[11px] text-[#6a7890] flex items-start gap-1.5 mb-0.5">
@@ -757,7 +757,7 @@ export function JWSTViewer() {
 
               {selected.analysis.funFacts && selected.analysis.funFacts.length > 0 && (
                 <>
-                  <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-1.5">Fun Facts</div>
+                  <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-1.5">Fun Facts</div>
                   <ul className="mb-3">
                     {selected.analysis.funFacts.map((ff, i) => (
                       <li key={i} className="text-[11px] text-[#6a7890] flex items-start gap-1.5 mb-1">
@@ -773,8 +773,8 @@ export function JWSTViewer() {
 
           {/* External links */}
           {selected.externalLinks && selected.externalLinks.length > 0 && (
-            <div className="px-4 pb-4 border-t border-[rgba(212,175,55,0.08)] pt-3 mt-auto">
-              <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mb-2">External Links</div>
+            <div className="px-4 pb-4 border-t border-white/[0.08] pt-3 mt-auto">
+              <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mb-2">External Links</div>
               <div className="flex flex-col gap-1.5">
                 {selected.externalLinks.map((link, i) => (
                   <a
@@ -834,8 +834,8 @@ function JWSTLogo() {
           opacity={i === 6 ? 1 : 0.7}
         />
       ))}
-      <line x1="3" y1="28" x2="29" y2="28" stroke="#4a5580" strokeWidth="0.5" opacity="0.4" />
-      <line x1="5" y1="30" x2="27" y2="30" stroke="#4a5580" strokeWidth="0.5" opacity="0.3" />
+      <line x1="3" y1="28" x2="29" y2="28" stroke="#7c88a8" strokeWidth="0.5" opacity="0.4" />
+      <line x1="5" y1="30" x2="27" y2="30" stroke="#7c88a8" strokeWidth="0.5" opacity="0.3" />
     </svg>
   )
 }
@@ -865,14 +865,14 @@ function Stat({ label, value, color }: { label: string; value: string | number; 
     blue: '#4a90e2',
     red: '#ff6b6b',
     orange: '#ff9a3c',
-    dim: '#4a5580',
+    dim: '#7c88a8',
   }
   return (
-    <div className="flex-1 py-2.5 px-4 border-r border-[rgba(212,175,55,0.08)] last:border-r-0 text-center">
+    <div className="flex-1 py-2.5 px-4 border-r border-white/[0.08] last:border-r-0 text-center">
       <div className="text-lg font-bold tabular-nums" style={{ color: colors[color] || colors.dim }}>
         {typeof value === 'number' ? value.toLocaleString() : value}
       </div>
-      <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a5580] mt-0.5">{label}</div>
+      <div className="text-[11px] uppercase tracking-[0.18em] text-cosmos-muted mt-0.5">{label}</div>
     </div>
   )
 }
@@ -885,7 +885,7 @@ function Chip({ children, active, onClick, color, title }: { children: React.Rea
       className={`px-2 py-1 rounded text-[10px] transition-all border ${
         active
           ? 'bg-[rgba(212,175,55,0.15)] text-[#d4af37] border-[rgba(212,175,55,0.3)]'
-          : 'bg-transparent text-[#4a5580] border-[rgba(212,175,55,0.08)] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.2)]'
+          : 'bg-transparent text-cosmos-muted border-white/[0.08] hover:text-[#d4af37] hover:border-[rgba(212,175,55,0.2)]'
       }`}
       style={active && color ? { color, borderColor: `${color}40` } : undefined}
     >
@@ -897,7 +897,7 @@ function Chip({ children, active, onClick, color, title }: { children: React.Rea
 function MetaItem({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div>
-      <div className="flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-[#4a5580] mb-0.5">
+      <div className="flex items-center gap-1 text-[11px] uppercase tracking-[0.15em] text-cosmos-muted mb-0.5">
         {icon}
         {label}
       </div>
@@ -919,14 +919,14 @@ function FeatureCard({ feature, isHovered, onHover, onLeave }: {
       className={`p-2 rounded-lg border transition-all cursor-default ${
         isHovered
           ? 'bg-[rgba(212,175,55,0.08)] border-[rgba(212,175,55,0.25)]'
-          : 'bg-white/[0.01] border-[rgba(212,175,55,0.06)]'
+          : 'bg-white/[0.01] border-white/[0.06]'
       }`}
     >
       <div className="flex items-center justify-between mb-0.5">
         <span className={`text-[11px] font-bold ${isHovered ? 'text-[#d4af37]' : 'text-[#e0e8ff]'}`}>
           {feature.label}
         </span>
-        <span className="text-[10px] text-[#4a5580]">
+        <span className="text-[10px] text-cosmos-muted">
           {Math.round(feature.confidence * 100)}%
         </span>
       </div>

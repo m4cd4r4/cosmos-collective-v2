@@ -260,7 +260,7 @@ export const JWSTSkyMap = forwardRef<
         <div className="absolute inset-0 bg-[#060a18] flex items-center justify-center z-10">
           <div className="text-center">
             <div className="w-6 h-6 border-2 border-[#d4af37] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-            <p className="text-[11px] text-[#4a5580] uppercase tracking-[0.15em]">Loading Sky Map…</p>
+            <p className="text-[11px] text-cosmos-muted uppercase tracking-[0.15em]">Loading Sky Map…</p>
           </div>
         </div>
       )}
@@ -345,7 +345,7 @@ export const JWSTSkyMap = forwardRef<
               )}
               {hoveredMarker.distanceLightYears && hoveredMarker.distanceLightYears > 0 && (
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-[#4a5580] uppercase tracking-wider">Distance</span>
+                  <span className="text-cosmos-muted uppercase tracking-wider">Distance</span>
                   <span className="text-[#8090b0]">{formatDistance(hoveredMarker.distanceLightYears)}</span>
                 </div>
               )}

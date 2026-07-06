@@ -57,14 +57,14 @@ export function getSeverityColor(severity: string): SeverityColorSet {
     case 'notable':
       return { bg: 'bg-[rgba(74,144,226,0.15)]', border: 'border-[rgba(74,144,226,0.3)]', text: 'text-[#4a90e2]' }
     default:
-      return { bg: 'bg-[rgba(255,255,255,0.05)]', border: 'border-[rgba(255,255,255,0.1)]', text: 'text-[#4a5580]' }
+      return { bg: 'bg-[rgba(255,255,255,0.05)]', border: 'border-[rgba(255,255,255,0.1)]', text: 'text-cosmos-muted' }
   }
 }
 
 export function getSeverityHex(severity: string): string {
   if (severity === 'once-in-lifetime' || severity === 'rare') return '#e040fb'
   if (severity === 'significant' || severity === 'notable') return '#d4af37'
-  return '#4a5580'
+  return '#7c88a8'
 }
 
 // ── Severity ordering ────────────────────────────────────────────────────
