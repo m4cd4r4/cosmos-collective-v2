@@ -3,7 +3,7 @@ import dynamic from 'next/dynamic'
 import { Header } from '@/components/layout/Header'
 
 export const metadata: Metadata = {
-  title: 'JWST Explorer | Cosmos Collective',
+  title: 'JWST Explorer',
   description:
     'Explore iconic James Webb Space Telescope observations with wavelength band switching, feature annotations, and scientific analysis. NIRCam and MIRI infrared views of nebulae, galaxies, and solar system objects.',
   keywords: [
