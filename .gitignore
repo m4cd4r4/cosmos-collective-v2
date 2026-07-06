@@ -133,3 +133,4 @@ DOMAIN_SETUP.md
 
 # Design reference images (local only, not app assets)
 design/references/*.jpg
+public/fallback-*.js
