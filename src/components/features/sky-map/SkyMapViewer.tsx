@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Script from 'next/script'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { cn, formatCoordinates, debounce } from '@/lib/utils'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
 import { getMeteorShowers } from '@/services/real-time-events'
@@ -26,6 +27,7 @@ import {
   Info,
   ChevronLeft,
   ChevronRight,
+  Globe,
   Eye,
   EyeOff,
 } from 'lucide-react'
@@ -111,41 +113,57 @@ interface AladinMarker {}
 // Survey Options (Different Wavelengths)
 // ============================================
 
+// Ordered long-wavelength to short (microwave -> gamma) so the switcher
+// reads as a spectrum. The default survey is selected by id, not index.
 const surveyOptions: {
   id: string
   name: string
+  short: string
   wavelength: WavelengthBand
   survey: string
   description: string
   color: string
 }[] = [
   {
-    id: 'dss',
-    name: 'DSS (Optical)',
-    wavelength: 'optical',
-    survey: 'P/DSS2/color',
-    description: 'Digitized Sky Survey - visible light',
-    color: '#f59e0b',
+    id: 'planck',
+    name: 'Planck (CMB)',
+    short: 'CMB',
+    wavelength: 'microwave',
+    survey: 'P/Planck/R2/HFI/color',
+    description: 'Planck Cosmic Microwave Background - the oldest light in the universe',
+    color: '#22c55e',
+  },
+  {
+    id: 'wise',
+    name: 'WISE (Mid-IR)',
+    short: 'Mid-IR',
+    wavelength: 'infrared',
+    survey: 'P/allWISE/color',
+    description: 'Wide-field Infrared Survey Explorer - mid-infrared dust and stars',
+    color: '#f97316',
   },
   {
     id: '2mass',
     name: '2MASS (Near-IR)',
+    short: 'Near-IR',
     wavelength: 'infrared',
     survey: 'P/2MASS/color',
     description: 'Two Micron All Sky Survey - near-infrared',
     color: '#ef4444',
   },
   {
-    id: 'wise',
-    name: 'WISE (Mid-IR)',
-    wavelength: 'infrared',
-    survey: 'P/allWISE/color',
-    description: 'Wide-field Infrared Survey Explorer',
-    color: '#dc2626',
+    id: 'dss',
+    name: 'DSS (Optical)',
+    short: 'Optical',
+    wavelength: 'optical',
+    survey: 'P/DSS2/color',
+    description: 'Digitized Sky Survey - visible light',
+    color: '#f59e0b',
   },
   {
     id: 'galex',
     name: 'GALEX (UV)',
+    short: 'UV',
     wavelength: 'ultraviolet',
     survey: 'P/GALEXGR6/AIS/color',
     description: 'Galaxy Evolution Explorer - ultraviolet',
@@ -154,20 +172,15 @@ const surveyOptions: {
   {
     id: 'fermi',
     name: 'Fermi (Gamma)',
+    short: 'Gamma',
     wavelength: 'gamma',
     survey: 'P/Fermi/color',
-    description: 'Fermi Gamma-ray Space Telescope',
+    description: 'Fermi Gamma-ray Space Telescope - the highest-energy sky',
     color: '#06b6d4',
   },
-  {
-    id: 'planck',
-    name: 'Planck (CMB)',
-    wavelength: 'microwave',
-    survey: 'P/Planck/R2/HFI/color',
-    description: 'Planck Cosmic Microwave Background',
-    color: '#22c55e',
-  },
 ]
+
+const DEFAULT_SURVEY = surveyOptions.find((s) => s.id === 'dss')!
 
 // ============================================
 // Props
@@ -200,7 +213,7 @@ export function SkyMapViewer({
 
   const [isLoaded, setIsLoaded] = useState(false)
   const [loadError, setLoadError] = useState<string | null>(null)
-  const [currentSurvey, setCurrentSurvey] = useState(surveyOptions[0])
+  const [currentSurvey, setCurrentSurvey] = useState(DEFAULT_SURVEY)
   const [searchQuery, setSearchQuery] = useState(initialTarget || '')
   const [currentCoords, setCurrentCoords] = useState<SkyCoordinates | null>(null)
   const [currentFov, setCurrentFov] = useState(initialFov)
@@ -523,7 +536,7 @@ export function SkyMapViewer({
   }, [showMeteorRadiants])
 
   return (
-    <>
+    <div className="absolute inset-0 flex flex-col">
       {/* Load Aladin Lite v3 - CSS is bundled in the JS */}
       <Script
         src="https://aladin.cds.unistra.fr/AladinLite/api/v3/latest/aladin.js"
@@ -531,8 +544,50 @@ export function SkyMapViewer({
         onLoad={initializeAladin}
       />
 
-      <div className="absolute inset-0 flex">
-        {/* Sidebar */}
+      {/* Instrument shell: title + live coordinate readout */}
+      <PageHeader
+        icon={Globe}
+        title="Sky Map"
+        badge={{ text: 'Aladin Lite', color: '#4a90e2' }}
+        rightContent={
+          <div className="hidden sm:flex items-center gap-4 font-mono text-[11px] tabular-nums text-cosmos-muted">
+            <span>RA <span className="text-gray-200">{currentCoords ? currentCoords.ra.toFixed(2) : '--'}°</span></span>
+            <span>Dec <span className="text-gray-200">{currentCoords ? `${currentCoords.dec >= 0 ? '+' : ''}${currentCoords.dec.toFixed(2)}` : '--'}°</span></span>
+            <span>FoV <span className="text-gray-200">{currentFov.toFixed(1)}°</span></span>
+            <span className="hidden lg:inline text-gray-600">CDS Strasbourg</span>
+          </div>
+        }
+      />
+
+      {/* Wavelength switcher - the multi-spectrum identity, first-class and always visible */}
+      <div className="flex items-center gap-1.5 px-4 py-2 bg-[rgba(8,12,28,0.9)] border-b border-cosmos-gold/[0.15] overflow-x-auto shrink-0">
+        <span className="text-[11px] uppercase tracking-widest text-gray-500 shrink-0 mr-1.5 hidden sm:inline">
+          Spectrum
+        </span>
+        {surveyOptions.map((s) => (
+          <button
+            key={s.id}
+            type="button"
+            onClick={() => changeSurvey(s)}
+            title={s.description}
+            aria-pressed={currentSurvey.id === s.id}
+            className={cn(
+              'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition-colors border shrink-0',
+              currentSurvey.id === s.id
+                ? 'bg-white/[0.08] border-white/20 text-white'
+                : 'border-transparent text-cosmos-muted hover:text-white hover:bg-white/[0.04]'
+            )}
+          >
+            <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+            {s.short}
+          </button>
+        ))}
+      </div>
+
+      {/* Map region */}
+      <div className="relative flex-1 min-h-0">
+        <div className="absolute inset-0 flex">
+          {/* Sidebar */}
         <aside
           className={cn(
             'relative z-20 h-full bg-cosmos-depth border-r border-white/10 transition-all duration-300',
@@ -572,39 +627,6 @@ export function SkyMapViewer({
                 </div>
               )}
 
-              {/* Survey Layers */}
-              <div className="mb-6">
-                <label className="text-xs text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <Layers className="w-4 h-4" />
-                  Wavelength Layer
-                </label>
-                <div className="space-y-2">
-                  {surveyOptions.map((survey) => (
-                    <button
-                      key={survey.id}
-                      type="button"
-                      onClick={() => changeSurvey(survey)}
-                      className={cn(
-                        'w-full flex items-center gap-3 p-2 rounded-lg text-left transition-all text-sm',
-                        currentSurvey.id === survey.id
-                          ? 'bg-white/10 border border-white/20'
-                          : 'hover:bg-white/5'
-                      )}
-                    >
-                      <span
-                        className="w-3 h-3 rounded-full"
-                        style={{ backgroundColor: survey.color }}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-white truncate">{survey.name}</div>
-                        <div className="text-xs text-gray-500 truncate">
-                          {survey.description}
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
-              </div>
 
               {/* Overlays */}
               <div className="mb-6">
@@ -822,20 +844,6 @@ export function SkyMapViewer({
             </div>
           </div>
 
-          {/* Info Badge */}
-          <div className={cn(
-            'absolute top-4 right-4 z-20 transition-all duration-300',
-            uiHidden && 'opacity-0 pointer-events-none'
-          )}>
-            <div className="glass-panel rounded-lg px-3 py-2 flex items-center gap-2 text-xs">
-              <div
-                className="w-2 h-2 rounded-full"
-                style={{ backgroundColor: currentSurvey.color }}
-              />
-              <span className="text-gray-300">{currentSurvey.name}</span>
-            </div>
-          </div>
-
           {/* Hide/Show UI Toggle */}
           <button
             type="button"
@@ -847,7 +855,7 @@ export function SkyMapViewer({
               'absolute z-30 transition-all duration-300 glass-panel rounded-lg p-2 hover:bg-white/10',
               uiHidden
                 ? 'bottom-6 right-6 opacity-50 hover:opacity-100'
-                : 'top-4 right-36'
+                : 'top-4 right-4'
             )}
             aria-label={uiHidden ? 'Show controls' : 'Hide controls'}
             title={uiHidden ? 'Show controls' : 'Hide controls'}
@@ -924,7 +932,8 @@ export function SkyMapViewer({
             </div>
           )}
         </div>
+        </div>
       </div>
-    </>
+    </div>
   )
 }
