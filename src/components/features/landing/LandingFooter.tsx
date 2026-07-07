@@ -5,6 +5,7 @@ import Link from 'next/link'
 const EXPLORE_LINKS = [
   { label: 'Solar System', href: '/solar-system' },
   { label: 'JWST', href: '/jwst' },
+  { label: 'Gravitational Lens', href: '/gravitational-lens' },
   { label: 'Kepler Exoplanets', href: '/kepler' },
   { label: 'Sky Map', href: '/sky-map' },
   { label: 'Live Events', href: '/events' },

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { PLANET_HERO_IMAGES } from '@/components/features/planet-hero-images'
-import { Telescope, Globe, Search, Radio, Orbit, Sun } from 'lucide-react'
+import { Telescope, Globe, Search, Radio, Orbit, Sun, Aperture } from 'lucide-react'
 
 const FEATURES = [
   {
@@ -22,6 +22,15 @@ const FEATURES = [
     image: PLANET_HERO_IMAGES.pillars,
     icon: Telescope,
     color: '#4a90e2',
+    featured: true,
+  },
+  {
+    title: 'Gravitational Lens Telescope',
+    href: '/gravitational-lens',
+    description: 'Fly to 650 AU and use the Sun itself as a telescope to image an exoplanet\'s surface',
+    image: { url: '/images/gravitational-lens-card.webp' },
+    icon: Aperture,
+    color: '#ffb000',
     featured: true,
   },
   {
