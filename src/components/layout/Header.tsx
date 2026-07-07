@@ -9,13 +9,14 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Telescope, Calendar, Globe, Orbit, Sun, Hexagon, Satellite } from 'lucide-react'
+import { Telescope, Calendar, Globe, Orbit, Sun, Hexagon, Satellite, Aperture } from 'lucide-react'
 
 const navItems = [
   { label: 'Explore', href: '/explore', icon: Telescope, description: 'Browse JWST, Hubble, and radio telescope observations' },
   { label: 'Live', href: '/events', icon: Calendar, description: 'ISS tracker, solar weather, and real-time events' },
   { label: 'Spacecraft', href: '/spacecraft', icon: Satellite, description: 'Space telescopes, probes, and stations encyclopedia' },
   { label: 'Solar System', href: '/solar-system', icon: Sun, description: 'Interactive 3D solar system' },
+  { label: 'Grav Lens', href: '/gravitational-lens', icon: Aperture, description: 'Solar Gravitational Lens telescope mission concept' },
   { label: 'Kepler', href: '/kepler', icon: Orbit, description: '2,600+ Kepler exoplanets' },
   { label: 'JWST', href: '/jwst', icon: Hexagon, description: 'JWST observation explorer' },
 ]
@@ -125,7 +126,7 @@ function DesktopNav() {
   const pathname = usePathname()
 
   return (
-    <nav className="hidden lg:flex items-center gap-1" aria-label="Main navigation">
+    <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1" aria-label="Main navigation">
       {navItems.map((item) => {
         const Icon = item.icon
         const isActive = pathname === item.href
@@ -137,14 +138,14 @@ function DesktopNav() {
             prefetch={true}
             title={item.description}
             className={cn(
-              'flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-200',
+              'flex items-center gap-1.5 xl:gap-2 px-2.5 xl:px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-200',
               isActive
                 ? 'bg-cosmos-gold/10 text-cosmos-gold'
                 : 'text-gray-300 hover:text-white hover:bg-white/5'
             )}
             aria-current={isActive ? 'page' : undefined}
           >
-            <Icon className="w-4 h-4" aria-hidden="true" />
+            <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
             {item.label}
           </Link>
         )
@@ -162,6 +163,7 @@ const mobileNavItems = [
   { label: 'Live', href: '/events', icon: Calendar },
   { label: 'Craft', href: '/spacecraft', icon: Satellite },
   { label: 'Solar', href: '/solar-system', icon: Sun },
+  { label: 'Lens', href: '/gravitational-lens', icon: Aperture },
   { label: 'Kepler', href: '/kepler', icon: Orbit },
   { label: 'Webb', href: '/jwst', icon: Hexagon },
 ]
