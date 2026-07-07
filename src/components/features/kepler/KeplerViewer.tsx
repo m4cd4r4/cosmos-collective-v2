@@ -323,7 +323,11 @@ export function KeplerViewer() {
         {/* DETAIL PANEL */}
         <aside className={`bg-[rgba(13,18,35,0.92)] border-l border-[rgba(74,144,226,0.15)] p-3.5 overflow-y-auto flex-col gap-3.5 ${mobileTab === 'filters' ? 'flex' : 'hidden lg:flex'}`}>
           {!selected ? (
-            <EmptyDetail />
+            <FeaturedPlanet
+              stars={stars}
+              onSelect={setSelected}
+              onSearch={(q) => setFilter('search', q)}
+            />
           ) : (
             <>
               <StarDetail star={selected} />
@@ -435,17 +439,113 @@ function ChipGroup({
   )
 }
 
-function EmptyDetail() {
+// Featured "weird planet" opening state. Kepler-16b - the first confirmed
+// circumbinary planet ("Tatooine"). Curated with real, sourced values
+// (Doyle et al. 2011, Science; NASA Exoplanet Archive) so the numbers stay
+// correct regardless of what the live TAP row carries for this system.
+function FeaturedPlanet({
+  stars,
+  onSelect,
+  onSearch,
+}: {
+  stars: StarSystem[]
+  onSelect: (s: StarSystem) => void
+  onSearch: (q: string) => void
+}) {
+  const facts: Array<{ label: string; value: string }> = [
+    { label: 'Orbits', value: '2 stars' },
+    { label: 'Year', value: '229 days' },
+    { label: 'Radius', value: '8.5 R⊕' },
+    { label: 'Distance', value: '~245 ly' },
+  ]
+
+  const handleExplore = () => {
+    const norm = (x: string) => x.toLowerCase().replace(/[\s()_-]/g, '')
+    const host = stars.find(
+      (s) => norm(s.name) === 'kepler16' || norm(s.name) === 'kepler16ab',
+    )
+    if (host) onSelect(host)
+    else onSearch('Kepler-16')
+  }
+
   return (
-    <div className="flex flex-col items-center justify-center h-full text-cosmos-muted text-center gap-3">
-      <svg width="52" height="52" viewBox="0 0 52 52" fill="none" aria-hidden>
-        <circle cx="26" cy="26" r="18" stroke="rgba(74,144,226,0.2)" strokeWidth="1.2"/>
-        <circle cx="26" cy="26" r="5" fill="rgba(74,144,226,0.25)"/>
-        <circle cx="40" cy="26" r="2.5" fill="rgba(74,144,226,0.15)"/>
-        <circle cx="16" cy="26" r="1.8" fill="rgba(74,144,226,0.15)"/>
-        <ellipse cx="26" cy="26" rx="14" ry="5" stroke="rgba(74,144,226,0.12)" strokeWidth="0.8" fill="none"/>
-      </svg>
-      <p className="text-xs leading-loose max-w-[200px]">Click any star to explore its planetary system and orbital diagram</p>
+    <div className="flex flex-col gap-3.5">
+      <div className="text-[11px] uppercase tracking-[0.18em] text-[#4a90e2]">
+        Featured world
+      </div>
+
+      {/* Circumbinary illustration: a planet lit by two suns */}
+      <div className="relative rounded-lg overflow-hidden border border-[rgba(74,144,226,0.15)] bg-gradient-to-b from-[rgba(74,144,226,0.06)] to-transparent">
+        <svg viewBox="0 0 280 120" className="w-full h-auto" role="img" aria-label="Kepler-16b, a gas giant lit by two suns">
+          <defs>
+            <radialGradient id="kp16-planet" cx="38%" cy="35%" r="75%">
+              <stop offset="0%" stopColor="#e6c98a" />
+              <stop offset="55%" stopColor="#b98d4e" />
+              <stop offset="100%" stopColor="#2a1e12" />
+            </radialGradient>
+            <radialGradient id="kp16-sunA" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#fff6e0" />
+              <stop offset="60%" stopColor="#ffd27a" />
+              <stop offset="100%" stopColor="#ffd27a" stopOpacity="0" />
+            </radialGradient>
+            <radialGradient id="kp16-sunB" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stopColor="#ffd9c2" />
+              <stop offset="55%" stopColor="#ff8f6b" />
+              <stop offset="100%" stopColor="#ff8f6b" stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          {/* stars */}
+          <circle cx="228" cy="34" r="16" fill="url(#kp16-sunA)" />
+          <circle cx="228" cy="34" r="6" fill="#fff6e0" />
+          <circle cx="248" cy="60" r="11" fill="url(#kp16-sunB)" />
+          <circle cx="248" cy="60" r="3.5" fill="#ffd9c2" />
+          {/* planet */}
+          <circle cx="96" cy="62" r="40" fill="url(#kp16-planet)" />
+          <ellipse cx="96" cy="62" rx="40" ry="40" fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="1" />
+          {/* faint distant stars */}
+          <circle cx="30" cy="20" r="1" fill="#fff" opacity="0.4" />
+          <circle cx="160" cy="96" r="1" fill="#fff" opacity="0.3" />
+          <circle cx="190" cy="18" r="0.8" fill="#fff" opacity="0.35" />
+        </svg>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-bold text-[#e0e8ff] leading-tight">Kepler-16b</h3>
+        <div className="text-[11px] text-cosmos-muted mt-0.5">
+          &ldquo;Tatooine&rdquo; · circumbinary planet
+        </div>
+      </div>
+
+      <p className="text-xs leading-relaxed text-[#c8d4f0]">
+        The first planet ever found orbiting two stars at once. A cold,
+        Saturn-sized world circling a K-dwarf and a red dwarf, where both suns
+        rise and set together - the real Tatooine, about 245 light-years away.
+      </p>
+
+      <div className="grid grid-cols-2 gap-px bg-[rgba(74,144,226,0.12)] rounded-lg overflow-hidden border border-[rgba(74,144,226,0.12)]">
+        {facts.map((f) => (
+          <div key={f.label} className="bg-[rgba(13,18,35,0.92)] px-3 py-2">
+            <div className="text-[10px] uppercase tracking-[0.14em] text-cosmos-muted">{f.label}</div>
+            <div className="text-sm font-bold text-[#a0c8ff] mt-0.5">{f.value}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="text-[10px] text-cosmos-faint">
+        Cold gas giant · discovered 2011 · Doyle et al. / NASA Exoplanet Archive
+      </div>
+
+      <button
+        onClick={handleExplore}
+        className="flex items-center justify-center gap-2 px-3 py-2 rounded bg-[rgba(74,144,226,0.1)] border border-[rgba(74,144,226,0.25)] text-[11px] text-[#a0c8ff] hover:bg-[rgba(74,144,226,0.18)] transition-all"
+      >
+        Find Kepler-16 in the field
+        <span aria-hidden>→</span>
+      </button>
+
+      <p className="text-[10px] text-cosmos-muted text-center leading-relaxed">
+        or click any star to explore all {stars.length.toLocaleString()} systems
+      </p>
     </div>
   )
 }
