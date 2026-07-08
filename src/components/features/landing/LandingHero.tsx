@@ -26,22 +26,40 @@ const SECONDARY_LINKS = [
   { label: '2,700+ exoplanets', href: '/kepler' },
 ]
 
+// Perth runs on AWST (UTC+8) year-round - no daylight saving - so this is a
+// fixed offset regardless of where the visitor is.
+function formatAWST(): string {
+  return new Date().toLocaleTimeString('en-GB', {
+    timeZone: 'Australia/Perth',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  })
+}
+
 export function LandingHero() {
-  const { utcTime, issPosition, issVelocity } = useTelemetryData()
+  const { issPosition, issVelocity } = useTelemetryData()
   const [mounted, setMounted] = useState(false)
   const [showScene, setShowScene] = useState(false)
   const [sceneReady, setSceneReady] = useState(false)
   const [moon, setMoon] = useState<MoonIllumination | null>(null)
+  const [clock, setClock] = useState('')
 
   useEffect(() => {
     setMounted(true)
     setMoon(getMoonIllumination(new Date()))
+    setClock(formatAWST())
     // Desktops get the live scene. HeroScene renders a single static frame
     // when the user prefers reduced motion, so no animation is forced and the
     // orbit-line poster fallback is only for mobile / no-WebGL.
     if (window.innerWidth >= 1024) setShowScene(true)
-    const id = setInterval(() => setMoon(getMoonIllumination(new Date())), 60_000)
-    return () => clearInterval(id)
+    const moonId = setInterval(() => setMoon(getMoonIllumination(new Date())), 60_000)
+    const clockId = setInterval(() => setClock(formatAWST()), 1000)
+    return () => {
+      clearInterval(moonId)
+      clearInterval(clockId)
+    }
   }, [])
 
   return (
@@ -83,7 +101,7 @@ export function LandingHero() {
               className="text-xs font-mono tabular-nums text-gray-400"
               suppressHydrationWarning
             >
-              {mounted ? `${utcTime} UTC` : 'UTC'}
+              {mounted ? `${clock} AWST` : 'AWST'}
             </span>
             {moon && (
               <span className="hidden sm:inline text-xs text-gray-500 border-l border-white/10 pl-2.5">
