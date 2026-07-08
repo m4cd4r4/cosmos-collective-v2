@@ -24,7 +24,6 @@ const HeroScene = dynamic(
 const SECONDARY_LINKS = [
   { label: 'Latest from JWST', href: '/jwst' },
   { label: '2,700+ exoplanets', href: '/kepler' },
-  { label: 'String of Pearls', href: '/gravitational-lens' },
 ]
 
 export function LandingHero() {
@@ -114,6 +113,16 @@ export function LandingHero() {
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-cosmos-gold text-cosmos-void font-semibold text-sm sm:text-base hover:bg-cosmos-amber transition-colors focus-visible:ring-2 focus-visible:ring-cosmos-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void"
             >
               Enter the Solar System
+              <ArrowRight className="w-4 h-4" aria-hidden="true" />
+            </Link>
+
+            {/* Secondary CTA: prominent but visually subordinate to the Solar
+                System (still the most interactive feature on the site) */}
+            <Link
+              href="/gravitational-lens"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-white/20 bg-white/[0.06] text-gray-100 font-semibold text-sm sm:text-base hover:bg-white/[0.12] hover:border-white/35 transition-colors focus-visible:ring-2 focus-visible:ring-cosmos-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void"
+            >
+              String of Pearls
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
 
