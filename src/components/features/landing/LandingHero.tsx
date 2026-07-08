@@ -26,16 +26,22 @@ const SECONDARY_LINKS = [
   { label: '2,700+ exoplanets', href: '/kepler' },
 ]
 
-// Perth runs on AWST (UTC+8) year-round - no daylight saving - so this is a
-// fixed offset regardless of where the visitor is.
-function formatAWST(): string {
-  return new Date().toLocaleTimeString('en-GB', {
-    timeZone: 'Australia/Perth',
+// The visitor's own local time plus their timezone abbreviation (e.g. AWST,
+// GMT, PDT). No timeZone option, so the browser uses its detected zone.
+function formatLocalClock(): string {
+  const now = new Date()
+  const time = now.toLocaleTimeString('en-GB', {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
     hour12: false,
   })
+  // Default locale for the zone so each visitor gets their own abbreviation
+  // (AWST in Perth, PST/EST in the US, GMT/BST in the UK).
+  const zone = new Intl.DateTimeFormat(undefined, { timeZoneName: 'short' })
+    .formatToParts(now)
+    .find((part) => part.type === 'timeZoneName')?.value
+  return zone ? `${time} ${zone}` : time
 }
 
 export function LandingHero() {
@@ -49,13 +55,13 @@ export function LandingHero() {
   useEffect(() => {
     setMounted(true)
     setMoon(getMoonIllumination(new Date()))
-    setClock(formatAWST())
+    setClock(formatLocalClock())
     // Desktops get the live scene. HeroScene renders a single static frame
     // when the user prefers reduced motion, so no animation is forced and the
     // orbit-line poster fallback is only for mobile / no-WebGL.
     if (window.innerWidth >= 1024) setShowScene(true)
     const moonId = setInterval(() => setMoon(getMoonIllumination(new Date())), 60_000)
-    const clockId = setInterval(() => setClock(formatAWST()), 1000)
+    const clockId = setInterval(() => setClock(formatLocalClock()), 1000)
     return () => {
       clearInterval(moonId)
       clearInterval(clockId)
@@ -101,7 +107,7 @@ export function LandingHero() {
               className="text-xs font-mono tabular-nums text-gray-400"
               suppressHydrationWarning
             >
-              {mounted ? `${clock} AWST` : 'AWST'}
+              {mounted ? clock : ''}
             </span>
             {moon && (
               <span className="hidden sm:inline text-xs text-gray-500 border-l border-white/10 pl-2.5">
