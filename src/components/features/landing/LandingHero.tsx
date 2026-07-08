@@ -3,33 +3,53 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import dynamic from 'next/dynamic'
 import { ChevronDown, ArrowRight } from 'lucide-react'
 import { useTelemetryData } from '@/components/features/mission-control/useTelemetryData'
+import { getMoonIllumination, type MoonIllumination } from '@/lib/celestial'
 
 /**
  * Landing hero: the solar system as the centre of gravity.
- * Full-bleed scene from the Solar System Explorer with live telemetry
- * overlays (real UTC clock, real ISS position) so "live" is verifiable.
+ * On capable desktops the Earth and Moon are rendered live for the current
+ * instant (real day/night terminator, real Moon phase); mobile and
+ * reduced-motion keep the static poster. Real UTC clock, ISS position, and
+ * Moon phase make "right now" verifiable.
  */
+
+const HeroScene = dynamic(
+  () => import('./HeroScene').then((m) => m.HeroScene),
+  { ssr: false },
+)
 
 const SECONDARY_LINKS = [
   { label: 'Latest from JWST', href: '/jwst' },
-  { label: '2,600+ exoplanets', href: '/kepler' },
+  { label: '2,700+ exoplanets', href: '/kepler' },
   { label: 'Live sun', href: '/events' },
 ]
 
 export function LandingHero() {
   const { utcTime, issPosition, issVelocity } = useTelemetryData()
   const [mounted, setMounted] = useState(false)
+  const [showScene, setShowScene] = useState(false)
+  const [sceneReady, setSceneReady] = useState(false)
+  const [moon, setMoon] = useState<MoonIllumination | null>(null)
 
-  useEffect(() => setMounted(true), [])
+  useEffect(() => {
+    setMounted(true)
+    setMoon(getMoonIllumination(new Date()))
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    // Live render only where it is cheap and welcome: wide screens, motion OK
+    if (window.innerWidth >= 1024 && !reduced) setShowScene(true)
+    const id = setInterval(() => setMoon(getMoonIllumination(new Date())), 60_000)
+    return () => clearInterval(id)
+  }, [])
 
   return (
     <section
       className="relative h-[100svh] min-h-[560px] overflow-hidden -mt-16"
       aria-labelledby="hero-heading"
     >
-      {/* Scene: Earth and Moon from the Solar System Explorer */}
+      {/* Scene: Earth and Moon, live on capable desktops, static poster otherwise */}
       <div className="absolute inset-0">
         <Image
           src="/images/hero-earth-close.webp"
@@ -38,9 +58,10 @@ export function LandingHero() {
           fill
           priority
           unoptimized
-          className="object-cover object-[70%_center]"
+          className={`object-cover object-[70%_center] transition-opacity duration-700 ${sceneReady ? 'opacity-0' : 'opacity-100'}`}
           sizes="100vw"
         />
+        {showScene && <HeroScene onReady={() => setSceneReady(true)} />}
         {/* Scrim: readable text on the left, scene untouched on the right */}
         <div className="absolute inset-0 bg-gradient-to-r from-[rgba(10,14,26,0.88)] via-[rgba(10,14,26,0.45)] to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0e1a] to-transparent" />
@@ -64,6 +85,11 @@ export function LandingHero() {
             >
               {mounted ? `${utcTime} UTC` : 'UTC'}
             </span>
+            {moon && (
+              <span className="hidden sm:inline text-xs text-gray-500 border-l border-white/10 pl-2.5">
+                {moon.phaseName} · {Math.round(moon.fraction * 100)}% lit
+              </span>
+            )}
           </div>
 
           <h1
@@ -72,7 +98,7 @@ export function LandingHero() {
           >
             The solar system,
             <br />
-            right now.
+            right about now.
           </h1>
 
           <p className="text-base sm:text-lg text-gray-300 leading-relaxed max-w-xl mb-8">
