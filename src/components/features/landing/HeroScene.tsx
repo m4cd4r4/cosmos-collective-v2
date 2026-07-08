@@ -19,10 +19,10 @@ import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
 import { getSunDirection, getMoonIllumination } from '@/lib/celestial'
 
-const EARTH_DAY = '/solar-system/textures/earth_daymap.jpg'
-const EARTH_NIGHT = '/solar-system/textures/earth_nightmap.jpg'
+const EARTH_DAY = '/solar-system/textures/4k_earth_daymap.jpg'
+const EARTH_NIGHT = '/solar-system/textures/4k_earth_nightmap.jpg'
 const MOON_TEX = '/images/hero-moon.jpg'
-const STAR_TEX = '/solar-system/textures/stars_milky_way.jpg'
+const STAR_TEX = '/solar-system/textures/8k_stars_milky_way.jpg'
 
 const EARTH_VERT = /* glsl */ `
   varying vec2 vUv;
@@ -109,6 +109,11 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     starTex.colorSpace = THREE.SRGBColorSpace
     starTex.mapping = THREE.EquirectangularReflectionMapping
     scene.background = starTex
+
+    // Anisotropic filtering keeps the Earth and star map crisp at grazing
+    // angles (the limb) instead of smearing - the main "not sharp" culprit.
+    const maxAniso = renderer.capabilities.getMaxAnisotropy()
+    ;[dayTex, nightTex, moonTex, starTex].forEach((t) => (t.anisotropy = maxAniso))
 
     // Earth (layer 0), lit by the real sub-solar direction
     const earth = new THREE.Mesh(
