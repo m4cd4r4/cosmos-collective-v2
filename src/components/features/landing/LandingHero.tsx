@@ -37,9 +37,10 @@ export function LandingHero() {
   useEffect(() => {
     setMounted(true)
     setMoon(getMoonIllumination(new Date()))
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    // Live render only where it is cheap and welcome: wide screens, motion OK
-    if (window.innerWidth >= 1024 && !reduced) setShowScene(true)
+    // Desktops get the live scene. HeroScene renders a single static frame
+    // when the user prefers reduced motion, so no animation is forced and the
+    // orbit-line poster fallback is only for mobile / no-WebGL.
+    if (window.innerWidth >= 1024) setShowScene(true)
     const id = setInterval(() => setMoon(getMoonIllumination(new Date())), 60_000)
     return () => clearInterval(id)
   }, [])
