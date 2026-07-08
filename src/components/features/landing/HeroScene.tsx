@@ -124,7 +124,9 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
         fragmentShader: EARTH_FRAG,
       }),
     )
-    earth.position.set(-0.55, 0, 0)
+    // Right-anchored so the headline on the left sits over clear starry
+    // space, not over the globe. Holds from ~16:9 through ultrawide.
+    earth.position.set(1.95, -0.1, 0)
     earth.rotation.z = 23.4 * (Math.PI / 180)
     earth.rotation.y = Math.PI // frame a populated hemisphere
     scene.add(earth)
@@ -134,7 +136,8 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
       new THREE.SphereGeometry(0.27, 48, 48),
       new THREE.MeshStandardMaterial({ map: moonTex, roughness: 1, metalness: 0 }),
     )
-    moon.position.set(3.05, 0.5, -0.4)
+    // Close above-right of Earth so the pair reads as one unit, not a wide gap.
+    moon.position.set(3.1, 1.15, -0.5)
     moon.layers.set(1)
     scene.add(moon)
 
@@ -164,10 +167,72 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     moonAmbient.layers.set(1)
     scene.add(moonAmbient)
 
+    // A scatter of foreground stars that gently glitter over the backdrop.
+    // Soft round sprites (not sub-pixel points), brightness eased by a per-star
+    // phase, so it twinkles without the shimmer of the old procedural points.
+    const TW_N = 340
+    const twGeo = new THREE.BufferGeometry()
+    const twPos = new Float32Array(TW_N * 3)
+    const twPhase = new Float32Array(TW_N)
+    const twScale = new Float32Array(TW_N)
+    let twSeed = 991
+    const twRand = () => { twSeed = (twSeed * 1103515245 + 12345) & 0x7fffffff; return twSeed / 0x7fffffff }
+    for (let k = 0; k < TW_N; k++) {
+      const r = 22 + twRand() * 22
+      const th = twRand() * Math.PI * 2
+      const ph = Math.acos(2 * twRand() - 1)
+      twPos[k * 3] = r * Math.sin(ph) * Math.cos(th)
+      twPos[k * 3 + 1] = r * Math.sin(ph) * Math.sin(th)
+      twPos[k * 3 + 2] = r * Math.cos(ph)
+      twPhase[k] = twRand() * Math.PI * 2
+      twScale[k] = 1.4 + twRand() * twRand() * 4.5 // mostly small, a few brighter
+    }
+    twGeo.setAttribute('position', new THREE.BufferAttribute(twPos, 3))
+    twGeo.setAttribute('aPhase', new THREE.BufferAttribute(twPhase, 1))
+    twGeo.setAttribute('aScale', new THREE.BufferAttribute(twScale, 1))
+    const twUniforms = {
+      uTime: { value: 0 },
+      uColor: { value: new THREE.Color(0xeaf1ff) },
+      uPix: { value: Math.min(window.devicePixelRatio, 2) },
+    }
+    const twinkle = new THREE.Points(
+      twGeo,
+      new THREE.ShaderMaterial({
+        uniforms: twUniforms,
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        vertexShader: `
+          attribute float aPhase;
+          attribute float aScale;
+          uniform float uTime;
+          uniform float uPix;
+          varying float vTw;
+          void main() {
+            vTw = 0.4 + 0.6 * sin(uTime * 1.5 + aPhase);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            gl_PointSize = aScale * uPix * (0.75 + 0.45 * vTw);
+          }
+        `,
+        fragmentShader: `
+          uniform vec3 uColor;
+          varying float vTw;
+          void main() {
+            float d = length(gl_PointCoord - 0.5);
+            if (d > 0.5) discard;
+            float core = smoothstep(0.5, 0.0, d);
+            gl_FragColor = vec4(uColor, core * (0.12 + 0.5 * max(vTw, 0.0)));
+          }
+        `,
+      }),
+    )
+    scene.add(twinkle)
+
     let raf = 0
     const render = () => renderer.render(scene, camera)
     const animate = () => {
       earth.rotation.y += 0.0006 // gentle; terminator is sun-locked in the shader
+      twUniforms.uTime.value = performance.now() / 1000
       render()
       raf = requestAnimationFrame(animate)
     }
