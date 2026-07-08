@@ -24,7 +24,7 @@ const HeroScene = dynamic(
 const SECONDARY_LINKS = [
   { label: 'Latest from JWST', href: '/jwst' },
   { label: '2,700+ exoplanets', href: '/kepler' },
-  { label: 'Live sun', href: '/events' },
+  { label: 'String of Pearls', href: '/gravitational-lens' },
 ]
 
 export function LandingHero() {
