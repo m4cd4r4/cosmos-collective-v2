@@ -8,10 +8,11 @@
  * - The Moon is lit to the real current phase (illuminated fraction and
  *   bright-limb orientation from the true Sun-Moon geometry).
  *
- * Deliberately lightweight (two spheres + a starfield, ~0.8MB of textures)
- * and desktop-only: mobile / reduced-motion / no-WebGL keep the static
- * poster in LandingHero. Honours prefers-reduced-motion by rendering a
- * single accurate frame with no animation loop.
+ * Deliberately lightweight (two spheres over an equirectangular Milky Way
+ * backdrop, ~1MB of textures) and desktop-only: mobile / reduced-motion /
+ * no-WebGL keep the static poster in LandingHero. Honours
+ * prefers-reduced-motion by rendering a single accurate frame with no loop.
+ * The scene is built once on mount; a parent re-render must never rebuild it.
  */
 
 import { useEffect, useRef } from 'react'
@@ -21,6 +22,7 @@ import { getSunDirection, getMoonIllumination } from '@/lib/celestial'
 const EARTH_DAY = '/solar-system/textures/earth_daymap.jpg'
 const EARTH_NIGHT = '/solar-system/textures/earth_nightmap.jpg'
 const MOON_TEX = '/images/hero-moon.jpg'
+const STAR_TEX = '/solar-system/textures/stars_milky_way.jpg'
 
 const EARTH_VERT = /* glsl */ `
   varying vec2 vUv;
@@ -59,6 +61,11 @@ const EARTH_FRAG = /* glsl */ `
 
 export function HeroScene({ onReady }: { onReady?: () => void }) {
   const mountRef = useRef<HTMLDivElement>(null)
+  // Keep the latest onReady without making it an effect dependency, so a
+  // parent re-render (the live UTC clock ticks every second) never tears the
+  // whole WebGL scene down and rebuilds it - which read as a flicker.
+  const onReadyRef = useRef(onReady)
+  onReadyRef.current = onReady
 
   useEffect(() => {
     const mount = mountRef.current
@@ -91,9 +98,17 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     const loader = new THREE.TextureLoader()
     const dayTex = loader.load(EARTH_DAY)
     const nightTex = loader.load(EARTH_NIGHT)
-    const moonTex = loader.load(MOON_TEX, () => onReady?.())
+    const moonTex = loader.load(MOON_TEX, () => onReadyRef.current?.())
     ;[dayTex, nightTex].forEach((t) => (t.colorSpace = THREE.LinearSRGBColorSpace))
     moonTex.colorSpace = THREE.SRGBColorSpace
+
+    // Rich, stable star background: an equirectangular Milky Way map behind
+    // everything. Static, so it never shimmers, and far denser than the old
+    // procedural points.
+    const starTex = loader.load(STAR_TEX)
+    starTex.colorSpace = THREE.SRGBColorSpace
+    starTex.mapping = THREE.EquirectangularReflectionMapping
+    scene.background = starTex
 
     // Earth (layer 0), lit by the real sub-solar direction
     const earth = new THREE.Mesh(
@@ -149,25 +164,6 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     moonAmbient.layers.set(1)
     scene.add(moonAmbient)
 
-    // Starfield
-    const starGeo = new THREE.BufferGeometry()
-    const starN = 1400
-    const pos = new Float32Array(starN * 3)
-    let seed = 20260707
-    const rand = () => { seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff }
-    for (let k = 0; k < starN; k++) {
-      const r = 40 + rand() * 30
-      const th = rand() * Math.PI * 2
-      const ph = Math.acos(2 * rand() - 1)
-      pos[k * 3] = r * Math.sin(ph) * Math.cos(th)
-      pos[k * 3 + 1] = r * Math.sin(ph) * Math.sin(th)
-      pos[k * 3 + 2] = r * Math.cos(ph)
-    }
-    starGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3))
-    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xcfd6ea, size: 0.09, sizeAttenuation: true, transparent: true, opacity: 0.75 }))
-    stars.layers.enableAll()
-    scene.add(stars)
-
     let raf = 0
     const render = () => renderer.render(scene, camera)
     const animate = () => {
@@ -185,7 +181,7 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     }
     window.addEventListener('resize', onResize)
 
-    if (reduced) { onReady?.(); render() } else animate()
+    if (reduced) { onReadyRef.current?.(); render() } else animate()
 
     return () => {
       cancelAnimationFrame(raf)
@@ -198,10 +194,13 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
         if (Array.isArray(mat)) mat.forEach((x) => x.dispose())
         else mat?.dispose?.()
       })
-      ;[dayTex, nightTex, moonTex].forEach((t) => t.dispose())
+      ;[dayTex, nightTex, moonTex, starTex].forEach((t) => t.dispose())
       if (renderer.domElement.parentNode === mount) mount.removeChild(renderer.domElement)
     }
-  }, [onReady])
+    // Build once on mount; onReady is read through onReadyRef so parent
+    // re-renders (the ticking clock) don't rebuild the scene.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return <div ref={mountRef} className="absolute inset-0" aria-hidden="true" />
 }

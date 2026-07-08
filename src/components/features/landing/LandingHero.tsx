@@ -96,7 +96,7 @@ export function LandingHero() {
             id="hero-heading"
             className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white leading-[1.05] mb-5"
           >
-            The solar system,
+            Earth and Moon,
             <br />
             right about now.
           </h1>
