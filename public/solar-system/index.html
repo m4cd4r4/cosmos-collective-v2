@@ -228,6 +228,45 @@
         #galaxy-info-body .stat-val { color: var(--text); font-weight: 600; font-family: var(--mono); font-size: 12px; }
         #galaxy-info-body .note { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 10px 0 0; }
 
+        /* Scene labels. pointer-events stay off: the 3D marker and the chip
+           are the hit targets, so the labels can never become click traps. */
+        #galaxy-labels { position: fixed; inset: 0; pointer-events: none; z-index: 150; }
+        #galaxy-labels .gl {
+            position: absolute;
+            display: none;
+            align-items: center;
+            gap: 7px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 11px;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+            color: rgba(236, 240, 252, 0.72);
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+            transition: color 0.18s, opacity 0.18s;
+        }
+        #galaxy-labels .gl.on { display: flex; }
+        #galaxy-labels .gl.flip { flex-direction: row-reverse; }
+        #galaxy-labels .gl.flip i { transform: scaleX(-1); }
+        #galaxy-labels .gl.flip[data-hs="core"]::after { inset: 0 50px 0 -4px; }
+        #galaxy-labels .gl[data-hs="core"] i { width: 54px; }
+        #galaxy-labels .gl[data-hs="core"] {
+            /* the only label that crosses bright pixels */
+            padding: 3px 8px 3px 0;
+            border-radius: 10px;
+        }
+        #galaxy-labels .gl[data-hs="core"]::after {
+            content: ''; position: absolute; inset: 0 -4px 0 50px; z-index: -1;
+            background: rgba(8, 12, 24, 0.62);
+            border-radius: 10px;
+            backdrop-filter: blur(3px);
+        }
+        #galaxy-labels .gl i {
+            display: block; width: 26px; height: 1px;
+            background: linear-gradient(90deg, rgba(212,175,55,0) 0%, rgba(212,175,55,0.75) 100%);
+        }
+        #galaxy-labels .gl.hot { color: var(--gold); }
+        #galaxy-labels .gl.hot i { background: linear-gradient(90deg, rgba(212,175,55,0.2) 0%, var(--gold) 100%); }
+
         #galaxy-hotspots {
             position: fixed;
             left: 50%;
@@ -245,8 +284,11 @@
         #galaxy-hotspots::-webkit-scrollbar { display: none; }
         #galaxy-hotspots button {
             flex: 0 0 auto;
-            min-height: 44px;
-            padding: 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            min-height: 48px;
+            padding: 0 14px;
             border-radius: 12px;
             background: var(--glass);
             border: 1px solid var(--line);
@@ -258,7 +300,16 @@
             backdrop-filter: blur(10px);
             transition: color 0.18s, border-color 0.18s, background 0.18s;
         }
+        #galaxy-hotspots .hs-ico { width: 20px; height: 20px; flex: 0 0 auto; opacity: 0.8; }
+        #galaxy-hotspots .hs-txt { display: flex; flex-direction: column; align-items: flex-start; line-height: 1.25; }
+        #galaxy-hotspots .hs-name { font-size: 13px; }
+        #galaxy-hotspots .hs-num {
+            font-family: var(--mono); font-size: 10px; letter-spacing: 0.02em;
+            color: var(--gold); opacity: 0.75;
+        }
         #galaxy-hotspots button:hover { color: var(--text); border-color: var(--gold-edge); }
+        #galaxy-hotspots button:hover .hs-ico { opacity: 1; }
+        #galaxy-hotspots button[aria-pressed="true"] .hs-num { opacity: 1; }
         #galaxy-hotspots button[aria-pressed="true"] { color: var(--gold); border-color: var(--gold-edge); background: var(--gold-soft); }
         #galaxy-hotspots button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
 
@@ -1331,6 +1382,12 @@
     <!-- Galaxy view overlay -->
     <div id="galaxy-transition-flash"></div>
     <div id="galaxy-hud">
+        <div id="galaxy-labels" aria-hidden="true">
+            <span class="gl" data-hs="sun"><i></i>The Sun</span>
+            <span class="gl" data-hs="core"><i></i>Galactic centre</span>
+            <span class="gl" data-hs="kepler"><i></i>Kepler field</span>
+            <span class="gl" data-hs="orion"><i></i>Orion Spur</span>
+        </div>
         <div id="galaxy-info">
             <button type="button" id="galaxy-info-expand" aria-expanded="false" aria-controls="galaxy-info-body">
                 <span class="gi-title">Milky Way</span>
@@ -1349,10 +1406,22 @@
             </div>
         </div>
         <div id="galaxy-hotspots" role="group" aria-label="Points of interest">
-            <button type="button" data-hs="sun" aria-pressed="false">The Sun</button>
-            <button type="button" data-hs="core" aria-pressed="false">Galactic centre</button>
-            <button type="button" data-hs="kepler" aria-pressed="false">Kepler field</button>
-            <button type="button" data-hs="orion" aria-pressed="false">Orion Spur</button>
+            <button type="button" data-hs="sun" aria-pressed="false">
+                <svg class="hs-ico" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.2" fill="none" stroke="currentColor" stroke-width="1"/><circle cx="3.4" cy="10" r="1.9" fill="currentColor"/></svg>
+                <span class="hs-txt"><span class="hs-name">The Sun</span><span class="hs-num">26,000 ly out</span></span>
+            </button>
+            <button type="button" data-hs="core" aria-pressed="false">
+                <svg class="hs-ico" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="3.4" fill="currentColor"/><ellipse cx="10" cy="10" rx="8.2" ry="3.2" fill="none" stroke="currentColor" stroke-width="1"/></svg>
+                <span class="hs-txt"><span class="hs-name">Galactic centre</span><span class="hs-num">4 million suns</span></span>
+            </button>
+            <button type="button" data-hs="kepler" aria-pressed="false">
+                <svg class="hs-ico" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 17 L10 3 L17 17" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/><circle cx="10" cy="3" r="1.5" fill="currentColor"/></svg>
+                <span class="hs-txt"><span class="hs-name">Kepler field</span><span class="hs-num">2,700+ planets</span></span>
+            </button>
+            <button type="button" data-hs="orion" aria-pressed="false">
+                <svg class="hs-ico" viewBox="0 0 20 20" aria-hidden="true"><path d="M2 13 Q10 4 18 13" fill="none" stroke="currentColor" stroke-width="1"/><path d="M4 17 Q10 10 16 17" fill="none" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg>
+                <span class="hs-txt"><span class="hs-name">Orion Spur</span><span class="hs-num">3,500 ly wide</span></span>
+            </button>
         </div>
         <div id="galaxy-fact" hidden></div>
         <button type="button" id="galaxy-return-btn">&#x2190; Return to Solar System</button>
@@ -3998,6 +4067,13 @@
         });
         document.querySelectorAll('#galaxy-hotspots button').forEach(function(b) {
             b.addEventListener('click', function() { setActiveHotspot(b.dataset.hs); });
+            // Hovering or tabbing to a chip lights its marker and label
+            const enter = function() { hoveredHotspot = b.dataset.hs; if (galaxyViewActive) setGalaxyOpacity(1); };
+            const leave = function() { if (hoveredHotspot === b.dataset.hs) hoveredHotspot = null; };
+            b.addEventListener('mouseenter', enter);
+            b.addEventListener('mouseleave', leave);
+            b.addEventListener('focus', enter);
+            b.addEventListener('blur', leave);
         });
         // Tapping a marker in the scene drives the same chips
         renderer.domElement.addEventListener('click', function(e) {
@@ -4065,9 +4141,18 @@
 
         const GALAXY_RADIUS = 500;
         const GALAXY_CENTER = new THREE.Vector3(0, 0, -2000); // offset from the solar system
+        const BAR_ANGLE = Math.PI * 0.17;   // the central bar's orientation
+        const ARM_PITCH = 0.33;             // arms wrap a little over one turn
+        const ARM_R0 = GALAXY_RADIUS * 0.11;
+        // Two arms leave each end of the bar, which is what makes it read as a
+        // *barred* spiral rather than a pinwheel.
+        const ARM_OFFSETS = [0, Math.PI, 0.95, Math.PI + 0.95];
         // We sit 26,000 ly out in a ~50,000 ly disk: 52% of the way to the rim
         const SUN_GALACTIC_R = GALAXY_RADIUS * 0.52;
-        const SUN_GALACTIC_ANGLE = Math.PI * 0.75; // in the Orion Spur
+        // The Orion Spur is a minor spur BETWEEN two major arms, so the Sun is
+        // placed in the widest inter-arm gap at its radius rather than at a
+        // fixed angle, which previously dropped it outside the outermost arm.
+        const SUN_GALACTIC_ANGLE = armAngleAt(SUN_GALACTIC_R, 0) + 1.85;
         const SUN_GALACTIC_POS = new THREE.Vector3(
             GALAXY_CENTER.x + Math.cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R,
             GALAXY_CENTER.y + 2,
@@ -4083,10 +4168,6 @@
             const a = SUN_GALACTIC_ANGLE + Math.PI + l;
             return new THREE.Vector3(Math.cos(a) * Math.cos(b), Math.sin(b), Math.sin(a) * Math.cos(b)).normalize();
         }
-        const BAR_ANGLE = Math.PI * 0.17;   // the central bar's orientation
-        const ARM_PITCH = 0.33;             // arms wrap a little over one turn
-        const ARM_R0 = GALAXY_RADIUS * 0.11;
-
         // Galaxy camera state
         let galaxyZoom = 1.0;
         const GALAXY_ZOOM_MIN = 0.8;
@@ -4121,7 +4202,7 @@
             const dH = need / halfH;
             const dV = (need * Math.cos(galaxyCamOrbit.phi)) / halfV;
             const portrait = aspect < 1;
-            return Math.max(dH, dV) * (portrait ? 0.46 : 1.0);
+            return Math.max(dH, dV) * (portrait ? 0.40 : 1.0);
         }
 
         // Markers are authored for this camera distance; scaling by the real
@@ -4252,9 +4333,6 @@
             while (r > GALAXY_RADIUS * 0.95);
             return r;
         }
-        // Two arms leave each end of the bar, which is what makes it read as a
-        // *barred* spiral rather than a pinwheel.
-        const ARM_OFFSETS = [0, Math.PI, 0.95, Math.PI + 0.95];
         // Star colour: a straight blue-white to warm-white ramp in RGB.
         const C_COOL = new THREE.Color(0.60, 0.73, 1.00);
         const C_WARM = new THREE.Color(1.00, 0.85, 0.60);
@@ -4274,10 +4352,25 @@
         // A point on arm k: on the spiral at radius r, scattered perpendicular to it.
         function armPoint(r, k, spread, lag) {
             const ang = armAngleAt(r, k) + (lag || 0);
-            const off = gauss() * spread;
+            // Two-component cross-section: a tight crest inside a diffuse halo.
+            // A single bounded gaussian gives a flat-topped band that reads as a
+            // solid tube with a visible edge.
+            const wide = Math.random() < 0.34;
+            const off = gauss() * spread * (wide ? 1.9 : 0.42);
             return {
                 x: Math.cos(ang) * r - Math.sin(ang) * off,
                 z: Math.sin(ang) * r + Math.cos(ang) * off,
+                t: Math.min(1, Math.abs(off) / (spread * 1.6)),   // 0 on the crest, 1 in the wings
+            };
+        }
+        // A point on the inner (concave) edge of arm k, where the dust sits.
+        function armInnerEdge(r, k, spread) {
+            const ang = armAngleAt(r, k);
+            const rr = r * 0.955;
+            const off = gauss() * spread;
+            return {
+                x: Math.cos(ang) * rr - Math.sin(ang) * off,
+                z: Math.sin(ang) * rr + Math.cos(ang) * off,
             };
         }
 
@@ -4301,9 +4394,10 @@
                 pos[i*3]   = Math.cos(a) * r;
                 pos[i*3+1] = gauss() * (3 + r * 0.012);
                 pos[i*3+2] = Math.sin(a) * r;
-                const warm = Math.pow(Math.max(0, 1 - r / GALAXY_RADIUS), 2.2);
+                // The disc between the arms is old and yellow; only the arms are blue
+                const warm = 0.52 + 0.48 * Math.pow(Math.max(0, 1 - r / GALAXY_RADIUS), 1.5);
                 const fade = rimFade(r);
-                starColour(c, warm, (0.42 + Math.random() * 0.34) * (0.30 + 0.70 * fade));
+                starColour(c, warm, (0.34 + 0.30 * Math.random()) * (0.30 + 0.70 * fade));
                 col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
                 siz[i] = 0.8 + Math.random() * 0.7;
                 rad[i] = r / GALAXY_RADIUS;
@@ -4312,21 +4406,28 @@
 
             // ---- 2. Arm stars: young, blue, clumped along the spiral ----------
             buildStarPoints(N_ARM, (i, pos, col, siz, rad, pha, c) => {
-                const r = Math.max(diskRadius(0.21), GALAXY_RADIUS * 0.10);
-                const p = armPoint(r, i % 4, GALAXY_RADIUS * 0.05 + r * 0.10, gauss() * 0.10);
+                const r = Math.max(diskRadius(0.32), GALAXY_RADIUS * 0.10);
+                // Arms broaden outwards, as they do in a real spiral
+                const p = armPoint(r, i % 4, GALAXY_RADIUS * 0.035 + r * 0.20, gauss() * 0.10);
                 pos[i*3] = p.x; pos[i*3+1] = gauss() * (2.2 + r * 0.01); pos[i*3+2] = p.z;
                 const warm = Math.pow(Math.max(0, 1 - r / GALAXY_RADIUS), 2.4);
                 const fade = rimFade(r);
+                // Young blue stars sit on the crest; the wings fade into the
+                // warm old disc, so the arm has no edge to see.
+                const crest = 1 - p.t;
                 const roll = Math.random();
-                if (roll < 0.025) {
-                    c.setRGB(1.0, 0.52, 0.30).multiplyScalar(0.7 + Math.random() * 0.3); // red giants
-                    siz[i] = 1.5 + Math.random() * 1.1;
-                } else if (roll < 0.05) {
-                    c.setRGB(0.70, 0.85, 1.0).multiplyScalar(0.85 + Math.random() * 0.15); // HII knots
-                    siz[i] = 2.2 + Math.random() * 1.6;
+                if (roll < 0.02) {
+                    c.setRGB(1.0, 0.52, 0.30).multiplyScalar(0.55 + Math.random() * 0.3); // red giants
+                    siz[i] = 1.4 + Math.random() * 1.0;
+                } else if (crest > 0.82 && roll < 0.014) {
+                    // H II regions glow in H-alpha: pink, not blue-white
+                    c.setRGB(1.0, 0.42, 0.58).multiplyScalar(0.55 + Math.random() * 0.35);
+                    siz[i] = 2.4 + Math.random() * 2.0;
                 } else {
-                    starColour(c, warm * 0.85, (0.70 + Math.random() * 0.30) * (0.28 + 0.72 * fade));
-                    siz[i] = 0.9 + Math.random() * 0.9;
+                    const young = Math.pow(crest, 1.6);
+                    starColour(c, Math.min(1, warm * 0.85 + (1 - young) * 0.55),
+                               (0.22 + 0.30 * young) * (0.28 + 0.72 * fade));
+                    siz[i] = 0.8 + Math.random() * 0.9 + young * 0.5;
                 }
                 col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
                 rad[i] = r / GALAXY_RADIUS;
@@ -4351,18 +4452,18 @@
                 siz[i] = 0.9 + Math.random() * 1.1;
                 rad[i] = 0.25; // constant: the bar turns as one pattern
                 pha[i] = Math.random() * 6.283;
-            }, { pattern: 0.042, twinkle: 0.18 });
+            }, { pattern: 0.018, twinkle: 0 });  // steady: a twinkling, fast-turning bar reads as a pulsing core
 
             // ---- 4. Dust lanes -----------------------------------------------
             // Additive light cannot darken, so the lanes are normal-blended dark
             // points drawn last: they dim the arms sitting behind them.
             buildStarPoints(N_DUST, (i, pos, col, siz, rad, pha, c) => {
                 const r = GALAXY_RADIUS * (0.22 + Math.random() * 0.64);
-                const p = armPoint(r, i % 4, GALAXY_RADIUS * 0.010 + r * 0.016, -0.10);
+                const p = armInnerEdge(r, i % 4, GALAXY_RADIUS * 0.008 + r * 0.030);
                 pos[i*3] = p.x; pos[i*3+1] = gauss() * 1.8; pos[i*3+2] = p.z;
-                const k = (0.55 + Math.random() * 0.45) * rimFade(r);
-                col[i*3] = 0.10 * k; col[i*3+1] = 0.062 * k; col[i*3+2] = 0.045 * k;
-                siz[i] = 1.5 + Math.random() * 1.5;
+                const k = (0.60 + Math.random() * 0.40) * rimFade(r);
+                col[i*3] = 0.11 * k; col[i*3+1] = 0.068 * k; col[i*3+2] = 0.050 * k;
+                siz[i] = 1.8 + Math.random() * 1.8;
                 rad[i] = r / GALAXY_RADIUS;
                 pha[i] = 0;
             }, { pattern: 0.026, shear: 0.16, twinkle: 0, blending: THREE.NormalBlending, opacityScale: 0.34 }, 2);
@@ -4436,7 +4537,7 @@
                 [1, 'rgba(50,55,110,0)']
             ], -3, 2.5).userData.glowScale = 1;
             radialPlane(256, [
-                [0, 'rgba(255,240,195,0.38)'], [0.18, 'rgba(255,208,120,0.20)'],
+                [0, 'rgba(255,238,195,0.26)'], [0.18, 'rgba(255,205,120,0.15)'],
                 [0.45, 'rgba(210,150,70,0.08)'], [1, 'rgba(140,90,30,0)']
             ], 0.5, 1.15).userData.glowScale = 1;
 
@@ -4492,7 +4593,7 @@
             galaxyGroup.add(galaxyMarker);
 
             galaxyMarkerGlow = new THREE.Mesh(
-                new THREE.RingGeometry(9, 10.6, 64),
+                new THREE.RingGeometry(9.4, 10.0, 72),
                 new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0, side: THREE.DoubleSide,
                     depthWrite: false, blending: THREE.AdditiveBlending })
             );
@@ -4506,10 +4607,10 @@
                 { id: 'sun',    color: 0xd4af37, size: 3.4, pos: markerPos.clone() },
                 { id: 'core',   color: 0xff9a3c, size: 3.6, pos: new THREE.Vector3(0, 0, 0) },
                 { id: 'kepler', color: 0xffd766, size: 3.2, pos: new THREE.Vector3(
-                    SUN_LOCAL.x + kDir.x * 32, SUN_LOCAL.y + kDir.y * 32, SUN_LOCAL.z + kDir.z * 32) },
+                    SUN_LOCAL.x + kDir.x * 78, SUN_LOCAL.y + kDir.y * 78, SUN_LOCAL.z + kDir.z * 78) },
                 { id: 'orion',  color: 0x4a90e2, size: 3.4, pos: new THREE.Vector3(
-                    Math.cos(SUN_GALACTIC_ANGLE + 0.26) * SUN_GALACTIC_R * 1.1, 6,
-                    Math.sin(SUN_GALACTIC_ANGLE + 0.26) * SUN_GALACTIC_R * 1.1) },
+                    Math.cos(SUN_GALACTIC_ANGLE + 0.62) * SUN_GALACTIC_R * 1.02, 6,
+                    Math.sin(SUN_GALACTIC_ANGLE + 0.62) * SUN_GALACTIC_R * 1.02) },
             ].forEach(h => {
                 const dot = new THREE.Mesh(
                     new THREE.SphereGeometry(h.size, 14, 14),
@@ -4520,7 +4621,7 @@
                 dot.userData.isHotspot = h.id;
                 galaxyGroup.add(dot);
                 const ring = new THREE.Mesh(
-                    new THREE.RingGeometry(h.size * 2.8, h.size * 3.2, 48),
+                    new THREE.RingGeometry(h.size * 3.0, h.size * 3.18, 64),
                     new THREE.MeshBasicMaterial({ color: h.color, transparent: true, opacity: 0, side: THREE.DoubleSide,
                         depthWrite: false, blending: THREE.AdditiveBlending })
                 );
@@ -4582,6 +4683,58 @@
             kepler: { name: 'Kepler field', text: 'Kepler watched about 150,000 stars in this one patch of Cygnus and confirmed 2,700+ planets.', src: 'NASA Kepler' },
             orion:  { name: 'Orion Spur', text: 'Our minor arm, running between the larger Sagittarius and Perseus arms.', src: 'NASA' },
         };
+
+        // Project each marker to the screen and hang a label off it on a short
+        // gold leader. Labels are placed brightest-first and any that would
+        // collide with one already placed is dropped, so they never overlap.
+        const _lblScratch = new THREE.Vector3();
+        let galaxyLabelEls = null;
+        function layoutGalaxyLabels() {
+            if (!galaxyLabelEls) {
+                galaxyLabelEls = {};
+                document.querySelectorAll('#galaxy-labels .gl').forEach(el => {
+                    galaxyLabelEls[el.dataset.hs] = el;
+                });
+            }
+            const W = window.innerWidth, H = window.innerHeight;
+            const placed = [];
+            // Active and hovered markers claim their space first
+            const order = galaxyHotspots.slice().sort((a, b) => {
+                const pa = (activeHotspot === a.id ? 2 : 0) + (hoveredHotspot === a.id ? 1 : 0);
+                const pb = (activeHotspot === b.id ? 2 : 0) + (hoveredHotspot === b.id ? 1 : 0);
+                return pb - pa;
+            });
+            order.forEach(h => {
+                const el = galaxyLabelEls[h.id];
+                if (!el) return;
+                h.dot.getWorldPosition(_lblScratch);
+                _lblScratch.project(camera);
+                const behind = _lblScratch.z > 1;
+                const x = (_lblScratch.x + 1) / 2 * W;
+                const y = (1 - (_lblScratch.y + 1) / 2) * H;
+                const hot = activeHotspot === h.id || hoveredHotspot === h.id;
+                // Keep the label and its leader inside the viewport
+                if (behind || x < 8 || x > W - 8 || y < 56 || y > H - 170) {
+                    el.classList.remove('on');
+                    return;
+                }
+                const lead = h.id === 'core' ? 86 : 14;
+                const w = 150, hh = 18;
+                // Flip to the left of the marker when the label would run off
+                // the right edge, which it does for the core at phone width.
+                const flip = x + lead + w > W - 8;
+                const lx = flip ? Math.max(8, x - lead - w) : x + lead;
+                const ly = y - (h.id === 'core' ? 54 : 10);
+                el.classList.toggle('flip', flip);
+                const clash = placed.some(r =>
+                    lx < r.x + r.w && lx + w > r.x && ly < r.y + r.h && ly + hh > r.y);
+                if (clash) { el.classList.remove('on'); return; }
+                placed.push({ x: lx, y: ly, w: w, h: hh });
+                el.style.transform = 'translate(' + Math.round(lx) + 'px,' + Math.round(ly) + 'px)';
+                el.classList.add('on');
+                el.classList.toggle('hot', hot);
+            });
+        }
 
         function setActiveHotspot(id) {
             activeHotspot = (activeHotspot === id) ? null : id;
@@ -4747,7 +4900,9 @@
                 if (!reduced) galaxyClock += dt;
                 galaxyStarMaterials.forEach(m => { m.uniforms.uTime.value = galaxyClock; });
 
-                if (!galaxyDragging && !reduced) galaxyCamOrbit.theta += 0.018 * dt;
+                // Slow drift. At the old rate the bar swung visibly enough that the
+                // bright centre read as swelling and shrinking.
+                if (!galaxyDragging && !reduced) galaxyCamOrbit.theta += 0.008 * dt;
                 galaxyCamDist = galaxyFitDistance();
                 camera.position.copy(galaxyCamPos(galaxyCamOrbit.theta, galaxyCamOrbit.phi, galaxyZoom));
                 camera.lookAt(
@@ -4778,6 +4933,7 @@
                     h.ring.quaternion.copy(camera.quaternion);
                     h.ring.rotateZ(h.spin);
                 });
+                layoutGalaxyLabels();
                 return;
             }
 
