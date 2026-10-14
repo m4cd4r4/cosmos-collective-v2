@@ -566,12 +566,19 @@
             #galaxy-info { top: 8px; max-width: calc(100vw - 16px); }
             #galaxy-info-expand .gi-sub { display: none; }
             #galaxy-hotspots {
-                left: 8px; right: 8px; bottom: 84px;
-                transform: none; max-width: none; justify-content: flex-start;
+                left: 8px; right: 8px; bottom: 76px;
+                transform: none; max-width: none;
+                flex-wrap: wrap; justify-content: center; overflow-x: visible;
             }
-            #galaxy-fact { left: 8px; right: 8px; bottom: 136px; transform: none; max-width: none; }
-            #galaxy-return-btn { bottom: 20px; padding: 12px 24px; font-size: 14px; }
-            #galaxy-zoom-indicator { top: 64px; left: 8px; bottom: auto; padding: 8px 12px; min-width: 128px; }
+            /* Chips wrap to two rows here, so the fact card clears both. */
+            #galaxy-fact { left: 8px; right: 8px; bottom: 196px; transform: none; max-width: none; }
+            body.galaxy-info-open #galaxy-zoom-indicator { display: none; }
+            /* Phone: a compact readout, not a panel. Scroll/drag/key hints
+               do not apply on touch, so they go. */
+            #galaxy-zoom-indicator { top: 60px; left: 8px; bottom: auto; padding: 6px 10px; min-width: 0; }
+            #galaxy-zoom-indicator .zoom-hint { display: none; }
+            #galaxy-zoom-indicator .scale-bar-container { margin-top: 4px; }
+            #galaxy-return-btn { bottom: 16px; padding: 10px 18px; font-size: 13px; white-space: nowrap; }
 
         }
 
@@ -3985,6 +3992,9 @@
             const open = this.getAttribute('aria-expanded') === 'true';
             this.setAttribute('aria-expanded', String(!open));
             document.getElementById('galaxy-info-body').hidden = open;
+            // Phone CSS leans on this: the sheet is full-width and would
+            // otherwise sit under the zoom readout.
+            document.body.classList.toggle('galaxy-info-open', !open);
         });
         document.querySelectorAll('#galaxy-hotspots button').forEach(function(b) {
             b.addEventListener('click', function() { setActiveHotspot(b.dataset.hs); });
@@ -4081,9 +4091,15 @@
         let galaxyZoom = 1.0;
         const GALAXY_ZOOM_MIN = 0.8;
         const GALAXY_ZOOM_MAX = 5.0;
-        const GALAXY_IDLE_THETA = -0.65;
+        // Idle camera angle. Portrait overflows the disk sideways, so the Sun has to
+        // sit nearer the camera there or its marker falls off the left of the frame.
+        function galaxyIdleTheta() {
+            const aspect = (typeof camera !== 'undefined' && camera && camera.aspect)
+                || (window.innerWidth / Math.max(1, window.innerHeight));
+            return SUN_GALACTIC_ANGLE - (aspect < 1 ? 0.3 : 1.35);
+        }
         const GALAXY_IDLE_PHI = Math.PI * 0.33;
-        let galaxyCamOrbit = { theta: GALAXY_IDLE_THETA, phi: GALAXY_IDLE_PHI };
+        let galaxyCamOrbit = { theta: galaxyIdleTheta(), phi: GALAXY_IDLE_PHI };
         let galaxyCamDist = 480;
         let galaxyDragging = false;
         let galaxyDragStart = { x: 0, y: 0 };
@@ -4101,11 +4117,20 @@
             const aspect = camera.aspect || (window.innerWidth / Math.max(1, window.innerHeight));
             const halfV = Math.tan(fov / 2);
             const halfH = halfV * aspect;
-            const need = GALAXY_RADIUS * 1.04;
+            const need = GALAXY_RADIUS * 0.94;
             const dH = need / halfH;
             const dV = (need * Math.cos(galaxyCamOrbit.phi)) / halfV;
             const portrait = aspect < 1;
-            return Math.max(dH, dV) * (portrait ? 0.72 : 1.0);
+            return Math.max(dH, dV) * (portrait ? 0.46 : 1.0);
+        }
+
+        // Markers are authored for this camera distance; scaling by the real
+        // distance keeps their apparent size steady wherever the camera orbits.
+        const _mScratch = new THREE.Vector3();
+        function markerScreenScale(obj) {
+            obj.getWorldPosition(_mScratch);
+            const d = _mScratch.distanceTo(camera.position);
+            return Math.max(0.45, Math.min(2.6, d / Math.max(1, galaxyCamDist)));
         }
 
         function galaxyCamPos(theta, phi, zoom) {
@@ -4459,15 +4484,17 @@
             // ---- 10. "You are here" ------------------------------------------
             const markerPos = new THREE.Vector3(SUN_LOCAL.x, 8, SUN_LOCAL.z);
             galaxyMarker = new THREE.Mesh(
-                new THREE.SphereGeometry(3.4, 16, 16),
-                new THREE.MeshBasicMaterial({ color: 0xffd766, transparent: true, opacity: 0 })
+                new THREE.SphereGeometry(3.2, 16, 16),
+                new THREE.MeshBasicMaterial({ color: 0xfff0bb, transparent: true, opacity: 0,
+                    depthWrite: false, blending: THREE.AdditiveBlending })
             );
             galaxyMarker.position.copy(markerPos);
             galaxyGroup.add(galaxyMarker);
 
             galaxyMarkerGlow = new THREE.Mesh(
-                new THREE.RingGeometry(7, 9.5, 48),
-                new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0, side: THREE.DoubleSide })
+                new THREE.RingGeometry(9, 10.6, 64),
+                new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0, side: THREE.DoubleSide,
+                    depthWrite: false, blending: THREE.AdditiveBlending })
             );
             galaxyMarkerGlow.position.copy(markerPos);
             galaxyMarkerGlow.rotation.x = -Math.PI / 2;
@@ -4476,30 +4503,32 @@
             // ---- 11. Hotspots: a 3D marker per HUD chip ------------------------
             const kDir = galDir(76, 13.5);
             [
-                { id: 'sun',    color: 0xd4af37, size: 5.5, pos: markerPos.clone() },
-                { id: 'core',   color: 0xff9a3c, size: 9.0, pos: new THREE.Vector3(0, 0, 0) },
-                { id: 'kepler', color: 0xffd766, size: 5.0, pos: new THREE.Vector3(
+                { id: 'sun',    color: 0xd4af37, size: 3.4, pos: markerPos.clone() },
+                { id: 'core',   color: 0xff9a3c, size: 3.6, pos: new THREE.Vector3(0, 0, 0) },
+                { id: 'kepler', color: 0xffd766, size: 3.2, pos: new THREE.Vector3(
                     SUN_LOCAL.x + kDir.x * 32, SUN_LOCAL.y + kDir.y * 32, SUN_LOCAL.z + kDir.z * 32) },
-                { id: 'orion',  color: 0x4a90e2, size: 5.5, pos: new THREE.Vector3(
+                { id: 'orion',  color: 0x4a90e2, size: 3.4, pos: new THREE.Vector3(
                     Math.cos(SUN_GALACTIC_ANGLE + 0.26) * SUN_GALACTIC_R * 1.1, 6,
                     Math.sin(SUN_GALACTIC_ANGLE + 0.26) * SUN_GALACTIC_R * 1.1) },
             ].forEach(h => {
                 const dot = new THREE.Mesh(
                     new THREE.SphereGeometry(h.size, 14, 14),
-                    new THREE.MeshBasicMaterial({ color: h.color, transparent: true, opacity: 0 })
+                    new THREE.MeshBasicMaterial({ color: h.color, transparent: true, opacity: 0,
+                        depthWrite: false, blending: THREE.AdditiveBlending })
                 );
                 dot.position.copy(h.pos);
                 dot.userData.isHotspot = h.id;
                 galaxyGroup.add(dot);
                 const ring = new THREE.Mesh(
-                    new THREE.RingGeometry(h.size * 2.0, h.size * 2.4, 40),
-                    new THREE.MeshBasicMaterial({ color: h.color, transparent: true, opacity: 0, side: THREE.DoubleSide })
+                    new THREE.RingGeometry(h.size * 2.8, h.size * 3.2, 48),
+                    new THREE.MeshBasicMaterial({ color: h.color, transparent: true, opacity: 0, side: THREE.DoubleSide,
+                        depthWrite: false, blending: THREE.AdditiveBlending })
                 );
                 ring.position.copy(h.pos);
                 ring.rotation.x = -Math.PI / 2;
                 ring.userData.isHotspotRing = h.id;
                 galaxyGroup.add(ring);
-                galaxyHotspots.push({ id: h.id, dot: dot, ring: ring, size: h.size });
+                galaxyHotspots.push({ id: h.id, dot: dot, ring: ring, size: h.size, ease: 1 });
             });
 
             scene.add(galaxyGroup);
@@ -4617,11 +4646,11 @@
                 setState({ mode: 'galaxy', sheet: null, tool: 'none' });
                 setActiveHotspot(null);
                 galaxyZoom = 1.0;
-                galaxyCamOrbit = { theta: GALAXY_IDLE_THETA, phi: GALAXY_IDLE_PHI };
+                galaxyCamOrbit = { theta: galaxyIdleTheta(), phi: GALAXY_IDLE_PHI };
                 galaxyLookOffset = { x: 0, z: 0 };
                 galaxyCamDist = galaxyFitDistance();
 
-                const target = galaxyCamPos(GALAXY_IDLE_THETA, GALAXY_IDLE_PHI, 1);
+                const target = galaxyCamPos(galaxyIdleTheta(), GALAXY_IDLE_PHI, 1);
                 galaxyTransition = {
                     phase: 'zoom-out',
                     startTime: performance.now(),
@@ -4731,15 +4760,23 @@
 
                 if (galaxyMarker) {
                     const pulse = reduced ? 1 : Math.sin(now / 600) * 0.16 + 1;
-                    galaxyMarker.scale.setScalar(pulse);
-                    if (galaxyMarkerGlow) galaxyMarkerGlow.scale.setScalar(0.9 + pulse * 0.2);
+                    const k = markerScreenScale(galaxyMarker);
+                    galaxyMarker.scale.setScalar(pulse * k);
+                    if (galaxyMarkerGlow) {
+                        galaxyMarkerGlow.scale.setScalar((0.9 + pulse * 0.2) * k);
+                        galaxyMarkerGlow.quaternion.copy(camera.quaternion);
+                    }
                 }
                 galaxyHotspots.forEach(h => {
                     const on = activeHotspot === h.id || hoveredHotspot === h.id;
                     const want = on ? 1.45 : 1;
-                    h.dot.scale.setScalar(h.dot.scale.x + (want - h.dot.scale.x) * 0.15);
-                    h.ring.scale.setScalar(h.ring.scale.x + (want - h.ring.scale.x) * 0.15);
-                    if (!reduced) h.ring.rotation.z += 0.004;
+                    h.ease = h.ease + (want - h.ease) * 0.15;
+                    const k = markerScreenScale(h.dot);
+                    h.dot.scale.setScalar(h.ease * k);
+                    h.ring.scale.setScalar(h.ease * k);
+                    h.spin = (h.spin || 0) + (reduced ? 0 : 0.004);
+                    h.ring.quaternion.copy(camera.quaternion);
+                    h.ring.rotateZ(h.spin);
                 });
                 return;
             }
@@ -4780,7 +4817,7 @@
 
                 if (t >= 1) {
                     galaxyZoom = 1.0;
-                    galaxyCamOrbit = { theta: GALAXY_IDLE_THETA, phi: GALAXY_IDLE_PHI };
+                    galaxyCamOrbit = { theta: galaxyIdleTheta(), phi: GALAXY_IDLE_PHI };
                     galaxyLookOffset = { x: 0, z: 0 };
                     galaxyLastNow = 0;
                     galaxyTransition = { phase: 'idle-galaxy', savedCamera: sc };

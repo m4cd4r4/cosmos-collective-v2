@@ -159,6 +159,27 @@ test.describe('solar system dock', () => {
     expect(errors).toEqual([])
   })
 
+  test('galaxy hotspot chip shows a sourced fact and marks itself pressed', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    await page.click('#toggle-galaxy')
+    await expect(page.locator('#galaxy-return-btn')).toBeVisible({ timeout: 15_000 })
+
+    const chip = page.locator('#galaxy-hotspots button').first()
+    await chip.click()
+    await expect(chip).toHaveAttribute('aria-pressed', 'true')
+
+    const fact = page.locator('#galaxy-fact')
+    await expect(fact).toBeVisible()
+    // Every fact carries its source; invented numbers are the failure mode here
+    await expect(fact).toContainText(/NASA|ESA|Gaia/)
+
+    // Clicking the same chip again clears it
+    await chip.click()
+    await expect(chip).toHaveAttribute('aria-pressed', 'false')
+    expect(errors).toEqual([])
+  })
+
   test('phone width: dock fits, targets are 44px, sheet opens', async ({ page }) => {
     const errors: string[] = []
     await page.setViewportSize({ width: 390, height: 844 })
