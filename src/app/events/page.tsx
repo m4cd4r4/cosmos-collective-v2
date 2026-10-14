@@ -132,9 +132,15 @@ export default function EventsPage() {
   const [highlightedEvent, setHighlightedEvent] = useState<string | null>(null)
   const [craftTab, setCraftTab] = useState<CraftTab>('launches')
 
-  // Arriving from the old /spacecraft URL opens the catalogue, not the launches
+  // Arriving from the old /spacecraft URL opens the catalogue, not the launches.
+  // hashchange covers a same-page link, where React does not remount.
   useEffect(() => {
-    if (window.location.hash === '#spacecraft') setCraftTab('spacecraft')
+    const syncFromHash = () => {
+      if (window.location.hash === '#spacecraft') setCraftTab('spacecraft')
+    }
+    syncFromHash()
+    window.addEventListener('hashchange', syncFromHash)
+    return () => window.removeEventListener('hashchange', syncFromHash)
   }, [])
 
   const skyMapRef = useRef<EventSkyMapHandle>(null)

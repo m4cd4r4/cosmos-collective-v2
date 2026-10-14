@@ -77,7 +77,7 @@ export default function ExplorePage({
         aria-label="Explore views"
       >
         {([
-          { id: 'gallery', label: 'Gallery', href: '/explore', hint: 'Every observation, filterable' },
+          { id: 'gallery', label: 'All Observations', href: '/explore', hint: 'JWST, Hubble and radio, filterable' },
           { id: 'webb', label: 'Webb Explorer', href: '/explore?view=webb', hint: 'Wavelength bands and feature annotations' },
         ] as const).map((tab) => (
           <Link
@@ -98,12 +98,15 @@ export default function ExplorePage({
       </nav>
 
       {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
-      <StatsBar items={[
-        { label: 'JWST', value: String(jwstCount), color: '#e040fb' },
-        { label: 'Hubble', value: String(hubbleCount), color: '#4a90e2' },
-        { label: 'Radio', value: String(radioCount), color: '#f59e0b' },
-        { label: 'Total', value: String(totalCount), color: '#d4af37' },
-      ]} />
+      {/* The Webb view carries its own counts, so only the gallery shows these */}
+      {view === 'gallery' && (
+        <StatsBar items={[
+          { label: 'JWST', value: String(jwstCount), color: '#e040fb' },
+          { label: 'Hubble', value: String(hubbleCount), color: '#4a90e2' },
+          { label: 'Radio', value: String(radioCount), color: '#f59e0b' },
+          { label: 'Total', value: String(totalCount), color: '#d4af37' },
+        ]} />
+      )}
 
       {view === 'webb' ? (
         <WebbExplorerPanel />
