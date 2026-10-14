@@ -26,7 +26,7 @@ test.describe('solar system dock', () => {
   test('loads with the dock visible and no page errors', async ({ page }) => {
     const errors: string[] = []
     await load(page, errors)
-    await pressed(page, '#dock-speed [data-speed="month"]')
+    await pressed(page, '#dock-speed [data-speed="week"]')
     await pressed(page, '#dock-view [data-view="free"]')
     await expect(page.locator('#sheet')).toBeHidden()
     await page.waitForTimeout(1500)
@@ -62,7 +62,7 @@ test.describe('solar system dock', () => {
     const errors: string[] = []
     await load(page, errors)
 
-    await page.click('#dock-speed [data-speed="week"]')
+    await page.click('#dock-speed [data-speed="year"]')
     await page.click('#dock-view [data-view="top"]')
     await page.click('#toggle-pause')
 
@@ -82,7 +82,7 @@ test.describe('solar system dock', () => {
     await expect(page.locator('#panel-tools')).toBeVisible()
 
     await page.click('#reset-view')
-    await pressed(page, '#dock-speed [data-speed="month"]')
+    await pressed(page, '#dock-speed [data-speed="week"]')
     await pressed(page, '#dock-view [data-view="free"]')
     await expect(page.locator('#toggle-pause')).toHaveAttribute('aria-label', 'Pause')
     await expect(page.locator('body')).not.toHaveClass(/\bkid\b/)
@@ -90,9 +90,31 @@ test.describe('solar system dock', () => {
     await expect(page.locator('#sheet')).toBeHidden()
     await page.click('#dock-more')
     await page.click('#tab-look')
-    await pressed(page, '#look-presets [data-look="pretty"]')
+    await pressed(page, '#look-presets [data-look="explorer"]')
+    await pressed(page, '#trail-length [data-trail="short"]')
     await expect(page.locator('#show-labels')).toBeChecked()
     expect(Math.abs(await simDays(page))).toBeLessThan(200)
+    expect(errors).toEqual([])
+  })
+
+  test('tapping a planet centres it, a second tap opens its card', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    await page.click('#toggle-pause')
+    await page.waitForTimeout(300)
+    const at = () => page.evaluate(() => (window as any).eval(`(() => {
+      const r = renderer.domElement.getBoundingClientRect();
+      const v = planets.find(p => p.name === 'Jupiter').mesh.position.clone().project(camera);
+      return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height };
+    })()`)) as Promise<{ x: number, y: number }>
+    let p = await at()
+    await page.mouse.click(p.x, p.y)
+    await expect(page.locator('#follow-target')).toHaveValue('jupiter')
+    await expect(page.locator('#planet-dive-btn .dive-target')).toHaveText('Jupiter')
+    await page.waitForTimeout(1500) // camera glides to the new target
+    p = await at()
+    await page.mouse.click(p.x, p.y)
+    await expect(page.locator('#planet-info-card')).toBeVisible()
     expect(errors).toEqual([])
   })
 
