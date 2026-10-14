@@ -4,6 +4,7 @@
  */
 
 import axios from 'axios'
+import { getMoonPhasesForYear, isSupermoon, SUPERMOON_DISTANCE_KM, type MoonPhase } from '@/lib/moon-phase'
 import type { AstronomicalEvent, ApiResponse, SkyCoordinates, EventType, EventSeverity } from '@/types'
 import { SEVERITY_ORDER } from '@/lib/event-utils'
 
@@ -404,63 +405,85 @@ export interface LunarEvent {
   type: 'new-moon' | 'first-quarter' | 'full-moon' | 'last-quarter' | 'supermoon' | 'blue-moon'
   description: string
   isSupermoon?: boolean
+  /** Geocentric distance of the Moon at the phase instant, km. */
+  distanceKm?: number
 }
 
+/** Traditional northern-hemisphere full moon names, by calendar month. */
+const FULL_MOON_NAMES = [
+  'Wolf Moon', 'Snow Moon', 'Worm Moon', 'Pink Moon', 'Flower Moon', 'Strawberry Moon',
+  'Buck Moon', 'Sturgeon Moon', 'Harvest Moon', "Hunter's Moon", 'Beaver Moon', 'Cold Moon',
+]
+
+const NEW_MOON_DESCRIPTION =
+  'No moonlight in the sky, so this is the best window of the month for faint deep-sky targets.'
+
+function describeFullMoon(p: MoonPhase, isBlueMoon: boolean): string {
+  const distance = Math.round(p.distanceKm).toLocaleString('en-AU')
+  if (isSupermoon(p)) {
+    return `Full moon near perigee at ${distance} km, inside the ${SUPERMOON_DISTANCE_KM.toLocaleString('en-AU')} km supermoon threshold, so it looks slightly larger and brighter than average.`
+  }
+  if (isBlueMoon) {
+    return `The second full moon in the same calendar month, at ${distance} km.`
+  }
+  return `Full moon at a geocentric distance of ${distance} km.`
+}
+
+/**
+ * Principal moon phases for a calendar year, computed from Meeus chapter 49
+ * rather than copied from a table. Full and new moons only: the quarters are
+ * not events a visitor plans around.
+ *
+ * The site previously carried a hand-typed table in which the 2025 dates had
+ * been year-swapped into 2026, so every 2026 phase was about ten days out.
+ */
 export function getLunarEvents(year: number = new Date().getFullYear()): LunarEvent[] {
-  // Key lunar events per year (pre-computed from astronomical data)
-  const eventsByYear: Record<number, LunarEvent[]> = {
-    2025: [
-      { name: 'Full Moon (Wolf Moon)', date: '2025-01-13', type: 'full-moon', description: 'First full moon of the year, named Wolf Moon by Native Americans.' },
-      { name: 'New Moon', date: '2025-01-29', type: 'new-moon', description: 'Best time for deep-sky observation with no moonlight interference.' },
-      { name: 'Full Moon (Snow Moon)', date: '2025-02-12', type: 'full-moon', description: 'February full moon, traditionally called Snow Moon.' },
-      { name: 'Full Moon (Worm Moon)', date: '2025-03-14', type: 'full-moon', description: 'March full moon marking the end of winter.' },
-      { name: 'Full Moon (Pink Moon)', date: '2025-04-13', type: 'full-moon', description: 'April full moon named after spring wildflowers.' },
-      { name: 'Supermoon (Flower Moon)', date: '2025-05-12', type: 'supermoon', description: 'Full moon at perigee appears 14% larger and 30% brighter.', isSupermoon: true },
-      { name: 'Full Moon (Strawberry Moon)', date: '2025-06-11', type: 'full-moon', description: 'June full moon coinciding with strawberry harvest season.' },
-      { name: 'Supermoon (Buck Moon)', date: '2025-07-10', type: 'supermoon', description: 'Supermoon appearing larger and brighter than average.', isSupermoon: true },
-      { name: 'Supermoon (Sturgeon Moon)', date: '2025-08-09', type: 'supermoon', description: 'August supermoon at closest approach to Earth.', isSupermoon: true },
-      { name: 'Supermoon (Harvest Moon)', date: '2025-09-07', type: 'supermoon', description: 'Closest supermoon of 2025, spectacular viewing opportunity.', isSupermoon: true },
-      { name: 'Supermoon (Hunter\'s Moon)', date: '2025-10-07', type: 'supermoon', description: 'October supermoon with orange hue near horizon.', isSupermoon: true },
-      { name: 'Full Moon (Beaver Moon)', date: '2025-11-05', type: 'full-moon', description: 'November full moon when beavers prepare for winter.' },
-      { name: 'Full Moon (Cold Moon)', date: '2025-12-04', type: 'full-moon', description: 'Last full moon of the year during winter\'s start.' },
-    ],
-    2026: [
-      { name: 'Full Moon (Wolf Moon)', date: '2026-01-13', type: 'full-moon', description: 'First full moon of 2026, named Wolf Moon by Native Americans.' },
-      { name: 'New Moon', date: '2026-01-29', type: 'new-moon', description: 'Best time for deep-sky observation with no moonlight interference.' },
-      { name: 'Full Moon (Snow Moon)', date: '2026-02-12', type: 'full-moon', description: 'February full moon, traditionally called Snow Moon.' },
-      { name: 'New Moon', date: '2026-02-28', type: 'new-moon', description: 'New moon ideal for faint galaxy observation.' },
-      { name: 'Full Moon (Worm Moon)', date: '2026-03-14', type: 'full-moon', description: 'March full moon marking the transition to spring.' },
-      { name: 'New Moon', date: '2026-03-29', type: 'new-moon', description: 'New moon with excellent dark-sky conditions.' },
-      { name: 'Full Moon (Pink Moon)', date: '2026-04-13', type: 'full-moon', description: 'April full moon named after spring wildflowers.' },
-      { name: 'New Moon', date: '2026-04-27', type: 'new-moon', description: 'Dark skies for late-April deep-sky observing.' },
-      { name: 'Full Moon (Flower Moon)', date: '2026-05-12', type: 'full-moon', description: 'May full moon celebrating spring blooms.' },
-      { name: 'New Moon', date: '2026-05-27', type: 'new-moon', description: 'New moon before summer observing season.' },
-      { name: 'Full Moon (Strawberry Moon)', date: '2026-06-11', type: 'full-moon', description: 'June full moon coinciding with strawberry harvest season.' },
-      { name: 'New Moon', date: '2026-06-25', type: 'new-moon', description: 'Summer new moon for Milky Way photography.' },
-      { name: 'Full Moon (Buck Moon)', date: '2026-07-10', type: 'full-moon', description: 'July full moon named for new antler growth on deer.' },
-      { name: 'New Moon', date: '2026-07-25', type: 'new-moon', description: 'Dark skies ideal for summer meteor observing.' },
-      { name: 'Supermoon (Sturgeon Moon)', date: '2026-08-09', type: 'supermoon', description: 'First supermoon of 2026 at perigee, appearing larger and brighter.', isSupermoon: true },
-      { name: 'New Moon', date: '2026-08-23', type: 'new-moon', description: 'New moon near Perseid meteor shower tail end.' },
-      { name: 'Supermoon (Harvest Moon)', date: '2026-09-07', type: 'supermoon', description: 'Closest supermoon of 2026, spectacular viewing opportunity.', isSupermoon: true },
-      { name: 'New Moon', date: '2026-09-22', type: 'new-moon', description: 'New moon around the autumn equinox.' },
-      { name: 'Supermoon (Hunter\'s Moon)', date: '2026-10-07', type: 'supermoon', description: 'October supermoon with orange hue near horizon.', isSupermoon: true },
-      { name: 'New Moon', date: '2026-10-21', type: 'new-moon', description: 'Dark skies for Orionid meteor shower.' },
-      { name: 'Supermoon (Beaver Moon)', date: '2026-11-05', type: 'supermoon', description: 'Final supermoon of 2026, appearing noticeably larger.', isSupermoon: true },
-      { name: 'New Moon', date: '2026-11-20', type: 'new-moon', description: 'Late autumn new moon for deep-sky observing.' },
-      { name: 'Full Moon (Cold Moon)', date: '2026-12-04', type: 'full-moon', description: 'Last full moon of 2026 during the onset of winter.' },
-      { name: 'New Moon', date: '2026-12-19', type: 'new-moon', description: 'Year-end new moon near the winter solstice.' },
-    ],
+  const phases = getMoonPhasesForYear(year).filter(
+    p => p.phase === 'full-moon' || p.phase === 'new-moon',
+  )
+
+  const fullMoonsByMonth = new Map<number, number>()
+  for (const p of phases) {
+    if (p.phase !== 'full-moon') continue
+    const month = p.date.getUTCMonth()
+    fullMoonsByMonth.set(month, (fullMoonsByMonth.get(month) ?? 0) + 1)
   }
 
-  if (eventsByYear[year]) {
-    return eventsByYear[year]
-  }
+  const seenFullMoonMonths = new Set<number>()
 
-  // Fallback: return 2025 data with naive year replacement for unsupported years
-  return eventsByYear[2025].map(e => ({
-    ...e,
-    date: e.date.replace('2025', String(year)),
-  }))
+  return phases.map((p) => {
+    const date = p.date.toISOString().slice(0, 10)
+
+    if (p.phase === 'new-moon') {
+      return {
+        name: 'New Moon',
+        date,
+        type: 'new-moon' as const,
+        description: NEW_MOON_DESCRIPTION,
+        distanceKm: Math.round(p.distanceKm),
+      }
+    }
+
+    const month = p.date.getUTCMonth()
+    const isBlueMoon = seenFullMoonMonths.has(month)
+    seenFullMoonMonths.add(month)
+    const supermoon = isSupermoon(p)
+
+    const label = isBlueMoon
+      ? 'Blue Moon'
+      : supermoon
+        ? `Supermoon (${FULL_MOON_NAMES[month]})`
+        : `Full Moon (${FULL_MOON_NAMES[month]})`
+
+    return {
+      name: label,
+      date,
+      type: isBlueMoon ? ('blue-moon' as const) : supermoon ? ('supermoon' as const) : ('full-moon' as const),
+      description: describeFullMoon(p, isBlueMoon),
+      isSupermoon: supermoon || undefined,
+      distanceKm: Math.round(p.distanceKm),
+    }
+  })
 }
 
 // ============================================
@@ -842,7 +865,11 @@ export function getUpcomingEvents(limit: number = 10): AstronomicalEvent[] {
   }
 
   // Add lunar events within next 2 months
-  const lunarEvents = getLunarEvents()
+  // Span the year boundary, or late-December visits see no January phases
+  const lunarEvents = [
+    ...getLunarEvents(now.getUTCFullYear()),
+    ...getLunarEvents(now.getUTCFullYear() + 1),
+  ]
   for (const lunar of lunarEvents) {
     const eventDate = new Date(lunar.date)
     const diffDays = (eventDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
