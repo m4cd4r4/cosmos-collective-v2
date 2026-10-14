@@ -48,7 +48,8 @@ export function SolarSystemViewer() {
         photorealistic textures from Solar System Scope (CC BY 4.0). Use the
         on-screen controls to adjust speed, camera mode, and follow individual
         planets. Press Space to pause, R to reset, E to dive into the planet
-        you are following, and G for the galaxy view.
+        you are following, G for the galaxy view, Escape to leave dive or
+        galaxy view, and question mark for the full list of shortcuts.
       </div>
     </div>
   )
