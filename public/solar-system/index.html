@@ -836,6 +836,8 @@
             --mono: 'JetBrains Mono', 'Cascadia Mono', 'Courier New', monospace;
         }
         #dock, #sheet, #help-overlay, #tool-hint, #recording-indicator { font-family: var(--ui-font); color: var(--text); }
+        /* Moon labels sit on top of their planet; let taps reach the planet underneath */
+        .moon-label { pointer-events: none; }
         #dock {
             position: fixed;
             left: 50%;
@@ -1163,6 +1165,7 @@
             <span class="dock-label" aria-hidden="true">Speed</span>
             <div class="seg">
                 <button type="button" data-speed="real" aria-label="Real time" aria-pressed="false">Real</button>
+                <button type="button" data-speed="day" aria-label="1 day per second" aria-pressed="false">1 day/s</button>
                 <button type="button" data-speed="week" aria-label="1 week per second" aria-pressed="false">1 wk/s</button>
                 <button type="button" data-speed="month" aria-label="1 month per second" aria-pressed="false">1 mo/s</button>
                 <button type="button" data-speed="year" aria-label="1 year per second" aria-pressed="false">1 yr/s</button>
@@ -1198,7 +1201,7 @@
                 <span class="sheet-label" id="look-label">Preset</span>
                 <div class="seg seg-wide" id="look-presets" role="group" aria-labelledby="look-label">
                     <button type="button" data-look="real" aria-pressed="false">Real scale</button>
-                    <button type="button" data-look="pretty" aria-pressed="false">Pretty</button>
+                    <button type="button" data-look="explorer" aria-pressed="false">Explorer</button>
                     <button type="button" data-look="kid" aria-pressed="false">Kid mode</button>
                 </div>
                 <label class="sheet-label" for="follow-target">Centre on</label>
@@ -1229,6 +1232,12 @@
                     <label class="switch"><input type="checkbox" id="show-milky-way"><span>Milky Way</span></label>
                     <label class="switch"><input type="checkbox" id="show-trails"><span>Trails</span></label>
                 </div>
+                <span class="sheet-label" id="trail-length-label">Trail length</span>
+                <div class="seg seg-wide" id="trail-length" role="group" aria-labelledby="trail-length-label">
+                    <button type="button" data-trail="short" aria-pressed="false">Short</button>
+                    <button type="button" data-trail="medium" aria-pressed="false">Medium</button>
+                    <button type="button" data-trail="long" aria-pressed="false">Long</button>
+                </div>
             </div>
             <div role="tabpanel" id="panel-time" aria-labelledby="tab-time" hidden>
                 <div class="time-now">
@@ -1254,7 +1263,7 @@
                     <button type="button" id="start-demo-tour">Tour</button>
                     <button type="button" id="toggle-accuracy" aria-pressed="false">Accuracy</button>
                 </div>
-                <p class="tool-note">Click a planet name to follow it and read its data.</p>
+                <p class="tool-note">Tap a planet to centre on it; tap it again for its data.</p>
             </div>
         </div>
         <div class="sheet-foot">
@@ -1282,6 +1291,7 @@
                 <dt><kbd>Esc</kbd></dt><dd>Close, or leave dive and galaxy</dd>
                 <dt><kbd>R</kbd></dt><dd>Reset everything</dd>
                 <dt><kbd>?</kbd></dt><dd>This list</dd>
+                <dt>Tap</dt><dd>Centre on a planet; tap again for its data</dd>
                 <dt>Drag</dt><dd>Rotate (Shift+drag to pan)</dd>
                 <dt>Scroll</dt><dd>Zoom; keep going out for the galaxy</dd>
             </dl>
@@ -2268,7 +2278,7 @@
             const p = pos.clone();
             p.day = simulationDays;
             trail.push(p);
-            const oldest = simulationDays - Math.min(TRAIL_ORBIT_FRACTION * periodDays, TRAIL_MAX_DAYS);
+            const oldest = simulationDays - Math.min(TRAIL_ORBIT_FRACTION * periodDays, TRAIL_DAYS[state.trailLen] || TRAIL_MAX_DAYS);
             while (trail.length > maxCount || (trail.length > 2 && trail[0].day < oldest)) trail.shift();
         }
 
@@ -3316,26 +3326,30 @@
         // pushes each changed field to the render globals, the DOM and storage.
         // =====================================================================
         const $ = id => document.getElementById(id);
-        const SPEED_DPS = { real: 1 / 86400, week: 7, month: DEFAULT_DAYS_PER_SECOND, year: 365.25 };
+        const SPEED_DPS = { real: 1 / 86400, day: 1, week: 7, month: DEFAULT_DAYS_PER_SECOND, year: 365.25 };
+        // Trail span in simulated days; 'long' is capped only by each body's quarter orbit
+        const TRAIL_DAYS = { short: 8, medium: 30, long: Infinity };
         const LOOK_PRESETS = {
             real:   { speed: 'week',  trueScale: true,  labels: true, orbitLines: true, moons: false, trails: false, milkyWay: true },
-            pretty: { speed: 'month', trueScale: false, labels: true, orbitLines: true, moons: true,  trails: true,  milkyWay: true },
+            explorer: { speed: 'week', trueScale: false, labels: true, orbitLines: true, moons: true,  trails: true,  milkyWay: true },
             kid:    { speed: 'week',  trueScale: false, labels: true, orbitLines: true, moons: false, trails: false, milkyWay: true },
         };
         const DEFAULTS = Object.freeze({
             playing: true,
             view: 'free',            // 'free' | 'top' | 'side'
             follow: 'sun',
-            look: 'pretty',          // 'real' | 'pretty' | 'kid' | 'custom'
-            ...LOOK_PRESETS.pretty,
+            look: 'explorer',        // 'real' | 'explorer' | 'kid' | 'custom'
+            ...LOOK_PRESETS.explorer,
+            trailLen: 'short',       // 'short' | 'medium' | 'long'
             mode: 'solar',           // 'solar' | 'dive' | 'galaxy' (set by their transitions)
             tool: 'none',            // 'none' | 'distance'
             sheet: null,             // null | 'look' | 'time' | 'tools'
         });
         // Changing one of these by hand turns the preset into 'custom'
         const LOOK_TOGGLES = ['labels', 'orbitLines', 'moons', 'trails', 'milkyWay'];
-        const PERSIST_KEY = 'solar-vortex-state';
-        const PERSISTED = ['speed', 'look', 'trueScale', 'labels', 'orbitLines', 'moons', 'milkyWay', 'trails'];
+        // v2: the default speed and preset changed, so earlier saved choices are dropped once
+        const PERSIST_KEY = 'solar-system-state-v2';
+        const PERSISTED = ['speed', 'look', 'trueScale', 'labels', 'orbitLines', 'moons', 'milkyWay', 'trails', 'trailLen'];
         const VIEW_MODE = { free: 'free', top: 'orbital', side: 'side' };
         const VIEW_INIT = {
             free: { rot: { x: 0.3, y: 0.7 }, dist: 140 },
@@ -3350,6 +3364,7 @@
                 PERSISTED.forEach(k => { if (k in saved && typeof saved[k] === typeof DEFAULTS[k]) out[k] = saved[k]; });
                 if (out.speed && !(out.speed in SPEED_DPS)) delete out.speed;
                 if (out.look && !(out.look in LOOK_PRESETS) && out.look !== 'custom') delete out.look;
+                if (out.trailLen && !(out.trailLen in TRAIL_DAYS)) delete out.trailLen;
                 return out;
             } catch (e) { return {}; }
         }
@@ -3441,6 +3456,7 @@
                 $('show-trails').checked = s.trails;
                 if (!s.trails) { clearTrailLines(); clearAllTrails(); }
             }
+            if (changed('trailLen')) markPressed('#trail-length [data-trail]', 'trail', s.trailLen);
             if (changed('mode')) {
                 document.body.classList.toggle('mode-dive', s.mode === 'dive');
                 document.body.classList.toggle('mode-galaxy', s.mode === 'galaxy');
@@ -3598,6 +3614,9 @@
         // Look tab
         document.querySelectorAll('#look-presets [data-look]').forEach(btn => {
             btn.addEventListener('click', () => setLook(btn.dataset.look));
+        });
+        document.querySelectorAll('#trail-length [data-trail]').forEach(btn => {
+            btn.addEventListener('click', () => setState({ trailLen: btn.dataset.trail, trails: true }));
         });
         $('follow-target').addEventListener('change', e => setFollow(e.target.value));
         [['show-labels', 'labels'], ['show-orbit-rings', 'orbitLines'], ['show-moons', 'moons'],
@@ -3776,6 +3795,8 @@
         });
         document.addEventListener('click', (e) => {
             const card = document.getElementById('planet-info-card');
+            // Canvas taps are handled by onTapEnd, which opens or closes the card itself
+            if (e.target === renderer.domElement) return;
             if (card.style.display !== 'none' && !card.contains(e.target) && !e.target.classList.contains('planet-label')) {
                 hideInfoCard();
             }
@@ -3909,16 +3930,57 @@
         // =====================================================================
         // LABEL CLICK HANDLER (integrates info card + distance mode)
         // =====================================================================
+        // First tap centres a body; a second tap on the centred one opens its info card
+        function selectBody(name, x, y) {
+            if (handleDistanceClick(name)) return;
+            const key = name.toLowerCase();
+            if (state.follow === key) { if (key !== 'sun') showInfoCard(name, x, y); return; }
+            hideInfoCard();
+            setFollow(key);
+        }
         planetLabels.forEach((label, name) => label.addEventListener('click', (e) => {
-            // Distance mode takes priority
-            if (handleDistanceClick(name)) { e.stopPropagation(); return; }
-
-            // Show info card near the click
-            showInfoCard(name, e.clientX, e.clientY);
-
-            // Also follow this planet
-            setFollow(name.toLowerCase());
+            e.stopPropagation();
+            selectBody(name, e.clientX, e.clientY);
         }));
+
+        // Tap on the canvas: pick the nearest body on screen, generous for tiny planets
+        const TAP_SLOP_PX = 6;
+        let tapStart = null;
+        function pickBodyAt(x, y) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            const v = new THREE.Vector3();
+            let best = null, bestD = Infinity;
+            [{ name: 'Sun', mesh: sun }, ...planets].forEach(b => {
+                v.copy(b.mesh.position).project(camera);
+                if (v.z > 1) return; // behind the camera
+                const sx = rect.left + (v.x + 1) / 2 * rect.width;
+                const sy = rect.top + (1 - v.y) / 2 * rect.height;
+                const d = Math.hypot(sx - x, sy - y);
+                if (d < 28 && d < bestD) { best = b.name; bestD = d; }
+            });
+            return best;
+        }
+        function onTapEnd(x, y) {
+            const start = tapStart;
+            tapStart = null;
+            if (!start || Math.hypot(x - start.x, y - start.y) > TAP_SLOP_PX) return;
+            if (galaxyViewActive || galaxyTransition || diveState !== 'none') return;
+            const name = pickBodyAt(x, y);
+            if (name) selectBody(name, x, y);
+            else if (infoCardPlanet) hideInfoCard();
+        }
+        renderer.domElement.addEventListener('mousedown', e => { tapStart = { x: e.clientX, y: e.clientY }; });
+        renderer.domElement.addEventListener('mouseup', e => onTapEnd(e.clientX, e.clientY));
+        renderer.domElement.addEventListener('touchstart', e => {
+            tapStart = e.touches.length === 1 ? { x: e.touches[0].clientX, y: e.touches[0].clientY } : null;
+        }, { passive: true });
+        renderer.domElement.addEventListener('touchmove', e => {
+            if (tapStart && e.touches.length === 1 && Math.hypot(e.touches[0].clientX - tapStart.x, e.touches[0].clientY - tapStart.y) > TAP_SLOP_PX) tapStart = null;
+        }, { passive: true });
+        renderer.domElement.addEventListener('touchend', e => {
+            const t = e.changedTouches[0];
+            if (e.touches.length === 0 && t) onTapEnd(t.clientX, t.clientY);
+        });
 
         document.getElementById('close-science').addEventListener('click', () => {
             document.getElementById('science-panel').style.display = 'none';
@@ -5265,7 +5327,7 @@
                     id: 'more',
                     target: '#dock-more',
                     title: 'More',
-                    text: 'Looks (Real scale, Pretty, Kid mode), time travel to any date within 100 years, distances, screenshots and more live here.',
+                    text: 'Looks (Real scale, Explorer, Kid mode), time travel to any date within 100 years, distances, screenshots and more live here.',
                     position: 'above',
                     duration: 6000,
                     action: null,
