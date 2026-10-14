@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solar System Vortex</title>
+    <title>Solar System</title>
     <style>
         * {
             margin: 0;
@@ -20,70 +20,6 @@
             width: 100vw;
             height: 100vh;
             touch-action: none;
-        }
-        #controls {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: rgba(10, 10, 25, 0.85);
-            padding: 15px;
-            border-radius: 12px;
-            font-size: 14px;
-            max-width: 320px;
-            border: 1px solid rgba(100, 150, 255, 0.3);
-            backdrop-filter: blur(10px);
-            max-height: calc(100vh - 40px);
-            overflow-y: auto;
-        }
-        #controls::-webkit-scrollbar { width: 4px; }
-        #controls::-webkit-scrollbar-thumb { background: rgba(100,150,255,0.3); border-radius: 2px; }
-        #controls h3 {
-            margin-bottom: 15px;
-            font-size: 18px;
-            color: #6495ff;
-            text-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
-        }
-        .control-group {
-            margin: 12px 0;
-        }
-        .control-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #ccc;
-            font-size: 13px;
-        }
-        .slider-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .slider-arrow {
-            background: rgba(100, 150, 255, 0.15);
-            border: 1px solid rgba(100, 150, 255, 0.3);
-            color: #6495ff;
-            width: 22px;
-            height: 22px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            padding: 0;
-            margin: 0;
-            flex-shrink: 0;
-            line-height: 1;
-            transition: background 0.15s, border-color 0.15s;
-        }
-        .slider-arrow:hover {
-            background: rgba(100, 150, 255, 0.3);
-            border-color: rgba(100, 150, 255, 0.6);
-            transform: none;
-            box-shadow: none;
-        }
-        .slider-arrow:active {
-            background: rgba(100, 150, 255, 0.45);
-            transform: none;
         }
         input[type="range"] {
             flex: 1;
@@ -129,31 +65,6 @@
             margin-top: 15px;
             padding-top: 15px;
             border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        #stats {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(10, 10, 25, 0.85);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid rgba(100, 150, 255, 0.3);
-            backdrop-filter: blur(10px);
-            font-size: 13px;
-            min-width: 200px;
-        }
-        #stats h4 {
-            color: #6495ff;
-            margin-bottom: 10px;
-            font-size: 14px;
-        }
-        .stat-line {
-            margin: 6px 0;
-            color: #ccc;
-        }
-        .stat-value {
-            color: #fff;
-            font-weight: bold;
         }
         .planet-label {
             position: absolute;
@@ -214,7 +125,6 @@
         .planet-info-funfact { color: #d4af37; font-size: 11px; font-style: italic; margin-bottom: 14px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); }
         .planet-label.distance-mode { cursor: crosshair; }
         .planet-label.distance-selected { border-color: #d4af37; background: rgba(212, 175, 55, 0.2); box-shadow: 0 0 8px rgba(212, 175, 55, 0.4); }
-        #toggle-distance.active { background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%) !important; }
         .toggle-section {
             border-top: 1px solid rgba(255, 255, 255, 0.1);
             margin-top: 15px;
@@ -256,10 +166,10 @@
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 10px rgba(100,150,255,0.3); } 50% { box-shadow: 0 0 20px rgba(100,150,255,0.6); } }
-        .loading-text { color: #6495ff; font-size: 24px; margin-top: 20px; }
+        .loading-text { color: #d4af37; font-size: 24px; margin-top: 20px; }
         .loading-subtext { color: #888; font-size: 14px; margin-top: 10px; }
         .loading-bar { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 15px; overflow: hidden; }
-        .loading-bar-fill { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); border-radius: 2px; transition: width 0.3s; width: 0%; }
+        .loading-bar-fill { height: 100%; background: linear-gradient(90deg, #b8860b, #d4af37); border-radius: 2px; transition: width 0.3s; width: 0%; }
 
         /* Galaxy View */
         #galaxy-info {
@@ -539,229 +449,19 @@
             transform: scale(1.08);
             box-shadow: 0 0 14px rgba(212, 175, 55, 0.35);
         }
-        body.ui-hidden #controls,
-        body.ui-hidden #stats,
-        body.ui-hidden #events,
-        body.ui-hidden #bottom-left-btns,
+        body.ui-hidden #dock,
+        body.ui-hidden #sheet,
+        body.ui-hidden #tool-hint,
         body.ui-hidden #earth-date-counter,
         body.ui-hidden #accuracy-panel,
-        body.ui-hidden #science-panel,
-        body.ui-hidden #left-panel-toggle,
-        body.ui-hidden #right-panel-toggle {
+        body.ui-hidden #science-panel {
             display: none !important;
-        }
-
-        /* ============================================================= */
-        /* CAMERA MODE BUTTON GROUP                                       */
-        /* ============================================================= */
-        .cam-mode-group {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px;
-            margin-top: 6px;
-        }
-        .cam-btn {
-            flex: 1 1 calc(33% - 4px);
-            min-width: 58px;
-            background: rgba(255, 255, 255, 0.06);
-            border: 1px solid rgba(100, 150, 255, 0.2);
-            color: #999;
-            padding: 6px 4px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-            text-align: center;
-            margin: 0;
-            transition: background 0.15s, border-color 0.15s, color 0.15s;
-            line-height: 1.4;
-        }
-        .cam-btn:hover {
-            background: rgba(100, 150, 255, 0.12);
-            border-color: rgba(100, 150, 255, 0.45);
-            color: #ccc;
-            transform: none;
-            box-shadow: none;
-        }
-        .cam-btn.active {
-            background: rgba(100, 150, 255, 0.2);
-            border-color: rgba(100, 150, 255, 0.65);
-            color: #6495ff;
-            font-weight: 600;
-        }
-
-        /* ============================================================= */
-        /* SCENE PRESETS                                                  */
-        /* ============================================================= */
-        .preset-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4px;
-            margin-top: 6px;
-        }
-        .preset-btn {
-            background: rgba(212, 175, 55, 0.06);
-            border: 1px solid rgba(212, 175, 55, 0.2);
-            color: #999;
-            padding: 7px 6px;
-            border-radius: 6px;
-            font-size: 11px;
-            cursor: pointer;
-            text-align: center;
-            margin: 0;
-            transition: background 0.15s, border-color 0.15s, color 0.15s;
-            line-height: 1.4;
-        }
-        .preset-btn:hover {
-            background: rgba(212, 175, 55, 0.14);
-            border-color: rgba(212, 175, 55, 0.5);
-            color: #d4af37;
-            transform: none;
-            box-shadow: none;
-        }
-        .preset-btn.active {
-            background: rgba(212, 175, 55, 0.2);
-            border-color: rgba(212, 175, 55, 0.65);
-            color: #d4af37;
-            font-weight: 600;
-        }
-
-        /* ============================================================= */
-        /* MOBILE TOGGLE BUTTONS                                          */
-        /* ============================================================= */
-        #mobile-controls-toggle,
-        #mobile-events-toggle,
-        #mobile-stats-toggle {
-            display: none;
-        }
-        #mobile-backdrop {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 150;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        #mobile-backdrop.visible {
-            opacity: 1;
         }
 
         /* ============================================================= */
         /* MOBILE RESPONSIVE - max-width 768px                            */
         /* ============================================================= */
         @media (max-width: 768px) {
-            /* --- Mobile toggle buttons --- */
-            #mobile-controls-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: fixed;
-                top: 12px;
-                left: 12px;
-                width: 44px;
-                height: 44px;
-                background: rgba(10, 10, 25, 0.9);
-                border: 1px solid rgba(100, 150, 255, 0.4);
-                border-radius: 12px;
-                backdrop-filter: blur(10px);
-                color: #6495ff;
-                font-size: 20px;
-                cursor: pointer;
-                z-index: 300;
-                transition: background 0.2s, transform 0.2s;
-            }
-            #mobile-controls-toggle:active {
-                transform: scale(0.92);
-                background: rgba(100, 150, 255, 0.2);
-            }
-            #mobile-controls-toggle.active {
-                background: rgba(100, 150, 255, 0.25);
-                border-color: rgba(100, 150, 255, 0.7);
-            }
-
-            #mobile-events-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: fixed;
-                bottom: 76px;
-                right: 12px;
-                width: 44px;
-                height: 44px;
-                background: rgba(10, 10, 25, 0.9);
-                border: 1px solid rgba(100, 150, 255, 0.4);
-                border-radius: 12px;
-                backdrop-filter: blur(10px);
-                color: #6495ff;
-                font-size: 18px;
-                cursor: pointer;
-                z-index: 300;
-                transition: background 0.2s, transform 0.2s;
-            }
-            #mobile-events-toggle:active {
-                transform: scale(0.92);
-            }
-
-            #mobile-stats-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                position: fixed;
-                bottom: 20px;
-                right: 20px;
-                width: 40px;
-                height: 40px;
-                background: rgba(10, 10, 25, 0.85);
-                border: 1px solid rgba(212, 175, 55, 0.45);
-                border-radius: 10px;
-                backdrop-filter: blur(10px);
-                color: #d4af37;
-                font-size: 16px;
-                cursor: pointer;
-                z-index: 500;
-                transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
-            }
-            #mobile-stats-toggle:active {
-                transform: scale(0.92);
-                background: rgba(212, 175, 55, 0.15);
-            }
-
-
-            /* --- Controls: bottom sheet (50% height, solar system visible above) --- */
-            #controls {
-                position: fixed;
-                top: auto;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                width: 100%;
-                max-width: 100%;
-                height: 50vh;
-                max-height: 50vh;
-                border-radius: 16px 16px 0 0;
-                padding: 16px 14px 80px; /* bottom clearance for app nav bar */
-                transform: translateY(100%);
-                transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 200;
-                border-bottom: none;
-                overflow-y: auto;
-                overflow-x: hidden;
-            }
-            #controls.mobile-open {
-                transform: translateY(0);
-            }
-            #controls h3 {
-                font-size: 14px;
-                margin-bottom: 8px;
-            }
-            .control-group {
-                margin: 6px 0;
-            }
-            .control-group label {
-                margin-bottom: 3px;
-                font-size: 12px;
-            }
-
             /* --- Earth date counter: compact on mobile --- */
             #earth-date-counter {
                 top: 10px;
@@ -772,50 +472,6 @@
             #earth-date-counter .date-label {
                 font-size: 8px;
                 letter-spacing: 2px;
-            }
-
-            /* --- Stats: hidden, toggled via button --- */
-            #stats {
-                position: fixed;
-                top: 12px;
-                right: 64px;
-                left: 64px;
-                min-width: auto;
-                padding: 10px 14px;
-                font-size: 11px;
-                border-radius: 10px;
-                display: none;
-                z-index: 200;
-            }
-            #stats.mobile-open {
-                display: block;
-            }
-            #stats h4 {
-                font-size: 12px;
-                margin-bottom: 6px;
-            }
-            .stat-line {
-                margin: 3px 0;
-                font-size: 11px;
-            }
-
-            /* --- Events: bottom sheet, hidden by default --- */
-            #events {
-                position: fixed !important;
-                top: auto !important;
-                left: 0 !important;
-                right: 0 !important;
-                bottom: 0 !important;
-                max-width: 100% !important;
-                width: 100% !important;
-                border-radius: 16px 16px 0 0 !important;
-                max-height: 50vh;
-                transform: translateY(100%);
-                transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-                z-index: 200;
-            }
-            #events.mobile-open {
-                transform: translateY(0);
             }
 
             /* --- Planet labels: smaller on mobile --- */
@@ -857,20 +513,6 @@
                 min-height: 44px;
                 padding: 10px !important;
                 font-size: 14px !important;
-            }
-
-            /* --- Bottom buttons: raised for mobile nav --- */
-            #bottom-left-btns {
-                bottom: 76px !important;
-                left: 12px !important;
-                right: 12px !important;
-                justify-content: center;
-            }
-            #bottom-left-btns button {
-                min-height: 40px;
-                font-size: 12px !important;
-                padding: 8px 12px !important;
-                flex: 1;
             }
 
             /* --- Science panel: full-width on mobile --- */
@@ -936,99 +578,6 @@
                 padding: 8px 12px;
             }
 
-            /* --- Mobile backdrop --- */
-            #mobile-backdrop {
-                display: none;
-            }
-            #mobile-backdrop.visible {
-                display: block;
-            }
-        }
-
-        /* Landscape on small devices */
-        @media (max-width: 768px) and (orientation: landscape) {
-            /* Controls is a left drawer in landscape too — no height override needed */
-            #events.mobile-open {
-                max-height: 70vh;
-            }
-        }
-
-        /* ============================================================= */
-        /* COLLAPSIBLE CONTROL SECTIONS                                   */
-        /* ============================================================= */
-        .ctrl-section {
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            margin-top: 10px;
-            padding-top: 8px;
-        }
-        .ctrl-section:first-child {
-            border-top: none;
-            margin-top: 0;
-            padding-top: 0;
-        }
-        .ctrl-section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            padding: 4px 0;
-            user-select: none;
-        }
-        .ctrl-section-header:hover .ctrl-section-label {
-            color: #6495ff;
-        }
-        .ctrl-section-label {
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            color: #777;
-            transition: color 0.15s;
-        }
-        .ctrl-section-chevron {
-            font-size: 10px;
-            color: #555;
-            transition: transform 0.25s ease;
-        }
-        .ctrl-section.collapsed .ctrl-section-chevron {
-            transform: rotate(-90deg);
-        }
-        .ctrl-section-body {
-            overflow: hidden;
-            max-height: 600px;
-            transition: max-height 0.35s ease, opacity 0.25s ease;
-            opacity: 1;
-        }
-        .ctrl-section.collapsed .ctrl-section-body {
-            max-height: 0;
-            opacity: 0;
-        }
-        /* "More Options" hint — visible only when collapsed */
-        .ctrl-section-hint {
-            color: #6495ff;
-            font-weight: 700;
-        }
-        .ctrl-section-hint-detail {
-            color: #666;
-            font-weight: 400;
-            font-size: 10px;
-            letter-spacing: 0.3px;
-            text-transform: none;
-        }
-        /* When expanded, revert to plain section title */
-        .ctrl-section:not(.collapsed) .ctrl-section-hint {
-            color: #777;
-        }
-        .ctrl-section:not(.collapsed) .ctrl-section-hint-detail {
-            display: none;
-        }
-        /* Subtle pulse on the chevron when collapsed to draw attention */
-        .ctrl-section.collapsed .ctrl-section-chevron {
-            animation: hint-pulse 2s ease-in-out 3;
-        }
-        @keyframes hint-pulse {
-            0%, 100% { color: #555; }
-            50% { color: #6495ff; }
         }
 
         /* ============================================================= */
@@ -1207,148 +756,6 @@
         #start-demo-tour.touring {
             background: linear-gradient(135deg, #ea4444 0%, #a22222 100%) !important;
         }
-        /* ============================================================
-           PANEL SLIDE TOGGLES
-           ============================================================ */
-        #controls, #stats, #events {
-            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.35s ease;
-        }
-        #controls.panel-collapsed {
-            transform: translateX(calc(-100% - 25px));
-            opacity: 0;
-            pointer-events: none;
-        }
-        #stats.panel-collapsed, #events.panel-collapsed {
-            transform: translateX(calc(100% + 25px));
-            opacity: 0;
-            pointer-events: none;
-        }
-        #left-panel-toggle, #right-panel-toggle {
-            position: fixed;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 200;
-            background: rgba(10, 10, 25, 0.85);
-            border: 1px solid rgba(100, 150, 255, 0.35);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #6495ff;
-            font-size: 15px;
-            font-weight: bold;
-            width: 22px;
-            height: 52px;
-            backdrop-filter: blur(10px);
-            transition: background 0.2s, box-shadow 0.2s;
-            line-height: 1;
-        }
-        #left-panel-toggle {
-            left: 0;
-            border-left: none;
-            border-radius: 0 8px 8px 0;
-        }
-        #right-panel-toggle {
-            right: 0;
-            border-right: none;
-            border-radius: 8px 0 0 8px;
-        }
-        #left-panel-toggle:hover, #right-panel-toggle:hover {
-            background: rgba(30, 30, 70, 0.95);
-            box-shadow: 0 0 14px rgba(100, 150, 255, 0.45);
-        }
-        @keyframes pulse-glow {
-            0%, 100% { box-shadow: 0 0 6px rgba(100, 150, 255, 0.2); border-color: rgba(100, 150, 255, 0.35); }
-            50%       { box-shadow: 0 0 18px rgba(100, 150, 255, 0.7); border-color: rgba(100, 150, 255, 0.8); }
-        }
-        .pulsing { animation: pulse-glow 2s ease-in-out infinite; }
-        @media (max-width: 767px) {
-            #left-panel-toggle, #right-panel-toggle { display: none !important; }
-            #controls.panel-collapsed, #stats.panel-collapsed, #events.panel-collapsed {
-                transform: none !important;
-                opacity: 1 !important;
-                pointer-events: auto !important;
-            }
-        }
-        /* ===== RESTRUCTURED PANEL ===== */
-        .views-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 5px;
-        }
-        .views-grid .preset-btn {
-            width: 100%;
-            font-size: 12px;
-            padding: 8px 4px;
-        }
-        .playback-row {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .playback-row button {
-            flex-shrink: 0;
-        }
-        .playback-row .time-inline {
-            flex: 1;
-            min-width: 0;
-            display: flex;
-            align-items: center;
-            gap: 3px;
-        }
-        .playback-row .time-inline input[type="range"] {
-            flex: 1;
-            min-width: 0;
-        }
-        .playback-row .time-inline .time-val {
-            font-size: 10px;
-            color: #888;
-            white-space: nowrap;
-            min-width: 32px;
-            text-align: right;
-        }
-        .advanced-toggle {
-            text-align: center;
-            padding: 8px 0 4px;
-            cursor: pointer;
-            color: #666;
-            font-size: 12px;
-            user-select: none;
-            transition: color 0.2s;
-        }
-        .advanced-toggle:hover {
-            color: #aaa;
-        }
-        #section-advanced {
-            border-top: 1px solid rgba(100,150,255,0.15);
-            padding-top: 8px;
-            margin-top: 4px;
-        }
-        #section-advanced.collapsed {
-            display: none;
-        }
-        .adv-group {
-            margin-bottom: 10px;
-        }
-        .adv-group-label {
-            display: block;
-            color: #6495ff;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 6px;
-            padding-bottom: 3px;
-            border-bottom: 1px solid rgba(100,150,255,0.1);
-        }
-        .adv-group .checkbox-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2px 8px;
-        }
-        .adv-group .checkbox-grid .checkbox-label {
-            font-size: 12px;
-        }
-
         /* Welcome prompt overlay */
         #welcome-prompt {
             position: fixed;
@@ -1362,13 +769,13 @@
         }
         .welcome-card {
             background: rgba(10,14,26,0.95);
-            border: 1px solid rgba(100,150,255,0.3);
+            border: 1px solid rgba(212,175,55,0.35);
             border-radius: 16px;
             padding: 32px 40px;
             text-align: center;
             max-width: 380px;
             backdrop-filter: blur(20px);
-            box-shadow: 0 0 80px rgba(100,150,255,0.1);
+            box-shadow: 0 0 80px rgba(212,175,55,0.08);
         }
         .welcome-card h3 {
             color: #fff;
@@ -1395,8 +802,8 @@
             min-height: auto;
         }
         #welcome-tour {
-            background: linear-gradient(135deg, #ff6b35 0%, #d63384 100%);
-            color: #fff;
+            background: #d4af37;
+            color: #0a0e1a;
             font-weight: 600;
         }
         #welcome-skip {
@@ -1406,40 +813,308 @@
         }
         #welcome-skip:hover { color: #fff; }
 
-        /* Shortcuts tooltip */
-        #shortcuts-popup {
-            display: none;
-            position: absolute;
-            top: 36px;
-            right: 0;
-            background: rgba(10,14,26,0.95);
-            border: 1px solid rgba(100,150,255,0.3);
-            border-radius: 8px;
-            padding: 10px 14px;
-            font-size: 11px;
-            color: #aaa;
-            line-height: 1.8;
+        /* ============================================================= */
+        /* DOCK, MORE SHEET AND SHORTCUTS                                 */
+        /* ============================================================= */
+        :root {
+            --void: #0a0e1a;
+            --glass: rgba(10, 14, 26, 0.86);
+            --line: rgba(255, 255, 255, 0.12);
+            --gold: #d4af37;
+            --gold-soft: rgba(212, 175, 55, 0.16);
+            --gold-edge: rgba(212, 175, 55, 0.55);
+            --text: #ecebe6;
+            --muted: #a3a8b8;
+            --dock-h: 62px;
+            --ui-font: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --mono: 'JetBrains Mono', 'Cascadia Mono', 'Courier New', monospace;
+        }
+        #dock, #sheet, #help-overlay, #tool-hint, #recording-indicator { font-family: var(--ui-font); color: var(--text); }
+        #dock {
+            position: fixed;
+            left: 50%;
+            bottom: 16px;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            max-width: calc(100vw - 32px);
+            background: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+            z-index: 120;
+        }
+        #dock button, #sheet button, #help-overlay button, #tool-hint button, #recording-indicator {
+            margin: 0;
+            min-height: 44px;
+            min-width: 44px;
+            padding: 0 12px;
+            background: transparent;
+            color: var(--text);
+            border: 1px solid transparent;
+            border-radius: 10px;
+            font: 500 13px/1 var(--ui-font);
+            letter-spacing: 0.01em;
             white-space: nowrap;
-            z-index: 200;
-            backdrop-filter: blur(10px);
+            box-shadow: none;
+            transform: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: background 0.15s, border-color 0.15s, color 0.15s;
         }
-        #shortcuts-popup kbd {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 3px;
-            padding: 1px 5px;
-            font-size: 10px;
-            color: #ccc;
-            font-family: monospace;
+        #dock button:hover, #sheet button:hover, #help-overlay button:hover, #tool-hint button:hover {
+            background: rgba(255, 255, 255, 0.08);
+            transform: none;
+            box-shadow: none;
         }
+        #dock button[aria-pressed="true"], #sheet button[aria-pressed="true"],
+        #sheet [role="tab"][aria-selected="true"], #dock-more[aria-expanded="true"] {
+            background: var(--gold-soft);
+            border-color: var(--gold-edge);
+            color: var(--gold);
+        }
+        #dock :focus-visible, #sheet :focus-visible, #help-overlay :focus-visible, #tool-hint :focus-visible,
+        #recording-indicator:focus-visible, #ui-toggle-btn:focus-visible, #welcome-prompt :focus-visible,
+        .planet-info-close-btn:focus-visible, #close-science:focus-visible {
+            outline: 2px solid var(--gold);
+            outline-offset: 2px;
+        }
+        #dock svg { width: 18px; height: 18px; flex-shrink: 0; }
+        .dock-group { display: flex; align-items: center; gap: 6px; }
+        .dock-label {
+            font: 600 10px/1 var(--ui-font);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding-left: 4px;
+        }
+        .dock-break { display: none; }
+        .seg {
+            display: flex;
+            gap: 2px;
+            padding: 2px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--line);
+        }
+        #dock .seg button, #sheet .seg button { padding: 0 11px; }
+        #toggle-pause { width: 44px; padding: 0; color: var(--gold); border-color: var(--gold-edge); }
+        #toggle-pause .i-play, #toggle-pause.is-paused .i-pause { display: none; }
+        #toggle-pause.is-paused .i-play { display: block; }
+        #planet-dive-btn .dive-target { color: var(--gold); }
 
-        /* Hide standalone stats panel */
-        #stats { display: none !important; }
+        #sheet {
+            position: fixed;
+            left: 50%;
+            bottom: calc(var(--dock-h) + 28px);
+            transform: translateX(-50%);
+            width: min(440px, calc(100vw - 32px));
+            max-height: calc(100vh - var(--dock-h) - 120px);
+            display: flex;
+            flex-direction: column;
+            background: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 16px 50px rgba(0, 0, 0, 0.55);
+            z-index: 130;
+        }
+        #sheet[hidden], #help-overlay[hidden], #tool-hint[hidden], #recording-indicator[hidden], #sheet [role="tabpanel"][hidden] { display: none; }
+        .sheet-head { display: flex; align-items: center; gap: 6px; padding: 8px 8px 0; }
+        .sheet-head .tabs { flex: 1; display: flex; gap: 2px; }
+        .sheet-head [role="tab"] { flex: 1; font-size: 14px !important; }
+        .sheet-body { padding: 6px 16px 12px; overflow-y: auto; }
+        .sheet-label {
+            display: block;
+            font: 600 11px/1 var(--ui-font);
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin: 16px 0 8px;
+        }
+        .seg-wide button { flex: 1; }
+        #follow-target {
+            width: 100%;
+            min-height: 44px;
+            padding: 0 12px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text);
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            font: 14px var(--ui-font);
+        }
+        #follow-target option, #follow-target optgroup { background: #12172a; color: #fff; }
+        .toggles { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .switch {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 44px;
+            padding: 0 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--line);
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .switch input {
+            appearance: none;
+            -webkit-appearance: none;
+            position: relative;
+            flex-shrink: 0;
+            width: 34px;
+            height: 20px;
+            margin: 0;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .switch input::after {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #fff;
+            transition: transform 0.15s;
+        }
+        .switch input:checked { background: var(--gold); }
+        .switch input:checked::after { transform: translateX(14px); background: var(--void); }
+        .switch input:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+        .time-now { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 4px; }
+        #scrubber-date { font: 600 20px/1.2 var(--mono); color: var(--gold); }
+        #scrubber-speed { color: var(--muted); font-size: 12px; }
+        #scrubber-slider { width: 100%; margin: 16px 0; }
+        #scrubber-slider::-webkit-slider-thumb { width: 22px; height: 22px; background: var(--gold); }
+        #scrubber-slider::-moz-range-thumb { width: 22px; height: 22px; background: var(--gold); border: none; border-radius: 50%; }
+        #events-list { max-height: 200px; font-size: 13px; }
+        .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
+        #sheet .tool-grid button {
+            min-height: 56px;
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--line);
+            white-space: normal;
+            text-align: center;
+            line-height: 1.2;
+        }
+        .tool-note { color: var(--muted); font-size: 12px; line-height: 1.5; margin-top: 12px; }
+        .sheet-foot { display: flex; padding: 8px 16px 14px; border-top: 1px solid var(--line); }
+        #sheet #reset-view { flex: 1; color: var(--muted); border-color: var(--line); }
+        #sheet #reset-view:hover { color: var(--text); }
+        .icon-btn { width: 44px; padding: 0 !important; font-size: 18px !important; color: var(--muted) !important; }
 
-        @media (max-width: 768px) {
-            .views-grid { gap: 4px; }
-            .views-grid .preset-btn { padding: 10px 4px; font-size: 13px; }
-            .playback-row { flex-wrap: wrap; }
+        #help-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(6px);
+        }
+        .help-card {
+            width: min(420px, calc(100vw - 32px));
+            padding: 22px 24px 18px;
+            background: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: 16px;
+        }
+        .help-card h2 { font: 600 18px/1.2 var(--ui-font); color: #fff; margin-bottom: 14px; }
+        .help-card dl { display: grid; grid-template-columns: auto 1fr; gap: 9px 16px; font-size: 14px; color: var(--muted); align-items: center; }
+        .help-card dt { text-align: right; color: var(--text); white-space: nowrap; }
+        .help-card kbd {
+            display: inline-block;
+            min-width: 26px;
+            padding: 3px 7px;
+            border: 1px solid var(--line);
+            border-bottom-width: 2px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.06);
+            font: 12px var(--mono);
+            text-align: center;
+        }
+        .help-card .help-actions { display: flex; justify-content: flex-end; margin-top: 16px; }
+        #help-close { border-color: var(--gold-edge) !important; color: var(--gold) !important; }
+
+        #tool-hint {
+            position: fixed;
+            top: 84px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 4px 4px 4px 16px;
+            background: var(--glass);
+            border: 1px solid var(--gold-edge);
+            border-radius: 12px;
+            font-size: 13px;
+            z-index: 120;
+            white-space: nowrap;
+        }
+        #tool-hint button { color: var(--gold); }
+        #recording-indicator {
+            position: fixed;
+            top: 16px;
+            left: 16px;
+            z-index: 140;
+            background: rgba(120, 20, 20, 0.85);
+            border-color: rgba(255, 90, 90, 0.6);
+            font-weight: 600;
+        }
+        .rec-dot { width: 9px; height: 9px; border-radius: 50%; background: #ff5555; animation: blink 1s infinite; }
+
+        #ui-toggle-btn { top: 16px; right: 16px; bottom: auto; width: 44px; height: 44px; }
+        #science-panel, #accuracy-panel { bottom: calc(var(--dock-h) + 28px) !important; }
+        #accuracy-panel .planet-info-close-btn { position: absolute; top: 10px; right: 10px; }
+        body.mode-galaxy #dock, body.mode-galaxy #sheet, body.mode-galaxy #tool-hint,
+        body.mode-galaxy #earth-date-counter { display: none !important; }
+        body.kid .planet-label { font-weight: 700; padding: 4px 10px; }
+
+        @media (max-width: 860px) {
+            :root { --dock-h: 112px; }
+            #dock {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 6px;
+                bottom: 10px;
+                width: calc(100vw - 20px);
+                max-width: 520px;
+                padding: 6px;
+            }
+            .dock-label, #planet-dive-btn .dive-target { display: none; }
+            .dock-break { display: block; flex-basis: 100%; height: 0; }
+            #dock-speed { flex: 1; }
+            #dock-speed .seg { flex: 1; }
+            #dock-speed .seg button { flex: 1; }
+            #dock button { padding: 0 10px; }
+            #dock .seg button { padding: 0 9px; }
+            #sheet {
+                left: 10px;
+                right: 10px;
+                width: auto;
+                transform: none;
+                bottom: calc(var(--dock-h) + 18px);
+                max-height: calc(100dvh - var(--dock-h) - 90px);
+            }
+            #science-panel, #accuracy-panel { bottom: calc(var(--dock-h) + 18px) !important; left: 10px !important; right: 10px !important; width: auto !important; border-radius: 16px !important; }
+            #tool-hint { top: 64px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            #dock *, #sheet *, .switch input, .switch input::after { transition: none !important; }
+            .rec-dot { animation: none; }
         }
     </style>
 </head>
@@ -1464,15 +1139,6 @@
         <div class="loading-bar"><div class="loading-bar-fill" id="loading-bar-fill"></div></div>
     </div>
 
-    <!-- Desktop panel collapse toggles -->
-    <button id="left-panel-toggle" aria-label="Toggle controls panel">&#x276F;</button>
-    <button id="right-panel-toggle" aria-label="Toggle side panels">&#x276E;</button>
-
-    <!-- Mobile toggle buttons (visible only on mobile via CSS) -->
-    <button type="button" id="mobile-controls-toggle" aria-label="Toggle controls">&#x2630;</button>
-    <button type="button" id="mobile-events-toggle" aria-label="Toggle events">&#x1F30D;</button>
-    <div id="mobile-backdrop"></div>
-
     <div id="canvas-container"></div>
 
     <!-- Earth date counter -->
@@ -1481,192 +1147,140 @@
         <div class="date-value" id="earth-date-value">04 : 02 : 2026</div>
     </div>
 
-    <div id="controls">
-        <!-- Header -->
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; position:relative;">
-            <h3 style="margin:0; font-size:16px;">&#x26A1; Solar Vortex</h3>
-            <button id="shortcuts-hint" title="Keyboard shortcuts" style="background:none; border:1px solid rgba(100,150,255,0.2); color:#666; font-size:11px; padding:2px 7px; border-radius:4px; cursor:pointer; min-height:auto; line-height:1.4;">?</button>
-            <div id="shortcuts-popup">
-                <kbd>Space</kbd> Pause / Resume<br>
-                <kbd>R</kbd> Reset view<br>
-                <kbd>E</kbd> Dive into planet<br>
-                <kbd>G</kbd> Galaxy view<br>
-                <kbd>+</kbd> / <kbd>-</kbd> Zoom<br>
-                <kbd>Esc</kbd> Exit mode<br>
-                Drag to rotate &middot; Scroll to zoom<br>
-                Shift+drag to pan &middot; Click label for info
+    <!-- ==================== DOCK ==================== -->
+    <nav id="dock" aria-label="Solar system controls">
+        <button type="button" id="toggle-pause" aria-label="Pause">
+            <svg class="i-pause" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>
+            <svg class="i-play" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l11-6.5a1 1 0 0 0 0-1.72l-11-6.5A1 1 0 0 0 8 5.5z"/></svg>
+        </button>
+        <div class="dock-group" id="dock-speed" role="group" aria-label="Speed">
+            <span class="dock-label" aria-hidden="true">Speed</span>
+            <div class="seg">
+                <button type="button" data-speed="real" aria-label="Real time" aria-pressed="false">Real</button>
+                <button type="button" data-speed="week" aria-label="1 week per second" aria-pressed="false">1 wk/s</button>
+                <button type="button" data-speed="month" aria-label="1 month per second" aria-pressed="false">1 mo/s</button>
+                <button type="button" data-speed="year" aria-label="1 year per second" aria-pressed="false">1 yr/s</button>
             </div>
         </div>
+        <span class="dock-break" aria-hidden="true"></span>
+        <div class="dock-group" id="dock-view" role="group" aria-label="View">
+            <span class="dock-label" aria-hidden="true">View</span>
+            <div class="seg">
+                <button type="button" data-view="free" aria-label="Free view" aria-pressed="false">Free</button>
+                <button type="button" data-view="top" aria-label="Top view" aria-pressed="false">Top</button>
+                <button type="button" data-view="side" aria-label="Side view" aria-pressed="false">Side</button>
+            </div>
+        </div>
+        <button type="button" id="planet-dive-btn" aria-pressed="false"><span class="dive-word">Dive</span> <span class="dive-target">Sun</span></button>
+        <button type="button" id="toggle-galaxy" aria-pressed="false">Galaxy</button>
+        <button type="button" id="dock-more" aria-expanded="false" aria-controls="sheet">More</button>
+    </nav>
 
-        <!-- ==================== SIMPLE MODE ==================== -->
-
-        <!-- Focus: what are you looking at? -->
-        <div class="ctrl-section" id="section-focus">
-            <div class="control-group">
-                <label style="display:block; margin-bottom:4px; color:#ccc; font-size:13px;">Focus:</label>
-                <select id="follow-target" style="width:100%; padding:6px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(100,150,255,0.3); border-radius:6px; font-size:13px;">
-                    <option value="sun" style="background:#1a1a2e;color:#fff;" selected>Sun (default)</option>
-                    <optgroup label="Planets" style="background:#1a1a2e;color:#fff;">
-                        <option value="mercury" style="background:#1a1a2e;color:#fff;">Mercury</option>
-                        <option value="venus" style="background:#1a1a2e;color:#fff;">Venus</option>
-                        <option value="earth" style="background:#1a1a2e;color:#fff;">Earth</option>
-                        <option value="mars" style="background:#1a1a2e;color:#fff;">Mars</option>
-                        <option value="jupiter" style="background:#1a1a2e;color:#fff;">Jupiter</option>
-                        <option value="saturn" style="background:#1a1a2e;color:#fff;">Saturn</option>
-                        <option value="uranus" style="background:#1a1a2e;color:#fff;">Uranus</option>
-                        <option value="neptune" style="background:#1a1a2e;color:#fff;">Neptune</option>
+    <!-- ==================== MORE SHEET ==================== -->
+    <section id="sheet" aria-label="More controls" hidden>
+        <div class="sheet-head">
+            <div class="tabs" role="tablist" aria-label="More controls">
+                <button type="button" role="tab" id="tab-look" data-tab="look" aria-controls="panel-look" aria-selected="true">Look</button>
+                <button type="button" role="tab" id="tab-time" data-tab="time" aria-controls="panel-time" aria-selected="false" tabindex="-1">Time</button>
+                <button type="button" role="tab" id="tab-tools" data-tab="tools" aria-controls="panel-tools" aria-selected="false" tabindex="-1">Tools</button>
+            </div>
+            <button type="button" id="help-btn" class="icon-btn" aria-label="Keyboard shortcuts" aria-haspopup="dialog">?</button>
+            <button type="button" id="sheet-close" class="icon-btn" aria-label="Close">&times;</button>
+        </div>
+        <div class="sheet-body">
+            <div role="tabpanel" id="panel-look" aria-labelledby="tab-look">
+                <span class="sheet-label" id="look-label">Preset</span>
+                <div class="seg seg-wide" id="look-presets" role="group" aria-labelledby="look-label">
+                    <button type="button" data-look="real" aria-pressed="false">Real scale</button>
+                    <button type="button" data-look="pretty" aria-pressed="false">Pretty</button>
+                    <button type="button" data-look="kid" aria-pressed="false">Kid mode</button>
+                </div>
+                <label class="sheet-label" for="follow-target">Centre on</label>
+                <select id="follow-target">
+                    <option value="sun" selected>Sun</option>
+                    <optgroup label="Planets">
+                        <option value="mercury">Mercury</option>
+                        <option value="venus">Venus</option>
+                        <option value="earth">Earth</option>
+                        <option value="mars">Mars</option>
+                        <option value="jupiter">Jupiter</option>
+                        <option value="saturn">Saturn</option>
+                        <option value="uranus">Uranus</option>
+                        <option value="neptune">Neptune</option>
                     </optgroup>
-                    <optgroup label="Other" style="background:#1a1a2e;color:#fff;">
-                        <option value="moon" style="background:#1a1a2e;color:#fff;">Moon</option>
-                        <option value="ceres" style="background:#1a1a2e;color:#fff;">Ceres (dwarf)</option>
-                        <option value="pluto" style="background:#1a1a2e;color:#fff;">Pluto (dwarf)</option>
+                    <optgroup label="Other">
+                        <option value="moon">Moon</option>
+                        <option value="ceres">Ceres (dwarf)</option>
+                        <option value="pluto">Pluto (dwarf)</option>
                     </optgroup>
-                    <option value="none" style="background:#1a1a2e;color:#fff;">None (free roam)</option>
+                    <option value="none">Nothing (free roam)</option>
                 </select>
+                <span class="sheet-label">Show</span>
+                <div class="toggles">
+                    <label class="switch"><input type="checkbox" id="show-labels"><span>Labels</span></label>
+                    <label class="switch"><input type="checkbox" id="show-orbit-rings"><span>Orbit lines</span></label>
+                    <label class="switch"><input type="checkbox" id="show-moons"><span>Moons</span></label>
+                    <label class="switch"><input type="checkbox" id="show-milky-way"><span>Milky Way</span></label>
+                    <label class="switch"><input type="checkbox" id="show-trails"><span>Trails</span></label>
+                </div>
+            </div>
+            <div role="tabpanel" id="panel-time" aria-labelledby="tab-time" hidden>
+                <div class="time-now">
+                    <span id="scrubber-date"></span>
+                    <span id="scrubber-speed"></span>
+                </div>
+                <input type="range" id="scrubber-slider" min="-36525" max="36525" step="1" value="0" aria-label="Date, up to 100 years either side of today">
+                <div class="seg seg-wide">
+                    <button type="button" class="scrubber-preset-btn" data-offset="-365">&minus;1 year</button>
+                    <button type="button" class="scrubber-preset-btn" data-offset="0">Today</button>
+                    <button type="button" class="scrubber-preset-btn" data-offset="365">+1 year</button>
+                    <button type="button" class="scrubber-preset-btn" data-offset="3652">+10 years</button>
+                </div>
+                <span class="sheet-label">Planetary events</span>
+                <div id="events-list"><div style="color:#888; font-size:12px;">Calculating alignments...</div></div>
+            </div>
+            <div role="tabpanel" id="panel-tools" aria-labelledby="tab-tools" hidden>
+                <div class="tool-grid">
+                    <button type="button" id="toggle-distance" aria-pressed="false">Distance</button>
+                    <button type="button" id="toggle-science">Planet info</button>
+                    <button type="button" id="export-screenshot">Screenshot</button>
+                    <button type="button" id="export-video" aria-pressed="false">Record</button>
+                    <button type="button" id="start-demo-tour">Tour</button>
+                    <button type="button" id="toggle-accuracy" aria-pressed="false">Accuracy</button>
+                </div>
+                <p class="tool-note">Click a planet name to follow it and read its data.</p>
             </div>
         </div>
-
-        <!-- Views: how are you looking at it? -->
-        <div class="ctrl-section" id="section-presets">
-            <div class="control-group">
-                <label>Views:</label>
-                <div class="views-grid">
-                    <button type="button" class="preset-btn" data-preset="overview" title="Bird's-eye view of the full system">Overview</button>
-                    <button type="button" class="preset-btn" data-preset="vortex" title="Side view showing the vortex helix">Vortex</button>
-                    <button type="button" class="preset-btn" data-preset="cinema" title="Sweeping cinematic camera orbit">Cinema</button>
-                    <button type="button" class="preset-btn" data-preset="moon-watch" title="Close-up of Earth with moons visible">Moon Watch</button>
-                </div>
-            </div>
+        <div class="sheet-foot">
+            <button type="button" id="reset-view">Reset everything</button>
         </div>
+    </section>
 
-        <!-- Playback: pause, time, reset -->
-        <div class="ctrl-section" id="section-playback">
-            <div class="playback-row">
-                <button id="toggle-pause" style="flex-shrink:0;">Pause</button>
-                <div class="time-inline">
-                    <button type="button" class="slider-arrow" data-target="time-speed" data-dir="-1" aria-label="Slower" style="min-height:auto; padding:3px 6px;">&#x25C0;</button>
-                    <input type="range" id="time-speed" min="1" max="365" step="1" value="30">
-                    <button type="button" class="slider-arrow" data-target="time-speed" data-dir="1" aria-label="Faster" style="min-height:auto; padding:3px 6px;">&#x25B6;</button>
-                    <span class="time-val"><span id="time-speed-val">30</span> d/s</span>
-                </div>
-                <button id="reset-view" style="flex-shrink:0;">Reset</button>
-            </div>
-        </div>
-
-        <!-- Primary actions -->
-        <div class="ctrl-section" id="section-actions">
-            <div style="display:flex; gap:5px; flex-wrap:wrap;">
-                <button id="planet-dive-btn" title="Dive into orbit around the focused planet" style="flex:1;">Dive Into Earth</button>
-                <button id="export-screenshot" title="Save screenshot" style="font-size:12px; padding:7px 10px; min-width:auto;">&#x1F4F7;</button>
-                <button id="export-video-start" title="Record video" style="font-size:12px; padding:7px 10px; min-width:auto;">&#x23FA;</button>
-                <button id="export-video-stop" style="font-size:12px; padding:7px 10px; min-width:auto; display:none; background:linear-gradient(135deg, #ea4444 0%, #a22222 100%);">Stop</button>
-            </div>
-            <div id="recording-indicator" style="display:none; margin-top:6px; color:#ff4444; font-size:11px; animation: blink 1s infinite;">Recording...</div>
-        </div>
-
-        <!-- Advanced toggle -->
-        <div id="advanced-toggle" class="advanced-toggle">
-            <span id="advanced-toggle-text">Show advanced</span> <span id="advanced-toggle-arrow">&#x25BC;</span>
-        </div>
-
-        <!-- ==================== ADVANCED MODE ==================== -->
-        <div id="section-advanced" class="collapsed">
-
-            <!-- More view presets -->
-            <div class="adv-group">
-                <label style="color:#ccc; font-size:12px;">More views:</label>
-                <div style="display:flex; gap:5px; margin-top:4px;">
-                    <button type="button" class="preset-btn" data-preset="surfboard" title="Ultra-low grazing angle along the ecliptic">Surfboard</button>
-                    <button type="button" class="preset-btn" data-preset="helix" title="Inside the helix tube, planets cross above">Helix</button>
-                </div>
-            </div>
-
-            <!-- Camera mode (manual override) -->
-            <div class="adv-group">
-                <label class="adv-group-label">Camera (manual)</label>
-                <div class="cam-mode-group">
-                    <button type="button" class="cam-btn active" data-mode="free">Free</button>
-                    <button type="button" class="cam-btn" data-mode="cinematic">Cinema</button>
-                    <button type="button" class="cam-btn" data-mode="orbital">Top-Down</button>
-                    <button type="button" class="cam-btn" data-mode="side">Vortex</button>
-                    <button type="button" class="cam-btn" data-mode="chase">Chase</button>
-                    <button type="button" class="cam-btn" data-mode="surfboard">Surfboard</button>
-                    <button type="button" class="cam-btn" data-mode="helix">Helix</button>
-                </div>
-                <select id="camera-mode" style="display:none;">
-                    <option value="free">Free Camera</option>
-                    <option value="cinematic">Cinematic</option>
-                    <option value="orbital">Top-Down</option>
-                    <option value="side">Vortex</option>
-                    <option value="chase">Chase</option>
-                    <option value="surfboard">Surfboard</option>
-                    <option value="helix">Helix</option>
-                </select>
-            </div>
-
-            <!-- Simulation speeds -->
-            <div class="adv-group" id="section-simulation">
-                <label class="adv-group-label">Simulation</label>
-                <div class="control-group">
-                    <label>Helix stretch: <span id="sun-speed-val">4.19</span>x</label>
-                    <div class="slider-row">
-                        <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="-1" aria-label="Decrease sun speed">&#x25C0;</button>
-                        <input type="range" id="sun-speed" min="0" max="5" step="0.001" value="2.047">
-                        <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="1" aria-label="Increase sun speed">&#x25B6;</button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Scene toggles -->
-            <div class="adv-group" id="section-visuals">
-                <label class="adv-group-label">Scene</label>
-                <div class="checkbox-grid">
-                    <label class="checkbox-label"><input type="checkbox" id="show-labels" checked><span>Labels</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="show-orbit-rings" checked><span>Orbit Lines</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="show-moons"><span>Moons</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="show-milky-way" checked><span>Milky Way</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="show-grid" checked><span>Grid</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="show-particles"><span>Corona</span></label>
-                    <label class="checkbox-label"><input type="checkbox" id="elliptical-orbits" checked><span>Elliptical</span></label>
-                </div>
-            </div>
-
-            <!-- Trail controls -->
-            <div class="adv-group">
-                <label class="adv-group-label">Trails</label>
-                <div class="control-group">
-                    <label>Length: <span id="trail-length-val">800</span></label>
-                    <div class="slider-row">
-                        <button type="button" class="slider-arrow" data-target="trail-length" data-dir="-1" aria-label="Decrease trail length">&#x25C0;</button>
-                        <input type="range" id="trail-length" min="100" max="2000" step="50" value="800">
-                        <button type="button" class="slider-arrow" data-target="trail-length" data-dir="1" aria-label="Increase trail length">&#x25B6;</button>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label>Opacity: <span id="trail-opacity-val">0.7</span></label>
-                    <div class="slider-row">
-                        <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="-1" aria-label="Decrease trail opacity">&#x25C0;</button>
-                        <input type="range" id="trail-opacity" min="0.2" max="1" step="0.05" value="0.7">
-                        <button type="button" class="slider-arrow" data-target="trail-opacity" data-dir="1" aria-label="Increase trail opacity">&#x25B6;</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <!-- Distance tool hint -->
+    <div id="tool-hint" role="status" hidden>
+        <span>Click two planet names to measure</span>
+        <button type="button" id="tool-hint-done">Done</button>
     </div>
 
-    <div id="stats">
-        <h4>&#x1F4CA; Statistics</h4>
-        <div class="stat-line">Distance: <span class="stat-value" id="stat-distance">0</span> AU</div>
-        <div class="stat-line">Sim Time: <span class="stat-value" id="stat-time">0</span>s</div>
-        <div class="stat-line">Date: <span class="stat-value" id="stat-date">Feb 4, 2026</span></div>
-        <div class="stat-line">Planets: <span class="stat-value">8 + 2 dwarf</span></div>
-        <div class="stat-line">Moons: <span class="stat-value">17</span></div>
-        <div class="stat-line">Camera: <span class="stat-value" id="stat-zoom">160</span></div>
-    </div>
+    <!-- Recording badge: shown while recording, click to stop -->
+    <button type="button" id="recording-indicator" aria-label="Stop recording" hidden><span class="rec-dot" aria-hidden="true"></span>REC</button>
 
-    <div id="events" style="position:absolute; bottom:20px; right:20px; background:rgba(10,10,25,0.85); padding:15px; border-radius:12px; border:1px solid rgba(100,150,255,0.3); backdrop-filter:blur(10px); max-width:320px; font-size:13px;">
-        <h4 style="color:#6495ff; margin-bottom:10px; font-size:14px;">&#x1F30D; Planetary Events</h4>
-        <div id="events-list"><div style="color:#888; font-size:12px;">Calculating alignments...</div></div>
+    <!-- Keyboard shortcuts -->
+    <div id="help-overlay" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+        <div class="help-card">
+            <h2 id="help-title">Keyboard shortcuts</h2>
+            <dl>
+                <dt><kbd>Space</kbd></dt><dd>Play or pause</dd>
+                <dt><kbd>E</kbd></dt><dd>Dive into the planet you follow</dd>
+                <dt><kbd>G</kbd></dt><dd>Galaxy view</dd>
+                <dt><kbd>Esc</kbd></dt><dd>Close, or leave dive and galaxy</dd>
+                <dt><kbd>R</kbd></dt><dd>Reset everything</dd>
+                <dt><kbd>?</kbd></dt><dd>This list</dd>
+                <dt>Drag</dt><dd>Rotate (Shift+drag to pan)</dd>
+                <dt>Scroll</dt><dd>Zoom; keep going out for the galaxy</dd>
+            </dl>
+            <div class="help-actions"><button type="button" id="help-close">Close</button></div>
+        </div>
     </div>
 
     <!-- Science Info Panel -->
@@ -1700,35 +1314,6 @@
         <div id="distance-label-names" style="color:#d4af37; font-weight:600; margin-bottom:4px;"></div>
         <div id="distance-label-au" style="font-family:'Courier New',monospace;"></div>
         <div id="distance-label-km" style="font-family:'Courier New',monospace; color:#aaa; font-size:11px;"></div>
-    </div>
-
-    <!-- Bottom-left buttons -->
-    <div style="position:absolute; bottom:20px; left:20px; display:flex; gap:8px; z-index:50; flex-wrap:wrap;" id="bottom-left-btns">
-        <button id="toggle-science" style="font-size:11px; padding:8px 14px; opacity:0.8;">Planet Info</button>
-        <button id="toggle-scale" style="font-size:11px; padding:8px 14px; opacity:0.8;">True Scale</button>
-        <button id="toggle-accuracy" style="font-size:11px; padding:8px 14px; opacity:0.8;">Accuracy</button>
-        <button id="toggle-distance" style="font-size:11px; padding:8px 14px; opacity:0.8;">Distance</button>
-        <button id="toggle-scrubber" style="font-size:11px; padding:8px 14px; opacity:0.8;">Time Travel</button>
-        <button id="toggle-galaxy" style="font-size:11px; padding:8px 14px; opacity:0.8; background:linear-gradient(135deg, #1a237e 0%, #4a148c 100%);">&#x1F30C; Galaxy View</button>
-        <button id="start-demo-tour" style="font-size:11px; padding:8px 14px; opacity:0.8; background:linear-gradient(135deg, #ff6b35 0%, #d63384 100%);">&#x1F3AC; Tour</button>
-    </div>
-
-    <!-- Time Scrubber Bar -->
-    <div id="time-scrubber" style="position:fixed; bottom:0; left:0; right:0; z-index:60; display:none; background:linear-gradient(to top, rgba(10,14,26,0.95), rgba(10,14,26,0.7)); border-top:1px solid rgba(212,175,55,0.25); backdrop-filter:blur(10px); padding:10px 20px 14px;">
-        <button id="scrubber-close" onclick="toggleScrubber()" title="Close (Esc)" style="position:absolute; top:8px; right:12px; background:none; border:none; color:#d4af37; font-size:20px; line-height:1; cursor:pointer; padding:4px 8px; opacity:0.8;">×</button>
-        <div style="max-width:900px; margin:0 auto;">
-            <div style="display:flex; gap:6px; justify-content:center; margin-bottom:8px;">
-                <button type="button" class="scrubber-preset-btn" data-offset="-365" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">-1 Year</button>
-                <button type="button" class="scrubber-preset-btn" data-offset="0" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">Today</button>
-                <button type="button" class="scrubber-preset-btn" data-offset="365" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">+1 Year</button>
-                <button type="button" class="scrubber-preset-btn" data-offset="3652" style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.25); color:#d4af37; padding:4px 12px; border-radius:4px; font-size:11px; cursor:pointer; min-height:auto; margin:0;">+10 Years</button>
-            </div>
-            <input type="range" id="scrubber-slider" min="-36525" max="36525" step="1" value="0" style="width:100%;">
-            <div style="display:flex; justify-content:space-between; margin-top:6px; font-size:12px;">
-                <span id="scrubber-date" style="color:#d4af37; font-family:'Courier New',monospace; font-weight:600;"></span>
-                <span id="scrubber-speed" style="color:#666; font-size:11px;"></span>
-            </div>
-        </div>
     </div>
 
     <!-- Galaxy View overlay elements -->
@@ -1771,7 +1356,8 @@
 
     <!-- Accuracy overlay -->
     <div id="accuracy-panel" style="position:absolute; bottom:70px; left:20px; background:rgba(10,10,25,0.92); padding:18px; border-radius:12px; border:1px solid rgba(100,150,255,0.3); backdrop-filter:blur(10px); max-width:400px; font-size:12px; display:none; line-height:1.6; z-index:90;">
-        <h4 style="color:#6495ff; margin:0 0 12px 0; font-size:14px;">Scientific Accuracy Notes</h4>
+        <button type="button" id="accuracy-close" class="planet-info-close-btn" aria-label="Close accuracy notes">&times;</button>
+        <h4 style="color:#d4af37; margin:0 0 12px 0; font-size:14px;">Scientific Accuracy Notes</h4>
         <div style="color:#8f8;">
             <strong style="color:#6f6;">Accurate:</strong><br>
             &bull; Orbital periods (Mercury 88d through Neptune 60,190d)<br>
@@ -1790,8 +1376,8 @@
             &bull; Vortex helix ratio greatly exaggerated for visual drama
         </div>
         <div style="color:#aaa; margin-top:10px; font-size:11px;">
-            Use <strong style="color:#fff;">True Scale</strong> to see real relative planet sizes.<br>
-            Click any planet label to see real NASA data.
+            Pick <strong style="color:#fff;">Real scale</strong> (More, Look) to see real relative planet sizes.<br>
+            Click any planet name to see its data.
         </div>
     </div>
 
@@ -2817,7 +2403,7 @@
                 if (v.z < 1 && v.x > -1.5 && v.x < 1.5 && v.y > -1.5 && v.y < 1.5) {
                     const distToCam = camera.position.distanceTo(planet.mesh.position);
                     const scaleFactor = Math.max(0.55, Math.min(1.4, 80 / distToCam));
-                    const fontSize = Math.round(12 * scaleFactor);
+                    const fontSize = Math.round((state.look === 'kid' ? 20 : 12) * scaleFactor);
                     const opacity = Math.max(0.4, Math.min(1.0, 120 / distToCam));
 
                     label.style.left = (v.x * halfW + halfW) + 'px';
@@ -2991,18 +2577,24 @@
             return planets.find(p => p.name.toLowerCase() === followTarget) || planets.find(p => p.name === 'Earth');
         }
 
-        function updateDiveButtonText() {
+        function setDiveButton(word, label) {
             const btn = document.getElementById('planet-dive-btn');
+            btn.querySelector('.dive-word').textContent = word;
+            btn.setAttribute('aria-label', label);
+            btn.title = label + ' (E)';
+        }
+        function updateDiveButtonText() {
             if (diveState !== 'none') return;
             const target = getDiveTargetFromFollow();
-            btn.textContent = 'Dive Into ' + target.name;
+            document.querySelector('#planet-dive-btn .dive-target').textContent = target.name;
+            setDiveButton('Dive', 'Dive into ' + target.name);
         }
 
         function startDive() {
             if (diveState !== 'none') {
                 diveState = 'returning';
                 diveProgress = 0;
-                document.getElementById('planet-dive-btn').textContent = 'Returning...';
+                setDiveButton('Returning', 'Returning from dive');
                 return;
             }
 
@@ -3036,9 +2628,8 @@
                 _m.needsUpdate = true;
             }
 
-            const btn = document.getElementById('planet-dive-btn');
-            btn.textContent = 'Exit Orbit';
-            btn.classList.add('active');
+            setDiveButton('Exit', 'Exit dive');
+            setState({ mode: 'dive' });
 
             document.getElementById('dive-planet-name').textContent = diveTargetName.toUpperCase();
             document.getElementById('dive-subtitle').textContent = info.subtitle;
@@ -3150,8 +2741,7 @@
                     cameraDistance = preDiveState.distance;
                     cameraRotation = { ...preDiveState.rotation };
                     cameraTarget = { ...preDiveState.target };
-                    followTarget = preDiveState.followTarget;
-                    document.getElementById('follow-target').value = followTarget;
+                    setState({ mode: 'solar', follow: preDiveState.followTarget });
                     updateDiveButtonText();
                 }
             }
@@ -3180,7 +2770,6 @@
                 diveTarget.cloudsMesh.material.alphaMap = textureCache[d8k.origCloudsKey];
                 diveTarget.cloudsMesh.material.needsUpdate = true;
             }
-            document.getElementById('planet-dive-btn').classList.remove('active');
             document.getElementById('dive-hud').classList.remove('visible');
             document.getElementById('dive-altitude').classList.remove('visible');
         }
@@ -3195,6 +2784,7 @@
                 cameraDistance = preDiveState.distance;
                 cameraRotation = { ...preDiveState.rotation };
             }
+            if (state.mode === 'dive') setState({ mode: 'solar' });
             updateDiveButtonText();
         }
 
@@ -3209,7 +2799,7 @@
         let isPaused = false;
         let currentSunSpeed = DEFAULT_SUN_SPEED;
         let showLabels = true;
-        let showGrid = true;
+        let showGrid = false; // Grid control cut: fixed off
         let followTarget = 'sun'; // 'sun', planet name, 'moon', or 'none'
         let showParticles = false;
         let showMoons = false;
@@ -3304,15 +2894,12 @@
         // STATS
         // =====================================================================
         function updateStats() {
-            document.getElementById('stat-distance').textContent = (sunPosition / 10).toFixed(1);
-            document.getElementById('stat-time').textContent = elapsedTime.toFixed(0);
-            document.getElementById('stat-zoom').textContent = cameraDistance.toFixed(0);
             const simDate = getSimulationDate();
-            document.getElementById('stat-date').textContent = formatDate(simDate);
             const dd = String(simDate.getDate()).padStart(2, '0');
             const mm = String(simDate.getMonth() + 1).padStart(2, '0');
             const yyyy = simDate.getFullYear();
             document.getElementById('earth-date-value').textContent = `${dd} : ${mm} : ${yyyy}`;
+            if (state.sheet === 'time') syncTimeTab(false);
         }
 
         // =====================================================================
@@ -3337,7 +2924,7 @@
             lastTime = now;
 
             if (!isPaused && !galaxyViewActive) {
-                if (!scrubberActive) simulationDays += daysPerSecond * clockDt;
+                simulationDays += daysPerSecond * clockDt;
                 positionBodies();
 
                 // Cosmetic spin uses wall-clock time, not simulated days
@@ -3349,7 +2936,7 @@
                 saturnRingGroup.rotation.z += 0.03 * dt;
 
                 trailTimer += dt;
-                if (trailTimer >= TRAIL_SAMPLE_SECONDS) {
+                if (showTrails && trailTimer >= TRAIL_SAMPLE_SECONDS) {
                     trailTimer %= TRAIL_SAMPLE_SECONDS;
                     updateTrails();
                 }
@@ -3441,12 +3028,7 @@
             }
             if (diveState !== 'none' && diveState !== 'orbiting') return;
             // Dragging always switches to Free so rotation is responsive
-            if (cameraMode !== 'free' && cameraMode !== 'dive') {
-                cameraMode = 'free';
-                document.getElementById('camera-mode').value = 'free';
-                document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'free'));
-                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-            }
+            if (cameraMode !== 'free' && cameraMode !== 'dive') setState({ view: 'free' });
             isDragging = true;
             isPanning = e.shiftKey;
             previousMousePosition = { x: e.clientX, y: e.clientY };
@@ -3526,12 +3108,7 @@
                 }
                 if (diveState !== 'none' && diveState !== 'orbiting') return;
                 // Dragging always switches to Free so rotation is responsive
-                if (cameraMode !== 'free' && cameraMode !== 'dive') {
-                    cameraMode = 'free';
-                    document.getElementById('camera-mode').value = 'free';
-                    document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'free'));
-                    document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-                }
+                if (cameraMode !== 'free' && cameraMode !== 'dive') setState({ view: 'free' });
                 isDragging = true;
                 isPanning = false;
                 previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -3714,262 +3291,356 @@
         }
 
         // =====================================================================
-        // SLIDER ARROW BUTTONS
+        // UI STATE: one object. setState(patch) is the only way in, applyState
+        // pushes each changed field to the render globals, the DOM and storage.
         // =====================================================================
-        document.querySelectorAll('.slider-arrow').forEach(btn => {
-            function step() {
-                const slider = document.getElementById(btn.dataset.target);
-                const dir = parseInt(btn.dataset.dir);
-                const step = parseFloat(slider.step) || 1;
-                const min = parseFloat(slider.min);
-                const max = parseFloat(slider.max);
-                const cur = parseFloat(slider.value);
-                slider.value = Math.min(max, Math.max(min, cur + step * dir));
-                slider.dispatchEvent(new Event('input'));
+        const $ = id => document.getElementById(id);
+        const SPEED_DPS = { real: 1 / 86400, week: 7, month: DEFAULT_DAYS_PER_SECOND, year: 365.25 };
+        const LOOK_PRESETS = {
+            real:   { speed: 'week',  trueScale: true,  labels: true, orbitLines: true, moons: false, trails: false, milkyWay: true },
+            pretty: { speed: 'month', trueScale: false, labels: true, orbitLines: true, moons: true,  trails: true,  milkyWay: true },
+            kid:    { speed: 'week',  trueScale: false, labels: true, orbitLines: true, moons: false, trails: false, milkyWay: true },
+        };
+        const DEFAULTS = Object.freeze({
+            playing: true,
+            view: 'free',            // 'free' | 'top' | 'side'
+            follow: 'sun',
+            look: 'pretty',          // 'real' | 'pretty' | 'kid' | 'custom'
+            ...LOOK_PRESETS.pretty,
+            mode: 'solar',           // 'solar' | 'dive' | 'galaxy' (set by their transitions)
+            tool: 'none',            // 'none' | 'distance'
+            sheet: null,             // null | 'look' | 'time' | 'tools'
+        });
+        // Changing one of these by hand turns the preset into 'custom'
+        const LOOK_TOGGLES = ['labels', 'orbitLines', 'moons', 'trails', 'milkyWay'];
+        const PERSIST_KEY = 'solar-vortex-state';
+        const PERSISTED = ['speed', 'look', 'trueScale', 'labels', 'orbitLines', 'moons', 'milkyWay', 'trails'];
+        const VIEW_MODE = { free: 'free', top: 'orbital', side: 'side' };
+        const VIEW_INIT = {
+            free: { rot: { x: 0.3, y: 0.7 }, dist: 140 },
+            top:  { rot: { x: 1.35, y: 0 }, dist: 200 },
+            side: { rot: { x: 0.1, y: 0 },  dist: 220 },
+        };
+
+        function loadPersisted() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}');
+                const out = {};
+                PERSISTED.forEach(k => { if (k in saved && typeof saved[k] === typeof DEFAULTS[k]) out[k] = saved[k]; });
+                if (out.speed && !(out.speed in SPEED_DPS)) delete out.speed;
+                if (out.look && !(out.look in LOOK_PRESETS) && out.look !== 'custom') delete out.look;
+                return out;
+            } catch (e) { return {}; }
+        }
+        function persist() {
+            try {
+                const out = {};
+                PERSISTED.forEach(k => { out[k] = state[k]; });
+                localStorage.setItem(PERSIST_KEY, JSON.stringify(out));
+            } catch (e) { /* private mode: state still works for this visit */ }
+        }
+
+        let state = { ...DEFAULTS, ...loadPersisted() };
+        let showTrails = state.trails;
+        let lastSheetTab = 'look';
+        // The tour lives in its own closure further down and replaces these
+        let tourControl = { active: () => false, end: () => {} };
+
+        function setState(patch) {
+            const prev = state;
+            state = { ...state, ...patch };
+            if (!('look' in patch) && state.look !== 'custom' && LOOK_TOGGLES.some(k => k in patch && patch[k] !== prev[k])) {
+                state.look = 'custom';
             }
-            let interval;
-            btn.addEventListener('click', step);
-            btn.addEventListener('mousedown', () => { interval = setInterval(step, 120); });
-            btn.addEventListener('mouseup', () => clearInterval(interval));
-            btn.addEventListener('mouseleave', () => clearInterval(interval));
-            btn.addEventListener('touchstart', (e) => { e.preventDefault(); interval = setInterval(step, 120); }, { passive: false });
-            btn.addEventListener('touchend', () => clearInterval(interval));
-            btn.addEventListener('touchcancel', () => clearInterval(interval));
-        });
+            applyState(prev, state);
+            persist();
+        }
 
-        // =====================================================================
-        // UI CONTROLS
-        // =====================================================================
-        document.getElementById('sun-speed').addEventListener('input', (e) => {
-            const raw = parseFloat(e.target.value);
-            currentSunSpeed = raw * raw;
-            document.getElementById('sun-speed-val').textContent = currentSunSpeed.toFixed(2);
-        });
-        document.getElementById('trail-length').addEventListener('input', (e) => {
-            const len = parseInt(e.target.value);
-            planets.forEach(p => p.maxTrailLength = len);
-            sunTrailMaxLength = Math.round(len * 2.5);
-            document.getElementById('trail-length-val').textContent = len;
-        });
-        document.getElementById('trail-opacity').addEventListener('input', (e) => {
-            trailOpacity = parseFloat(e.target.value);
-            document.getElementById('trail-opacity-val').textContent = trailOpacity.toFixed(2);
-        });
-        document.getElementById('time-speed').addEventListener('input', (e) => {
-            daysPerSecond = parseFloat(e.target.value);
-            document.getElementById('time-speed-val').textContent = daysPerSecond.toFixed(0);
-        });
-        document.getElementById('toggle-pause').addEventListener('click', (e) => {
-            isPaused = !isPaused;
-            if (isPaused) {
-                pausedAt = performance.now();
-            } else {
-                pausedOffset += performance.now() - pausedAt;
+        function markPressed(selector, key, value) {
+            document.querySelectorAll(selector).forEach(b => b.setAttribute('aria-pressed', String(b.dataset[key] === value)));
+        }
+
+        // prev = null applies every field (first paint, Reset, end of tour)
+        function applyState(prev, s) {
+            const changed = k => !prev || prev[k] !== s[k];
+
+            if (changed('playing')) {
+                const paused = !s.playing;
+                if (paused !== isPaused) {
+                    isPaused = paused;
+                    if (isPaused) pausedAt = performance.now();
+                    else pausedOffset += performance.now() - pausedAt;
+                }
+                const btn = $('toggle-pause');
+                btn.classList.toggle('is-paused', paused);
+                btn.setAttribute('aria-label', paused ? 'Play' : 'Pause');
+                btn.title = paused ? 'Play (Space)' : 'Pause (Space)';
             }
-            e.target.textContent = isPaused ? 'Resume' : 'Pause';
-        });
-        document.getElementById('reset-view').addEventListener('click', () => {
-            // Leave every mode first: dive, galaxy, scrubber, distance, true scale
-            exitDiveImmediate();
-            if (galaxyViewActive) finishGalaxyReturn(null);
-            if (scrubberActive) toggleScrubber();
-            if (distanceModeActive) toggleDistanceMode();
-            if (trueScaleMode) document.getElementById('toggle-scale').click();
+            if (changed('speed')) {
+                daysPerSecond = SPEED_DPS[s.speed];
+                markPressed('#dock-speed [data-speed]', 'speed', s.speed);
+            }
+            if (changed('view')) {
+                if (cameraMode !== 'dive') cameraMode = VIEW_MODE[s.view];
+                cinematicAngle = cameraRotation.y;
+                markPressed('#dock-view [data-view]', 'view', s.view);
+            }
+            if (changed('follow')) {
+                followTarget = s.follow;
+                $('follow-target').value = s.follow;
+                const fp = getFollowPosition();
+                if (fp) cameraTarget = { x: fp.x, y: fp.y, z: fp.z };
+                updateDiveButtonText();
+            }
+            if (changed('look')) {
+                document.body.classList.toggle('kid', s.look === 'kid');
+                markPressed('#look-presets [data-look]', 'look', s.look);
+            }
+            if (changed('trueScale')) applyTrueScale(s.trueScale);
+            if (changed('labels')) {
+                showLabels = s.labels;
+                $('show-labels').checked = s.labels;
+            }
+            if (changed('orbitLines')) {
+                showOrbitRings = s.orbitLines;
+                $('show-orbit-rings').checked = s.orbitLines;
+                if (!galaxyViewActive) orbitRingLines.forEach(line => { line.visible = s.orbitLines; });
+            }
+            if (changed('moons')) {
+                showMoons = s.moons;
+                $('show-moons').checked = s.moons;
+                if (!s.moons) removeMoonTrails();
+            }
+            if (changed('milkyWay')) {
+                if (galacticBg) galacticBg.visible = s.milkyWay;
+                $('show-milky-way').checked = s.milkyWay;
+            }
+            if (changed('trails')) {
+                showTrails = s.trails;
+                $('show-trails').checked = s.trails;
+                if (!s.trails) { clearTrailLines(); clearAllTrails(); }
+            }
+            if (changed('mode')) {
+                document.body.classList.toggle('mode-dive', s.mode === 'dive');
+                document.body.classList.toggle('mode-galaxy', s.mode === 'galaxy');
+                $('planet-dive-btn').setAttribute('aria-pressed', String(s.mode === 'dive'));
+                $('toggle-galaxy').setAttribute('aria-pressed', String(s.mode === 'galaxy'));
+            }
+            if (changed('tool')) {
+                distanceModeActive = s.tool === 'distance';
+                if (!distanceModeActive) clearDistanceMeasure();
+                planetLabels.forEach(label => label.classList.toggle('distance-mode', distanceModeActive));
+                $('toggle-distance').setAttribute('aria-pressed', String(distanceModeActive));
+                $('tool-hint').hidden = !distanceModeActive;
+            }
+            if (changed('sheet')) {
+                const open = !!s.sheet;
+                $('sheet').hidden = !open;
+                $('dock-more').setAttribute('aria-expanded', String(open));
+                if (open) {
+                    lastSheetTab = s.sheet;
+                    document.querySelectorAll('#sheet [role="tab"]').forEach(tab => {
+                        const on = tab.dataset.tab === s.sheet;
+                        tab.setAttribute('aria-selected', String(on));
+                        tab.tabIndex = on ? 0 : -1;
+                        $(tab.getAttribute('aria-controls')).hidden = !on;
+                    });
+                    if (s.sheet === 'time') syncTimeTab(true);
+                }
+            }
+        }
 
-            // Camera
-            cameraRotation = { x: 0.3, y: 0.7 };
-            cameraDistance = 140;
-            cameraMode = 'free';
-            document.getElementById('camera-mode').value = 'free';
-            document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'free'));
-            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-            followTarget = 'sun';
-            document.getElementById('follow-target').value = 'sun';
-
-            // Sliders
-            currentSunSpeed = DEFAULT_SUN_SPEED;
-            document.getElementById('sun-speed').value = Math.sqrt(DEFAULT_SUN_SPEED);
-            document.getElementById('sun-speed-val').textContent = DEFAULT_SUN_SPEED.toFixed(2);
-
-            const defaultTrailLen = 800;
-            planets.forEach(p => p.maxTrailLength = defaultTrailLen);
-            sunTrailMaxLength = Math.round(defaultTrailLen * 2.5);
-            document.getElementById('trail-length').value = defaultTrailLen;
-            document.getElementById('trail-length-val').textContent = defaultTrailLen;
-
-            trailOpacity = 0.7;
-            document.getElementById('trail-opacity').value = 0.7;
-            document.getElementById('trail-opacity-val').textContent = '0.70';
-
-            daysPerSecond = DEFAULT_DAYS_PER_SECOND;
-            document.getElementById('time-speed').value = Math.round(DEFAULT_DAYS_PER_SECOND);
-            document.getElementById('time-speed-val').textContent = Math.round(DEFAULT_DAYS_PER_SECOND);
-
-            // Toggles
-            showLabels = true;
-            document.getElementById('show-labels').checked = true;
-            showMoons = false;
-            document.getElementById('show-moons').checked = false;
+        // ---- render helpers the state drives --------------------------------
+        function removeMoonTrails() {
             allMoons.forEach(moon => {
                 const key = 'moon_' + moon.name;
                 const old = trailLines.get(key);
                 if (old) { scene.remove(old); old.geometry.dispose(); old.material.dispose(); trailLines.delete(key); }
                 moon.trail = [];
             });
-            showGrid = true;
-            document.getElementById('show-grid').checked = true;
-            if (referenceGrid) referenceGrid.visible = true;
-            showParticles = false;
-            document.getElementById('show-particles').checked = false;
-            document.getElementById('show-particles').dispatchEvent(new Event('change'));
-            showOrbitRings = true;
-            document.getElementById('show-orbit-rings').checked = true;
-            orbitRingLines.forEach(line => { line.visible = true; });
-            document.getElementById('show-milky-way').checked = true;
-            if (galacticBg) galacticBg.visible = true;
-            if (!ellipticalOrbits) {
-                ellipticalOrbits = true;
-                document.getElementById('elliptical-orbits').checked = true;
-                createOrbitRings();
-            }
+        }
+        function clearTrailLines() {
+            trailLines.forEach(line => { scene.remove(line); line.geometry.dispose(); line.material.dispose(); });
+            trailLines.clear();
+            sunTrail.length = 0;
+        }
 
-            // Back to today, with fresh trails
+        // Camera views. The dock sets a starting angle; drag takes over from there.
+        function setView(view) {
+            if (diveState !== 'none') exitDiveImmediate();
+            const init = VIEW_INIT[view];
+            cameraRotation = { ...init.rot };
+            cameraDistance = init.dist;
+            setState({ view });
+            cameraMode = VIEW_MODE[view];
+            cinematicAngle = cameraRotation.y;
+            updateCameraPosition();
+        }
+
+        function setFollow(target) {
+            if (diveState !== 'none') exitDiveImmediate();
+            setState({ follow: target });
+            updateCameraPosition();
+        }
+
+        function setLook(name) {
+            setState({ look: name, ...LOOK_PRESETS[name] });
+        }
+
+        function openSheet(tab) {
+            setState({ sheet: tab || lastSheetTab });
+        }
+        function closeSheet(returnFocus) {
+            if (!state.sheet) return;
+            setState({ sheet: null });
+            if (returnFocus) $('dock-more').focus();
+        }
+
+        function openHelp() {
+            $('help-overlay').hidden = false;
+            $('help-close').focus();
+        }
+        function closeHelp() {
+            $('help-overlay').hidden = true;
+        }
+
+        function setAccuracyOpen(open) {
+            $('accuracy-panel').style.display = open ? 'block' : 'none';
+            $('toggle-accuracy').setAttribute('aria-pressed', String(open));
+        }
+
+        // Reset: leave every mode, then every field back to DEFAULTS
+        function resetAll() {
+            if (tourControl.active()) tourControl.end(false);
+            exitDiveImmediate();
+            if (galaxyViewActive || galaxyTransition) finishGalaxyReturn(null);
+            closeHelp();
+            setAccuracyOpen(false);
+            $('science-panel').style.display = 'none';
+            if (infoCardPlanet) hideInfoCard();
+
+            cameraRotation = { ...VIEW_INIT.free.rot };
+            cameraDistance = VIEW_INIT.free.dist;
             simulationDays = 0;
+            try { localStorage.removeItem(PERSIST_KEY); } catch (e) {}
+            state = { ...DEFAULTS };
+            cameraMode = 'free';
+            applyState(null, state);
+
             positionBodies();
+            clearTrailLines();
             clearAllTrails();
             cameraTarget = { x: 0, y: 0, z: sun.position.z };
             updateStats();
             updateEventsDisplay();
-
-            // Playing is the default state
-            if (isPaused) {
-                isPaused = false;
-                pausedOffset += performance.now() - pausedAt;
-            }
-            document.getElementById('toggle-pause').textContent = 'Pause';
-
             updateCameraPosition();
             updateDiveButtonText();
+        }
+
+        // ---- dock ----------------------------------------------------------
+        $('toggle-pause').addEventListener('click', () => setState({ playing: !state.playing }));
+        document.querySelectorAll('#dock-speed [data-speed]').forEach(btn => {
+            btn.addEventListener('click', () => setState({ speed: btn.dataset.speed }));
         });
-        document.getElementById('show-labels').addEventListener('change', (e) => { showLabels = e.target.checked; });
-        document.getElementById('show-milky-way').addEventListener('change', (e) => { if (galacticBg) galacticBg.visible = e.target.checked; });
-        document.getElementById('show-moons').addEventListener('change', (e) => {
-            showMoons = e.target.checked;
-            if (!showMoons) {
-                allMoons.forEach(moon => {
-                    const key = 'moon_' + moon.name;
-                    const old = trailLines.get(key);
-                    if (old) { scene.remove(old); old.geometry.dispose(); old.material.dispose(); trailLines.delete(key); }
-                });
+        document.querySelectorAll('#dock-view [data-view]').forEach(btn => {
+            btn.addEventListener('click', () => setView(btn.dataset.view));
+        });
+        $('planet-dive-btn').addEventListener('click', startDive);
+        $('toggle-galaxy').addEventListener('click', toggleGalaxyView);
+        $('dock-more').addEventListener('click', () => {
+            if (state.sheet) closeSheet(false);
+            else {
+                openSheet();
+                const tab = document.querySelector('#sheet [role="tab"][aria-selected="true"]');
+                if (tab) tab.focus();
             }
         });
-        document.getElementById('show-grid').addEventListener('change', (e) => { showGrid = e.target.checked; if (referenceGrid) referenceGrid.visible = showGrid; });
-        document.getElementById('follow-target').addEventListener('change', (e) => {
-            const newTarget = e.target.value;
-            // If currently diving, instantly exit dive and switch to new target
-            if (diveState !== 'none') exitDiveImmediate();
-            followTarget = newTarget;
-            // Snap camera target to new follow position
-            const followPos = getFollowPosition();
-            if (followPos) {
-                cameraTarget.x = followPos.x;
-                cameraTarget.y = followPos.y;
-                cameraTarget.z = followPos.z;
+
+        // ---- sheet ---------------------------------------------------------
+        const sheetTabs = Array.from(document.querySelectorAll('#sheet [role="tab"]'));
+        sheetTabs.forEach((tab, i) => {
+            tab.addEventListener('click', () => openSheet(tab.dataset.tab));
+            tab.addEventListener('keydown', e => {
+                if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+                e.preventDefault();
+                const next = sheetTabs[(i + (e.key === 'ArrowRight' ? 1 : sheetTabs.length - 1)) % sheetTabs.length];
+                openSheet(next.dataset.tab);
+                next.focus();
+            });
+        });
+        $('sheet-close').addEventListener('click', () => closeSheet(true));
+        $('help-btn').addEventListener('click', openHelp);
+        $('help-close').addEventListener('click', closeHelp);
+        $('help-overlay').addEventListener('click', e => { if (e.target === $('help-overlay')) closeHelp(); });
+        $('reset-view').addEventListener('click', () => { resetAll(); $('dock-more').focus(); });
+
+        // Look tab
+        document.querySelectorAll('#look-presets [data-look]').forEach(btn => {
+            btn.addEventListener('click', () => setLook(btn.dataset.look));
+        });
+        $('follow-target').addEventListener('change', e => setFollow(e.target.value));
+        [['show-labels', 'labels'], ['show-orbit-rings', 'orbitLines'], ['show-moons', 'moons'],
+         ['show-milky-way', 'milkyWay'], ['show-trails', 'trails']].forEach(([id, key]) => {
+            $(id).addEventListener('change', e => setState({ [key]: e.target.checked }));
+        });
+
+        // Tools tab
+        $('toggle-distance').addEventListener('click', toggleDistanceMode);
+        $('tool-hint-done').addEventListener('click', () => setState({ tool: 'none' }));
+        $('toggle-science').addEventListener('click', () => {
+            const name = followTarget.charAt(0).toUpperCase() + followTarget.slice(1);
+            showPlanetInfo(scienceData[name] ? name : 'Sun');
+            closeSheet(false);
+        });
+        $('toggle-accuracy').addEventListener('click', () => {
+            const open = $('accuracy-panel').style.display === 'none';
+            setAccuracyOpen(open);
+            if (open) closeSheet(false);
+        });
+        $('accuracy-close').addEventListener('click', () => setAccuracyOpen(false));
+
+        // Export: Screenshot
+        $('export-screenshot').addEventListener('click', () => {
+            renderer.render(scene, camera);
+            const link = document.createElement('a');
+            link.download = `solar-system-${formatDate(getSimulationDate()).replace(/[\s,]/g,'-')}.png`;
+            link.href = renderer.domElement.toDataURL('image/png');
+            link.click();
+        });
+
+        // Export: Video
+        let mediaRecorder = null, recordedChunks = [];
+        function setRecording(on) {
+            if (on) {
+                if (typeof MediaRecorder === 'undefined') return;
+                const stream = renderer.domElement.captureStream(30);
+                const type = ['video/webm; codecs=vp9', 'video/webm'].find(t => MediaRecorder.isTypeSupported(t));
+                mediaRecorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+                recordedChunks = [];
+                mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = `solar-system-${formatDate(getSimulationDate()).replace(/[\s,]/g,'-')}.webm`;
+                    link.href = url; link.click(); URL.revokeObjectURL(url);
+                };
+                mediaRecorder.start();
+                closeSheet(false);
+            } else if (mediaRecorder && mediaRecorder.state === 'recording') {
+                mediaRecorder.stop();
             }
-            updateCameraPosition();
-            updateDiveButtonText();
-        });
-        document.getElementById('camera-mode').addEventListener('change', (e) => { cameraMode = e.target.value; cinematicAngle = cameraRotation.y; });
-
-        // Camera mode button group
-        // Camera mode initial positions — distinct from presets
-        const CAM_MODE_INIT = {
-            free:      null, // no change, user-controlled
-            cinematic: { camRot: { x: 0.15, y: 0 }, camDist: 180 },        // lower angle, closer — preset uses default distance
-            orbital:   { camRot: { x: 1.35, y: 0 }, camDist: 200 },        // steeper top-down, further out
-            side:      { camRot: { x: -0.1, y: 1.2 }, camDist: 160 },      // lower, tighter side — preset uses x:0.18, y:0.7, dist:220
-            chase:     { camRot: { x: 0.05, y: 3.14 }, camDist: 120 },     // behind sun, very close
-        };
-        document.querySelectorAll('.cam-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                cameraMode = btn.dataset.mode;
-                cinematicAngle = cameraRotation.y;
-                // Apply distinct initial camera position for this mode
-                const init = CAM_MODE_INIT[btn.dataset.mode];
-                if (init) {
-                    if (init.camRot) cameraRotation = { ...init.camRot };
-                    if (init.camDist) cameraDistance = init.camDist;
-                    cinematicAngle = cameraRotation.y;
-                }
-                document.getElementById('camera-mode').value = btn.dataset.mode;
-                document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b === btn));
-                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
-            });
-        });
-
-        // Scene presets
-        (function() {
-            const PRESETS = {
-                // Classic side-on — helix ribbon with gentle breathing pan
-                vortex:       { mode: 'side',      sunSpeed: 4.19, dps: 30, trailLength: 800,  showMoons: false, camDist: 220, camRot: { x: 0.08, y: 0.7 } },
-                // Lemniscate figure-of-eight with rising/falling elevation
-                cinema:       { mode: 'cinematic', sunSpeed: 2.00, dps: 10, trailLength: 1600, showMoons: false, camDist: 300 },
-                // Steep bird's-eye — full vortex coil spread below
-                overview:     { mode: 'free',      sunSpeed: 1.80, dps: 15, trailLength: 1800, showMoons: false, camDist: 580, camRot: { x: 1.28, y: -0.25 } },
-                // Earth-locked close-up — moons in full detail
-                'moon-watch': { mode: 'free',       sunSpeed: 1.00, dps: 2, trailLength: 300,  showMoons: true,  camDist: 65,  camRot: { x: 0.35, y: 1.0 }, followTarget: 'earth' },
-                // Grazing angle along the ecliptic — disk has visible thickness
-                surfboard:    { mode: 'surfboard',  sunSpeed: 2.50, dps: 15, trailLength: 1000, showMoons: false, camDist: 280 },
-                // Inside the helix tube — planets cross the sky above you
-                helix:        { mode: 'helix',      sunSpeed: 3.00, dps: 20, trailLength: 600,  showMoons: false, camDist: 260 },
-            };
-            document.querySelectorAll('.preset-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const p = PRESETS[btn.dataset.preset];
-                    if (!p) return;
-                    // Camera
-                    cameraMode = p.mode;
-                    cinematicAngle = cameraRotation.y;
-                    if (p.camDist) cameraDistance = p.camDist;
-                    if (p.camRot) cameraRotation = { ...p.camRot };
-                    document.getElementById('camera-mode').value = p.mode;
-                    document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === p.mode));
-                    // Sun speed
-                    currentSunSpeed = p.sunSpeed;
-                    document.getElementById('sun-speed').value = Math.sqrt(p.sunSpeed);
-                    document.getElementById('sun-speed-val').textContent = p.sunSpeed.toFixed(2);
-                    // Days per second
-                    daysPerSecond = p.dps;
-                    document.getElementById('time-speed').value = p.dps;
-                    document.getElementById('time-speed-val').textContent = p.dps;
-                    // Trail length
-                    document.getElementById('trail-length').value = p.trailLength;
-                    document.getElementById('trail-length-val').textContent = p.trailLength;
-                    planets.forEach(pp => pp.maxTrailLength = p.trailLength);
-                    sunTrailMaxLength = Math.round(p.trailLength * 2.5);
-                    // Show moons
-                    showMoons = p.showMoons;
-                    document.getElementById('show-moons').checked = p.showMoons;
-                    document.getElementById('show-moons').dispatchEvent(new Event('change'));
-                    // Follow target (e.g. Moon Watch locks onto Earth)
-                    if (p.followTarget !== undefined) {
-                        followTarget = p.followTarget;
-                        document.getElementById('follow-target').value = p.followTarget;
-                        const followPos = getFollowPosition();
-                        if (followPos) { cameraTarget.x = followPos.x; cameraTarget.y = followPos.y; cameraTarget.z = followPos.z; }
-                    } else {
-                        followTarget = 'sun';
-                        document.getElementById('follow-target').value = 'sun';
-                    }
-                    // Active state
-                    document.querySelectorAll('.preset-btn').forEach(b => b.classList.toggle('active', b === btn));
-                });
-            });
-        })();
+            const recording = !!on;
+            $('export-video').setAttribute('aria-pressed', String(recording));
+            $('export-video').textContent = recording ? 'Stop recording' : 'Record';
+            $('recording-indicator').hidden = !recording;
+        }
+        $('export-video').addEventListener('click', () => setRecording(!(mediaRecorder && mediaRecorder.state === 'recording')));
+        $('recording-indicator').addEventListener('click', () => setRecording(false));
 
         // UI hide/show toggle
         (function() {
-            const btn = document.getElementById('ui-toggle-btn');
+            const btn = $('ui-toggle-btn');
             let hidden = false;
             const eyeOpen   = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
             const eyeClosed = `<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
@@ -3979,63 +3650,9 @@
                 document.body.classList.toggle('ui-hidden', hidden);
                 btn.innerHTML = hidden ? eyeClosed : eyeOpen;
                 btn.title = hidden ? 'Show controls' : 'Hide controls';
+                btn.setAttribute('aria-pressed', String(hidden));
             });
         })();
-
-        document.getElementById('show-particles').addEventListener('change', (e) => {
-            showParticles = e.target.checked;
-            if (showParticles && !coronaParticles) createCoronaParticles();
-            else if (!showParticles && coronaParticles) { scene.remove(coronaParticles); coronaParticles = null; }
-        });
-        document.getElementById('show-orbit-rings').addEventListener('change', (e) => {
-            showOrbitRings = e.target.checked;
-            orbitRingLines.forEach(line => { line.visible = showOrbitRings; });
-        });
-        document.getElementById('elliptical-orbits').addEventListener('change', (e) => {
-            ellipticalOrbits = e.target.checked;
-            positionBodies();
-            clearAllTrails();
-            // Redraw orbit rings as ellipses or circles to match mode
-            createOrbitRings();
-        });
-
-        // Planet dive button
-        document.getElementById('planet-dive-btn').addEventListener('click', startDive);
-
-        // Export: Screenshot
-        document.getElementById('export-screenshot').addEventListener('click', () => {
-            renderer.render(scene, camera);
-            const link = document.createElement('a');
-            link.download = `solar-vortex-${formatDate(getSimulationDate()).replace(/[\s,]/g,'-')}.png`;
-            link.href = renderer.domElement.toDataURL('image/png');
-            link.click();
-        });
-
-        // Export: Video
-        let mediaRecorder = null, recordedChunks = [];
-        document.getElementById('export-video-start').addEventListener('click', () => {
-            const stream = renderer.domElement.captureStream(30);
-            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm; codecs=vp9' });
-            recordedChunks = [];
-            mediaRecorder.ondataavailable = (e) => { if (e.data.size > 0) recordedChunks.push(e.data); };
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                const url = URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.download = `solar-vortex-${formatDate(getSimulationDate()).replace(/[\s,]/g,'-')}.webm`;
-                link.href = url; link.click(); URL.revokeObjectURL(url);
-            };
-            mediaRecorder.start();
-            document.getElementById('export-video-start').style.display = 'none';
-            document.getElementById('export-video-stop').style.display = 'inline-block';
-            document.getElementById('recording-indicator').style.display = 'block';
-        });
-        document.getElementById('export-video-stop').addEventListener('click', () => {
-            if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
-            document.getElementById('export-video-start').style.display = 'inline-block';
-            document.getElementById('export-video-stop').style.display = 'none';
-            document.getElementById('recording-indicator').style.display = 'none';
-        });
 
         // =====================================================================
         // SCIENCE PANEL
@@ -4063,7 +3680,6 @@
                 ${usingRealTextures ? '<div style="margin-top:6px;color:#4a4;font-size:10px;">Textures: Solar System Scope (CC BY 4.0)</div>' : '<div style="margin-top:6px;color:#884;font-size:10px;">Using procedural textures (image textures failed to load)</div>'}
             `;
             panel.style.display = 'block';
-            document.getElementById('bottom-left-btns').style.display = 'none';
         }
 
         // =====================================================================
@@ -4132,10 +3748,9 @@
         document.getElementById('planet-info-close').addEventListener('click', hideInfoCard);
         document.getElementById('planet-info-dive').addEventListener('click', () => {
             if (!infoCardPlanet) return;
-            followTarget = infoCardPlanet.toLowerCase();
-            document.getElementById('follow-target').value = followTarget;
+            const target = infoCardPlanet.toLowerCase();
             hideInfoCard();
-            updateDiveButtonText();
+            setFollow(target);
             startDive();
         });
         document.addEventListener('click', (e) => {
@@ -4154,12 +3769,9 @@
         let distanceLine = null;
 
         function toggleDistanceMode() {
-            distanceModeActive = !distanceModeActive;
-            const btn = document.getElementById('toggle-distance');
-            btn.classList.toggle('active', distanceModeActive);
-            btn.textContent = distanceModeActive ? 'Cancel Distance' : 'Distance';
-            if (!distanceModeActive) clearDistanceMeasure();
-            planetLabels.forEach(label => label.classList.toggle('distance-mode', distanceModeActive));
+            const on = state.tool !== 'distance';
+            setState({ tool: on ? 'distance' : 'none' });
+            if (on) closeSheet(false);
         }
 
         function clearDistanceMeasure() {
@@ -4236,65 +3848,40 @@
             document.getElementById('distance-label-km').textContent = `${Math.round(distKm).toLocaleString()} km`;
         }
 
-        document.getElementById('toggle-distance').addEventListener('click', toggleDistanceMode);
 
         // =====================================================================
-        // FEATURE: TIME SCRUBBER (J2000 epoch-based positioning)
+        // FEATURE: TIME SCRUBBER (Time tab; dragging the date pauses playback)
         // =====================================================================
-        let scrubberActive = false;
-
-        function toggleScrubber() {
-            scrubberActive = !scrubberActive;
-            const panel = document.getElementById('time-scrubber');
-            const btn = document.getElementById('toggle-scrubber');
-            if (scrubberActive) {
-                panel.style.display = 'block';
-                btn.textContent = 'Close Scrubber';
-                btn.style.background = 'linear-gradient(135deg, #d4af37 0%, #b8860b 100%)';
-                isPaused = true;
-                pausedAt = performance.now();
-                document.getElementById('toggle-pause').textContent = 'Resume';
-                document.getElementById('scrubber-slider').value = Math.round(simulationDays);
-                updateScrubberDisplay();
-            } else {
-                panel.style.display = 'none';
-                btn.textContent = 'Time Travel';
-                btn.style.background = '';
-            }
-        }
-
         function setSimulationToDay(dayOffset) {
             simulationDays = dayOffset;
             lastPositionedDays = dayOffset; // scrubbing does not drag the Sun along the helix
             positionBodies();
-            updateScrubberDisplay();
+            if (showTrails) { clearTrailLines(); clearAllTrails(); }
             updateStats();
+            syncTimeTab(true);
         }
 
-        function updateScrubberDisplay() {
-            const d = getSimulationDate();
-            document.getElementById('scrubber-date').textContent = formatDate(d);
-            const years = (simulationDays / 365.25).toFixed(1);
-            const sign = simulationDays >= 0 ? '+' : '';
-            document.getElementById('scrubber-speed').textContent = `${sign}${years} years from start`;
+        // Keep the Time tab on the live date. The slider is left alone while dragged.
+        function syncTimeTab(moveSlider) {
+            const slider = document.getElementById('scrubber-slider');
+            if (moveSlider || document.activeElement !== slider) slider.value = Math.round(simulationDays);
+            document.getElementById('scrubber-date').textContent = formatDate(getSimulationDate());
+            const years = simulationDays / 365.25;
+            document.getElementById('scrubber-speed').textContent =
+                Math.abs(years) < 0.05 ? 'today' : `${years > 0 ? '+' : ''}${years.toFixed(1)} years from today`;
         }
 
-        document.getElementById('toggle-scrubber').addEventListener('click', toggleScrubber);
-        document.addEventListener('keydown', e => { if (e.key === 'Escape' && scrubberActive) toggleScrubber(); });
         document.getElementById('scrubber-slider').addEventListener('input', (e) => {
+            if (state.playing) setState({ playing: false });
             setSimulationToDay(parseInt(e.target.value));
         });
         document.querySelectorAll('.scrubber-preset-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const offset = parseInt(btn.dataset.offset);
-                let targetDays;
-                if (offset === 0) {
-                    targetDays = Math.round((new Date() - startDate) / 86400000);
-                } else {
-                    targetDays = simulationDays + offset;
-                }
-                document.getElementById('scrubber-slider').value = targetDays;
-                setSimulationToDay(targetDays);
+                const targetDays = offset === 0
+                    ? Math.round((new Date() - startDate) / 86400000)
+                    : Math.round(simulationDays) + offset;
+                setSimulationToDay(Math.max(-36525, Math.min(36525, targetDays)));
             });
         });
 
@@ -4308,34 +3895,15 @@
             // Show info card near the click
             showInfoCard(name, e.clientX, e.clientY);
 
-            // Also switch follow target to this planet
-            const val = name.toLowerCase();
-            followTarget = val;
-            document.getElementById('follow-target').value = val;
-            // If in dive, exit it
-            if (diveState !== 'none') exitDiveImmediate();
-            const followPos = getFollowPosition();
-            if (followPos) {
-                cameraTarget.x = followPos.x;
-                cameraTarget.y = followPos.y;
-                cameraTarget.z = followPos.z;
-            }
-            updateCameraPosition();
-            updateDiveButtonText();
+            // Also follow this planet
+            setFollow(name.toLowerCase());
         }));
 
         document.getElementById('close-science').addEventListener('click', () => {
             document.getElementById('science-panel').style.display = 'none';
-            document.getElementById('bottom-left-btns').style.display = 'flex';
-        });
-        document.getElementById('toggle-science').addEventListener('click', () => showPlanetInfo('Sun'));
-        document.getElementById('toggle-accuracy').addEventListener('click', () => {
-            const p = document.getElementById('accuracy-panel');
-            p.style.display = p.style.display === 'none' ? 'block' : 'none';
         });
 
         // Galaxy View
-        document.getElementById('toggle-galaxy').addEventListener('click', toggleGalaxyView);
         document.getElementById('galaxy-return-btn').addEventListener('click', toggleGalaxyView);
         document.getElementById('galaxy-info-close').addEventListener('click', function() {
             // On mobile: hide panel but stay in galaxy view
@@ -4360,11 +3928,9 @@
 
         // True Scale
         let trueScaleMode = false;
-        document.getElementById('toggle-scale').addEventListener('click', () => {
-            trueScaleMode = !trueScaleMode;
-            const btn = document.getElementById('toggle-scale');
-            btn.style.background = trueScaleMode ? 'linear-gradient(135deg, #44aa44 0%, #228822 100%)' : '';
-            btn.textContent = trueScaleMode ? 'Normal Scale' : 'True Scale';
+        function applyTrueScale(on) {
+            if (on === trueScaleMode) return;
+            trueScaleMode = on;
             planets.forEach(planet => {
                 const scale = trueScaleMode ? planet.realRadiusScale : 1.0;
                 const base = planet.originalRadius;
@@ -4383,7 +3949,7 @@
                 moon.mesh.geometry.dispose();
                 moon.mesh.geometry = new THREE.SphereGeometry(newRadius, 32, 32);
             });
-        });
+        }
 
         // =====================================================================
         // GALAXY VIEW - Milky Way zoom-out visualization
@@ -5265,22 +4831,8 @@
                     tx: cameraTarget.x, ty: cameraTarget.y, tz: cameraTarget.z,
                     fov: camera.fov
                 };
-                // Hide solar system UI
-                document.getElementById('controls').style.transition = 'opacity 0.5s';
-                document.getElementById('controls').style.opacity = '0';
-                document.getElementById('controls').style.pointerEvents = 'none';
-                document.getElementById('stats').style.transition = 'opacity 0.5s';
-                document.getElementById('stats').style.opacity = '0';
-                document.getElementById('stats').style.pointerEvents = 'none';
-                document.getElementById('events').style.transition = 'opacity 0.5s';
-                document.getElementById('events').style.opacity = '0';
-                document.getElementById('events').style.pointerEvents = 'none';
-                document.getElementById('bottom-left-btns').style.transition = 'opacity 0.5s';
-                document.getElementById('bottom-left-btns').style.opacity = '0';
-                document.getElementById('bottom-left-btns').style.pointerEvents = 'none';
-                document.getElementById('earth-date-counter').style.transition = 'opacity 0.5s';
-                document.getElementById('earth-date-counter').style.opacity = '0';
-                document.getElementById('earth-date-counter').style.pointerEvents = 'none';
+                // Hide solar system UI (display:none via body.mode-galaxy, so no click traps)
+                setState({ mode: 'galaxy', sheet: null, tool: 'none' });
 
                 // Flash effect
                 const flash = document.getElementById('galaxy-transition-flash');
@@ -5354,12 +4906,8 @@
                 cameraTarget = { x: sc.tx, y: sc.ty, z: sc.tz };
             }
 
-            // Show solar system UI and give it back its clicks
-            ['controls', 'stats', 'events', 'bottom-left-btns', 'earth-date-counter'].forEach(id => {
-                const el = document.getElementById(id);
-                el.style.opacity = '1';
-                el.style.pointerEvents = '';
-            });
+            // Show solar system UI
+            setState({ mode: 'solar' });
             // Galaxy UI sits at opacity 0 with display:block and would trap clicks
             ['galaxy-info', 'galaxy-return-btn', 'galaxy-zoom-indicator'].forEach(id => {
                 const el = document.getElementById(id);
@@ -5507,14 +5055,29 @@
         // =====================================================================
         // KEYBOARD SHORTCUTS
         // =====================================================================
+        // Esc closes the top-most thing: shortcuts, sheet, distance tool, panels,
+        // then leaves dive or galaxy view. The tour handles its own Esc first.
+        function handleEscape() {
+            if (!$('help-overlay').hidden) { closeHelp(); $('help-btn').focus(); return; }
+            if (state.sheet) { closeSheet(true); return; }
+            if (state.tool !== 'none') { setState({ tool: 'none' }); return; }
+            if (infoCardPlanet) { hideInfoCard(); return; }
+            if ($('science-panel').style.display !== 'none') { $('science-panel').style.display = 'none'; return; }
+            if ($('accuracy-panel').style.display !== 'none') { setAccuracyOpen(false); return; }
+            if (diveState === 'diving' || diveState === 'orbiting') { startDive(); return; }
+            if (galaxyViewActive && galaxyTransition && galaxyTransition.phase === 'idle-galaxy') toggleGalaxyView();
+        }
         window.addEventListener('keydown', (e) => {
             // Leave typing, select menus and browser shortcuts alone
             const tag = e.target && e.target.tagName;
             if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
             if (e.ctrlKey || e.metaKey || e.altKey) return;
+            if (e.key === 'Escape') { handleEscape(); return; }
+            if (!$('help-overlay').hidden) return; // the shortcuts dialog is modal
+            if (e.key === '?') { e.preventDefault(); openHelp(); return; }
             if (e.code === 'Space' && (tag === 'BUTTON' || tag === 'A')) return; // Space activates the focused button
-            if (e.code === 'Space') { e.preventDefault(); document.getElementById('toggle-pause').click(); }
-            if (e.code === 'KeyR') document.getElementById('reset-view').click();
+            if (e.code === 'Space') { e.preventDefault(); setState({ playing: !state.playing }); }
+            if (e.code === 'KeyR') resetAll();
             if (e.code === 'KeyE') startDive();
             if (e.code === 'KeyG') toggleGalaxyView();
             // Galaxy zoom keyboard shortcuts
@@ -5564,19 +5127,12 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
+        if (referenceGrid) referenceGrid.visible = false; // Grid control cut: fixed off
+        applyState(null, state);
         updateCameraPosition();
         updateEventsDisplay();
         animate(performance.now());
         updateDiveButtonText(); // sync button with initial followTarget ('sun')
-
-        // =====================================================================
-        // COLLAPSIBLE CONTROL SECTIONS
-        // =====================================================================
-        (function initCollapsibleSections() {
-            // Old section-header collapse code removed - replaced by advanced toggle
-        })();
-
-        // Advanced section persistence handled by localStorage toggle in advanced-toggle code
 
         // =====================================================================
         // GUIDED DEMO TOUR
@@ -5604,224 +5160,104 @@
                 {
                     id: 'welcome',
                     target: null,
-                    title: 'Welcome to Solar Vortex',
-                    text: 'This visualization shows our solar system hurtling through space at 220 km/s. Let me show you the most spectacular views and hidden features!',
+                    title: 'Welcome to the Solar System',
+                    text: 'Every planet here sits where it really is today, and the whole system is racing through the galaxy at 220 km/s. Here is a quick look around.',
                     position: 'center',
                     duration: 0,
                     action: null,
                     delay: 300,
                 },
                 {
-                    id: 'preset-vortex',
-                    target: '.preset-btn[data-preset="vortex"]',
-                    title: 'Vortex Mode',
-                    text: 'The signature view \u2014 watch the planets spiral through space like a cosmic corkscrew. The Sun drags everything forward while planets orbit around it.',
-                    position: 'right',
+                    id: 'speed',
+                    target: '#dock-speed',
+                    title: 'Speed up time',
+                    text: 'Each speed is real: at 1 year per second, Earth goes once around the Sun every second. Watch the date at the top.',
+                    position: 'above',
                     duration: 6000,
-                    action: function() {
-                        document.querySelector('.preset-btn[data-preset="vortex"]').click();
-                    },
+                    action: function() { setState({ speed: 'year' }); },
                     delay: 500,
                 },
                 {
-                    id: 'preset-cinema',
-                    target: '.preset-btn[data-preset="cinema"]',
-                    title: 'Cinematic View',
-                    text: 'A slow, sweeping camera that auto-rotates around the system. Sit back and enjoy the show.',
-                    position: 'right',
+                    id: 'view-side',
+                    target: '#dock-view',
+                    title: 'The vortex',
+                    text: 'From the side you can see the Sun pulling every planet along behind it, so each orbit becomes a spiral.',
+                    position: 'above',
                     duration: 6000,
-                    action: function() {
-                        document.querySelector('.preset-btn[data-preset="cinema"]').click();
-                    },
-                    delay: 500,
+                    action: function() { setView('side'); },
+                    delay: 600,
                 },
                 {
-                    id: 'preset-overview',
-                    target: '.preset-btn[data-preset="overview"]',
-                    title: 'Top-Down Overview',
-                    text: 'See the whole system from above \u2014 like a classic textbook diagram, but animated and alive.',
-                    position: 'right',
+                    id: 'view-top',
+                    target: '#dock-view',
+                    title: 'From above',
+                    text: 'The classic textbook view, but alive. Inner planets lap the outer ones again and again.',
+                    position: 'above',
                     duration: 5000,
-                    action: function() {
-                        document.querySelector('.preset-btn[data-preset="overview"]').click();
-                    },
-                    delay: 500,
+                    action: function() { setView('top'); setState({ speed: 'month' }); },
+                    delay: 600,
                 },
                 {
                     id: 'follow-saturn',
-                    target: '#follow-target',
-                    title: 'Follow a Planet',
-                    text: 'The camera can lock onto any planet. Watch as we follow Saturn and its magnificent rings through space.',
-                    position: 'right',
+                    target: null,
+                    title: 'Follow a planet',
+                    text: 'Click any planet name to follow it and read its data. Here is Saturn and its rings.',
+                    position: 'center',
                     duration: 5000,
-                    action: function() {
-                        var select = document.getElementById('follow-target');
-                        select.value = 'saturn';
-                        select.dispatchEvent(new Event('change'));
-                    },
-                    delay: 500,
-                },
-                {
-                    id: 'preset-moon-watch',
-                    target: '.preset-btn[data-preset="moon-watch"]',
-                    title: 'Moon Watch Mode',
-                    text: 'Slows everything down and reveals the moons. Watch Earth\'s Moon, Jupiter\'s Galilean moons, and Saturn\'s Titan.',
-                    position: 'right',
-                    duration: 6000,
-                    action: function() {
-                        document.querySelector('.preset-btn[data-preset="moon-watch"]').click();
-                        setTimeout(function() {
-                            var select = document.getElementById('follow-target');
-                            select.value = 'earth';
-                            select.dispatchEvent(new Event('change'));
-                        }, 500);
-                    },
+                    action: function() { setView('free'); setFollow('saturn'); cameraDistance = 45; },
                     delay: 800,
                 },
                 {
-                    id: 'slider-demo',
-                    target: '#sun-speed',
-                    title: 'Fine-Tune the Physics',
-                    text: 'Every slider adjusts the simulation in real time. Watch the Sun speed ramp up \u2014 the vortex helix tightens as the Sun moves faster.',
-                    position: 'right',
-                    duration: 5000,
-                    action: function() {
-                        // Expand advanced section so simulation sliders are visible
-                        var advSection = document.getElementById('section-advanced');
-                        if (advSection.classList.contains('collapsed')) {
-                            document.getElementById('advanced-toggle').click();
-                        }
-                        animateSlider('sun-speed', 5, 2000, function() {
-                            animateSlider('sun-speed', 2.047 * 2.047, 2000);
-                        });
-                    },
-                    delay: 300,
-                    sliderTarget: true,
-                },
-                {
-                    id: 'visual-toggles',
-                    target: '#elliptical-orbits',
-                    title: 'Elliptical Orbits',
-                    text: 'Enable Kepler\'s real orbital shapes. Mercury has the most eccentric orbit \u2014 notice how it speeds up near the Sun.',
-                    position: 'right',
-                    duration: 5000,
-                    action: function() {
-                        // Expand advanced section so scene toggles are visible
-                        var advSection = document.getElementById('section-advanced');
-                        if (advSection.classList.contains('collapsed')) {
-                            document.getElementById('advanced-toggle').click();
-                        }
-                        var cb = document.getElementById('elliptical-orbits');
-                        if (!cb.checked) {
-                            cb.checked = true;
-                            cb.dispatchEvent(new Event('change'));
-                        }
-                    },
-                    delay: 500,
-                },
-                {
-                    id: 'corona-particles',
-                    target: '#show-particles',
-                    title: 'Sun Corona Particles',
-                    text: 'Turn on the corona particle effect for a fiery, dynamic Sun. These particles simulate the solar wind streaming outward.',
-                    position: 'right',
-                    duration: 4000,
-                    action: function() {
-                        // Expand advanced section so scene toggles are visible
-                        var advSection = document.getElementById('section-advanced');
-                        if (advSection.classList.contains('collapsed')) {
-                            document.getElementById('advanced-toggle').click();
-                        }
-                        var cb = document.getElementById('show-particles');
-                        if (!cb.checked) {
-                            cb.checked = true;
-                            cb.dispatchEvent(new Event('change'));
-                        }
-                    },
-                    delay: 300,
-                },
-                {
-                    id: 'camera-chase',
-                    target: '.cam-btn[data-mode="chase"]',
-                    title: 'Chase Camera',
-                    text: 'The chase camera follows behind the Sun like a spacecraft. Five camera modes let you find your favorite perspective.',
-                    position: 'right',
-                    duration: 5000,
-                    action: function() {
-                        // Expand advanced section so camera mode buttons are visible
-                        var advSection = document.getElementById('section-advanced');
-                        if (advSection.classList.contains('collapsed')) {
-                            document.getElementById('advanced-toggle').click();
-                        }
-                        document.querySelector('.cam-btn[data-mode="chase"]').click();
-                        var select = document.getElementById('follow-target');
-                        select.value = 'sun';
-                        select.dispatchEvent(new Event('change'));
-                    },
-                    delay: 500,
-                },
-                {
-                    id: 'planet-info',
-                    target: '#toggle-science',
-                    title: 'NASA Planet Data',
-                    text: 'Click any planet label for real NASA data \u2014 mass, gravity, temperature, and fun facts.',
-                    position: 'above',
-                    duration: 5000,
-                    action: function() {
-                        document.getElementById('toggle-science').click();
-                    },
-                    delay: 500,
+                    id: 'moons',
+                    target: null,
+                    title: 'Moons',
+                    text: 'Slow time down and the moons come out. Earth\'s Moon takes about four seconds per orbit at 1 week per second.',
+                    position: 'center',
+                    duration: 6000,
+                    action: function() { setState({ moons: true, speed: 'week' }); setFollow('earth'); cameraDistance = 22; },
+                    delay: 800,
                 },
                 {
                     id: 'planet-dive',
                     target: '#planet-dive-btn',
-                    title: 'Dive Into Orbit',
-                    text: 'The most dramatic feature! Watch as we dive into orbit around Jupiter. You can dive into any planet or the Sun.',
-                    position: 'right',
+                    title: 'Dive into orbit',
+                    text: 'Dive takes you into orbit around the planet you follow. Here we go to Jupiter.',
+                    position: 'above',
                     duration: 8000,
                     action: function() {
-                        // Close science panel if open
-                        var closeBtn = document.getElementById('close-science');
-                        if (closeBtn) closeBtn.click();
-                        // Set follow to Jupiter
-                        var select = document.getElementById('follow-target');
-                        select.value = 'jupiter';
-                        select.dispatchEvent(new Event('change'));
-                        // Wait for dive button text to update, then dive
-                        setTimeout(function() {
-                            if (diveState === 'none') {
-                                document.getElementById('planet-dive-btn').click();
-                            }
-                        }, 400);
+                        setFollow('jupiter');
+                        setTimeout(function() { if (tourActive && diveState === 'none') startDive(); }, 400);
                     },
                     delay: 1000,
                 },
                 {
                     id: 'exit-dive',
                     target: null,
-                    title: 'Returning to Overview',
-                    text: 'Bringing us back for the grand finale...',
+                    title: 'Back out',
+                    text: 'Esc or the same button brings you back out. One more stop...',
                     position: 'center',
                     duration: 4000,
-                    action: function() {
-                        if (diveState !== 'none') {
-                            document.getElementById('planet-dive-btn').click();
-                        }
-                    },
+                    action: function() { if (diveState === 'diving' || diveState === 'orbiting') startDive(); },
                     delay: 500,
+                },
+                {
+                    id: 'more',
+                    target: '#dock-more',
+                    title: 'More',
+                    text: 'Looks (Real scale, Pretty, Kid mode), time travel to any date within 100 years, distances, screenshots and more live here.',
+                    position: 'above',
+                    duration: 6000,
+                    action: null,
+                    delay: 4000,
                 },
                 {
                     id: 'galaxy-view',
                     target: null,
-                    title: 'Galaxy View \u2014 Grand Finale',
-                    text: 'Zoom out to see where our tiny solar system sits in the Milky Way. A speck in the Orion Arm, orbiting the galactic center every 225 million years.',
+                    title: 'The Milky Way',
+                    text: 'Zoom out to see where our solar system sits: a speck in the Orion Arm, going round the galactic centre once every 225 million years.',
                     position: 'center',
                     duration: 0,
-                    action: function() {
-                        if (!galaxyViewActive) {
-                            toggleGalaxyView();
-                        }
-                    },
+                    action: function() { if (!galaxyViewActive) toggleGalaxyView(); },
                     delay: 4000,
                     isFinalStep: true,
                 },
@@ -5830,149 +5266,34 @@
             // --- State Save/Restore ---
             function saveTourState() {
                 return {
-                    cameraRotation: { x: cameraRotation.x, y: cameraRotation.y },
-                    cameraDistance: cameraDistance,
-                    cameraTarget: { x: cameraTarget.x, y: cameraTarget.y, z: cameraTarget.z },
-                    cameraMode: cameraMode,
-                    cinematicAngle: cinematicAngle,
-                    currentSunSpeed: currentSunSpeed,
-                    followTarget: followTarget,
-                    daysPerSecond: daysPerSecond,
-                    trailOpacity: trailOpacity,
-                    showLabels: showLabels,
-                    showGrid: showGrid,
-                    showMoons: showMoons,
-                    showParticles: showParticles,
-                    showOrbitRingsVal: showOrbitRings,
-                    ellipticalOrbitsVal: ellipticalOrbits,
-                    isPaused: isPaused,
-                    panelCollapsed: document.getElementById('controls').classList.contains('panel-collapsed'),
-                    advancedCollapsed: document.getElementById('section-advanced').classList.contains('collapsed'),
-                    sunSpeedRaw: document.getElementById('sun-speed').value,
-                    trailLengthVal: document.getElementById('trail-length').value,
-                    trailOpacityRaw: document.getElementById('trail-opacity').value,
-                    timeSpeedVal: document.getElementById('time-speed').value,
+                    ui: { ...state },
+                    rotation: { ...cameraRotation },
+                    distance: cameraDistance,
+                    target: { ...cameraTarget },
                 };
             }
 
-            function restoreSolarState(state) {
-                // Camera
-                cameraRotation = { x: state.cameraRotation.x, y: state.cameraRotation.y };
-                cameraDistance = state.cameraDistance;
-                cameraTarget = { x: state.cameraTarget.x, y: state.cameraTarget.y, z: state.cameraTarget.z };
-                cameraMode = state.cameraMode;
-                cinematicAngle = state.cinematicAngle;
-                document.getElementById('camera-mode').value = state.cameraMode;
-                document.querySelectorAll('.cam-btn').forEach(function(b) {
-                    b.classList.toggle('active', b.dataset.mode === state.cameraMode);
-                });
-
-                // Sim values
-                currentSunSpeed = state.currentSunSpeed;
-                followTarget = state.followTarget;
-                daysPerSecond = state.daysPerSecond;
-                trailOpacity = state.trailOpacity;
-
-                // Sliders
-                document.getElementById('sun-speed').value = state.sunSpeedRaw;
-                document.getElementById('sun-speed-val').textContent = state.currentSunSpeed.toFixed(2);
-                document.getElementById('trail-length').value = state.trailLengthVal;
-                document.getElementById('trail-length-val').textContent = state.trailLengthVal;
-                document.getElementById('trail-opacity').value = state.trailOpacityRaw;
-                document.getElementById('trail-opacity-val').textContent = parseFloat(state.trailOpacityRaw).toFixed(1);
-                document.getElementById('time-speed').value = state.timeSpeedVal;
-                document.getElementById('time-speed-val').textContent = parseInt(state.timeSpeedVal);
-                document.getElementById('follow-target').value = state.followTarget;
-
-                // Trail length internal
-                var len = parseInt(state.trailLengthVal);
-                planets.forEach(function(p) { p.maxTrailLength = len; });
-                sunTrailMaxLength = Math.round(len * 2.5);
-
-                // Checkboxes
-                showLabels = state.showLabels;
-                document.getElementById('show-labels').checked = state.showLabels;
-                showGrid = state.showGrid;
-                document.getElementById('show-grid').checked = state.showGrid;
-                if (referenceGrid) referenceGrid.visible = state.showGrid;
-                showMoons = state.showMoons;
-                document.getElementById('show-moons').checked = state.showMoons;
-                document.getElementById('show-moons').dispatchEvent(new Event('change'));
-                showParticles = state.showParticles;
-                document.getElementById('show-particles').checked = state.showParticles;
-                document.getElementById('show-particles').dispatchEvent(new Event('change'));
-                showOrbitRings = state.showOrbitRingsVal ?? true;
-                document.getElementById('show-orbit-rings').checked = showOrbitRings;
-                orbitRingLines.forEach(line => { line.visible = showOrbitRings; });
-                ellipticalOrbits = state.ellipticalOrbitsVal;
-                document.getElementById('elliptical-orbits').checked = state.ellipticalOrbitsVal;
-
-                // Pause state
-                isPaused = state.isPaused;
-                document.getElementById('toggle-pause').textContent = state.isPaused ? 'Resume' : 'Pause';
-
-                // Clear preset active states
-                document.querySelectorAll('.preset-btn').forEach(function(b) { b.classList.remove('active'); });
-
-                // Restore panel collapsed state
-                var controlsEl = document.getElementById('controls');
-                if (state.panelCollapsed && !controlsEl.classList.contains('panel-collapsed')) {
-                    var leftBtn = document.getElementById('left-panel-toggle');
-                    if (leftBtn) leftBtn.click();
-                }
-                // Restore advanced collapsed state
-                var advSection = document.getElementById('section-advanced');
-                if (state.advancedCollapsed && !advSection.classList.contains('collapsed')) {
-                    document.getElementById('advanced-toggle').click();
-                } else if (!state.advancedCollapsed && advSection.classList.contains('collapsed')) {
-                    document.getElementById('advanced-toggle').click();
-                }
-
+            function restoreSolarState(saved) {
+                cameraRotation = { ...saved.rotation };
+                cameraDistance = saved.distance;
+                state = { ...saved.ui, mode: 'solar', sheet: null, tool: 'none' };
+                cameraMode = VIEW_MODE[state.view];
+                applyState(null, state);
+                persist();
+                cameraTarget = { ...saved.target };
                 updateCameraPosition();
                 updateDiveButtonText();
             }
 
-            function restoreTourState(state) {
-                // Exit dive first if active
+            function restoreTourState(saved) {
                 exitDiveImmediate();
-
-                // Exit galaxy view if active
+                // Galaxy view animates back first, then the solar state returns
                 if (galaxyViewActive) {
-                    toggleGalaxyView();
-                    setTimeout(function() { restoreSolarState(state); }, 4000);
+                    if (galaxyTransition && galaxyTransition.phase === 'idle-galaxy') toggleGalaxyView();
+                    setTimeout(function() { restoreSolarState(saved); }, 3200);
                     return;
                 }
-
-                restoreSolarState(state);
-            }
-
-            // --- Slider Animation ---
-            function animateSlider(sliderId, targetValue, durationMs, onComplete) {
-                var slider = document.getElementById(sliderId);
-                var isSquared = (sliderId === 'sun-speed');
-                var startRaw = parseFloat(slider.value);
-                var targetRaw = isSquared ? Math.sqrt(targetValue) : targetValue;
-                var startTime = performance.now();
-
-                function tick(now) {
-                    if (!tourActive) return;
-                    var elapsed = now - startTime;
-                    var t = Math.min(1, elapsed / durationMs);
-                    var eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-                    var currentRaw = startRaw + (targetRaw - startRaw) * eased;
-
-                    slider.value = currentRaw;
-                    slider.dispatchEvent(new Event('input'));
-
-                    if (t < 1) {
-                        tourSliderAnim = requestAnimationFrame(tick);
-                    } else {
-                        tourSliderAnim = null;
-                        if (onComplete) onComplete();
-                    }
-                }
-                if (tourSliderAnim) cancelAnimationFrame(tourSliderAnim);
-                tourSliderAnim = requestAnimationFrame(tick);
+                restoreSolarState(saved);
             }
 
             // --- Typewriter Effect ---
@@ -6151,29 +5472,17 @@
 
                 tourActive = true;
                 preTourState = saveTourState();
+                setState({ playing: true, sheet: null, tool: 'none' });
 
-                // Expand control panel so tour tooltips can target panel elements
-                var controlsEl = document.getElementById('controls');
-                if (controlsEl && controlsEl.classList.contains('panel-collapsed')) {
-                    var leftBtn = document.getElementById('left-panel-toggle');
-                    if (leftBtn) leftBtn.click();
-                }
-
-                // Ensure running
-                if (isPaused) {
-                    isPaused = false;
-                    pausedOffset += performance.now() - pausedAt;
-                    document.getElementById('toggle-pause').textContent = 'Pause';
-                }
-
-                demoBtn.classList.add('touring');
-                demoBtn.textContent = '\u23F9 Exit Tour';
+                demoBtn.setAttribute('aria-pressed', 'true');
+                demoBtn.textContent = 'Exit tour';
 
                 showStep(0);
             }
 
             // --- End Tour ---
-            function endTour() {
+            // restore = false when Reset ends the tour: Reset sets the state itself
+            function endTour(restore) {
                 tourActive = false;
                 tourStep = -1;
 
@@ -6187,20 +5496,21 @@
                     tooltip.style.display = 'none';
                 }, 400);
 
-                demoBtn.classList.remove('touring');
-                demoBtn.textContent = '\uD83C\uDFAC Tour';
+                demoBtn.setAttribute('aria-pressed', 'false');
+                demoBtn.textContent = 'Tour';
 
-                if (preTourState) {
-                    restoreTourState(preTourState);
-                    preTourState = null;
-                }
+                if (preTourState && restore !== false) restoreTourState(preTourState);
+                preTourState = null;
             }
+
+            tourControl = { active: function() { return tourActive; }, end: endTour };
 
             // --- Event Listeners ---
             demoBtn.addEventListener('click', function() {
                 if (tourActive) endTour();
                 else startTour();
             });
+            demoBtn.setAttribute('aria-pressed', 'false');
 
             nextBtn.addEventListener('click', function() {
                 if (!tourActive) return;
@@ -6231,153 +5541,6 @@
         })();
 
         // =====================================================================
-        // MOBILE RESPONSIVE TOGGLES
-        // =====================================================================
-        (function initMobileUI() {
-            const controlsPanel = document.getElementById('controls');
-            const statsPanel = document.getElementById('stats');
-            const eventsPanel = document.getElementById('events');
-            const backdrop = document.getElementById('mobile-backdrop');
-            const controlsBtn = document.getElementById('mobile-controls-toggle');
-            const eventsBtn = document.getElementById('mobile-events-toggle');
-
-            function isMobile() {
-                return window.innerWidth <= 768;
-            }
-
-            // Don't auto-open controls on mobile — let user tap to open
-            // Controls now slide up as a bottom sheet
-
-            function closeAllSheets() {
-                controlsPanel.classList.remove('mobile-open');
-                eventsPanel.classList.remove('mobile-open');
-                statsPanel.classList.remove('mobile-open');
-                controlsBtn.classList.remove('active');
-                backdrop.classList.remove('visible');
-                setTimeout(() => {
-                    if (!backdrop.classList.contains('visible')) {
-                        backdrop.style.display = 'none';
-                    }
-                }, 300);
-            }
-
-            function toggleSheet(panel, btn) {
-                const isOpen = panel.classList.contains('mobile-open');
-                closeAllSheets();
-                if (!isOpen) {
-                    panel.classList.add('mobile-open');
-                    if (btn) btn.classList.add('active');
-                    backdrop.style.display = 'block';
-                    requestAnimationFrame(() => backdrop.classList.add('visible'));
-                }
-            }
-
-            controlsBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleSheet(controlsPanel, controlsBtn);
-            });
-
-            eventsBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleSheet(eventsPanel);
-            });
-
-            backdrop.addEventListener('click', closeAllSheets);
-
-            // Prevent touch events on panels from closing
-            [controlsPanel, statsPanel, eventsPanel].forEach(p => {
-                p.addEventListener('click', (e) => e.stopPropagation());
-            });
-
-            // On resize: if switching to desktop, remove mobile classes
-            window.addEventListener('resize', () => {
-                if (!isMobile()) {
-                    controlsPanel.classList.remove('mobile-open');
-                    eventsPanel.classList.remove('mobile-open');
-                    statsPanel.classList.remove('mobile-open');
-                    controlsBtn.classList.remove('active');
-                    backdrop.classList.remove('visible');
-                    backdrop.style.display = 'none';
-                    statsPanel.style.display = '';
-                }
-            });
-        })();
-
-        // ── Desktop panel collapse toggles ──────────────────────────────
-        (function initPanelToggles() {
-            const leftBtn     = document.getElementById('left-panel-toggle');
-            const rightBtn    = document.getElementById('right-panel-toggle');
-            const controlsEl  = document.getElementById('controls');
-            const statsEl     = document.getElementById('stats');
-            const eventsEl    = document.getElementById('events');
-
-            let leftCollapsed  = true;
-            let rightCollapsed = true;
-
-            // Start both sides collapsed — desktop only.
-            // On mobile, panels are hidden by translateY(100%) via CSS; adding
-            // panel-collapsed would trigger the 767px override (transform:none !important)
-            // which defeats that hiding and shows the panel on load.
-            if (window.innerWidth > 768) {
-                controlsEl.classList.add('panel-collapsed');
-                statsEl.classList.add('panel-collapsed');
-                eventsEl.classList.add('panel-collapsed');
-                leftBtn.classList.add('pulsing');
-            }
-
-            leftBtn.addEventListener('click', function () {
-                leftCollapsed = !leftCollapsed;
-                controlsEl.classList.toggle('panel-collapsed', leftCollapsed);
-                leftBtn.innerHTML  = leftCollapsed ? '&#x276F;' : '&#x276E;';
-                leftBtn.classList.toggle('pulsing', leftCollapsed);
-            });
-
-            rightBtn.addEventListener('click', function () {
-                rightCollapsed = !rightCollapsed;
-                statsEl.classList.toggle('panel-collapsed', rightCollapsed);
-                eventsEl.classList.toggle('panel-collapsed', rightCollapsed);
-                rightBtn.innerHTML = rightCollapsed ? '&#x276E;' : '&#x276F;';
-            });
-        })();
-
-        // =====================================================================
-        // ADVANCED TOGGLE (with localStorage persistence)
-        // =====================================================================
-        (function() {
-            var toggle = document.getElementById('advanced-toggle');
-            var section = document.getElementById('section-advanced');
-            var text = document.getElementById('advanced-toggle-text');
-            var arrow = document.getElementById('advanced-toggle-arrow');
-            var expanded = localStorage.getItem('solar-vortex-advanced') === '1';
-            if (expanded) {
-                section.classList.remove('collapsed');
-                text.textContent = 'Hide advanced';
-                arrow.innerHTML = '&#x25B2;';
-            }
-            toggle.addEventListener('click', function() {
-                var isCollapsed = section.classList.toggle('collapsed');
-                text.textContent = isCollapsed ? 'Show advanced' : 'Hide advanced';
-                arrow.innerHTML = isCollapsed ? '&#x25BC;' : '&#x25B2;';
-                localStorage.setItem('solar-vortex-advanced', isCollapsed ? '0' : '1');
-            });
-        })();
-
-        // =====================================================================
-        // SHORTCUTS HINT TOGGLE
-        // =====================================================================
-        (function() {
-            var btn = document.getElementById('shortcuts-hint');
-            var popup = document.getElementById('shortcuts-popup');
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
-            });
-            document.addEventListener('click', function() {
-                popup.style.display = 'none';
-            });
-        })();
-
-        // =====================================================================
         // WELCOME PROMPT (first visit only)
         // =====================================================================
         (function() {
@@ -6394,8 +5557,8 @@
                 var el = document.createElement('div');
                 el.id = 'welcome-prompt';
                 el.innerHTML = '<div class="welcome-card">' +
-                    '<h3>Solar Vortex</h3>' +
-                    '<p>An interactive journey through our solar system as it hurtles through space at 220 km/s.</p>' +
+                    '<h3>Our Solar System</h3>' +
+                    '<p>Every planet where it really is today, racing through the galaxy at 220 km/s.</p>' +
                     '<div class="welcome-actions">' +
                     '<button id="welcome-tour">Take the Tour</button>' +
                     '<button id="welcome-skip">Jump In</button>' +
