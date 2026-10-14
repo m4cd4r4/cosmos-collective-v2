@@ -47,10 +47,10 @@
   ],
   "shortcuts": [
     {
-      "name": "JWST Explorer",
-      "short_name": "JWST",
+      "name": "Webb Explorer",
+      "short_name": "Webb",
       "description": "James Webb Space Telescope imagery",
-      "url": "/jwst",
+      "url": "/explore?view=webb",
       "icons": [{ "src": "/icons/shortcut-jwst.png", "sizes": "96x96" }]
     },
     {

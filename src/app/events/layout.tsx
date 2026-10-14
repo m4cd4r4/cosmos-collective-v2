@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Live Events',
-  description: 'Real-time astronomical events including meteor showers, asteroid approaches, ISS tracking, space weather alerts, and NASA Astronomy Picture of the Day.',
+  description: 'Real-time astronomical events including meteor showers, asteroid approaches, ISS tracking, space weather alerts, computed moon phases, and a spacecraft encyclopedia covering JWST, Hubble, Voyager, the ISS and Australian radio telescopes.',
   openGraph: {
     title: 'Live Events | Cosmos Collective',
     description: 'Track real-time astronomical events, meteor showers, ISS position, and space weather.',
@@ -27,6 +27,10 @@ export const metadata: Metadata = {
     'astronomical events',
     'APOD',
     'astronomy picture of the day',
+    'moon phases',
+    'spacecraft',
+    'space telescope',
+    'radio telescope',
   ],
 }
 

@@ -4,7 +4,6 @@ import { useState, useMemo, useCallback, useEffect, useRef } from 'react'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import type { Observation, DetectedFeature, ObjectCategory, JWSTInstrument, WavelengthChannel } from '@/types'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
-import { HubbleComparison } from './HubbleComparison'
 import Link from 'next/link'
 import { ExternalLink, MapPin, Calendar, Ruler, Star, Layers, Search, ChevronRight, Maximize2, Info, Map, ZoomIn, ZoomOut, Minimize2 } from 'lucide-react'
 
@@ -89,7 +88,6 @@ export function JWSTViewer() {
   const [mobileTab, setMobileTab] = useState<'list' | 'detail'>('list')
   const [imgLoaded, setImgLoaded] = useState(false)
   const [imgError, setImgError] = useState(false)
-  const [showHubble, setShowHubble] = useState(false)
   const [disabledChannels, setDisabledChannels] = useState<Set<string>>(new Set())
   const [channelsExpanded, setChannelsExpanded] = useState(true)
 
@@ -148,7 +146,6 @@ export function JWSTViewer() {
     setActiveWavelength(0)
     setHoveredFeature(null)
     setMobileTab('detail')
-    setShowHubble(false)
     setDisabledChannels(new Set())
   }, [])
 
@@ -181,12 +178,6 @@ export function JWSTViewer() {
     if (!tieredImageUrl) return ''
     return `/api/image-proxy?url=${encodeURIComponent(tieredImageUrl)}`
   }, [tieredImageUrl])
-
-  // Proxied Hubble URL for comparison
-  const proxiedHubbleUrl = useMemo(() => {
-    if (!selected.hubbleUrl) return ''
-    return `/api/image-proxy?url=${encodeURIComponent(selected.hubbleUrl)}`
-  }, [selected.hubbleUrl])
 
   useEffect(() => {
     setImgLoaded(false)
@@ -316,7 +307,6 @@ export function JWSTViewer() {
                     <div className="flex-1 min-w-0">
                       <div className={`text-[11px] font-bold truncate ${selected.id === obs.id ? 'text-[#d4af37]' : 'text-[#e0e8ff]'}`}>
                         {obs.targetName}
-                        {obs.hubbleUrl && <span className="ml-1 text-[11px] text-[#4a90e2] opacity-70">⟺</span>}
                       </div>
                       <div className="text-[10px] text-cosmos-muted flex items-center gap-1.5 mt-0.5">
                         <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: INSTRUMENT_INFO[obs.instrument || '']?.color || '#666' }} />
@@ -498,17 +488,6 @@ export function JWSTViewer() {
 
           {/* Controls — top right */}
           <div className="absolute top-3 right-3 flex gap-2 z-10">
-            {/* Hubble comparison button */}
-            {selected.hubbleUrl && (
-              <button
-                onClick={() => setShowHubble(true)}
-                className="px-2.5 py-1.5 rounded text-xs uppercase tracking-wider bg-[rgba(74,144,226,0.15)] text-[#4a90e2] border border-[rgba(74,144,226,0.3)] hover:bg-[rgba(74,144,226,0.25)] transition-all backdrop-blur-sm"
-                title="Compare this view with a Hubble image"
-              >
-                ⟺ Hubble
-              </button>
-            )}
-
             {selected.features && selected.features.length > 0 && (
               <button
                 onClick={() => setShowFeatures(!showFeatures)}
@@ -803,15 +782,6 @@ export function JWSTViewer() {
         </aside>
       </div>
 
-      {/* Hubble comparison fullscreen overlay */}
-      {showHubble && selected.hubbleUrl && (
-        <HubbleComparison
-          jwstUrl={proxiedImageUrl}
-          hubbleUrl={proxiedHubbleUrl}
-          targetName={selected.targetName}
-          onClose={() => setShowHubble(false)}
-        />
-      )}
     </div>
   )
 }

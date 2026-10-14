@@ -151,7 +151,7 @@ const nextConfig = {
     { source: '/devlog', destination: '/', permanent: true },
     { source: '/devlog/:slug', destination: '/', permanent: true },
     // JWST explorer merged into /explore (same catalogue)
-    { source: '/jwst', destination: '/explore?source=jwst', permanent: true },
+    { source: '/jwst', destination: '/explore?view=webb', permanent: true },
     // Spacecraft encyclopedia merged into /events as a tab
     { source: '/spacecraft', destination: '/events#spacecraft', permanent: true },
     { source: '/spacecraft/:slug', destination: '/events#spacecraft', permanent: true },

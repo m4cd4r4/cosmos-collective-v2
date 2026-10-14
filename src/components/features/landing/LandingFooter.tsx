@@ -4,7 +4,7 @@ import Link from 'next/link'
 
 const EXPLORE_LINKS = [
   { label: 'Solar System', href: '/solar-system' },
-  { label: 'Webb Gallery', href: '/explore?source=jwst' },
+  { label: 'Webb Explorer', href: '/explore?view=webb' },
   { label: 'Gravitational Lens', href: '/gravitational-lens' },
   { label: 'Kepler Exoplanets', href: '/kepler' },
   { label: 'Sky Map', href: '/sky-map' },
