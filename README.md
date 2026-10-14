@@ -31,7 +31,7 @@ Eight explorers, one dark-sky instrument aesthetic. Deep space void backgrounds,
 
 | Explorer | Route | What it does |
 |----------|-------|--------------|
-| **Solar System** | `/solar-system` | Photorealistic 3D orbits, true-scale toggle, galaxy zoom-out, Earth Dive |
+| **Solar System** | `/solar-system` | Photorealistic 3D orbits, true-scale toggle, Earth Dive |
 | **Gravitational Lens Telescope** | `/gravitational-lens` | The Solar Gravitational Lens mission concept, act by act |
 | **JWST Explorer** | `/jwst` | 85 Webb observations with NIRCam/MIRI wavelength switching |
 | **Kepler Exoplanets** | `/kepler` | 2,700+ confirmed worlds in an interactive stellar field |
