@@ -10,7 +10,7 @@ import { SolarSystemViewer } from '@/components/features/solar-system/SolarSyste
 export const metadata: Metadata = {
   title: 'Solar System',
   description:
-    'Explore a photorealistic 3D solar system with NASA textures, orbital mechanics, atmospheric effects, and an Earth Dive experience. Follow any planet through the cosmos.',
+    'Explore a photorealistic 3D solar system with real orbital data, orbital mechanics, atmospheric effects, and an Earth Dive experience. Follow any planet through the cosmos.',
 }
 
 export default function SolarSystemPage() {
