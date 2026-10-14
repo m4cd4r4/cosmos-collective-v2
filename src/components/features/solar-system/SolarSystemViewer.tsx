@@ -20,7 +20,7 @@ export function SolarSystemViewer() {
             <div className="w-16 h-16 border-4 border-cosmos-gold border-t-transparent rounded-full animate-spin mx-auto mb-4" />
             <p className="text-gray-400">Loading Solar System...</p>
             <p className="text-gray-500 text-sm mt-2">
-              Initializing 3D renderer and NASA textures
+              Initializing 3D renderer and planet textures
             </p>
           </div>
         </div>
@@ -38,9 +38,10 @@ export function SolarSystemViewer() {
       {/* Accessibility description */}
       <div className="sr-only" aria-live="polite">
         Interactive 3D solar system visualization showing all 8 planets with
-        photorealistic NASA textures. Use the on-screen controls to adjust
-        orbital speed, camera mode, and follow individual planets. Press D to
-        dive into Earth.
+        photorealistic textures from Solar System Scope (CC BY 4.0). Use the
+        on-screen controls to adjust speed, camera mode, and follow individual
+        planets. Press Space to pause, R to reset, E to dive into the planet
+        you are following, and G for the galaxy view.
       </div>
     </div>
   )

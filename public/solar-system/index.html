@@ -726,10 +726,6 @@
                 background: rgba(212, 175, 55, 0.15);
             }
 
-            /* Hide the eye toggle on mobile — stats replaces it */
-            #ui-toggle-btn {
-                display: none !important;
-            }
 
             /* --- Controls: bottom sheet (50% height, solar system visible above) --- */
             #controls {
@@ -1473,7 +1469,6 @@
 
     <!-- Mobile toggle buttons (visible only on mobile via CSS) -->
     <button type="button" id="mobile-controls-toggle" aria-label="Toggle controls">&#x2630;</button>
-    <button type="button" id="mobile-stats-toggle" aria-label="Toggle statistics"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg></button>
     <button type="button" id="mobile-events-toggle" aria-label="Toggle events">&#x1F30D;</button>
     <div id="mobile-backdrop"></div>
 
@@ -1549,9 +1544,9 @@
                 <button id="toggle-pause" style="flex-shrink:0;">Pause</button>
                 <div class="time-inline">
                     <button type="button" class="slider-arrow" data-target="time-speed" data-dir="-1" aria-label="Slower" style="min-height:auto; padding:3px 6px;">&#x25C0;</button>
-                    <input type="range" id="time-speed" min="1" max="100" step="1" value="49">
+                    <input type="range" id="time-speed" min="1" max="365" step="1" value="30">
                     <button type="button" class="slider-arrow" data-target="time-speed" data-dir="1" aria-label="Faster" style="min-height:auto; padding:3px 6px;">&#x25B6;</button>
-                    <span class="time-val"><span id="time-speed-val">49</span> d/s</span>
+                    <span class="time-val"><span id="time-speed-val">30</span> d/s</span>
                 </div>
                 <button id="reset-view" style="flex-shrink:0;">Reset</button>
             </div>
@@ -1612,19 +1607,11 @@
             <div class="adv-group" id="section-simulation">
                 <label class="adv-group-label">Simulation</label>
                 <div class="control-group">
-                    <label>Sun Speed: <span id="sun-speed-val">4.19</span>x</label>
+                    <label>Helix stretch: <span id="sun-speed-val">4.19</span>x</label>
                     <div class="slider-row">
                         <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="-1" aria-label="Decrease sun speed">&#x25C0;</button>
                         <input type="range" id="sun-speed" min="0" max="5" step="0.001" value="2.047">
                         <button type="button" class="slider-arrow" data-target="sun-speed" data-dir="1" aria-label="Increase sun speed">&#x25B6;</button>
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label>Orbital Speed: <span id="orbit-speed-val">1.24</span>x</label>
-                    <div class="slider-row">
-                        <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="-1" aria-label="Decrease orbital speed">&#x25C0;</button>
-                        <input type="range" id="orbit-speed" min="0" max="3" step="0.001" value="1.114">
-                        <button type="button" class="slider-arrow" data-target="orbit-speed" data-dir="1" aria-label="Increase orbital speed">&#x25B6;</button>
                     </div>
                 </div>
             </div>
@@ -1787,17 +1774,17 @@
         <div style="color:#8f8;">
             <strong style="color:#6f6;">Accurate:</strong><br>
             &bull; Orbital periods (Mercury 88d through Neptune 60,190d)<br>
+            &bull; Orbital eccentricities (Kepler&apos;s 2nd law)<br>
             &bull; Relative orbital speeds (derived from real periods)<br>
             &bull; Conjunction/opposition calculations (two-body mechanics)<br>
             &bull; Saturn ring structure (D, C, B, A, F rings with Cassini gap)<br>
-            &bull; NASA photorealistic textures with bump mapping<br>
+            &bull; Planet textures from Solar System Scope (CC BY 4.0) with bump mapping<br>
             &bull; Vortex motion concept (solar system moves at ~220 km/s through galaxy)
         </div>
         <div style="color:#fa8; margin-top:10px;">
             <strong style="color:#f80;">Scaled for visualization:</strong><br>
             &bull; Planet sizes (Jupiter should be 11x Earth, shown ~2.5x)<br>
             &bull; Distances (real spacing would make inner planets invisible)<br>
-            &bull; Orbits circular by default — enable <em>Elliptical Orbits</em> for real eccentricities (Kepler&apos;s 2nd law)<br>
             &bull; All orbits coplanar (real system has slight inclinations)<br>
             &bull; Vortex helix ratio greatly exaggerated for visual drama
         </div>
@@ -1901,7 +1888,7 @@
         scene.add(rimLight);
 
         // =====================================================================
-        // TEXTURE SYSTEM - NASA high-res with bump/specular/night/clouds
+        // TEXTURE SYSTEM - Solar System Scope (CC BY 4.0) with bump/specular/night/clouds
         // =====================================================================
         const loadingOverlay = document.getElementById('loading-overlay');
         const loadingSubtext = document.querySelector('.loading-subtext');
@@ -2279,7 +2266,7 @@
         }
 
         // =====================================================================
-        // PROCEDURAL TEXTURES (fallback if CORS blocks NASA textures)
+        // PROCEDURAL TEXTURES (fallback if CORS blocks the image textures)
         // =====================================================================
         function createProceduralTexture(type, width = 512, height = 256) {
             const canvas = document.createElement('canvas');
@@ -2455,7 +2442,9 @@
             Neptune: { L0: 304.880, n: 0.00598103 },
             Pluto:   { L0: 238.929, n: 0.00397 },
         };
-        const DAYS_FROM_J2000_TO_START_EARLY = 9530.5; // Feb 4, 2026 from J2000.0
+        // Simulation starts at the visitor's current date and time
+        const SIM_START_MS = Date.now();
+        const DAYS_FROM_J2000_TO_START_EARLY = (SIM_START_MS - Date.UTC(2000, 0, 1, 12)) / 86400000;
 
         // =====================================================================
         // PLANET CREATION
@@ -2608,8 +2597,9 @@
                     mesh, parent: planet,
                     distance: data.distance, speed: data.speed,
                     ecc: data.ecc || 0,
-                    angle: Math.random() * Math.PI * 2,
-                    meanAnomaly: Math.random() * Math.PI * 2,
+                    phase0: Math.random() * Math.PI * 2,
+                    angle: 0,
+                    meanAnomaly: 0,
                     trail: [], maxTrailLength: 200, name: data.name,
                     originalRadius: data.radius,
                     realRadiusScale: data.realRadiusScale || 1.0
@@ -2892,14 +2882,17 @@
         // =====================================================================
         // PLANETARY EVENTS
         // =====================================================================
-        const startDate = new Date('2026-02-04T00:00:00');
+        // One clock drives everything: simulationDays (days since page load, which
+        // is "today") feeds every planet, moon and asteroid angle and the Sun's
+        // drift. daysPerSecond is the only speed, applied with real frame time,
+        // so 60 Hz and 144 Hz screens show the same motion.
+        const startDate = new Date(SIM_START_MS);
         let simulationDays = 0;
-        let daysPerSecond = 49;
+        const DEFAULT_DAYS_PER_SECOND = 30.44; // 1 month/s
+        let daysPerSecond = DEFAULT_DAYS_PER_SECOND;
 
         function getSimulationDate() {
-            const d = new Date(startDate);
-            d.setDate(d.getDate() + Math.floor(simulationDays));
-            return d;
+            return new Date(startDate.getTime() + simulationDays * 86400000);
         }
         function formatDate(d) {
             const m = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -3021,8 +3014,6 @@
                 distance: cameraDistance,
                 target: { ...cameraTarget },
                 mode: cameraMode,
-                sunSpeed: currentSunSpeed,
-                orbitSpeed: orbitSpeedMultiplier,
                 followTarget: followTarget
             };
 
@@ -3153,55 +3144,69 @@
 
                 if (t >= 1) {
                     diveState = 'none';
-                    ambientLight.color.set(0x111122);
-                    ambientLight.intensity = 0.15;
-                    diveFillLight.intensity = 0;
-                    diveCamLight.intensity = 0;
-                    renderer.toneMappingExposure = 1.2;
-                    if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
-                        const _m = diveTarget.mesh.material;
-                        if (_m._diveEmissive) { _m.emissive.copy(_m._diveEmissive); _m._diveEmissive = null; }
-                        if (_m._diveEmissiveInt !== undefined) { _m.emissiveIntensity = _m._diveEmissiveInt; _m._diveEmissiveInt = undefined; }
-                        _m.needsUpdate = true;
-                    }
+                    restoreFromDive();
                     cameraMode = preDiveState.mode;
                     cameraDistance = preDiveState.distance;
                     cameraRotation = { ...preDiveState.rotation };
                     cameraTarget = { ...preDiveState.target };
-                    currentSunSpeed = preDiveState.sunSpeed;
-                    orbitSpeedMultiplier = preDiveState.orbitSpeed;
                     followTarget = preDiveState.followTarget;
                     document.getElementById('follow-target').value = followTarget;
-
-                    // Restore 2K textures after exiting dive
-                    const d8k = dive8kMap[diveTargetName];
-                    if (d8k && textureCache[d8k.origKey]) {
-                        diveTarget.mesh.material.map = textureCache[d8k.origKey];
-                        diveTarget.mesh.material.needsUpdate = true;
-                    }
-                    if (d8k && d8k.origCloudsKey && diveTarget.cloudsMesh && textureCache[d8k.origCloudsKey]) {
-                        diveTarget.cloudsMesh.material.map = textureCache[d8k.origCloudsKey];
-                        diveTarget.cloudsMesh.material.alphaMap = textureCache[d8k.origCloudsKey];
-                        diveTarget.cloudsMesh.material.needsUpdate = true;
-                    }
-
-                    const btn = document.getElementById('planet-dive-btn');
-                    btn.classList.remove('active');
                     updateDiveButtonText();
-                    document.getElementById('dive-hud').classList.remove('visible');
-                    document.getElementById('dive-altitude').classList.remove('visible');
                 }
             }
+        }
+
+        // Undo dive lighting, emissive fallback and 8K textures
+        function restoreFromDive() {
+            ambientLight.color.set(0x111122);
+            ambientLight.intensity = 0.15;
+            diveFillLight.intensity = 0;
+            diveCamLight.intensity = 0;
+            renderer.toneMappingExposure = 1.2;
+            if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
+                const _m = diveTarget.mesh.material;
+                if (_m._diveEmissive) { _m.emissive.copy(_m._diveEmissive); _m._diveEmissive = null; }
+                if (_m._diveEmissiveInt !== undefined) { _m.emissiveIntensity = _m._diveEmissiveInt; _m._diveEmissiveInt = undefined; }
+                _m.needsUpdate = true;
+            }
+            const d8k = dive8kMap[diveTargetName];
+            if (diveTarget && d8k && textureCache[d8k.origKey]) {
+                diveTarget.mesh.material.map = textureCache[d8k.origKey];
+                diveTarget.mesh.material.needsUpdate = true;
+            }
+            if (diveTarget && d8k && d8k.origCloudsKey && diveTarget.cloudsMesh && textureCache[d8k.origCloudsKey]) {
+                diveTarget.cloudsMesh.material.map = textureCache[d8k.origCloudsKey];
+                diveTarget.cloudsMesh.material.alphaMap = textureCache[d8k.origCloudsKey];
+                diveTarget.cloudsMesh.material.needsUpdate = true;
+            }
+            document.getElementById('planet-dive-btn').classList.remove('active');
+            document.getElementById('dive-hud').classList.remove('visible');
+            document.getElementById('dive-altitude').classList.remove('visible');
+        }
+
+        // Leave dive mode at once (no return animation), restoring the pre-dive camera
+        function exitDiveImmediate() {
+            if (diveState === 'none') return;
+            diveState = 'none';
+            restoreFromDive();
+            cameraMode = preDiveState ? preDiveState.mode : 'free';
+            if (preDiveState) {
+                cameraDistance = preDiveState.distance;
+                cameraRotation = { ...preDiveState.rotation };
+            }
+            updateDiveButtonText();
         }
 
         // =====================================================================
         // ANIMATION STATE
         // =====================================================================
         let sunPosition = 0;
-        const sunSpeed = 0.5;
-        let orbitSpeedMultiplier = 1.114 * 1.114; // ~1.24 — was 0.04
+        // Sun drift along -Z per simulated day (the vortex helix pitch). Tied to
+        // the date, so the helix has the same shape at every speed.
+        const SUN_DRIFT_PER_DAY = 2;
+        const DEFAULT_SUN_SPEED = 2.047 * 2.047; // ~4.19, slider midpoint = 1x drift
         let isPaused = false;
-        let currentSunSpeed = 2.047 * 2.047; // ~4.19 — was 0.09
+        let currentSunSpeed = DEFAULT_SUN_SPEED;
         let showLabels = true;
         let showGrid = true;
         let followTarget = 'sun'; // 'sun', planet name, 'moon', or 'none'
@@ -3209,7 +3214,90 @@
         let showMoons = false;
         let trailOpacity = 0.7;
         let elapsedTime = 0;
-        let eventsUpdateCounter = 0;
+        let eventsTimer = 0;
+        let trailTimer = 0;
+        const TRAIL_SAMPLE_SECONDS = 1 / 60; // trails sampled at 60 Hz on any screen
+        let lastPositionedDays = 0;
+
+        // Place every body for the current simulationDays. Planets use J2000 mean
+        // longitudes, moons and asteroids use their periods, the Sun drifts by
+        // the days elapsed since the last call.
+        function positionBodies() {
+            const dDays = simulationDays - lastPositionedDays;
+            lastPositionedDays = simulationDays;
+            sunPosition += dDays * SUN_DRIFT_PER_DAY * (currentSunSpeed / DEFAULT_SUN_SPEED);
+            sun.position.z = -sunPosition;
+            sunLight.position.copy(sun.position);
+            glowLayers.forEach(glow => { glow.position.z = -sunPosition; });
+
+            const daysFromJ2000 = DAYS_FROM_J2000_TO_START_EARLY + simulationDays;
+            const z = sun.position.z;
+            planets.forEach(planet => {
+                const elem = J2000_EPOCH_EARLY[planet.name];
+                const M = elem ? ((elem.L0 + elem.n * daysFromJ2000) % 360) * Math.PI / 180 : planet.angle;
+                planet.angle = M;
+                planet.meanAnomaly = M;
+                let x, y;
+                if (ellipticalOrbits && planet.ecc > 0) {
+                    const E = solveKepler(M, planet.ecc);
+                    const a = planet.distance;
+                    const b = a * Math.sqrt(1 - planet.ecc * planet.ecc);
+                    x = a * (Math.cos(E) - planet.ecc);
+                    y = b * Math.sin(E);
+                } else {
+                    x = Math.cos(M) * planet.distance;
+                    y = Math.sin(M) * planet.distance;
+                }
+                planet.mesh.position.set(x, y, z);
+                if (planet.cloudsMesh) planet.cloudsMesh.position.set(x, y, z);
+                if (planet.atmosphereMesh) planet.atmosphereMesh.position.set(x, y, z);
+                if (planet.venusAtmo) planet.venusAtmo.position.set(x, y, z);
+                if (planet.marsAtmo) planet.marsAtmo.position.set(x, y, z);
+                if (planet.gasGiantAtmo) planet.gasGiantAtmo.position.set(x, y, z);
+
+                if (showMoons) {
+                    planet.moons.forEach(moon => {
+                        // moon.speed = revolutions per Earth year
+                        const mM = moon.phase0 + 2 * Math.PI * moon.speed * simulationDays / 365.25;
+                        moon.angle = mM;
+                        moon.meanAnomaly = mM;
+                        let mx, my;
+                        if (ellipticalOrbits && moon.ecc > 0) {
+                            const E = solveKepler(mM, moon.ecc);
+                            const a = moon.distance;
+                            const b = a * Math.sqrt(1 - moon.ecc * moon.ecc);
+                            mx = x + a * (Math.cos(E) - moon.ecc);
+                            my = y + b * Math.sin(E);
+                        } else {
+                            mx = x + Math.cos(mM) * moon.distance;
+                            my = y + Math.sin(mM) * moon.distance;
+                        }
+                        moon.mesh.position.set(mx, my, z);
+                        // All major moons are tidally locked: same face toward their planet
+                        moon.mesh.rotation.y = Math.atan2(my - y, mx - x) + Math.PI;
+                        moon.mesh.visible = true;
+                    });
+                } else {
+                    planet.moons.forEach(m => m.mesh.visible = false);
+                }
+            });
+
+            // Asteroid belt: Kepler's third law scaled from Ceres (1682 d at scene distance 26)
+            const astPos = asteroidBelt.geometry.attributes.position.array;
+            for (let i = 0; i < asteroidCount; i++) {
+                const period = 1682 * Math.pow(asteroidDistances[i] / 26, 1.5);
+                const ang = asteroidAngles[i] + 2 * Math.PI * simulationDays / period;
+                const i3 = i * 3;
+                astPos[i3] = Math.cos(ang) * asteroidDistances[i];
+                astPos[i3+1] = Math.sin(ang) * asteroidDistances[i] + asteroidHeights[i];
+                astPos[i3+2] = z;
+            }
+            asteroidBelt.geometry.attributes.position.needsUpdate = true;
+
+            saturnRingGroup.position.copy(saturnPlanet.mesh.position);
+            if (referenceGrid && referenceGrid.visible) referenceGrid.position.z = z;
+            orbitRingLines.forEach(line => { line.position.z = z; });
+        }
 
         // =====================================================================
         // STATS
@@ -3240,105 +3328,35 @@
             if (frameCount === 1) console.log('[SolarSystem] First frame rendering');
             if (frameCount === 60) console.log('[SolarSystem] 60 frames rendered, sun pos:', sun.position.toArray(), 'camera pos:', camera.position.toArray());
 
-            const dt = Math.min((now - lastTime) / 1000, 0.05); // Cap at 50ms
+            const rawDt = (now - lastTime) / 1000;
+            const dt = Math.min(rawDt, 0.05); // Cap at 50ms for animation
+            // The date clock tolerates slow frames (down to 4 fps) so the speed
+            // label stays true on weak devices; longer gaps (hidden tab) are dropped.
+            const clockDt = Math.min(rawDt, 0.25);
             lastTime = now;
 
             if (!isPaused && !galaxyViewActive) {
-                sunPosition += sunSpeed * currentSunSpeed;
-                sun.position.z = -sunPosition;
-                sunLight.position.copy(sun.position);
+                if (!scrubberActive) simulationDays += daysPerSecond * clockDt;
+                positionBodies();
 
-                glowLayers.forEach((glow, i) => {
-                    glow.position.z = -sunPosition;
-                    glow.rotation.y += 0.001 * (i + 1);
-                });
-
-                if (!scrubberActive) {
-                    simulationDays += daysPerSecond * dt * Math.max(currentSunSpeed, 0.01) * Math.max(orbitSpeedMultiplier, 0.01);
-                }
-
+                // Cosmetic spin uses wall-clock time, not simulated days
                 planets.forEach(planet => {
-                    let x, y;
-                    const z = sun.position.z;
-                    const step = planet.speed * 0.01 * orbitSpeedMultiplier;
-                    if (ellipticalOrbits && planet.ecc > 0) {
-                        planet.meanAnomaly += step;
-                        const E = solveKepler(planet.meanAnomaly, planet.ecc);
-                        const a = planet.distance;
-                        const b = a * Math.sqrt(1 - planet.ecc * planet.ecc);
-                        x = a * (Math.cos(E) - planet.ecc);
-                        y = b * Math.sin(E);
-                    } else {
-                        planet.angle += step;
-                        x = Math.cos(planet.angle) * planet.distance;
-                        y = Math.sin(planet.angle) * planet.distance;
-                    }
-                    planet.mesh.position.set(x, y, z);
-                    planet.mesh.rotation.y += 0.008;
-
-                    if (planet.cloudsMesh) { planet.cloudsMesh.position.set(x, y, z); planet.cloudsMesh.rotation.y += 0.01; }
-                    if (planet.atmosphereMesh) planet.atmosphereMesh.position.set(x, y, z);
-                    if (planet.venusAtmo) planet.venusAtmo.position.set(x, y, z);
-                    if (planet.marsAtmo) planet.marsAtmo.position.set(x, y, z);
-                    if (planet.gasGiantAtmo) planet.gasGiantAtmo.position.set(x, y, z);
-
-                    if (showMoons) {
-                        planet.moons.forEach(moon => {
-                            const mStep = moon.speed * 0.01 * orbitSpeedMultiplier;
-                            let mx, my;
-                            if (ellipticalOrbits && moon.ecc > 0) {
-                                moon.meanAnomaly += mStep;
-                                const E = solveKepler(moon.meanAnomaly, moon.ecc);
-                                const a = moon.distance;
-                                const b = a * Math.sqrt(1 - moon.ecc * moon.ecc);
-                                mx = planet.mesh.position.x + a * (Math.cos(E) - moon.ecc);
-                                my = planet.mesh.position.y + b * Math.sin(E);
-                            } else {
-                                moon.angle += mStep;
-                                mx = planet.mesh.position.x + Math.cos(moon.angle) * moon.distance;
-                                my = planet.mesh.position.y + Math.sin(moon.angle) * moon.distance;
-                            }
-                            moon.mesh.position.set(
-                                mx, my,
-                                planet.mesh.position.z
-                            );
-                            // All major moons are tidally locked — same face always toward their planet
-                            const tdx = mx - planet.mesh.position.x;
-                            const tdy = my - planet.mesh.position.y;
-                            moon.mesh.rotation.y = Math.atan2(tdy, tdx) + Math.PI;
-                            moon.mesh.visible = true;
-                        });
-                    } else {
-                        planet.moons.forEach(m => m.mesh.visible = false);
-                    }
+                    planet.mesh.rotation.y += 0.48 * dt;
+                    if (planet.cloudsMesh) planet.cloudsMesh.rotation.y += 0.6 * dt;
                 });
+                glowLayers.forEach((glow, i) => { glow.rotation.y += 0.06 * (i + 1) * dt; });
+                saturnRingGroup.rotation.z += 0.03 * dt;
 
-                // Asteroid belt
-                const astPos = asteroidBelt.geometry.attributes.position.array;
-                for (let i = 0; i < asteroidCount; i++) {
-                    asteroidAngles[i] += (0.002 / Math.sqrt(asteroidDistances[i] / 25)) * orbitSpeedMultiplier;
-                    const i3 = i * 3;
-                    astPos[i3] = Math.cos(asteroidAngles[i]) * asteroidDistances[i];
-                    astPos[i3+1] = Math.sin(asteroidAngles[i]) * asteroidDistances[i] + asteroidHeights[i];
-                    astPos[i3+2] = sun.position.z;
+                trailTimer += dt;
+                if (trailTimer >= TRAIL_SAMPLE_SECONDS) {
+                    trailTimer %= TRAIL_SAMPLE_SECONDS;
+                    updateTrails();
                 }
-                asteroidBelt.geometry.attributes.position.needsUpdate = true;
-
-                // Saturn rings
-                saturnRingGroup.position.copy(saturnPlanet.mesh.position);
-                saturnRingGroup.rotation.z += 0.0005;
-
-                // Grid
-                if (referenceGrid && referenceGrid.visible) referenceGrid.position.z = sun.position.z;
-
-                updateTrails();
                 updateCorona();
-                // Keep orbit rings in the same plane as the Sun
-                orbitRingLines.forEach(line => { line.position.z = sun.position.z; });
                 elapsedTime += dt;
 
-                eventsUpdateCounter++;
-                if (eventsUpdateCounter >= 60) { updateEventsDisplay(); eventsUpdateCounter = 0; }
+                eventsTimer += dt;
+                if (eventsTimer >= 1) { updateEventsDisplay(); eventsTimer = 0; }
             }
 
             // Planet dive
@@ -3726,11 +3744,6 @@
             currentSunSpeed = raw * raw;
             document.getElementById('sun-speed-val').textContent = currentSunSpeed.toFixed(2);
         });
-        document.getElementById('orbit-speed').addEventListener('input', (e) => {
-            const raw = parseFloat(e.target.value);
-            orbitSpeedMultiplier = raw * raw;
-            document.getElementById('orbit-speed-val').textContent = orbitSpeedMultiplier.toFixed(2);
-        });
         document.getElementById('trail-length').addEventListener('input', (e) => {
             const len = parseInt(e.target.value);
             planets.forEach(p => p.maxTrailLength = len);
@@ -3755,10 +3768,16 @@
             e.target.textContent = isPaused ? 'Resume' : 'Pause';
         });
         document.getElementById('reset-view').addEventListener('click', () => {
+            // Leave every mode first: dive, galaxy, scrubber, distance, true scale
+            exitDiveImmediate();
+            if (galaxyViewActive) finishGalaxyReturn(null);
+            if (scrubberActive) toggleScrubber();
+            if (distanceModeActive) toggleDistanceMode();
+            if (trueScaleMode) document.getElementById('toggle-scale').click();
+
             // Camera
             cameraRotation = { x: 0.3, y: 0.7 };
             cameraDistance = 140;
-            cameraTarget = { x: 0, y: 0, z: sun.position.z };
             cameraMode = 'free';
             document.getElementById('camera-mode').value = 'free';
             document.querySelectorAll('.cam-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'free'));
@@ -3767,13 +3786,9 @@
             document.getElementById('follow-target').value = 'sun';
 
             // Sliders
-            currentSunSpeed = 2.047 * 2.047;
-            document.getElementById('sun-speed').value = 2.047;
-            document.getElementById('sun-speed-val').textContent = '4.19';
-
-            orbitSpeedMultiplier = 1.114 * 1.114;
-            document.getElementById('orbit-speed').value = 1.114;
-            document.getElementById('orbit-speed-val').textContent = '1.24';
+            currentSunSpeed = DEFAULT_SUN_SPEED;
+            document.getElementById('sun-speed').value = Math.sqrt(DEFAULT_SUN_SPEED);
+            document.getElementById('sun-speed-val').textContent = DEFAULT_SUN_SPEED.toFixed(2);
 
             const defaultTrailLen = 800;
             planets.forEach(p => p.maxTrailLength = defaultTrailLen);
@@ -3785,9 +3800,9 @@
             document.getElementById('trail-opacity').value = 0.7;
             document.getElementById('trail-opacity-val').textContent = '0.70';
 
-            daysPerSecond = 49;
-            document.getElementById('time-speed').value = 49;
-            document.getElementById('time-speed-val').textContent = '49';
+            daysPerSecond = DEFAULT_DAYS_PER_SECOND;
+            document.getElementById('time-speed').value = Math.round(DEFAULT_DAYS_PER_SECOND);
+            document.getElementById('time-speed-val').textContent = Math.round(DEFAULT_DAYS_PER_SECOND);
 
             // Toggles
             showLabels = true;
@@ -3805,15 +3820,35 @@
             if (referenceGrid) referenceGrid.visible = true;
             showParticles = false;
             document.getElementById('show-particles').checked = false;
+            document.getElementById('show-particles').dispatchEvent(new Event('change'));
+            showOrbitRings = true;
+            document.getElementById('show-orbit-rings').checked = true;
+            orbitRingLines.forEach(line => { line.visible = true; });
+            document.getElementById('show-milky-way').checked = true;
+            if (galacticBg) galacticBg.visible = true;
+            if (!ellipticalOrbits) {
+                ellipticalOrbits = true;
+                document.getElementById('elliptical-orbits').checked = true;
+                createOrbitRings();
+            }
 
-            // Unpause if paused
+            // Back to today, with fresh trails
+            simulationDays = 0;
+            positionBodies();
+            clearAllTrails();
+            cameraTarget = { x: 0, y: 0, z: sun.position.z };
+            updateStats();
+            updateEventsDisplay();
+
+            // Playing is the default state
             if (isPaused) {
                 isPaused = false;
                 pausedOffset += performance.now() - pausedAt;
-                document.getElementById('toggle-pause').textContent = 'Pause';
             }
+            document.getElementById('toggle-pause').textContent = 'Pause';
 
             updateCameraPosition();
+            updateDiveButtonText();
         });
         document.getElementById('show-labels').addEventListener('change', (e) => { showLabels = e.target.checked; });
         document.getElementById('show-milky-way').addEventListener('change', (e) => { if (galacticBg) galacticBg.visible = e.target.checked; });
@@ -3831,30 +3866,7 @@
         document.getElementById('follow-target').addEventListener('change', (e) => {
             const newTarget = e.target.value;
             // If currently diving, instantly exit dive and switch to new target
-            if (diveState !== 'none') {
-                diveState = 'none';
-                ambientLight.color.set(0x111122);
-                ambientLight.intensity = 0.15;
-                diveFillLight.intensity = 0;
-                diveCamLight.intensity = 0;
-                renderer.toneMappingExposure = 1.2;
-                if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
-                    const _m = diveTarget.mesh.material;
-                    if (_m._diveEmissive) { _m.emissive.copy(_m._diveEmissive); _m._diveEmissive = null; }
-                    if (_m._diveEmissiveInt !== undefined) { _m.emissiveIntensity = _m._diveEmissiveInt; _m._diveEmissiveInt = undefined; }
-                    _m.needsUpdate = true;
-                }
-                cameraMode = preDiveState ? preDiveState.mode : 'free';
-                if (preDiveState) {
-                    cameraDistance = preDiveState.distance;
-                    cameraRotation = { ...preDiveState.rotation };
-                    currentSunSpeed = preDiveState.sunSpeed;
-                    orbitSpeedMultiplier = preDiveState.orbitSpeed;
-                }
-                document.getElementById('planet-dive-btn').classList.remove('active');
-                document.getElementById('dive-hud').classList.remove('visible');
-                document.getElementById('dive-altitude').classList.remove('visible');
-            }
+            if (diveState !== 'none') exitDiveImmediate();
             followTarget = newTarget;
             // Snap camera target to new follow position
             const followPos = getFollowPosition();
@@ -3898,17 +3910,17 @@
         (function() {
             const PRESETS = {
                 // Classic side-on — helix ribbon with gentle breathing pan
-                vortex:       { mode: 'side',      sunSpeed: 4.19, orbitSpeed: 1.24, trailLength: 800,  showMoons: false, camDist: 220, camRot: { x: 0.08, y: 0.7 } },
+                vortex:       { mode: 'side',      sunSpeed: 4.19, dps: 30, trailLength: 800,  showMoons: false, camDist: 220, camRot: { x: 0.08, y: 0.7 } },
                 // Lemniscate figure-of-eight with rising/falling elevation
-                cinema:       { mode: 'cinematic', sunSpeed: 2.00, orbitSpeed: 0.40, trailLength: 1600, showMoons: false, camDist: 300 },
+                cinema:       { mode: 'cinematic', sunSpeed: 2.00, dps: 10, trailLength: 1600, showMoons: false, camDist: 300 },
                 // Steep bird's-eye — full vortex coil spread below
-                overview:     { mode: 'free',      sunSpeed: 1.80, orbitSpeed: 0.55, trailLength: 1800, showMoons: false, camDist: 580, camRot: { x: 1.28, y: -0.25 } },
+                overview:     { mode: 'free',      sunSpeed: 1.80, dps: 15, trailLength: 1800, showMoons: false, camDist: 580, camRot: { x: 1.28, y: -0.25 } },
                 // Earth-locked close-up — moons in full detail
-                'moon-watch': { mode: 'free',       sunSpeed: 1.00, orbitSpeed: 0.12, trailLength: 300,  showMoons: true,  camDist: 65,  camRot: { x: 0.35, y: 1.0 }, followTarget: 'earth' },
+                'moon-watch': { mode: 'free',       sunSpeed: 1.00, dps: 2, trailLength: 300,  showMoons: true,  camDist: 65,  camRot: { x: 0.35, y: 1.0 }, followTarget: 'earth' },
                 // Grazing angle along the ecliptic — disk has visible thickness
-                surfboard:    { mode: 'surfboard',  sunSpeed: 2.50, orbitSpeed: 0.60, trailLength: 1000, showMoons: false, camDist: 280 },
+                surfboard:    { mode: 'surfboard',  sunSpeed: 2.50, dps: 15, trailLength: 1000, showMoons: false, camDist: 280 },
                 // Inside the helix tube — planets cross the sky above you
-                helix:        { mode: 'helix',      sunSpeed: 3.00, orbitSpeed: 0.80, trailLength: 600,  showMoons: false, camDist: 260 },
+                helix:        { mode: 'helix',      sunSpeed: 3.00, dps: 20, trailLength: 600,  showMoons: false, camDist: 260 },
             };
             document.querySelectorAll('.preset-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -3925,10 +3937,10 @@
                     currentSunSpeed = p.sunSpeed;
                     document.getElementById('sun-speed').value = Math.sqrt(p.sunSpeed);
                     document.getElementById('sun-speed-val').textContent = p.sunSpeed.toFixed(2);
-                    // Orbit speed
-                    orbitSpeedMultiplier = p.orbitSpeed;
-                    document.getElementById('orbit-speed').value = Math.sqrt(p.orbitSpeed);
-                    document.getElementById('orbit-speed-val').textContent = p.orbitSpeed.toFixed(2);
+                    // Days per second
+                    daysPerSecond = p.dps;
+                    document.getElementById('time-speed').value = p.dps;
+                    document.getElementById('time-speed-val').textContent = p.dps;
                     // Trail length
                     document.getElementById('trail-length').value = p.trailLength;
                     document.getElementById('trail-length-val').textContent = p.trailLength;
@@ -3980,11 +3992,7 @@
         });
         document.getElementById('elliptical-orbits').addEventListener('change', (e) => {
             ellipticalOrbits = e.target.checked;
-            // Sync meanAnomaly/angle so planets don't teleport on toggle
-            planets.forEach(p => {
-                p.meanAnomaly = p.angle;
-                p.moons.forEach(m => { m.meanAnomaly = m.angle; });
-            });
+            positionBodies();
             clearAllTrails();
             // Redraw orbit rings as ellipses or circles to match mode
             createOrbitRings();
@@ -4051,7 +4059,7 @@
                     <span style="color:#6495ff;font-weight:bold;">Fun fact:</span>
                     <span style="color:#ddd;">${data.funFact}</span>
                 </div>
-                ${usingRealTextures ? '<div style="margin-top:6px;color:#4a4;font-size:10px;">Using NASA photorealistic textures</div>' : '<div style="margin-top:6px;color:#884;font-size:10px;">Using procedural textures (serve via localhost for NASA textures)</div>'}
+                ${usingRealTextures ? '<div style="margin-top:6px;color:#4a4;font-size:10px;">Textures: Solar System Scope (CC BY 4.0)</div>' : '<div style="margin-top:6px;color:#884;font-size:10px;">Using procedural textures (image textures failed to load)</div>'}
             `;
             panel.style.display = 'block';
             document.getElementById('bottom-left-btns').style.display = 'none';
@@ -4177,6 +4185,16 @@
             return true;
         }
 
+        function realPositionAU(name) {
+            if (name === 'Sun') return { x: 0, y: 0 };
+            const planet = planets.find(p => p.name === name);
+            const aAU = scienceData[name] && scienceData[name].distanceAU;
+            if (!planet || !aAU) return { x: 0, y: 0 };
+            const e = planet.ecc || 0;
+            const E = solveKepler(planet.meanAnomaly, e);
+            return { x: aAU * (Math.cos(E) - e), y: aAU * Math.sqrt(1 - e * e) * Math.sin(E) };
+        }
+
         function updateDistanceMeter() {
             if (!distanceModeActive || !distanceOrigin || !distanceDestination) return;
             const p1 = distanceOrigin === 'Sun' ? { mesh: sun } : planets.find(p => p.name === distanceOrigin);
@@ -4194,12 +4212,11 @@
             distanceLine.computeLineDistances();
             scene.add(distanceLine);
 
-            // Earth orbits at distance 16 scene units = 1 AU
-            const sceneDistPerAU = 16;
-            const dx = pos1.x - pos2.x;
-            const dy = pos1.y - pos2.y;
-            const flatDist = Math.sqrt(dx * dx + dy * dy);
-            const distAU = flatDist / sceneDistPerAU;
+            // Scene distances are compressed, so measure in real AU: each body's
+            // position on its true-size ellipse (semi-major axis in AU), Sun at origin.
+            const a1 = realPositionAU(distanceOrigin);
+            const a2 = realPositionAU(distanceDestination);
+            const distAU = Math.hypot(a1.x - a2.x, a1.y - a2.y);
             const distKm = distAU * 149597870.7;
 
             const midWorld = new THREE.Vector3((pos1.x + pos2.x) / 2, (pos1.y + pos2.y) / 2, (pos1.z + pos2.z) / 2);
@@ -4223,8 +4240,6 @@
         // =====================================================================
         // FEATURE: TIME SCRUBBER (J2000 epoch-based positioning)
         // =====================================================================
-        const J2000_EPOCH = J2000_EPOCH_EARLY;
-        const DAYS_FROM_J2000_TO_START = DAYS_FROM_J2000_TO_START_EARLY;
         let scrubberActive = false;
 
         function toggleScrubber() {
@@ -4249,40 +4264,8 @@
 
         function setSimulationToDay(dayOffset) {
             simulationDays = dayOffset;
-            const totalDaysFromJ2000 = DAYS_FROM_J2000_TO_START + dayOffset;
-
-            planets.forEach((planet, idx) => {
-                const pd = planetsData[idx];
-                const elem = J2000_EPOCH[pd.name];
-                if (!elem) return;
-
-                const meanLongDeg = (elem.L0 + elem.n * totalDaysFromJ2000) % 360;
-                const M = meanLongDeg * Math.PI / 180;
-                planet.meanAnomaly = M;
-                planet.angle = M;
-
-                const e = ellipticalOrbits ? planet.ecc : 0;
-                let x, y;
-                if (e > 0) {
-                    const E = solveKepler(M, e);
-                    const a = planet.distance;
-                    const b = a * Math.sqrt(1 - e * e);
-                    x = a * (Math.cos(E) - e);
-                    y = b * Math.sin(E);
-                } else {
-                    x = Math.cos(M) * planet.distance;
-                    y = Math.sin(M) * planet.distance;
-                }
-
-                const z = sun.position.z;
-                planet.mesh.position.set(x, y, z);
-                if (planet.cloudsMesh) planet.cloudsMesh.position.set(x, y, z);
-                if (planet.atmosphereMesh) planet.atmosphereMesh.position.set(x, y, z);
-                if (planet.venusAtmo) planet.venusAtmo.position.set(x, y, z);
-                if (planet.marsAtmo) planet.marsAtmo.position.set(x, y, z);
-                if (planet.gasGiantAtmo) planet.gasGiantAtmo.position.set(x, y, z);
-            });
-
+            lastPositionedDays = dayOffset; // scrubbing does not drag the Sun along the helix
+            positionBodies();
             updateScrubberDisplay();
             updateStats();
         }
@@ -4329,30 +4312,7 @@
             followTarget = val;
             document.getElementById('follow-target').value = val;
             // If in dive, exit it
-            if (diveState !== 'none') {
-                diveState = 'none';
-                ambientLight.color.set(0x111122);
-                ambientLight.intensity = 0.15;
-                diveFillLight.intensity = 0;
-                diveCamLight.intensity = 0;
-                renderer.toneMappingExposure = 1.2;
-                if (diveTarget && diveTarget.mesh && diveTarget.mesh.material) {
-                    const _m = diveTarget.mesh.material;
-                    if (_m._diveEmissive) { _m.emissive.copy(_m._diveEmissive); _m._diveEmissive = null; }
-                    if (_m._diveEmissiveInt !== undefined) { _m.emissiveIntensity = _m._diveEmissiveInt; _m._diveEmissiveInt = undefined; }
-                    _m.needsUpdate = true;
-                }
-                cameraMode = preDiveState ? preDiveState.mode : 'free';
-                if (preDiveState) {
-                    cameraDistance = preDiveState.distance;
-                    cameraRotation = { ...preDiveState.rotation };
-                    currentSunSpeed = preDiveState.sunSpeed;
-                    orbitSpeedMultiplier = preDiveState.orbitSpeed;
-                }
-                document.getElementById('planet-dive-btn').classList.remove('active');
-                document.getElementById('dive-hud').classList.remove('visible');
-                document.getElementById('dive-altitude').classList.remove('visible');
-            }
+            if (diveState !== 'none') exitDiveImmediate();
             const followPos = getFollowPosition();
             if (followPos) {
                 cameraTarget.x = followPos.x;
@@ -5295,7 +5255,8 @@
                 orbitRingLines.forEach(l => { l.visible = false; });
                 trailLines.forEach(l => { l.visible = false; });
                 document.querySelectorAll('.planet-label').forEach(l => l.style.display = 'none');
-                // Hide dive HUD in case user entered galaxy mid-dive
+                // Leave dive at once if the user entered galaxy mid-dive
+                exitDiveImmediate();
                 document.getElementById('dive-hud').classList.remove('visible');
                 document.getElementById('dive-altitude').classList.remove('visible');
                 const savedCam = {
@@ -5309,13 +5270,16 @@
                 document.getElementById('controls').style.pointerEvents = 'none';
                 document.getElementById('stats').style.transition = 'opacity 0.5s';
                 document.getElementById('stats').style.opacity = '0';
+                document.getElementById('stats').style.pointerEvents = 'none';
                 document.getElementById('events').style.transition = 'opacity 0.5s';
                 document.getElementById('events').style.opacity = '0';
+                document.getElementById('events').style.pointerEvents = 'none';
                 document.getElementById('bottom-left-btns').style.transition = 'opacity 0.5s';
                 document.getElementById('bottom-left-btns').style.opacity = '0';
                 document.getElementById('bottom-left-btns').style.pointerEvents = 'none';
                 document.getElementById('earth-date-counter').style.transition = 'opacity 0.5s';
                 document.getElementById('earth-date-counter').style.opacity = '0';
+                document.getElementById('earth-date-counter').style.pointerEvents = 'none';
 
                 // Flash effect
                 const flash = document.getElementById('galaxy-transition-flash');
@@ -5363,6 +5327,46 @@
                     startLookAt: GALAXY_CENTER.clone()
                 };
             }
+        }
+
+        // Restore the solar system after galaxy view. sc = saved camera, or null
+        // to leave the camera to the caller (Reset). Used by the animated return
+        // and by Reset, which skips the animation.
+        function finishGalaxyReturn(sc) {
+            galaxyViewActive = false;
+            if (galaxyGroup) galaxyGroup.visible = false;
+            setGalaxyOpacity(0);
+            planets.forEach(p => { if (p.mesh) p.mesh.visible = true; });
+            if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = true;
+            if (sun) sun.visible = true;
+            glowLayers.forEach(g => { if (g) g.visible = true; });
+            if (asteroidBelt) asteroidBelt.visible = true;
+            if (referenceGrid) referenceGrid.visible = showGrid;
+            orbitRingLines.forEach(l => { l.visible = showOrbitRings; });
+            trailLines.forEach(l => { l.visible = true; });
+            document.querySelectorAll('.planet-label').forEach(l => l.style.display = '');
+            setSolarSystemOpacity(1);
+            camera.fov = 60;
+            camera.updateProjectionMatrix();
+            if (sc) {
+                camera.position.set(sc.px, sc.py, sc.pz);
+                cameraTarget = { x: sc.tx, y: sc.ty, z: sc.tz };
+            }
+
+            // Show solar system UI and give it back its clicks
+            ['controls', 'stats', 'events', 'bottom-left-btns', 'earth-date-counter'].forEach(id => {
+                const el = document.getElementById(id);
+                el.style.opacity = '1';
+                el.style.pointerEvents = '';
+            });
+            // Galaxy UI sits at opacity 0 with display:block and would trap clicks
+            ['galaxy-info', 'galaxy-return-btn', 'galaxy-zoom-indicator'].forEach(id => {
+                const el = document.getElementById(id);
+                el.classList.remove('visible');
+                el.style.display = 'none';
+            });
+            document.getElementById('galaxy-info-toggle').style.display = 'none';
+            galaxyTransition = null;
         }
 
         function updateGalaxyTransition(now) {
@@ -5451,42 +5455,13 @@
                 camera.fov = 75 - eased * 15;
                 camera.updateProjectionMatrix();
 
-                if (t >= 1) {
-                    // Restore solar system fully
-                    galaxyViewActive = false;
-                    galaxyGroup.visible = false;
-                    // Restore ALL solar system objects
-                    planets.forEach(p => { if (p.mesh) p.mesh.visible = true; });
-                    if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = true;
-                    if (sun) sun.visible = true;
-                    glowLayers.forEach(g => { if (g) g.visible = true; });
-                    if (asteroidBelt) asteroidBelt.visible = true;
-                    if (referenceGrid) referenceGrid.visible = showGrid;
-                    orbitRingLines.forEach(l => { l.visible = showOrbitRings; });
-                    trailLines.forEach(l => { l.visible = true; });
-                    setSolarSystemOpacity(1);
-                    camera.fov = 60;
-                    camera.updateProjectionMatrix();
-                    camera.position.set(sc.px, sc.py, sc.pz);
-                    cameraTarget = { x: sc.tx, y: sc.ty, z: sc.tz };
-
-                    // Show solar system UI
-                    document.getElementById('controls').style.opacity = '1';
-                    document.getElementById('controls').style.pointerEvents = '';
-                    document.getElementById('stats').style.opacity = '1';
-                    document.getElementById('events').style.opacity = '1';
-                    document.getElementById('bottom-left-btns').style.opacity = '1';
-                    document.getElementById('bottom-left-btns').style.pointerEvents = '';
-                    document.getElementById('earth-date-counter').style.opacity = '1';
-                    // Hide galaxy zoom UI
-                    document.getElementById('galaxy-zoom-indicator').classList.remove('visible');
-                    setTimeout(() => { document.getElementById('galaxy-zoom-indicator').style.display = 'none'; }, 500);
-                    galaxyTransition = null;
-                }
+                if (t >= 1) finishGalaxyReturn(sc);
             } else if (galaxyTransition.phase === 'idle-galaxy') {
                 // Slow auto-rotation (only when not dragging)
+                const gdt = galaxyTransition.lastNow ? Math.min((now - galaxyTransition.lastNow) / 1000, 0.05) : 0;
+                galaxyTransition.lastNow = now;
                 if (!galaxyDragging) {
-                    galaxyCamOrbit.theta += 0.0004;
+                    galaxyCamOrbit.theta += 0.024 * gdt;
                 }
 
                 // Compute camera position from spherical coords + zoom
@@ -5532,6 +5507,11 @@
         // KEYBOARD SHORTCUTS
         // =====================================================================
         window.addEventListener('keydown', (e) => {
+            // Leave typing, select menus and browser shortcuts alone
+            const tag = e.target && e.target.tagName;
+            if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA' || (e.target && e.target.isContentEditable)) return;
+            if (e.ctrlKey || e.metaKey || e.altKey) return;
+            if (e.code === 'Space' && (tag === 'BUTTON' || tag === 'A')) return; // Space activates the focused button
             if (e.code === 'Space') { e.preventDefault(); document.getElementById('toggle-pause').click(); }
             if (e.code === 'KeyR') document.getElementById('reset-view').click();
             if (e.code === 'KeyE') startDive();
@@ -5855,7 +5835,6 @@
                     cameraMode: cameraMode,
                     cinematicAngle: cinematicAngle,
                     currentSunSpeed: currentSunSpeed,
-                    orbitSpeedMultiplier: orbitSpeedMultiplier,
                     followTarget: followTarget,
                     daysPerSecond: daysPerSecond,
                     trailOpacity: trailOpacity,
@@ -5869,7 +5848,6 @@
                     panelCollapsed: document.getElementById('controls').classList.contains('panel-collapsed'),
                     advancedCollapsed: document.getElementById('section-advanced').classList.contains('collapsed'),
                     sunSpeedRaw: document.getElementById('sun-speed').value,
-                    orbitSpeedRaw: document.getElementById('orbit-speed').value,
                     trailLengthVal: document.getElementById('trail-length').value,
                     trailOpacityRaw: document.getElementById('trail-opacity').value,
                     timeSpeedVal: document.getElementById('time-speed').value,
@@ -5890,7 +5868,6 @@
 
                 // Sim values
                 currentSunSpeed = state.currentSunSpeed;
-                orbitSpeedMultiplier = state.orbitSpeedMultiplier;
                 followTarget = state.followTarget;
                 daysPerSecond = state.daysPerSecond;
                 trailOpacity = state.trailOpacity;
@@ -5898,8 +5875,6 @@
                 // Sliders
                 document.getElementById('sun-speed').value = state.sunSpeedRaw;
                 document.getElementById('sun-speed-val').textContent = state.currentSunSpeed.toFixed(2);
-                document.getElementById('orbit-speed').value = state.orbitSpeedRaw;
-                document.getElementById('orbit-speed-val').textContent = state.orbitSpeedMultiplier.toFixed(2);
                 document.getElementById('trail-length').value = state.trailLengthVal;
                 document.getElementById('trail-length-val').textContent = state.trailLengthVal;
                 document.getElementById('trail-opacity').value = state.trailOpacityRaw;
@@ -5958,12 +5933,7 @@
 
             function restoreTourState(state) {
                 // Exit dive first if active
-                if (diveState !== 'none') {
-                    diveState = 'none';
-                    document.getElementById('planet-dive-btn').classList.remove('active');
-                    document.getElementById('dive-hud').classList.remove('visible');
-                    document.getElementById('dive-altitude').classList.remove('visible');
-                }
+                exitDiveImmediate();
 
                 // Exit galaxy view if active
                 if (galaxyViewActive) {
@@ -5978,7 +5948,7 @@
             // --- Slider Animation ---
             function animateSlider(sliderId, targetValue, durationMs, onComplete) {
                 var slider = document.getElementById(sliderId);
-                var isSquared = (sliderId === 'sun-speed' || sliderId === 'orbit-speed');
+                var isSquared = (sliderId === 'sun-speed');
                 var startRaw = parseFloat(slider.value);
                 var targetRaw = isSquared ? Math.sqrt(targetValue) : targetValue;
                 var startTime = performance.now();
@@ -6268,7 +6238,6 @@
             const eventsPanel = document.getElementById('events');
             const backdrop = document.getElementById('mobile-backdrop');
             const controlsBtn = document.getElementById('mobile-controls-toggle');
-            const statsBtn = document.getElementById('mobile-stats-toggle');
             const eventsBtn = document.getElementById('mobile-events-toggle');
 
             function isMobile() {
@@ -6305,11 +6274,6 @@
             controlsBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 toggleSheet(controlsPanel, controlsBtn);
-            });
-
-            statsBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                toggleSheet(statsPanel, statsBtn);
             });
 
             eventsBtn.addEventListener('click', (e) => {
