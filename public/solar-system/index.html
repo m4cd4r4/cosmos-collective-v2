@@ -243,9 +243,9 @@
             bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            border: none;
+            background: rgba(212, 175, 55, 0.16);
+            color: #f3d77a;
+            border: 1px solid rgba(212, 175, 55, 0.55);
             padding: 14px 32px;
             border-radius: 12px;
             font-size: 15px;
@@ -254,10 +254,12 @@
             z-index: 200;
             display: none;
             opacity: 0;
-            transition: opacity 0.6s, transform 0.2s;
-            box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+            transition: opacity 0.6s, transform 0.2s, background 0.2s;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(212, 175, 55, 0.18);
         }
-        #galaxy-return-btn:hover { transform: translateX(-50%) translateY(-2px); box-shadow: 0 6px 24px rgba(102, 126, 234, 0.6); }
+        #galaxy-return-btn:hover { transform: translateX(-50%) translateY(-2px); background: rgba(212, 175, 55, 0.26); box-shadow: 0 6px 24px rgba(212, 175, 55, 0.3); }
+        #galaxy-return-btn:focus-visible { outline: 2px solid #d4af37; outline-offset: 3px; }
         #galaxy-return-btn.visible { display: block; opacity: 1; }
         @keyframes pulse-marker {
             0%, 100% { box-shadow: 0 0 8px 2px rgba(255,200,50,0.6); }
@@ -2139,6 +2141,7 @@
                 })(),
                 trail: [],
                 maxTrailLength: 800,
+                period: data.orbitalPeriod,
                 name: data.name,
                 originalRadius: data.radius,
                 realRadiusScale: data.realRadiusScale,
@@ -2247,7 +2250,23 @@
         // =====================================================================
         const trailLines = new Map();
         const sunTrail = [];
-        let sunTrailMaxLength = 2000;
+        // Trails span at most a few simulated days. The Sun drifts SUN_DRIFT_PER_DAY
+        // units a day (Earth's orbit radius is 16), so a longer trail turns into a
+        // streak across the screen instead of a short tail by the planet.
+        // Samples are trimmed by simulated age, not count, so a slow frame rate
+        // cannot stretch them.
+        const TRAIL_MAX_DAYS = 8;
+        const sunTrailMaxLength = 2000;
+        const TRAIL_ORBIT_FRACTION = 0.25;
+        function pushTrail(trail, pos, periodDays, maxCount) {
+            // Time went backwards (scrubber): the old samples are in the future
+            if (trail.length && trail[trail.length - 1].day > simulationDays) trail.length = 0;
+            const p = pos.clone();
+            p.day = simulationDays;
+            trail.push(p);
+            const oldest = simulationDays - Math.min(TRAIL_ORBIT_FRACTION * periodDays, TRAIL_MAX_DAYS);
+            while (trail.length > maxCount || (trail.length > 2 && trail[0].day < oldest)) trail.shift();
+        }
 
         // =====================================================================
         // STATIC ORBIT RINGS — shows the orbit path shape (ellipse or circle)
@@ -2315,8 +2334,7 @@
 
         function updateTrails() {
             // Sun trail — shows the vortex forward path
-            sunTrail.push(sun.position.clone());
-            if (sunTrail.length > sunTrailMaxLength) sunTrail.shift();
+            pushTrail(sunTrail, sun.position, Infinity, sunTrailMaxLength);
 
             const oldSunLine = trailLines.get('__sun__');
             if (oldSunLine) { scene.remove(oldSunLine); oldSunLine.geometry.dispose(); oldSunLine.material.dispose(); }
@@ -2336,8 +2354,7 @@
 
             // Planet trails
             planets.forEach(planet => {
-                planet.trail.push(planet.mesh.position.clone());
-                if (planet.trail.length > planet.maxTrailLength) planet.trail.shift();
+                pushTrail(planet.trail, planet.mesh.position, planet.period, planet.maxTrailLength);
 
                 const old = trailLines.get(planet.name);
                 if (old) { scene.remove(old); old.geometry.dispose(); old.material.dispose(); }
@@ -2359,8 +2376,7 @@
             // Moon trails
             if (showMoons) {
                 allMoons.forEach(moon => {
-                    moon.trail.push(moon.mesh.position.clone());
-                    if (moon.trail.length > moon.maxTrailLength) moon.trail.shift();
+                    pushTrail(moon.trail, moon.mesh.position, Infinity, moon.maxTrailLength);
 
                     const key = 'moon_' + moon.name;
                     const old = trailLines.get(key);
