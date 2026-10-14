@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { PLANET_HERO_IMAGES } from '@/components/features/planet-hero-images'
-import { Telescope, Globe, Search, Radio, Orbit, Sun, Aperture } from 'lucide-react'
+import { Globe, Search, Radio, Orbit, Sun, Aperture } from 'lucide-react'
 
 const FEATURES = [
   {
@@ -13,15 +13,6 @@ const FEATURES = [
     image: PLANET_HERO_IMAGES.saturnRings,
     icon: Orbit,
     color: '#d4af37',
-    featured: true,
-  },
-  {
-    title: 'JWST',
-    href: '/jwst',
-    description: 'Webb observations with infrared wavelength band switching',
-    image: PLANET_HERO_IMAGES.pillars,
-    icon: Telescope,
-    color: '#4a90e2',
     featured: true,
   },
   {

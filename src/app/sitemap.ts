@@ -4,13 +4,12 @@
  */
 
 import { MetadataRoute } from 'next'
-import { getDevlogPosts } from '@/lib/devlog'
 import { getFeaturedJWSTImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
 
 const BASE_URL = 'https://cosmos-collective.com.au'
 
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   // Static routes
   const staticRoutes: MetadataRoute.Sitemap = [
     {
@@ -42,24 +41,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.8,
-    },
-    {
-      url: `${BASE_URL}/spacecraft`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/devlog`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${BASE_URL}/jwst`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.9,
     },
     {
       url: `${BASE_URL}/solar-system`,
@@ -111,14 +92,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  // Dynamic devlog routes
-  const devlogPosts = await getDevlogPosts()
-  const devlogRoutes: MetadataRoute.Sitemap = devlogPosts.map((post) => ({
-    url: `${BASE_URL}/devlog/${post.slug}`,
-    lastModified: new Date(post.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
-  }))
 
-  return [...staticRoutes, ...observationRoutes, ...devlogRoutes]
+  return [...staticRoutes, ...observationRoutes]
 }

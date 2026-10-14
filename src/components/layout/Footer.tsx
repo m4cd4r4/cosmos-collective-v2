@@ -22,7 +22,7 @@ const footerLinks = {
   interactive: [
     { label: 'Solar System', href: '/solar-system' },
     { label: 'Kepler Exoplanets', href: '/kepler' },
-    { label: 'Spacecraft', href: '/spacecraft' },
+    { label: 'Spacecraft', href: '/events#spacecraft' },
   ],
   learn: [
     { label: 'About SKA', href: 'https://www.skao.int/', external: true },

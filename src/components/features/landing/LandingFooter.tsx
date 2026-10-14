@@ -4,17 +4,16 @@ import Link from 'next/link'
 
 const EXPLORE_LINKS = [
   { label: 'Solar System', href: '/solar-system' },
-  { label: 'JWST', href: '/jwst' },
+  { label: 'Webb Gallery', href: '/explore?source=jwst' },
   { label: 'Gravitational Lens', href: '/gravitational-lens' },
   { label: 'Kepler Exoplanets', href: '/kepler' },
   { label: 'Sky Map', href: '/sky-map' },
   { label: 'Live Events', href: '/events' },
-  { label: 'Spacecraft', href: '/spacecraft' },
+  { label: 'Spacecraft', href: '/events#spacecraft' },
 ]
 
 const SITE_LINKS = [
   { label: 'Explore Gallery', href: '/explore' },
-  { label: 'Dev Log', href: '/devlog' },
   { label: 'Credits & Data Sources', href: '/credits' },
   { label: 'Accessibility', href: '/accessibility' },
   { label: 'Privacy', href: '/privacy' },

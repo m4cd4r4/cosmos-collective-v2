@@ -139,6 +139,24 @@ const nextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons', 'framer-motion'],
   },
 
+  // Pruned routes (2026-10-14 audit). Every cut URL keeps resolving.
+  redirects: async () => [
+    // Error-boundary test page — never belonged in production
+    { source: '/test-error', destination: '/', permanent: true },
+    // Former redirect stubs, now handled here instead of by a page component
+    { source: '/dashboard', destination: '/', permanent: true },
+    { source: '/mission-control', destination: '/explore', permanent: true },
+    { source: '/observatory', destination: '/sky-map', permanent: true },
+    // Devlog: wrong audience, padded the sitemap. Content kept in docs/devlog/
+    { source: '/devlog', destination: '/', permanent: true },
+    { source: '/devlog/:slug', destination: '/', permanent: true },
+    // JWST explorer merged into /explore (same catalogue)
+    { source: '/jwst', destination: '/explore?source=jwst', permanent: true },
+    // Spacecraft encyclopedia merged into /events as a tab
+    { source: '/spacecraft', destination: '/events#spacecraft', permanent: true },
+    { source: '/spacecraft/:slug', destination: '/events#spacecraft', permanent: true },
+  ],
+
   headers: async () => [
     {
       source: '/(.*)',
