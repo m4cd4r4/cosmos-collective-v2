@@ -6,10 +6,16 @@
  * Similar pattern to SkyMapViewer with Aladin Lite
  */
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 export function SolarSystemViewer() {
   const [isLoaded, setIsLoaded] = useState(false)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
+  // The iframe can finish loading before hydration attaches onLoad
+  useEffect(() => {
+    if (iframeRef.current?.contentDocument?.readyState === 'complete') setIsLoaded(true)
+  }, [])
 
   return (
     <div className="absolute inset-0">
@@ -28,6 +34,7 @@ export function SolarSystemViewer() {
 
       {/* Solar Vortex iframe */}
       <iframe
+        ref={iframeRef}
         src="/solar-system/index.html"
         title="Interactive 3D Solar System Visualization"
         className="w-full h-full border-0"
