@@ -128,34 +128,14 @@ test.describe('solar system dock', () => {
     expect(errors).toEqual([])
   })
 
-  test('galaxy view leaves no invisible click traps and Esc returns', async ({ page }) => {
+  test('the galaxy view is gone: no dock button, G is inert, no stray overlays', async ({ page }) => {
     const errors: string[] = []
     await load(page, errors)
-    await page.click('#toggle-galaxy')
-    await expect(page.locator('#galaxy-return-btn')).toBeVisible({ timeout: 15_000 })
-    await page.waitForTimeout(500)
-
-    // Every element that is invisible but still catches clicks is a trap
-    const traps = await page.evaluate(() => {
-      const out: string[] = []
-      document.querySelectorAll('body *').forEach(el => {
-        const cs = getComputedStyle(el)
-        const r = el.getBoundingClientRect()
-        if (r.width === 0 || r.height === 0 || cs.display === 'none') return
-        if (cs.pointerEvents === 'none' || cs.visibility === 'hidden') return
-        if (parseFloat(cs.opacity) === 0 && el.parentElement && getComputedStyle(el.parentElement).pointerEvents !== 'none') {
-          out.push(el.id || el.className.toString() || el.tagName)
-        }
-      })
-      return out
-    })
-    expect(traps).toEqual([])
-    await expect(page.locator('#dock')).toBeHidden()
-    await page.screenshot({ path: `${SHOTS}/1440-galaxy.png` })
-
-    await page.keyboard.press('Escape')
-    await expect(page.locator('#dock')).toBeVisible({ timeout: 15_000 })
-    await expect(page.locator('#toggle-galaxy')).toHaveAttribute('aria-pressed', 'false')
+    await expect(page.locator('#toggle-galaxy')).toHaveCount(0)
+    await expect(page.locator('#galaxy-return-btn, #galaxy-info, #galaxy-zoom-indicator')).toHaveCount(0)
+    await page.keyboard.press('g')
+    await page.waitForTimeout(600)
+    await expect(page.locator('#dock')).toBeVisible()
     expect(errors).toEqual([])
   })
 
