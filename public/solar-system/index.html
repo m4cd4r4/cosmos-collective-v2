@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solar System</title>
+    <!-- The iframe does not inherit the site's fonts; load the brand UI and data faces here -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
     <style>
         * {
             margin: 0;
@@ -396,11 +400,11 @@
             left: 50%;
             transform: translateX(-50%);
             background: rgba(10, 10, 25, 0.85);
-            border: 1px solid rgba(100, 150, 255, 0.3);
+            border: 1px solid rgba(212, 175, 55, 0.3);
             backdrop-filter: blur(10px);
             border-radius: 10px;
             padding: 8px 18px;
-            font-family: 'Courier New', monospace;
+            font-family: 'JetBrains Mono', 'Cascadia Mono', 'Courier New', monospace;
             font-size: 18px;
             color: #fff;
             letter-spacing: 2px;
@@ -2541,7 +2545,8 @@
             el.innerHTML = events.map(ev => {
                 const icon = ev.type === 'conjunction' ? '&#x1F517;' : '&#x2194;&#xFE0F;';
                 const sym = ev.type === 'conjunction' ? '&#x26A1;' : '&#x27F7;';
-                const days = ev.daysUntil < 1 ? 'Today!' : `${Math.floor(ev.daysUntil)} days`;
+                const n = Math.floor(ev.daysUntil);
+                const days = ev.daysUntil < 1 ? 'Today!' : `${n} ${n === 1 ? 'day' : 'days'}`;
                 return `<div style="margin:8px 0;padding:8px;background:rgba(100,150,255,0.1);border-radius:6px;border-left:3px solid ${ev.daysUntil<30?'#ff6b6b':'#6495ff'};">
                     <div style="font-weight:bold;color:#fff;margin-bottom:4px;">${icon} ${ev.planet1} ${sym} ${ev.planet2}</div>
                     <div style="font-size:11px;color:#aaa;">${ev.type==='conjunction'?'Conjunction':'Opposition'} &bull; ${formatDate(ev.date)}</div>
