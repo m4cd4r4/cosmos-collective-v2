@@ -465,7 +465,8 @@ test.describe('Page Stability - Changed Pages', () => {
       )
       expect(fatalErrors, `${label}: no JS crash errors`).toHaveLength(0)
 
-      await screenshotViewport(page, `stability-${slug.replace(/\//g, '_') || 'home'}`)
+      // A slug can carry a query string now, and ? and = are illegal in a filename
+      await screenshotViewport(page, `stability-${slug.replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '') || 'home'}`)
     })
   }
 })
