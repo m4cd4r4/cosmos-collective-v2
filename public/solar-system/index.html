@@ -175,172 +175,181 @@
         .loading-bar { width: 200px; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 15px; overflow: hidden; }
         .loading-bar-fill { height: 100%; background: linear-gradient(90deg, #b8860b, #d4af37); border-radius: 2px; transition: width 0.3s; width: 0%; }
 
-        /* Galaxy View */
+        /* ============================================================= */
+        /* GALAXY VIEW HUD                                                */
+        /* ============================================================= */
+        /* The whole HUD is display:none until the arrival animation ends,
+           so it can never leave an invisible click trap behind. */
+        #galaxy-hud { display: none; font-family: var(--ui-font); color: var(--text); }
+        body.galaxy-ready #galaxy-hud { display: block; }
+        @keyframes galaxy-hud-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; } }
+
         #galaxy-info {
             position: fixed;
-            top: 50%;
-            right: 30px;
-            transform: translateY(-50%);
-            background: rgba(10, 10, 25, 0.92);
-            padding: 24px;
-            border-radius: 16px;
-            border: 1px solid rgba(100, 150, 255, 0.3);
-            backdrop-filter: blur(12px);
-            max-width: 320px;
-            font-size: 13px;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: min(460px, calc(100vw - 32px));
+            background: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
             z-index: 200;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.8s ease;
+            animation: galaxy-hud-in 0.5s ease both;
         }
-        #galaxy-info.visible { display: block; opacity: 1; }
-        #galaxy-info-close {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 32px;
-            height: 32px;
-            min-height: 32px;
-            background: rgba(255,255,255,0.08);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 8px;
-            color: #999;
-            font-size: 20px;
-            line-height: 1;
-            cursor: pointer;
+        #galaxy-info-expand {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 0;
-            transition: background 0.2s, color 0.2s;
-            z-index: 10;
-        }
-        #galaxy-info-close:hover { background: rgba(255,255,255,0.15); color: #fff; }
-        #galaxy-info-toggle {
-            position: fixed;
-            top: 12px;
-            right: 12px;
-            width: 44px;
-            height: 44px;
+            gap: 10px;
+            width: 100%;
             min-height: 44px;
-            background: rgba(10, 10, 25, 0.9);
-            border: 1px solid rgba(100, 150, 255, 0.4);
-            border-radius: 12px;
-            backdrop-filter: blur(10px);
-            color: #6495ff;
+            padding: 11px 16px;
+            background: none;
+            border: 0;
+            color: var(--text);
+            font: inherit;
+            text-align: left;
             cursor: pointer;
-            z-index: 210;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            transition: background 0.2s, transform 0.2s;
         }
-        #galaxy-info-toggle:active { transform: scale(0.92); background: rgba(100, 150, 255, 0.2); }
-        #galaxy-info h3 { color: #6495ff; font-size: 18px; margin: 0 0 16px; text-shadow: 0 0 10px rgba(100,150,255,0.4); }
-        #galaxy-info .stat { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.06); }
-        #galaxy-info .stat-label { color: #999; }
-        #galaxy-info .stat-val { color: #fff; font-weight: 600; }
-        #galaxy-info .arm-tag { display: inline-block; background: rgba(100,150,255,0.15); border: 1px solid rgba(100,150,255,0.3); color: #6495ff; padding: 3px 10px; border-radius: 20px; font-size: 11px; margin-top: 12px; }
+        #galaxy-info-expand .gi-title { color: var(--gold); font-weight: 600; font-size: 14px; }
+        #galaxy-info-expand .gi-sub { color: var(--muted); font-size: 12px; }
+        #galaxy-info-expand .gi-chev { margin-left: auto; color: var(--muted); transition: transform 0.2s; }
+        #galaxy-info-expand[aria-expanded="true"] .gi-chev { transform: rotate(180deg); }
+        #galaxy-info-expand:focus-visible { outline: 2px solid var(--gold); outline-offset: -2px; }
+        #galaxy-info-body { padding: 0 16px 14px; font-size: 13px; }
+        #galaxy-info-body .stat {
+            display: flex; justify-content: space-between; gap: 16px;
+            padding: 6px 0; border-top: 1px solid rgba(255, 255, 255, 0.07);
+        }
+        #galaxy-info-body .stat-label { color: var(--muted); }
+        #galaxy-info-body .stat-val { color: var(--text); font-weight: 600; font-family: var(--mono); font-size: 12px; }
+        #galaxy-info-body .note { color: var(--muted); font-size: 11px; line-height: 1.6; margin: 10px 0 0; }
+
+        #galaxy-hotspots {
+            position: fixed;
+            left: 50%;
+            bottom: 104px;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            max-width: calc(100vw - 24px);
+            overflow-x: auto;
+            padding: 2px;
+            scrollbar-width: none;
+            z-index: 200;
+            animation: galaxy-hud-in 0.5s ease both;
+        }
+        #galaxy-hotspots::-webkit-scrollbar { display: none; }
+        #galaxy-hotspots button {
+            flex: 0 0 auto;
+            min-height: 44px;
+            padding: 0 16px;
+            border-radius: 12px;
+            background: var(--glass);
+            border: 1px solid var(--line);
+            color: var(--muted);
+            font: inherit;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: color 0.18s, border-color 0.18s, background 0.18s;
+        }
+        #galaxy-hotspots button:hover { color: var(--text); border-color: var(--gold-edge); }
+        #galaxy-hotspots button[aria-pressed="true"] { color: var(--gold); border-color: var(--gold-edge); background: var(--gold-soft); }
+        #galaxy-hotspots button:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+        #galaxy-fact {
+            position: fixed;
+            left: 50%;
+            bottom: 156px;
+            transform: translateX(-50%);
+            max-width: min(540px, calc(100vw - 32px));
+            padding: 12px 16px;
+            background: var(--glass);
+            border: 1px solid var(--gold-edge);
+            border-radius: 12px;
+            backdrop-filter: blur(14px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+            font-size: 13px;
+            line-height: 1.55;
+            color: var(--text);
+            z-index: 200;
+            animation: galaxy-hud-in 0.25s ease both;
+        }
+        #galaxy-fact strong { color: var(--gold); margin-right: 6px; }
+        #galaxy-fact .src { color: var(--muted); font-size: 11px; margin-left: 6px; }
+
         #galaxy-return-btn {
             position: fixed;
             bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(212, 175, 55, 0.16);
-            color: #f3d77a;
-            border: 1px solid rgba(212, 175, 55, 0.55);
             padding: 14px 32px;
+            background: var(--gold-soft);
+            color: #f3d77a;
+            border: 1px solid var(--gold-edge);
             border-radius: 12px;
+            font: inherit;
             font-size: 15px;
             font-weight: 600;
             cursor: pointer;
-            z-index: 200;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.6s, transform 0.2s, background 0.2s;
             backdrop-filter: blur(10px);
             box-shadow: 0 4px 20px rgba(212, 175, 55, 0.18);
+            transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+            z-index: 200;
+            animation: galaxy-hud-in 0.5s ease both;
         }
-        #galaxy-return-btn:hover { transform: translateX(-50%) translateY(-2px); background: rgba(212, 175, 55, 0.26); box-shadow: 0 6px 24px rgba(212, 175, 55, 0.3); }
-        #galaxy-return-btn:focus-visible { outline: 2px solid #d4af37; outline-offset: 3px; }
-        #galaxy-return-btn.visible { display: block; opacity: 1; }
-        @keyframes pulse-marker {
-            0%, 100% { box-shadow: 0 0 8px 2px rgba(255,200,50,0.6); }
-            50% { box-shadow: 0 0 20px 6px rgba(255,200,50,0.9); }
+        #galaxy-return-btn:hover {
+            transform: translateX(-50%) translateY(-2px);
+            background: rgba(212, 175, 55, 0.26);
+            box-shadow: 0 6px 24px rgba(212, 175, 55, 0.3);
         }
+        #galaxy-return-btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
+        /* A hint of glare as the camera leaves the solar system, not a wipe */
         #galaxy-transition-flash {
             position: fixed;
             inset: 0;
-            background: radial-gradient(ellipse at center, rgba(100,150,255,0.3) 0%, transparent 70%);
+            background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.22) 0%, rgba(212, 175, 55, 0.06) 45%, transparent 72%);
             z-index: 150;
             pointer-events: none;
             opacity: 0;
-            transition: opacity 0.5s;
+            transition: opacity 0.9s ease;
         }
 
-        /* Galaxy zoom indicator */
         #galaxy-zoom-indicator {
             position: fixed;
-            bottom: 100px;
-            left: 30px;
-            background: rgba(10, 10, 25, 0.85);
-            padding: 12px 16px;
-            border-radius: 10px;
-            border: 1px solid rgba(100, 150, 255, 0.25);
-            backdrop-filter: blur(8px);
+            bottom: 40px;
+            left: 24px;
+            min-width: 150px;
+            padding: 10px 14px;
+            background: var(--glass);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
             font-size: 12px;
             z-index: 200;
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s ease;
-            min-width: 160px;
+            animation: galaxy-hud-in 0.5s ease both;
         }
-        #galaxy-zoom-indicator.visible { display: block; opacity: 1; }
-        #galaxy-zoom-indicator .zoom-level {
-            color: #6495ff;
-            font-weight: 600;
-            font-size: 14px;
-            margin-bottom: 6px;
-        }
-        #galaxy-zoom-indicator .scale-bar-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 6px;
-        }
+        #galaxy-zoom-indicator .zoom-level { color: var(--gold); font-family: var(--mono); font-weight: 600; font-size: 13px; }
+        #galaxy-zoom-indicator .scale-bar-container { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
         #galaxy-zoom-indicator .scale-bar {
             height: 2px;
-            background: linear-gradient(90deg, rgba(100,150,255,0.8), rgba(100,150,255,0.3));
             min-width: 40px;
+            background: linear-gradient(90deg, rgba(212, 175, 55, 0.9), rgba(212, 175, 55, 0.2));
             transition: width 0.3s ease;
         }
-        #galaxy-zoom-indicator .scale-label {
-            color: #888;
-            font-size: 10px;
-            white-space: nowrap;
-        }
+        #galaxy-zoom-indicator .scale-label { color: var(--muted); font-size: 10px; white-space: nowrap; }
         #galaxy-zoom-indicator .zoom-hint {
-            color: #555;
+            color: #6b7183;
             font-size: 10px;
             margin-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.06);
             padding-top: 6px;
-        }
-
-        /* Galaxy arm labels */
-        .galaxy-arm-label {
-            position: fixed;
-            color: rgba(100, 170, 255, 0.7);
-            font-size: 11px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            pointer-events: none;
-            z-index: 180;
-            text-shadow: 0 0 6px rgba(100, 150, 255, 0.4);
-            transition: opacity 0.5s ease;
-            white-space: nowrap;
+            border-top: 1px solid rgba(255, 255, 255, 0.07);
         }
 
         /* Planet dive button */
@@ -553,36 +562,16 @@
                 font-size: 14px;
             }
 
-            /* --- Galaxy view: mobile overrides --- */
-            #galaxy-info {
-                right: 8px;
-                left: 8px;
-                top: auto;
-                bottom: 140px;
-                transform: none;
-                max-width: 100%;
-                max-height: 50vh;
-                overflow-y: auto;
-                padding: 18px 16px;
-                border-radius: 14px;
+            /* --- Galaxy view: phone overrides --- */
+            #galaxy-info { top: 8px; max-width: calc(100vw - 16px); }
+            #galaxy-info-expand .gi-sub { display: none; }
+            #galaxy-hotspots {
+                left: 8px; right: 8px; bottom: 84px;
+                transform: none; max-width: none; justify-content: flex-start;
             }
-            #galaxy-info h3 { font-size: 16px; margin-bottom: 12px; padding-right: 36px; }
-            #galaxy-info-close {
-                width: 36px;
-                height: 36px;
-                min-height: 36px;
-                font-size: 22px;
-            }
-            #galaxy-return-btn {
-                bottom: 76px;
-                padding: 12px 24px;
-                font-size: 14px;
-            }
-            #galaxy-zoom-indicator {
-                bottom: 76px;
-                left: 8px;
-                padding: 8px 12px;
-            }
+            #galaxy-fact { left: 8px; right: 8px; bottom: 136px; transform: none; max-width: none; }
+            #galaxy-return-btn { bottom: 20px; padding: 12px 24px; font-size: 14px; }
+            #galaxy-zoom-indicator { top: 64px; left: 8px; bottom: auto; padding: 8px 12px; min-width: 128px; }
 
         }
 
@@ -1332,42 +1321,42 @@
         <div id="distance-label-km" style="font-family:'Courier New',monospace; color:#aaa; font-size:11px;"></div>
     </div>
 
-    <!-- Galaxy View overlay elements -->
+    <!-- Galaxy view overlay -->
     <div id="galaxy-transition-flash"></div>
-    <div id="galaxy-info">
-        <button id="galaxy-info-close" aria-label="Close">&times;</button>
-        <h3>&#x1F30C; Milky Way Galaxy</h3>
-        <div class="stat"><span class="stat-label">Location</span><span class="stat-val">Orion Arm</span></div>
-        <div class="stat"><span class="stat-label">Distance from center</span><span class="stat-val">26,000 ly</span></div>
-        <div class="stat"><span class="stat-label">Orbital speed</span><span class="stat-val">230 km/s</span></div>
-        <div class="stat"><span class="stat-label">Galactic orbit period</span><span class="stat-val">~225 Myr</span></div>
-        <div class="stat"><span class="stat-label">Galaxy diameter</span><span class="stat-val">~100,000 ly</span></div>
-        <div class="stat"><span class="stat-label">Stars in galaxy</span><span class="stat-val">100-400 billion</span></div>
-        <div class="stat"><span class="stat-label">Galaxy type</span><span class="stat-val">Barred spiral (SBbc)</span></div>
-        <div class="stat"><span class="stat-label">Height above plane</span><span class="stat-val">~56 ly (N)</span></div>
-        <div style="margin-top:14px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.1);">
-            <span class="arm-tag">&#x2600; You Are Here</span>
-            <p style="color:#777; font-size:11px; margin:10px 0 0; line-height:1.5;">
-                Our solar system sits in the <strong style="color:#aaa;">Orion Arm</strong> (Orion Spur), a minor spiral arm between the larger Perseus and Sagittarius-Carina arms. We orbit the galactic center once every ~225 million years &mdash; a journey called a <em>galactic year</em>.
-            </p>
+    <div id="galaxy-hud">
+        <div id="galaxy-info">
+            <button type="button" id="galaxy-info-expand" aria-expanded="false" aria-controls="galaxy-info-body">
+                <span class="gi-title">Milky Way</span>
+                <span class="gi-sub">Barred spiral, ~100,000 ly across</span>
+                <svg class="gi-chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            <div id="galaxy-info-body" hidden>
+                <div class="stat"><span class="stat-label">Our address</span><span class="stat-val">Orion Spur</span></div>
+                <div class="stat"><span class="stat-label">Distance from centre</span><span class="stat-val">26,000 ly</span></div>
+                <div class="stat"><span class="stat-label">Orbital speed</span><span class="stat-val">230 km/s</span></div>
+                <div class="stat"><span class="stat-label">One galactic lap</span><span class="stat-val">~225 Myr</span></div>
+                <div class="stat"><span class="stat-label">Stars</span><span class="stat-val">100-400 billion</span></div>
+                <div class="stat"><span class="stat-label">Type</span><span class="stat-val">Barred spiral (SBbc)</span></div>
+                <div class="stat"><span class="stat-label">Exoplanets confirmed</span><span class="stat-val">5,800+</span></div>
+                <p class="note">Gaia has measured positions for about 1.8 billion of these stars. Pick a marker below for what we know about it.</p>
+            </div>
         </div>
-        <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.08);">
-            <div class="stat"><span class="stat-label">Exoplanets confirmed</span><span class="stat-val" style="color:#ffcc44">5,800+</span></div>
-            <div class="stat"><span class="stat-label">Galaxy surveyed for planets</span><span class="stat-val" style="color:#ff8844">&lt;0.001%</span></div>
-            <p style="color:#666; font-size:10px; margin:8px 0 0; line-height:1.5;">
-                Zoom in to see: the <span style="color:#ffcc44">Kepler</span> survey cone toward Cygnus, the <span style="color:#88ccff">Gaia</span> star catalogue reach, and the <span style="color:#55dd99">Galactic Habitable Zone</span> where life is most likely.
-            </p>
+        <div id="galaxy-hotspots" role="group" aria-label="Points of interest">
+            <button type="button" data-hs="sun" aria-pressed="false">The Sun</button>
+            <button type="button" data-hs="core" aria-pressed="false">Galactic centre</button>
+            <button type="button" data-hs="kepler" aria-pressed="false">Kepler field</button>
+            <button type="button" data-hs="orion" aria-pressed="false">Orion Spur</button>
         </div>
-    </div>
-    <button id="galaxy-info-toggle" aria-label="Toggle galaxy info" style="display:none;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></button>
-    <button id="galaxy-return-btn">&#x2190; Return to Solar System</button>
-    <div id="galaxy-zoom-indicator">
-        <div class="zoom-level" id="galaxy-zoom-level">1.0x</div>
-        <div class="scale-bar-container">
-            <div class="scale-bar" id="galaxy-scale-bar" style="width:60px;"></div>
-            <span class="scale-label" id="galaxy-scale-label">50,000 ly</span>
+        <div id="galaxy-fact" hidden></div>
+        <button type="button" id="galaxy-return-btn">&#x2190; Return to Solar System</button>
+        <div id="galaxy-zoom-indicator">
+            <div class="zoom-level" id="galaxy-zoom-level">1.0x</div>
+            <div class="scale-bar-container">
+                <div class="scale-bar" id="galaxy-scale-bar" style="width:60px;"></div>
+                <span class="scale-label" id="galaxy-scale-label">100,000 ly</span>
+            </div>
+            <div class="zoom-hint">Scroll to zoom &middot; Drag to orbit &middot; +/- keys &middot; 0 to reset</div>
         </div>
-        <div class="zoom-hint">Scroll to zoom &middot; Drag to orbit &middot; +/- keys &middot; 0 to reset</div>
     </div>
 
     <!-- Accuracy overlay -->
@@ -3054,6 +3043,7 @@
             // Galaxy view drag
             if (galaxyViewActive && galaxyTransition?.phase === 'idle-galaxy') {
                 galaxyDragging = true;
+                galaxyDragMoved = 0;
                 galaxyDragStart = { x: e.clientX, y: e.clientY };
                 return;
             }
@@ -3071,6 +3061,7 @@
                 const dy = e.clientY - galaxyDragStart.y;
                 galaxyCamOrbit.theta -= dx * 0.004;
                 galaxyCamOrbit.phi = Math.max(0.15, Math.min(Math.PI * 0.48, galaxyCamOrbit.phi - dy * 0.003));
+                galaxyDragMoved += Math.abs(dx) + Math.abs(dy);
                 galaxyDragStart = { x: e.clientX, y: e.clientY };
                 return;
             }
@@ -3134,6 +3125,7 @@
                 // Single finger: orbit (same as mouse drag)
                 if (galaxyViewActive && galaxyTransition?.phase === 'idle-galaxy') {
                     galaxyDragging = true;
+                    galaxyDragMoved = 0;
                     galaxyDragStart = { x: e.touches[0].clientX, y: e.touches[0].clientY };
                     return;
                 }
@@ -3167,6 +3159,7 @@
                     const dy = ty - galaxyDragStart.y;
                     galaxyCamOrbit.theta -= dx * 0.004;
                     galaxyCamOrbit.phi = Math.max(0.15, Math.min(Math.PI * 0.48, galaxyCamOrbit.phi - dy * 0.003));
+                    galaxyDragMoved += Math.abs(dx) + Math.abs(dy);
                     galaxyDragStart = { x: tx, y: ty };
                     return;
                 }
@@ -3988,24 +3981,29 @@
 
         // Galaxy View
         document.getElementById('galaxy-return-btn').addEventListener('click', toggleGalaxyView);
-        document.getElementById('galaxy-info-close').addEventListener('click', function() {
-            // On mobile: hide panel but stay in galaxy view
-            if (window.innerWidth <= 768) {
-                document.getElementById('galaxy-info').classList.remove('visible');
-                setTimeout(() => { document.getElementById('galaxy-info').style.display = 'none'; }, 300);
-                document.getElementById('galaxy-info-toggle').style.display = 'flex';
-            } else {
-                toggleGalaxyView();
-            }
+        document.getElementById('galaxy-info-expand').addEventListener('click', function() {
+            const open = this.getAttribute('aria-expanded') === 'true';
+            this.setAttribute('aria-expanded', String(!open));
+            document.getElementById('galaxy-info-body').hidden = open;
         });
-        document.getElementById('galaxy-info-toggle').addEventListener('click', function() {
-            const info = document.getElementById('galaxy-info');
-            if (info.classList.contains('visible')) {
-                info.classList.remove('visible');
-                setTimeout(() => { info.style.display = 'none'; }, 300);
-            } else {
-                info.style.display = 'block';
-                requestAnimationFrame(() => info.classList.add('visible'));
+        document.querySelectorAll('#galaxy-hotspots button').forEach(function(b) {
+            b.addEventListener('click', function() { setActiveHotspot(b.dataset.hs); });
+        });
+        // Tapping a marker in the scene drives the same chips
+        renderer.domElement.addEventListener('click', function(e) {
+            if (!galaxyViewActive || !galaxyTransition || galaxyTransition.phase !== 'idle-galaxy') return;
+            if (galaxyDragMoved > 6) return;
+            const id = hotspotAt(e.clientX, e.clientY);
+            if (id) setActiveHotspot(id);
+        });
+        renderer.domElement.addEventListener('mousemove', function(e) {
+            if (!galaxyViewActive || galaxyDragging) return;
+            if (!galaxyTransition || galaxyTransition.phase !== 'idle-galaxy') return;
+            const id = hotspotAt(e.clientX, e.clientY);
+            if (id !== hoveredHotspot) {
+                hoveredHotspot = id;
+                renderer.domElement.style.cursor = id ? 'pointer' : '';
+                setGalaxyOpacity(1);
             }
         });
 
@@ -4035,802 +4033,503 @@
         }
 
         // =====================================================================
-        // GALAXY VIEW - Milky Way zoom-out visualization
+        // GALAXY VIEW - the Milky Way built from stars, not a textured plate.
+        // Design note: docs/prompts/galaxy-view-design.md
         // =====================================================================
         let galaxyGroup = null;
-        let galaxyMarker = null;
+        let galaxyMarker = null;        // the gold "you are here" pin
         let galaxyMarkerGlow = null;
         let galaxyViewActive = false;
-        let galaxyTransition = null; // { phase, progress, startTime, savedCamera }
-        let galaxyDisk = null; // reference to the texture mesh for hi-res swap
-        let galaxyDiskMaterial = null;
-        let galaxyHiResLoaded = false;
-        let galaxyArmLabels = []; // 3D sprite labels for spiral arms
-        let galaxyOverscrollAccum = 0; // accumulated scroll-delta at max zoom to trigger galaxy view
-        let galaxyFeatureMarkers = []; // notable features (Sgr A*, nebulae)
+        let galaxyTransition = null;    // { phase, progress, startTime, savedCamera }
+        let galaxyHiResLoaded = false;  // kept: the scroll/pinch handlers still call it
+        let galaxyOverscrollAccum = 0;  // scroll delta at max zoom that triggers the view
+        let galaxyStarMaterials = [];   // every ShaderMaterial with uTime / uOpacity
+        let galaxyHotspots = [];        // { id, dot, ring, home }
+        let galaxySunOrbit = null;      // the Sun's lap around the galaxy
+        let galaxySunOrbitCount = 0;
+        let galaxyKeplerCone = [];      // meshes that brighten with the Kepler hotspot
+        let galaxyClock = 0;            // galaxy seconds; frozen under reduced motion
+        let galaxyLastNow = 0;
+        let activeHotspot = null;
+        let hoveredHotspot = null;
+
         const GALAXY_RADIUS = 500;
-        const GALAXY_CENTER = new THREE.Vector3(0, 0, -2000); // offset from solar system
-        // Our position: 26,000 ly from center in a 50,000 ly radius galaxy = 52% out
+        const GALAXY_CENTER = new THREE.Vector3(0, 0, -2000); // offset from the solar system
+        // We sit 26,000 ly out in a ~50,000 ly disk: 52% of the way to the rim
         const SUN_GALACTIC_R = GALAXY_RADIUS * 0.52;
-        const SUN_GALACTIC_ANGLE = Math.PI * 0.75; // position in the Orion Arm
+        const SUN_GALACTIC_ANGLE = Math.PI * 0.75; // in the Orion Spur
         const SUN_GALACTIC_POS = new THREE.Vector3(
             GALAXY_CENTER.x + Math.cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R,
-            GALAXY_CENTER.y + 2, // slightly above plane
+            GALAXY_CENTER.y + 2,
             GALAXY_CENTER.z + Math.sin(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R
         );
-        // Galaxy zoom/pan state
-        let galaxyZoom = 1.0; // 1.0 = overview, max ~5x
+        // The Sun's position inside galaxyGroup, and galactic (l, b) directions
+        const SUN_LOCAL = new THREE.Vector3(
+            Math.cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R, 2,
+            Math.sin(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R
+        );
+        function galDir(l_deg, b_deg) {
+            const l = l_deg * Math.PI / 180, b = b_deg * Math.PI / 180;
+            const a = SUN_GALACTIC_ANGLE + Math.PI + l;
+            return new THREE.Vector3(Math.cos(a) * Math.cos(b), Math.sin(b), Math.sin(a) * Math.cos(b)).normalize();
+        }
+        const BAR_ANGLE = Math.PI * 0.17;   // the central bar's orientation
+        const ARM_PITCH = 0.33;             // arms wrap a little over one turn
+        const ARM_R0 = GALAXY_RADIUS * 0.11;
+
+        // Galaxy camera state
+        let galaxyZoom = 1.0;
         const GALAXY_ZOOM_MIN = 0.8;
         const GALAXY_ZOOM_MAX = 5.0;
-        let galaxyCamOrbit = { theta: 0, phi: Math.PI * 0.35 }; // spherical coords around center
-        let galaxyCamDist = 480; // base distance from center
+        const GALAXY_IDLE_THETA = -0.65;
+        const GALAXY_IDLE_PHI = Math.PI * 0.33;
+        let galaxyCamOrbit = { theta: GALAXY_IDLE_THETA, phi: GALAXY_IDLE_PHI };
+        let galaxyCamDist = 480;
         let galaxyDragging = false;
         let galaxyDragStart = { x: 0, y: 0 };
-        let galaxyLookOffset = { x: 0, z: 0 }; // pan offset for the look-at target
+        let galaxyDragMoved = 0;
+        let galaxyLookOffset = { x: 0, z: 0 };
+
+        function galaxyReducedMotion() {
+            return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        }
+
+        // Distance that fits the disk to the viewport. Portrait overflows slightly
+        // rather than leaving a dead margin down both sides.
+        function galaxyFitDistance() {
+            const fov = 75 * Math.PI / 180;
+            const aspect = camera.aspect || (window.innerWidth / Math.max(1, window.innerHeight));
+            const halfV = Math.tan(fov / 2);
+            const halfH = halfV * aspect;
+            const need = GALAXY_RADIUS * 1.04;
+            const dH = need / halfH;
+            const dV = (need * Math.cos(galaxyCamOrbit.phi)) / halfV;
+            const portrait = aspect < 1;
+            return Math.max(dH, dV) * (portrait ? 0.72 : 1.0);
+        }
+
+        function galaxyCamPos(theta, phi, zoom) {
+            const d = galaxyCamDist / zoom;
+            return new THREE.Vector3(
+                GALAXY_CENTER.x + Math.sin(phi) * Math.cos(theta) * d,
+                GALAXY_CENTER.y + Math.cos(phi) * d,
+                GALAXY_CENTER.z + Math.sin(phi) * Math.sin(theta) * d
+            );
+        }
+
+        // ---------------------------------------------------------------------
+        // Star shader. One draw call per population; the GPU does the rotation
+        // and the twinkle, so idle costs no CPU work at all.
+        //   uPattern - rigid pattern speed (rad/s). Arms are a density wave and
+        //              must not wind up, so their differential term is bounded.
+        //   uDiff    - differential term, only for the featureless inter-arm disk
+        //   uShear   - bounded oscillating shear, never accumulates
+        // ---------------------------------------------------------------------
+        const GALAXY_STAR_VS = [
+            'attribute vec3 aColor;',
+            'attribute float aSize;',
+            'attribute float aRadius;',
+            'attribute float aPhase;',
+            'uniform float uTime;',
+            'uniform float uOpacity;',
+            'uniform float uScale;',
+            'uniform float uPattern;',
+            'uniform float uDiff;',
+            'uniform float uShear;',
+            'uniform float uTwinkle;',
+            'varying vec3 vColor;',
+            'varying float vAlpha;',
+            'void main() {',
+            '  float ang = uTime * (uPattern + uDiff / (0.30 + aRadius))',
+            '            + uShear * sin(uTime * 0.07) / (0.25 + aRadius);',
+            '  float s = sin(ang), c = cos(ang);',
+            '  vec3 p = vec3(position.x * c - position.z * s, position.y, position.x * s + position.z * c);',
+            '  vec4 mv = modelViewMatrix * vec4(p, 1.0);',
+            '  float tw = 1.0 - uTwinkle + uTwinkle * (0.55 + 0.45 * sin(uTime * 1.9 + aPhase));',
+            '  vColor = aColor;',
+            '  vAlpha = uOpacity * tw;',
+            '  gl_PointSize = max(1.0, aSize * uScale / max(-mv.z, 1.0));',
+            '  gl_Position = projectionMatrix * mv;',
+            '}'
+        ].join('\n');
+
+        const GALAXY_STAR_FS = [
+            'varying vec3 vColor;',
+            'varying float vAlpha;',
+            'void main() {',
+            '  vec2 d = gl_PointCoord - vec2(0.5);',
+            '  float r2 = dot(d, d) * 4.0;',
+            '  float a = smoothstep(1.0, 0.05, r2);',
+            '  a *= a;',
+            '  if (a * vAlpha < 0.004) discard;',
+            '  gl_FragColor = vec4(vColor, a * vAlpha);',
+            '}'
+        ].join('\n');
+
+        function galaxyPointScale() {
+            return (renderer.domElement.height || window.innerHeight) * 0.5;
+        }
+
+        function makeStarMaterial(opts) {
+            const mat = new THREE.ShaderMaterial({
+                uniforms: {
+                    uTime:    { value: 0 },
+                    uOpacity: { value: 0 },
+                    uScale:   { value: galaxyPointScale() },
+                    uPattern: { value: opts.pattern || 0 },
+                    uDiff:    { value: opts.diff || 0 },
+                    uShear:   { value: opts.shear || 0 },
+                    uTwinkle: { value: opts.twinkle === undefined ? 0.22 : opts.twinkle },
+                },
+                vertexShader: GALAXY_STAR_VS,
+                fragmentShader: GALAXY_STAR_FS,
+                transparent: true,
+                depthWrite: false,
+                blending: opts.blending || THREE.AdditiveBlending,
+            });
+            mat.userData.opacityScale = opts.opacityScale || 1;
+            galaxyStarMaterials.push(mat);
+            return mat;
+        }
+
+        // gauss-ish in roughly [-1, 1]
+        function gauss() {
+            return (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+        }
+
+        function buildStarPoints(count, fill, matOpts, renderOrder) {
+            const pos = new Float32Array(count * 3);
+            const col = new Float32Array(count * 3);
+            const siz = new Float32Array(count);
+            const rad = new Float32Array(count);
+            const pha = new Float32Array(count);
+            const c = new THREE.Color();
+            for (let i = 0; i < count; i++) fill(i, pos, col, siz, rad, pha, c);
+            const geo = new THREE.BufferGeometry();
+            geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+            geo.setAttribute('aColor', new THREE.BufferAttribute(col, 3));
+            geo.setAttribute('aSize', new THREE.BufferAttribute(siz, 1));
+            geo.setAttribute('aRadius', new THREE.BufferAttribute(rad, 1));
+            geo.setAttribute('aPhase', new THREE.BufferAttribute(pha, 1));
+            const pts = new THREE.Points(geo, makeStarMaterial(matOpts));
+            pts.frustumCulled = false;
+            if (renderOrder) pts.renderOrder = renderOrder;
+            galaxyGroup.add(pts);
+            return pts;
+        }
+
+        // Radius first, from an exponential disk profile, then the angle. Doing
+        // it the other way round piles stars at the rim and the arms read as
+        // wire rings floating over a dark disk.
+        function diskRadius(scale) {
+            let r;
+            do { r = -(scale || 0.26) * GALAXY_RADIUS * Math.log(1 - Math.random()); }
+            while (r > GALAXY_RADIUS * 0.95);
+            return r;
+        }
+        // Two arms leave each end of the bar, which is what makes it read as a
+        // *barred* spiral rather than a pinwheel.
+        const ARM_OFFSETS = [0, Math.PI, 0.95, Math.PI + 0.95];
+        // Star colour: a straight blue-white to warm-white ramp in RGB.
+        const C_COOL = new THREE.Color(0.60, 0.73, 1.00);
+        const C_WARM = new THREE.Color(1.00, 0.85, 0.60);
+        function starColour(c, warm, bright) {
+            c.copy(C_COOL).lerp(C_WARM, Math.min(1, Math.max(0, warm)));
+            c.multiplyScalar(bright);
+            return c;
+        }
+
+        // Nothing ends with an edge: brightness rolls off through the rim.
+        function rimFade(r) {
+            return Math.max(0, 1 - Math.pow(r / (GALAXY_RADIUS * 0.92), 2.6));
+        }
+        function armAngleAt(r, k) {
+            return Math.log(Math.max(r, ARM_R0 * 0.6) / ARM_R0) / ARM_PITCH + BAR_ANGLE + ARM_OFFSETS[k];
+        }
+        // A point on arm k: on the spiral at radius r, scattered perpendicular to it.
+        function armPoint(r, k, spread, lag) {
+            const ang = armAngleAt(r, k) + (lag || 0);
+            const off = gauss() * spread;
+            return {
+                x: Math.cos(ang) * r - Math.sin(ang) * off,
+                z: Math.sin(ang) * r + Math.cos(ang) * off,
+            };
+        }
 
         function createGalaxy() {
             galaxyGroup = new THREE.Group();
             galaxyGroup.position.copy(GALAXY_CENTER);
+            galaxyStarMaterials = [];
+            galaxyHotspots = [];
+            galaxyKeplerCone = [];
 
-            // ---- Procedural Milky Way disk texture with spiral arm structure ----
-            (function() {
-                const SZ = 2048;
-                const dc = document.createElement('canvas');
-                dc.width = dc.height = SZ;
-                const dctx = dc.getContext('2d');
-                const cx = SZ / 2, cy = SZ / 2, R = SZ / 2;
+            const LOW = window.innerWidth <= 768;
+            const N_ARM   = LOW ? 46000 : 100000;
+            const N_DISK  = LOW ? 52000 : 115000;
+            const N_BULGE = LOW ? 18000 : 40000;
+            const N_DUST  = LOW ? 11000 : 24000;
 
-                dctx.fillStyle = '#000';
-                dctx.fillRect(0, 0, SZ, SZ);
+            // ---- 1. Smooth disk: the continuous glow the arms sit on ----------
+            buildStarPoints(N_DISK, (i, pos, col, siz, rad, pha, c) => {
+                const r = diskRadius(0.27);
+                const a = Math.random() * Math.PI * 2;
+                pos[i*3]   = Math.cos(a) * r;
+                pos[i*3+1] = gauss() * (3 + r * 0.012);
+                pos[i*3+2] = Math.sin(a) * r;
+                const warm = Math.pow(Math.max(0, 1 - r / GALAXY_RADIUS), 2.2);
+                const fade = rimFade(r);
+                starColour(c, warm, (0.42 + Math.random() * 0.34) * (0.30 + 0.70 * fade));
+                col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+                siz[i] = 0.8 + Math.random() * 0.7;
+                rad[i] = r / GALAXY_RADIUS;
+                pha[i] = Math.random() * 6.283;
+            }, { pattern: 0.018, diff: 0.004, twinkle: 0.16 });
 
-                // Circular clip for clean disk edge
-                dctx.save();
-                dctx.beginPath();
-                dctx.arc(cx, cy, R * 0.97, 0, Math.PI * 2);
-                dctx.clip();
-
-                // Outer disk background — cool dusty glow
-                const diskBg = dctx.createRadialGradient(cx, cy, 0, cx, cy, R);
-                diskBg.addColorStop(0,    'rgba(180,150,90,0.22)');
-                diskBg.addColorStop(0.18, 'rgba(140,110,60,0.16)');
-                diskBg.addColorStop(0.45, 'rgba(90,70,40,0.10)');
-                diskBg.addColorStop(0.72, 'rgba(50,40,28,0.06)');
-                diskBg.addColorStop(1,    'rgba(0,0,0,0)');
-                dctx.fillStyle = diskBg;
-                dctx.fillRect(0, 0, SZ, SZ);
-
-                // Galactic bulge — bright golden core
-                const bulge = dctx.createRadialGradient(cx, cy, 0, cx, cy, R * 0.16);
-                bulge.addColorStop(0,    'rgba(255,248,210,0.98)');
-                bulge.addColorStop(0.12, 'rgba(255,230,160,0.90)');
-                bulge.addColorStop(0.30, 'rgba(240,200,110,0.70)');
-                bulge.addColorStop(0.55, 'rgba(200,155,75,0.45)');
-                bulge.addColorStop(0.80, 'rgba(150,100,45,0.20)');
-                bulge.addColorStop(1,    'rgba(100,60,20,0)');
-                dctx.fillStyle = bulge;
-                dctx.fillRect(0, 0, SZ, SZ);
-
-                // Inner bar (Milky Way has a central bar ~27,000 ly long)
-                dctx.save();
-                dctx.globalAlpha = 0.35;
-                dctx.translate(cx, cy);
-                dctx.rotate(Math.PI * 0.62); // bar orientation
-                const barGrad = dctx.createLinearGradient(-R * 0.15, 0, R * 0.15, 0);
-                barGrad.addColorStop(0,   'rgba(255,240,180,0)');
-                barGrad.addColorStop(0.2, 'rgba(255,235,170,0.5)');
-                barGrad.addColorStop(0.5, 'rgba(255,240,185,0.7)');
-                barGrad.addColorStop(0.8, 'rgba(255,235,170,0.5)');
-                barGrad.addColorStop(1,   'rgba(255,240,180,0)');
-                dctx.fillStyle = barGrad;
-                dctx.fillRect(-R * 0.15, -R * 0.03, R * 0.30, R * 0.06);
-                dctx.restore();
-
-                // 4 logarithmic spiral arms in screen mode
-                dctx.save();
-                dctx.globalCompositeOperation = 'screen';
-                const armDefs = [
-                    { off: 0,               cr: 140, cg: 180, cb: 255, al: 0.22 }, // Perseus (our arm vicinity)
-                    { off: Math.PI / 2,     cr: 160, cg: 200, cb: 255, al: 0.20 }, // Sagittarius
-                    { off: Math.PI,         cr: 130, cg: 170, cb: 255, al: 0.18 }, // Norma-Cygnus
-                    { off: Math.PI * 1.5,   cr: 170, cg: 190, cb: 255, al: 0.16 }, // Scutum-Centaurus
-                ];
-                armDefs.forEach(function(arm) {
-                    const STEPS = 280;
-                    for (let s = 0; s < STEPS - 1; s++) {
-                        const t0 = s / STEPS, t1 = (s + 1) / STEPS;
-                        const th0 = arm.off + t0 * 4.8, th1 = arm.off + t1 * 4.8;
-                        const rr0 = R * (0.08 + Math.pow(t0, 0.62) * 0.86);
-                        const rr1 = R * (0.08 + Math.pow(t1, 0.62) * 0.86);
-                        const x0 = cx + Math.cos(th0) * rr0, y0 = cy + Math.sin(th0) * rr0;
-                        const x1 = cx + Math.cos(th1) * rr1, y1 = cy + Math.sin(th1) * rr1;
-                        const width = R * (0.028 + t0 * 0.13);
-                        const fade = arm.al * (0.6 + 0.4 * (1 - t0 * 0.5));
-                        dctx.beginPath();
-                        dctx.moveTo(x0, y0);
-                        dctx.lineTo(x1, y1);
-                        dctx.lineWidth = width * 2;
-                        dctx.strokeStyle = 'rgba(' + arm.cr + ',' + arm.cg + ',' + arm.cb + ',' + fade.toFixed(3) + ')';
-                        dctx.stroke();
-                    }
-                });
-                dctx.restore();
-
-                // HII region bright knots (ionized gas clouds along arms)
-                dctx.save();
-                dctx.globalCompositeOperation = 'screen';
-                for (let k = 0; k < 120; k++) {
-                    const armOff = (k % 4) * Math.PI / 2;
-                    const t = 0.05 + Math.random() * 0.90;
-                    const theta = armOff + t * 4.8;
-                    const r = R * (0.08 + Math.pow(t, 0.62) * 0.86);
-                    const kx = cx + Math.cos(theta) * r;
-                    const ky = cy + Math.sin(theta) * r;
-                    const kr = R * (0.005 + Math.random() * 0.018) * (0.4 + t * 0.6);
-                    const kg = dctx.createRadialGradient(kx, ky, 0, kx, ky, kr);
-                    const hue = Math.random() < 0.6 ? '180,220,255' : '255,200,130';
-                    kg.addColorStop(0,   'rgba(' + hue + ',0.45)');
-                    kg.addColorStop(0.5, 'rgba(' + hue + ',0.18)');
-                    kg.addColorStop(1,   'rgba(' + hue + ',0)');
-                    dctx.fillStyle = kg;
-                    dctx.beginPath();
-                    dctx.arc(kx, ky, kr, 0, Math.PI * 2);
-                    dctx.fill();
+            // ---- 2. Arm stars: young, blue, clumped along the spiral ----------
+            buildStarPoints(N_ARM, (i, pos, col, siz, rad, pha, c) => {
+                const r = Math.max(diskRadius(0.21), GALAXY_RADIUS * 0.10);
+                const p = armPoint(r, i % 4, GALAXY_RADIUS * 0.05 + r * 0.10, gauss() * 0.10);
+                pos[i*3] = p.x; pos[i*3+1] = gauss() * (2.2 + r * 0.01); pos[i*3+2] = p.z;
+                const warm = Math.pow(Math.max(0, 1 - r / GALAXY_RADIUS), 2.4);
+                const fade = rimFade(r);
+                const roll = Math.random();
+                if (roll < 0.025) {
+                    c.setRGB(1.0, 0.52, 0.30).multiplyScalar(0.7 + Math.random() * 0.3); // red giants
+                    siz[i] = 1.5 + Math.random() * 1.1;
+                } else if (roll < 0.05) {
+                    c.setRGB(0.70, 0.85, 1.0).multiplyScalar(0.85 + Math.random() * 0.15); // HII knots
+                    siz[i] = 2.2 + Math.random() * 1.6;
+                } else {
+                    starColour(c, warm * 0.85, (0.70 + Math.random() * 0.30) * (0.28 + 0.72 * fade));
+                    siz[i] = 0.9 + Math.random() * 0.9;
                 }
-                dctx.restore();
+                col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+                rad[i] = r / GALAXY_RADIUS;
+                pha[i] = Math.random() * 6.283;
+            }, { pattern: 0.026, shear: 0.16, twinkle: 0.26 });
 
-                dctx.restore(); // remove circular clip
+            // ---- 3. Bar and bulge (rigid: a bar that sheared would smear) -----
+            buildStarPoints(N_BULGE, (i, pos, col, siz, rad, pha, c) => {
+                const bar = i % 2 === 0;
+                const u = Math.pow(Math.random(), bar ? 0.75 : 1.5);
+                const dir = new THREE.Vector3(gauss(), gauss(), gauss()).normalize();
+                const bx = dir.x * u * GALAXY_RADIUS * (bar ? 0.27 : 0.10);
+                const by = dir.y * u * GALAXY_RADIUS * (bar ? 0.035 : 0.055);
+                const bz = dir.z * u * GALAXY_RADIUS * (bar ? 0.055 : 0.10);
+                const ca = Math.cos(BAR_ANGLE), sa = Math.sin(BAR_ANGLE);
+                pos[i*3]   = bx * ca - bz * sa;
+                pos[i*3+1] = by;
+                pos[i*3+2] = bx * sa + bz * ca;
+                c.setRGB(1.0, 0.80 + Math.random() * 0.1, 0.50 + Math.random() * 0.14)
+                 .multiplyScalar((bar ? 0.55 : 0.45) + Math.random() * 0.35);
+                col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+                siz[i] = 0.9 + Math.random() * 1.1;
+                rad[i] = 0.25; // constant: the bar turns as one pattern
+                pha[i] = Math.random() * 6.283;
+            }, { pattern: 0.042, twinkle: 0.18 });
 
-                const procTex = new THREE.CanvasTexture(dc);
-                procTex.minFilter = THREE.LinearFilter;
-                procTex.magFilter = THREE.LinearFilter;
-                const diskGeo = new THREE.PlaneGeometry(GALAXY_RADIUS * 2.2, GALAXY_RADIUS * 2.2);
-                galaxyDiskMaterial = new THREE.MeshBasicMaterial({
-                    map: procTex, transparent: true, opacity: 0,
-                    side: THREE.DoubleSide, depthWrite: false,
-                });
-                galaxyDisk = new THREE.Mesh(diskGeo, galaxyDiskMaterial);
-                galaxyDisk.rotation.x = -Math.PI / 2;
-                galaxyDisk.position.y = -2;
-                galaxyGroup.add(galaxyDisk);
-            })();
+            // ---- 4. Dust lanes -----------------------------------------------
+            // Additive light cannot darken, so the lanes are normal-blended dark
+            // points drawn last: they dim the arms sitting behind them.
+            buildStarPoints(N_DUST, (i, pos, col, siz, rad, pha, c) => {
+                const r = GALAXY_RADIUS * (0.22 + Math.random() * 0.64);
+                const p = armPoint(r, i % 4, GALAXY_RADIUS * 0.010 + r * 0.016, -0.10);
+                pos[i*3] = p.x; pos[i*3+1] = gauss() * 1.8; pos[i*3+2] = p.z;
+                const k = (0.55 + Math.random() * 0.45) * rimFade(r);
+                col[i*3] = 0.10 * k; col[i*3+1] = 0.062 * k; col[i*3+2] = 0.045 * k;
+                siz[i] = 1.5 + Math.random() * 1.5;
+                rad[i] = r / GALAXY_RADIUS;
+                pha[i] = 0;
+            }, { pattern: 0.026, shear: 0.16, twinkle: 0, blending: THREE.NormalBlending, opacityScale: 0.34 }, 2);
 
-            // ---- Light sparkle particles on top for 3D depth ----
-            // Circular soft-glow texture so points render as circles, not squares
-            const _starCanvas = document.createElement('canvas');
-            _starCanvas.width = 64; _starCanvas.height = 64;
-            const _starCtx = _starCanvas.getContext('2d');
-            const _starGrad = _starCtx.createRadialGradient(32, 32, 0, 32, 32, 32);
-            _starGrad.addColorStop(0,   'rgba(255,255,255,1)');
-            _starGrad.addColorStop(0.3, 'rgba(255,255,255,0.85)');
-            _starGrad.addColorStop(0.7, 'rgba(255,255,255,0.25)');
-            _starGrad.addColorStop(1,   'rgba(255,255,255,0)');
-            _starCtx.fillStyle = _starGrad;
-            _starCtx.fillRect(0, 0, 64, 64);
-            const _starTex = new THREE.CanvasTexture(_starCanvas);
+            // ---- 5. Globular cluster halo ------------------------------------
+            buildStarPoints(60, (i, pos, col, siz, rad, pha, c) => {
+                const phi = Math.acos(1 - 2 * ((i * 0.6180339887) % 1));
+                const th = (i * 2.399963) % (Math.PI * 2);
+                const rr = 90 + Math.pow((i + 1) / 60, 0.4) * 400;
+                pos[i*3]   = rr * Math.sin(phi) * Math.cos(th);
+                pos[i*3+1] = rr * Math.cos(phi) * 0.62;
+                pos[i*3+2] = rr * Math.sin(phi) * Math.sin(th);
+                c.setHSL(0.10 + (i % 5) * 0.02, 0.4, 0.62 + (i % 3) * 0.08);
+                col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+                siz[i] = 5 + (i % 4);
+                rad[i] = 1.6;
+                pha[i] = Math.random() * 6.283;
+            }, { pattern: 0.004, twinkle: 0.3 });
 
-            function addParticles(count, buildFn, size) {
-                const geo = new THREE.BufferGeometry();
-                const pos = new Float32Array(count * 3);
-                const col = new Float32Array(count * 3);
-                for (let i = 0; i < count; i++) buildFn(i, pos, col);
-                geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-                geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
-                galaxyGroup.add(new THREE.Points(geo, new THREE.PointsMaterial({
-                    size, vertexColors: true, transparent: true, opacity: 0,
-                    blending: THREE.AdditiveBlending, depthWrite: false, sizeAttenuation: true,
-                    map: _starTex, alphaTest: 0.01,
-                })));
-            }
-
-            // ---- 1. Galactic stellar halo (large soft glow behind the disk) ----
-            const _haloCanvas = document.createElement('canvas');
-            _haloCanvas.width = 512; _haloCanvas.height = 512;
-            const _haloCtx = _haloCanvas.getContext('2d');
-            const _haloGrad = _haloCtx.createRadialGradient(256, 256, 0, 256, 256, 256);
-            _haloGrad.addColorStop(0,    'rgba(200,190,255,0.18)');
-            _haloGrad.addColorStop(0.25, 'rgba(180,170,255,0.10)');
-            _haloGrad.addColorStop(0.55, 'rgba(140,130,220,0.05)');
-            _haloGrad.addColorStop(1,    'rgba(80,70,160,0)');
-            _haloCtx.fillStyle = _haloGrad;
-            _haloCtx.fillRect(0, 0, 512, 512);
-            const haloMesh = new THREE.Mesh(
-                new THREE.PlaneGeometry(GALAXY_RADIUS * 5.5, GALAXY_RADIUS * 5.5),
-                new THREE.MeshBasicMaterial({
-                    map: new THREE.CanvasTexture(_haloCanvas),
-                    transparent: true, opacity: 0,
-                    blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
-                })
-            );
-            haloMesh.rotation.x = -Math.PI / 2;
-            haloMesh.position.y = -4;
-            haloMesh.userData.isGalaxyLayer = true;
-            galaxyGroup.add(haloMesh);
-
-            // ---- 2. Galactic core bloom (warm concentrated glow over the centre) ----
-            const _coreCanvas = document.createElement('canvas');
-            _coreCanvas.width = 256; _coreCanvas.height = 256;
-            const _coreCtx = _coreCanvas.getContext('2d');
-            const _coreGrad = _coreCtx.createRadialGradient(128, 128, 0, 128, 128, 128);
-            _coreGrad.addColorStop(0,    'rgba(255,240,180,0.55)');
-            _coreGrad.addColorStop(0.2,  'rgba(255,210,120,0.30)');
-            _coreGrad.addColorStop(0.5,  'rgba(200,160,80,0.12)');
-            _coreGrad.addColorStop(1,    'rgba(140,100,40,0)');
-            _coreCtx.fillStyle = _coreGrad;
-            _coreCtx.fillRect(0, 0, 256, 256);
-            const coreMesh = new THREE.Mesh(
-                new THREE.PlaneGeometry(GALAXY_RADIUS * 0.55, GALAXY_RADIUS * 0.55),
-                new THREE.MeshBasicMaterial({
-                    map: new THREE.CanvasTexture(_coreCanvas),
-                    transparent: true, opacity: 0,
-                    blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
-                })
-            );
-            coreMesh.rotation.x = -Math.PI / 2;
-            coreMesh.position.y = 1;
-            coreMesh.userData.isGalaxyLayer = true;
-            galaxyGroup.add(coreMesh);
-
-            // ---- 3. Galactic disk edge-glow (thin tilted plane — vertical thickness illusion) ----
-            const _edgeCanvas = document.createElement('canvas');
-            _edgeCanvas.width = 512; _edgeCanvas.height = 64;
-            const _edgeCtx = _edgeCanvas.getContext('2d');
-            const _edgeGrad = _edgeCtx.createLinearGradient(0, 0, 0, 64);
-            _edgeGrad.addColorStop(0,    'rgba(180,170,255,0)');
-            _edgeGrad.addColorStop(0.5,  'rgba(200,195,255,0.22)');
-            _edgeGrad.addColorStop(1,    'rgba(180,170,255,0)');
-            _edgeCtx.fillStyle = _edgeGrad;
-            _edgeCtx.fillRect(0, 0, 512, 64);
-            const edgeMesh = new THREE.Mesh(
-                new THREE.PlaneGeometry(GALAXY_RADIUS * 2.4, GALAXY_RADIUS * 0.08),
-                new THREE.MeshBasicMaterial({
-                    map: new THREE.CanvasTexture(_edgeCanvas),
-                    transparent: true, opacity: 0,
-                    blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
-                })
-            );
-            // Perpendicular to the disk plane — gives vertical extent at low viewing angles
-            edgeMesh.rotation.y = Math.PI * 0.12;
-            edgeMesh.position.y = -2;
-            edgeMesh.userData.isGalaxyLayer = true;
-            galaxyGroup.add(edgeMesh);
-
-            // ---- 4. Star particles — logarithmic spiral arms (Milky Way structure) ----
-            // Based on real Milky Way: Perseus, Sagittarius, Norma-Cygnus, Scutum-Centaurus arms
-            const INNER_R = GALAXY_RADIUS * 0.07;
-            const OUTER_R = GALAXY_RADIUS * 0.93;
-
-            // Generate a point on one logarithmic spiral arm
-            // armOff = starting angle; returns [x, y, z] in galaxyGroup local space
-            function spiralPt(armOff) {
-                const t = Math.pow(Math.random(), 0.7); // cluster inward slightly
-                const theta = armOff + t * 4.5;         // ~0.7 full rotations per arm
-                const r = INNER_R + Math.pow(t, 0.6) * (OUTER_R - INNER_R);
-                // perpendicular scatter increases with radius
-                const scatter = (Math.random() - 0.5) * 2 * (GALAXY_RADIUS * 0.08 + r * 0.14);
-                return [
-                    Math.cos(theta) * r - Math.sin(theta) * scatter,
-                    (Math.random() - 0.5) * (4 + t * 5),
-                    Math.sin(theta) * r + Math.cos(theta) * scatter
-                ];
-            }
-
-            // 4 spiral arms — arm stars (blue-white HII regions toward outer, warm inner)
-            addParticles(65000, (i, pos, col) => {
-                const armIdx = i % 4;
-                const armOffset = armIdx * Math.PI / 2;
-                const [px, py, pz] = spiralPt(armOffset);
-                const d = Math.sqrt(px * px + pz * pz);
-                const s = d > GALAXY_RADIUS ? GALAXY_RADIUS / d : 1;
-                pos[i*3] = px * s; pos[i*3+1] = py; pos[i*3+2] = pz * s;
-                const warmth = Math.max(0, 1 - d / GALAXY_RADIUS);
-                const c = new THREE.Color();
-                c.setHSL(0.58 + warmth * 0.10 + (armIdx % 2) * 0.06 + Math.random() * 0.04,
-                         0.15 + warmth * 0.12, 0.60 + Math.random() * 0.35);
-                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 0.85);
-
-            // Inter-arm diffuse population (older red/orange disk stars)
-            addParticles(15000, (i, pos, col) => {
-                const r = Math.pow(Math.random(), 0.55) * GALAXY_RADIUS * 0.88;
-                const theta = Math.random() * Math.PI * 2;
-                pos[i*3]   = Math.cos(theta) * r;
-                pos[i*3+1] = (Math.random() - 0.5) * 10;
-                pos[i*3+2] = Math.sin(theta) * r;
-                const c = new THREE.Color();
-                c.setHSL(0.60 + Math.random() * 0.08, 0.08, 0.28 + Math.random() * 0.20);
-                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 0.5);
-
-            // Galactic core / bulge — warm golden/orange packed stars
-            addParticles(20000, (i, pos, col) => {
-                const r = Math.pow(Math.random(), 2.2) * GALAXY_RADIUS * 0.22;
-                const theta = Math.random() * Math.PI * 2;
-                pos[i*3]   = Math.cos(theta) * r;
-                pos[i*3+1] = (Math.random() - 0.5) * 4;
-                pos[i*3+2] = Math.sin(theta) * r;
-                const c = new THREE.Color();
-                c.setHSL(0.10 + Math.random() * 0.06, 0.5 + Math.random() * 0.2, 0.6 + Math.random() * 0.35);
-                col[i*3]=c.r; col[i*3+1]=c.g; col[i*3+2]=c.b;
-            }, 2.2);
-
-            // ---- Spiral arm labels (3D sprites, visible at zoom >= 1.5) ----
-            const armData = [
-                { name: 'Perseus Arm', angle: Math.PI * 0.45, r: GALAXY_RADIUS * 0.7 },
-                { name: 'Sagittarius Arm', angle: Math.PI * 1.0, r: GALAXY_RADIUS * 0.42 },
-                { name: 'Scutum-Centaurus', angle: Math.PI * 1.5, r: GALAXY_RADIUS * 0.55 },
-                { name: 'Norma Arm', angle: Math.PI * 0.1, r: GALAXY_RADIUS * 0.35 },
-                { name: 'Orion Spur', angle: SUN_GALACTIC_ANGLE + 0.15, r: SUN_GALACTIC_R * 1.05 },
-                { name: 'Outer Arm', angle: Math.PI * 0.65, r: GALAXY_RADIUS * 0.88 },
-            ];
-            armData.forEach(arm => {
-                const c = document.createElement('canvas');
-                c.width = 512; c.height = 64;
-                const ctx = c.getContext('2d');
-                const isOrion = arm.name === 'Orion Spur';
-                ctx.font = isOrion ? 'bold 28px sans-serif' : '24px sans-serif';
-                ctx.fillStyle = isOrion ? '#88bbff' : 'rgba(120,170,255,0.6)';
-                ctx.strokeStyle = 'rgba(0,0,0,0.7)';
-                ctx.lineWidth = 3;
-                ctx.textAlign = 'center';
-                ctx.strokeText(arm.name, 256, 40);
-                ctx.fillText(arm.name, 256, 40);
-                const mat = new THREE.SpriteMaterial({
-                    map: new THREE.CanvasTexture(c), transparent: true, opacity: 0, depthWrite: false
-                });
-                const sprite = new THREE.Sprite(mat);
-                sprite.position.set(Math.cos(arm.angle) * arm.r, 18, Math.sin(arm.angle) * arm.r);
-                sprite.scale.set(isOrion ? 60 : 70, isOrion ? 8 : 9, 1);
-                sprite.userData.isArmLabel = true;
-                galaxyGroup.add(sprite);
-                galaxyArmLabels.push(sprite);
+            // ---- 6. Magellanic Clouds (not to scale, kept for depth) ----------
+            [
+                { l: 280, b: -33, dist: 700, size: 30 },
+                { l: 303, b: -44, dist: 860, size: 20 },
+            ].forEach(function(mc, idx) {
+                const dir = galDir(mc.l, mc.b);
+                const mx = SUN_LOCAL.x + dir.x * mc.dist;
+                const my = SUN_LOCAL.y + dir.y * mc.dist;
+                const mz = SUN_LOCAL.z + dir.z * mc.dist;
+                buildStarPoints(LOW ? 150 : 300, (i, pos, col, siz, rad, pha, c) => {
+                    const spread = mc.size * (0.3 + Math.sqrt(Math.random()) * 0.7);
+                    pos[i*3]   = mx + gauss() * spread;
+                    pos[i*3+1] = my + gauss() * spread * 0.45;
+                    pos[i*3+2] = mz + gauss() * spread;
+                    c.setHSL(0.63 + Math.random() * 0.08, 0.3, 0.5 + Math.random() * 0.4);
+                    col[i*3] = c.r; col[i*3+1] = c.g; col[i*3+2] = c.b;
+                    siz[i] = 2.5 + Math.random() * 2;
+                    rad[i] = 2.5 + idx;
+                    pha[i] = Math.random() * 6.283;
+                }, { pattern: 0.002, twinkle: 0.3, opacityScale: 0.8 });
             });
 
-            // ---- Notable feature markers (visible at zoom >= 2.0) ----
-            const features = [
-                { name: 'Sagittarius A*', desc: 'Supermassive black hole\n4 million solar masses', x: 0, z: 0, color: 0xff6644, size: 4 },
-                { name: 'Crab Nebula', desc: 'Supernova remnant\n6,500 ly away', angle: Math.PI * 0.62, r: GALAXY_RADIUS * 0.38, color: 0xff8844, size: 2.5 },
-                { name: 'Orion Nebula', desc: 'Stellar nursery\n1,344 ly away', angle: SUN_GALACTIC_ANGLE - 0.04, r: SUN_GALACTIC_R * 0.98, color: 0x66aaff, size: 2 },
-                { name: 'Eagle Nebula', desc: 'Pillars of Creation\n7,000 ly away', angle: Math.PI * 0.95, r: GALAXY_RADIUS * 0.36, color: 0xaa88ff, size: 2.5 },
-            ];
-            features.forEach(f => {
-                const px = f.x !== undefined ? f.x : Math.cos(f.angle) * f.r;
-                const pz = f.z !== undefined ? f.z : Math.sin(f.angle) * f.r;
-                // Glowing dot
-                const dot = new THREE.Mesh(
-                    new THREE.SphereGeometry(f.size, 12, 12),
-                    new THREE.MeshBasicMaterial({ color: f.color, transparent: true, opacity: 0 })
+            // ---- 7. Soft glows: a halo and a core bloom, no hard edge anywhere -
+            function radialPlane(size, stops, yPos, scale) {
+                const cv = document.createElement('canvas');
+                cv.width = cv.height = size;
+                const cx = cv.getContext('2d');
+                const g = cx.createRadialGradient(size/2, size/2, 0, size/2, size/2, size/2);
+                stops.forEach(s => g.addColorStop(s[0], s[1]));
+                cx.fillStyle = g;
+                cx.fillRect(0, 0, size, size);
+                const mesh = new THREE.Mesh(
+                    new THREE.PlaneGeometry(GALAXY_RADIUS * scale, GALAXY_RADIUS * scale),
+                    new THREE.MeshBasicMaterial({
+                        map: new THREE.CanvasTexture(cv), transparent: true, opacity: 0,
+                        blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide,
+                    })
                 );
-                dot.position.set(px, 6, pz);
-                dot.userData.isFeature = true;
-                dot.userData.featureName = f.name;
-                galaxyGroup.add(dot);
-                // Label sprite
-                const c = document.createElement('canvas');
-                c.width = 512; c.height = 80;
-                const ctx = c.getContext('2d');
-                ctx.font = 'bold 22px sans-serif';
-                ctx.fillStyle = '#' + f.color.toString(16).padStart(6, '0');
-                ctx.strokeStyle = 'rgba(0,0,0,0.8)';
-                ctx.lineWidth = 3;
-                ctx.textAlign = 'center';
-                ctx.strokeText(f.name, 256, 30);
-                ctx.fillText(f.name, 256, 30);
-                ctx.font = '16px sans-serif';
-                ctx.fillStyle = '#aaa';
-                const descLines = f.desc.split('\n');
-                descLines.forEach((line, i) => {
-                    ctx.strokeText(line, 256, 55 + i * 18);
-                    ctx.fillText(line, 256, 55 + i * 18);
-                });
-                const mat = new THREE.SpriteMaterial({
-                    map: new THREE.CanvasTexture(c), transparent: true, opacity: 0, depthWrite: false
-                });
-                const sprite = new THREE.Sprite(mat);
-                sprite.position.set(px, 22, pz);
-                sprite.scale.set(55, 9, 1);
-                sprite.userData.isFeature = true;
-                galaxyGroup.add(sprite);
-                galaxyFeatureMarkers.push({ dot, sprite });
-            });
+                mesh.rotation.x = -Math.PI / 2;
+                mesh.position.y = yPos;
+                mesh.renderOrder = -1;
+                galaxyGroup.add(mesh);
+                return mesh;
+            }
+            radialPlane(512, [
+                [0, 'rgba(150,160,230,0.16)'], [0.22, 'rgba(120,130,210,0.09)'],
+                [0.55, 'rgba(80,90,170,0.035)'], [1, 'rgba(40,45,110,0)']
+            ], -5, 5.2).userData.glowScale = 1;
+            radialPlane(512, [
+                [0, 'rgba(255,230,170,0.20)'], [0.16, 'rgba(230,195,135,0.13)'],
+                [0.40, 'rgba(150,150,190,0.065)'], [0.72, 'rgba(90,100,160,0.022)'],
+                [1, 'rgba(50,55,110,0)']
+            ], -3, 2.5).userData.glowScale = 1;
+            radialPlane(256, [
+                [0, 'rgba(255,240,195,0.38)'], [0.18, 'rgba(255,208,120,0.20)'],
+                [0.45, 'rgba(210,150,70,0.08)'], [1, 'rgba(140,90,30,0)']
+            ], 0.5, 1.15).userData.glowScale = 1;
 
-            // "You Are Here" marker
-            const markerLocalPos = new THREE.Vector3(
-                Math.cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R,
-                12,
-                Math.sin(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R
-            );
+            // ---- 8. The Sun's lap around the galaxy ---------------------------
+            {
+                const pts = [];
+                const SEG = 256;
+                for (let i = 0; i <= SEG; i++) {
+                    const a = (i / SEG) * Math.PI * 2;
+                    pts.push(new THREE.Vector3(Math.cos(a) * SUN_GALACTIC_R, 1.5, Math.sin(a) * SUN_GALACTIC_R));
+                }
+                galaxySunOrbitCount = pts.length;
+                galaxySunOrbit = new THREE.Line(
+                    new THREE.BufferGeometry().setFromPoints(pts),
+                    new THREE.LineBasicMaterial({
+                        color: 0xd4af37, transparent: true, opacity: 0,
+                        depthWrite: false, blending: THREE.AdditiveBlending
+                    })
+                );
+                galaxySunOrbit.userData.isSunOrbit = true;
+                galaxySunOrbit.geometry.setDrawRange(0, 0);
+                galaxyGroup.add(galaxySunOrbit);
+            }
 
-            // Pulsing sphere
+            // ---- 9. Kepler survey cone (tied to its hotspot) -------------------
+            {
+                const dir = galDir(76, 13.5);
+                const NEAR = 8, FAR = 30, half = 6 * Math.PI / 180;
+                const h = FAR - NEAR, mid = NEAR + h / 2;
+                const quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), dir);
+                const cone = new THREE.Mesh(
+                    new THREE.CylinderGeometry(Math.tan(half) * FAR, Math.tan(half) * NEAR, h, 24, 1, true),
+                    new THREE.MeshBasicMaterial({
+                        color: 0xd4af37, transparent: true, opacity: 0,
+                        side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
+                    })
+                );
+                cone.position.set(SUN_LOCAL.x + dir.x * mid, SUN_LOCAL.y + dir.y * mid, SUN_LOCAL.z + dir.z * mid);
+                cone.quaternion.copy(quat);
+                cone.userData.isKepler = true;
+                galaxyGroup.add(cone);
+                galaxyKeplerCone.push(cone);
+            }
+
+            // ---- 10. "You are here" ------------------------------------------
+            const markerPos = new THREE.Vector3(SUN_LOCAL.x, 8, SUN_LOCAL.z);
             galaxyMarker = new THREE.Mesh(
-                new THREE.SphereGeometry(5, 16, 16),
-                new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0 })
+                new THREE.SphereGeometry(3.4, 16, 16),
+                new THREE.MeshBasicMaterial({ color: 0xffd766, transparent: true, opacity: 0 })
             );
-            galaxyMarker.position.copy(markerLocalPos);
+            galaxyMarker.position.copy(markerPos);
             galaxyGroup.add(galaxyMarker);
 
-            // Glow ring
             galaxyMarkerGlow = new THREE.Mesh(
-                new THREE.RingGeometry(7, 12, 32),
-                new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0, side: THREE.DoubleSide })
+                new THREE.RingGeometry(7, 9.5, 48),
+                new THREE.MeshBasicMaterial({ color: 0xd4af37, transparent: true, opacity: 0, side: THREE.DoubleSide })
             );
-            galaxyMarkerGlow.position.copy(markerLocalPos);
+            galaxyMarkerGlow.position.copy(markerPos);
             galaxyMarkerGlow.rotation.x = -Math.PI / 2;
             galaxyGroup.add(galaxyMarkerGlow);
 
-            // Vertical beam
-            const beam = new THREE.Mesh(
-                new THREE.CylinderGeometry(0.5, 0.5, 60, 8),
-                new THREE.MeshBasicMaterial({ color: 0xffcc33, transparent: true, opacity: 0 })
-            );
-            beam.position.set(markerLocalPos.x, markerLocalPos.y + 20, markerLocalPos.z);
-            galaxyGroup.add(beam);
-
-            // "You Are Here" label
-            const yahCanvas = document.createElement('canvas');
-            yahCanvas.width = 512; yahCanvas.height = 80;
-            const yahCtx = yahCanvas.getContext('2d');
-            yahCtx.font = 'bold 36px sans-serif';
-            yahCtx.fillStyle = '#ffcc33';
-            yahCtx.strokeStyle = 'rgba(0,0,0,0.8)';
-            yahCtx.lineWidth = 4;
-            yahCtx.textAlign = 'center';
-            yahCtx.strokeText('\u2600 You Are Here', 256, 50);
-            yahCtx.fillText('\u2600 You Are Here', 256, 50);
-            const yahMat = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(yahCanvas), transparent: true, opacity: 0, depthWrite: false });
-            const yahSprite = new THREE.Sprite(yahMat);
-            yahSprite.position.set(markerLocalPos.x, markerLocalPos.y + 52, markerLocalPos.z);
-            yahSprite.scale.set(80, 12, 1);
-            galaxyGroup.add(yahSprite);
-
-            // ============================================================
-            // GALAXY ENHANCEMENTS: Kepler cone, Gaia ring, GHZ, etc.
-            // ============================================================
-
-            // Sun's local position within galaxyGroup (galaxyGroup is centered at GALAXY_CENTER)
-            const _sunLX = Math.cos(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R;
-            const _sunLY = 2;
-            const _sunLZ = Math.sin(SUN_GALACTIC_ANGLE) * SUN_GALACTIC_R;
-            // Direction from Sun toward galactic center (in the XZ plane)
-            const _sunToCenter = SUN_GALACTIC_ANGLE + Math.PI;
-
-            // Helper: galactic (l, b) direction from Sun → normalised Three.js Vector3
-            function galDir(l_deg, b_deg) {
-                const l = l_deg * Math.PI / 180;
-                const b = b_deg * Math.PI / 180;
-                const a = _sunToCenter + l;
-                return new THREE.Vector3(
-                    Math.cos(a) * Math.cos(b),
-                    Math.sin(b),
-                    Math.sin(a) * Math.cos(b)
-                ).normalize();
-            }
-
-            // Helper: build a simple label sprite
-            function makeGalLabel(text, color, subtext) {
-                const W = 512, H = subtext ? 80 : 56;
-                const cv = document.createElement('canvas');
-                cv.width = W; cv.height = H;
-                const cx = cv.getContext('2d');
-                cx.font = 'bold 22px sans-serif';
-                cx.fillStyle = color;
-                cx.strokeStyle = 'rgba(0,0,0,0.85)';
-                cx.lineWidth = 3;
-                cx.textAlign = 'center';
-                cx.strokeText(text, W / 2, 34);
-                cx.fillText(text, W / 2, 34);
-                if (subtext) {
-                    cx.font = '15px sans-serif';
-                    cx.fillStyle = 'rgba(200,200,200,0.75)';
-                    cx.strokeText(subtext, W / 2, 58);
-                    cx.fillText(subtext, W / 2, 58);
-                }
-                const mat = new THREE.SpriteMaterial({
-                    map: new THREE.CanvasTexture(cv), transparent: true, opacity: 0, depthWrite: false
-                });
-                return new THREE.Sprite(mat);
-            }
-
-            // ---- 1. Galactic Habitable Zone (130–330 units from galactic center) ----
-            // Annular band where stellar density and metallicity favour complex life
-            const _ghzMesh = new THREE.Mesh(
-                new THREE.RingGeometry(130, 330, 128),
-                new THREE.MeshBasicMaterial({
-                    color: 0x00eebb, transparent: true, opacity: 0,
-                    side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
-                })
-            );
-            _ghzMesh.rotation.x = -Math.PI / 2;
-            _ghzMesh.position.y = -1.5;
-            _ghzMesh.userData.isGHZ = true;
-            galaxyGroup.add(_ghzMesh);
-
-            const _ghzLbl = makeGalLabel('Galactic Habitable Zone', '#00eebb', '13,000–33,000 ly from center');
-            _ghzLbl.position.set(Math.cos(Math.PI * 1.25) * 240, 10, Math.sin(Math.PI * 1.25) * 240);
-            _ghzLbl.scale.set(120, 15, 1);
-            _ghzLbl.userData.isGHZ = true;
-            galaxyGroup.add(_ghzLbl);
-
-            // ---- 2. Globular cluster halo (~50 ancient star clusters in spherical halo) ----
-            {
-                const GC = 50;
-                const gcPos = new Float32Array(GC * 3);
-                const gcCol = new Float32Array(GC * 3);
-                // Golden-ratio spiral on sphere for even distribution
-                for (let i = 0; i < GC; i++) {
-                    const phi = Math.acos(1 - 2 * ((i * 0.6180339887) % 1));
-                    const theta = (i * 2.399963) % (Math.PI * 2);
-                    const r = 80 + Math.pow((i + 1) / GC, 0.4) * 380;
-                    gcPos[i * 3]     = r * Math.sin(phi) * Math.cos(theta);
-                    gcPos[i * 3 + 1] = r * Math.cos(phi) * 0.6; // flatten toward disk
-                    gcPos[i * 3 + 2] = r * Math.sin(phi) * Math.sin(theta);
-                    const gc = new THREE.Color().setHSL(0.10 + (i % 5) * 0.02, 0.4, 0.65 + (i % 3) * 0.1);
-                    gcCol[i * 3] = gc.r; gcCol[i * 3 + 1] = gc.g; gcCol[i * 3 + 2] = gc.b;
-                }
-                const gcGeo = new THREE.BufferGeometry();
-                gcGeo.setAttribute('position', new THREE.BufferAttribute(gcPos, 3));
-                gcGeo.setAttribute('color', new THREE.BufferAttribute(gcCol, 3));
-                const gcPoints = new THREE.Points(gcGeo, new THREE.PointsMaterial({
-                    size: 7, vertexColors: true, transparent: true, opacity: 0,
-                    sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending,
-                    map: _starTex, alphaTest: 0.01
-                }));
-                gcPoints.userData.isGlobular = true;
-                galaxyGroup.add(gcPoints);
-            }
-
-            // ---- 3. Magellanic Cloud blobs (satellite galaxies, not to scale) ----
+            // ---- 11. Hotspots: a 3D marker per HUD chip ------------------------
+            const kDir = galDir(76, 13.5);
             [
-                { name: 'Large Magellanic Cloud', l: 280, b: -33, dist: 700, size: 28, color: 0xddccff },
-                { name: 'Small Magellanic Cloud', l: 303, b: -44, dist: 860, size: 18, color: 0xbbaaee },
-            ].forEach(function(mc) {
-                const mcDir = galDir(mc.l, mc.b);
-                const mcX = _sunLX + mcDir.x * mc.dist;
-                const mcY = _sunLY + mcDir.y * mc.dist;
-                const mcZ = _sunLZ + mcDir.z * mc.dist;
-                const mcCount = 280;
-                const mcPos = new Float32Array(mcCount * 3);
-                const mcCol = new Float32Array(mcCount * 3);
-                for (let i = 0; i < mcCount; i++) {
-                    const spread = mc.size * (0.3 + Math.sqrt(Math.random()) * 0.7);
-                    mcPos[i * 3]     = mcX + (Math.random() - 0.5) * spread;
-                    mcPos[i * 3 + 1] = mcY + (Math.random() - 0.5) * spread * 0.45;
-                    mcPos[i * 3 + 2] = mcZ + (Math.random() - 0.5) * spread;
-                    const mc2 = new THREE.Color().setHSL(0.65 + Math.random() * 0.1, 0.3, 0.5 + Math.random() * 0.45);
-                    mcCol[i * 3] = mc2.r; mcCol[i * 3 + 1] = mc2.g; mcCol[i * 3 + 2] = mc2.b;
-                }
-                const mcGeo = new THREE.BufferGeometry();
-                mcGeo.setAttribute('position', new THREE.BufferAttribute(mcPos, 3));
-                mcGeo.setAttribute('color', new THREE.BufferAttribute(mcCol, 3));
-                const mcPts = new THREE.Points(mcGeo, new THREE.PointsMaterial({
-                    size: 5, vertexColors: true, transparent: true, opacity: 0,
-                    sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending,
-                    map: _starTex, alphaTest: 0.01
-                }));
-                mcPts.userData.isMagellanicCloud = true;
-                galaxyGroup.add(mcPts);
-                const mcLbl = makeGalLabel(mc.name, '#ccbbff', 'Satellite galaxy (not to scale)');
-                mcLbl.position.set(mcX, mcY + 32, mcZ);
-                mcLbl.scale.set(130, 16, 1);
-                mcLbl.userData.isMagellanicCloud = true;
-                galaxyGroup.add(mcLbl);
+                { id: 'sun',    color: 0xd4af37, size: 5.5, pos: markerPos.clone() },
+                { id: 'core',   color: 0xff9a3c, size: 9.0, pos: new THREE.Vector3(0, 0, 0) },
+                { id: 'kepler', color: 0xffd766, size: 5.0, pos: new THREE.Vector3(
+                    SUN_LOCAL.x + kDir.x * 32, SUN_LOCAL.y + kDir.y * 32, SUN_LOCAL.z + kDir.z * 32) },
+                { id: 'orion',  color: 0x4a90e2, size: 5.5, pos: new THREE.Vector3(
+                    Math.cos(SUN_GALACTIC_ANGLE + 0.26) * SUN_GALACTIC_R * 1.1, 6,
+                    Math.sin(SUN_GALACTIC_ANGLE + 0.26) * SUN_GALACTIC_R * 1.1) },
+            ].forEach(h => {
+                const dot = new THREE.Mesh(
+                    new THREE.SphereGeometry(h.size, 14, 14),
+                    new THREE.MeshBasicMaterial({ color: h.color, transparent: true, opacity: 0 })
+                );
+                dot.position.copy(h.pos);
+                dot.userData.isHotspot = h.id;
+                galaxyGroup.add(dot);
+                const ring = new THREE.Mesh(
+                    new THREE.RingGeometry(h.size * 2.0, h.size * 2.4, 40),
+                    new THREE.MeshBasicMaterial({ color: h.color, transparent: true, opacity: 0, side: THREE.DoubleSide })
+                );
+                ring.position.copy(h.pos);
+                ring.rotation.x = -Math.PI / 2;
+                ring.userData.isHotspotRing = h.id;
+                galaxyGroup.add(ring);
+                galaxyHotspots.push({ id: h.id, dot: dot, ring: ring, size: h.size });
             });
-
-            // ---- 4. Kepler survey cone (l=76°, b=+13.5° toward Cygnus) ----
-            // Kepler stared at this patch for 9 years, finding 5,000+ exoplanets
-            {
-                const kepDir = galDir(76, 13.5);
-                const KEPLER_NEAR = 8, KEPLER_FAR = 28;
-                const halfAngle = 6 * Math.PI / 180;
-                const coneH = KEPLER_FAR - KEPLER_NEAR;
-                const rNear = Math.tan(halfAngle) * KEPLER_NEAR;
-                const rFar  = Math.tan(halfAngle) * KEPLER_FAR;
-                const mid   = KEPLER_NEAR + coneH / 2;
-
-                // Rotate Y axis onto kepDir
-                const _quat = new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), kepDir);
-
-                // Frustum shell
-                const kepConeMesh = new THREE.Mesh(
-                    new THREE.CylinderGeometry(rFar, rNear, coneH, 24, 1, true),
-                    new THREE.MeshBasicMaterial({
-                        color: 0xffcc44, transparent: true, opacity: 0,
-                        side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
-                    })
-                );
-                kepConeMesh.position.set(
-                    _sunLX + kepDir.x * mid,
-                    _sunLY + kepDir.y * mid,
-                    _sunLZ + kepDir.z * mid
-                );
-                kepConeMesh.quaternion.copy(_quat);
-                kepConeMesh.userData.isKeplerCone = true;
-                galaxyGroup.add(kepConeMesh);
-
-                // Far-end cap circle
-                const kepCapMesh = new THREE.Mesh(
-                    new THREE.CircleGeometry(rFar, 24),
-                    new THREE.MeshBasicMaterial({
-                        color: 0xffcc44, transparent: true, opacity: 0,
-                        side: THREE.DoubleSide, depthWrite: false, blending: THREE.AdditiveBlending
-                    })
-                );
-                kepCapMesh.position.set(
-                    _sunLX + kepDir.x * KEPLER_FAR,
-                    _sunLY + kepDir.y * KEPLER_FAR,
-                    _sunLZ + kepDir.z * KEPLER_FAR
-                );
-                kepCapMesh.quaternion.copy(_quat);
-                kepCapMesh.userData.isKeplerCone = true;
-                galaxyGroup.add(kepCapMesh);
-
-                // Exoplanet dots inside the cone
-                const kRight = new THREE.Vector3().crossVectors(kepDir, new THREE.Vector3(0, 1, 0)).normalize();
-                if (kRight.lengthSq() < 0.001) kRight.crossVectors(kepDir, new THREE.Vector3(1, 0, 0)).normalize();
-                const kUp = new THREE.Vector3().crossVectors(kepDir, kRight).normalize();
-                const kCount = 220;
-                const kPos = new Float32Array(kCount * 3);
-                const kCol = new Float32Array(kCount * 3);
-                for (let i = 0; i < kCount; i++) {
-                    const depth = KEPLER_NEAR + Math.random() * coneH;
-                    const cR = Math.tan(halfAngle) * depth;
-                    const ang = Math.random() * Math.PI * 2;
-                    const rr = Math.sqrt(Math.random()) * cR;
-                    kPos[i * 3]     = _sunLX + kepDir.x * depth + kRight.x * rr * Math.cos(ang) + kUp.x * rr * Math.sin(ang);
-                    kPos[i * 3 + 1] = _sunLY + kepDir.y * depth + kRight.y * rr * Math.cos(ang) + kUp.y * rr * Math.sin(ang);
-                    kPos[i * 3 + 2] = _sunLZ + kepDir.z * depth + kRight.z * rr * Math.cos(ang) + kUp.z * rr * Math.sin(ang);
-                    const kc = new THREE.Color().setHSL(0.55 + Math.random() * 0.12, 0.7, 0.6 + Math.random() * 0.3);
-                    kCol[i * 3] = kc.r; kCol[i * 3 + 1] = kc.g; kCol[i * 3 + 2] = kc.b;
-                }
-                const kGeo = new THREE.BufferGeometry();
-                kGeo.setAttribute('position', new THREE.BufferAttribute(kPos, 3));
-                kGeo.setAttribute('color', new THREE.BufferAttribute(kCol, 3));
-                const kPoints = new THREE.Points(kGeo, new THREE.PointsMaterial({
-                    size: 3, vertexColors: true, transparent: true, opacity: 0,
-                    sizeAttenuation: true, depthWrite: false, blending: THREE.AdditiveBlending,
-                    map: _starTex, alphaTest: 0.01
-                }));
-                kPoints.userData.isKeplerCone = true;
-                galaxyGroup.add(kPoints);
-
-                // Label at far end
-                const kepLbl = makeGalLabel('Kepler Survey Field', '#ffcc44', '5,000+ exoplanets found');
-                kepLbl.position.set(
-                    _sunLX + kepDir.x * KEPLER_FAR * 1.35,
-                    _sunLY + kepDir.y * KEPLER_FAR * 1.35,
-                    _sunLZ + kepDir.z * KEPLER_FAR * 1.35
-                );
-                kepLbl.scale.set(100, 14, 1);
-                kepLbl.userData.isKeplerCone = true;
-                galaxyGroup.add(kepLbl);
-            }
-
-            // ---- 5. Gaia census ring (dashed, 300-unit radius around Sun) ----
-            // Gaia has precisely mapped ~1.7 billion stars within ~30,000 ly
-            {
-                const GAIA_R = 300;
-                const gaiaPts = [];
-                const NDASH = 120;
-                for (let i = 0; i < NDASH; i++) {
-                    if (i % 4 === 3) continue; // 3 solid, 1 gap = dashed
-                    const a1 = (i / NDASH) * Math.PI * 2;
-                    const a2 = ((i + 1) / NDASH) * Math.PI * 2;
-                    gaiaPts.push(new THREE.Vector3(_sunLX + Math.cos(a1) * GAIA_R, 0, _sunLZ + Math.sin(a1) * GAIA_R));
-                    gaiaPts.push(new THREE.Vector3(_sunLX + Math.cos(a2) * GAIA_R, 0, _sunLZ + Math.sin(a2) * GAIA_R));
-                }
-                const gaiaLine = new THREE.LineSegments(
-                    new THREE.BufferGeometry().setFromPoints(gaiaPts),
-                    new THREE.LineBasicMaterial({
-                        color: 0x88ccff, transparent: true, opacity: 0,
-                        depthWrite: false, blending: THREE.AdditiveBlending
-                    })
-                );
-                gaiaLine.userData.isGaiaRing = true;
-                galaxyGroup.add(gaiaLine);
-
-                const gaiaLbl = makeGalLabel('Gaia Space Telescope', '#88ccff', '1.7 billion stars — positions, distances, velocities');
-                gaiaLbl.position.set(_sunLX + GAIA_R * 0.72, 18, _sunLZ - GAIA_R * 0.72);
-                gaiaLbl.scale.set(115, 14, 1);
-                gaiaLbl.userData.isGaiaRing = true;
-                galaxyGroup.add(gaiaLbl);
-            }
-
-            // ---- 6. JWST and Hubble deep field beams (out of galactic plane) ----
-            [
-                { name: 'Hubble Ultra Deep Field', l: 224, b: -55, color: 0x44aaff },
-                { name: 'JWST GOODS-South',        l: 223, b: -53, color: 0xff9944 },
-            ].forEach(function(df) {
-                const bDir = galDir(df.l, df.b);
-                const BEAM_LEN = 210;
-                const bPts = [
-                    new THREE.Vector3(_sunLX, _sunLY, _sunLZ),
-                    new THREE.Vector3(_sunLX + bDir.x * BEAM_LEN, _sunLY + bDir.y * BEAM_LEN, _sunLZ + bDir.z * BEAM_LEN)
-                ];
-                const beamLine = new THREE.Line(
-                    new THREE.BufferGeometry().setFromPoints(bPts),
-                    new THREE.LineBasicMaterial({
-                        color: df.color, transparent: true, opacity: 0,
-                        depthWrite: false, blending: THREE.AdditiveBlending
-                    })
-                );
-                beamLine.userData.isDeepFieldBeam = true;
-                galaxyGroup.add(beamLine);
-
-                const hex6 = df.color.toString(16).padStart(6, '0');
-                const bLbl = makeGalLabel(df.name, '#' + hex6, 'Billions of galaxies visible');
-                bLbl.position.set(
-                    _sunLX + bDir.x * (BEAM_LEN + 22),
-                    _sunLY + bDir.y * (BEAM_LEN + 22),
-                    _sunLZ + bDir.z * (BEAM_LEN + 22)
-                );
-                bLbl.scale.set(120, 14, 1);
-                bLbl.userData.isDeepFieldBeam = true;
-                galaxyGroup.add(bLbl);
-            });
-
-            // ============================================================
-            // END GALAXY ENHANCEMENTS
-            // ============================================================
 
             scene.add(galaxyGroup);
             galaxyGroup.visible = false;
         }
 
-        // Procedural texture is already high quality — no JPEG swap needed
+        // The procedural plate is gone; the scroll handlers still call this.
         function loadGalaxyHiRes() { galaxyHiResLoaded = true; }
 
         function setGalaxyOpacity(opacity) {
             if (!galaxyGroup) return;
+            galaxyStarMaterials.forEach(m => {
+                m.uniforms.uOpacity.value = opacity * (m.userData.opacityScale || 1);
+            });
             galaxyGroup.traverse(child => {
-                if (child.material && child.material.opacity !== undefined) {
-                    // Arm labels: fade in from zoom >= 0.8 (visible at overview)
-                    if (child.userData?.isArmLabel) {
-                        const armOp = galaxyZoom >= 0.8 ? Math.min(opacity, (galaxyZoom - 0.8) / 0.4) : 0;
-                        child.material.opacity = armOp;
-                        return;
-                    }
-                    // Feature markers: fade in from zoom >= 1.0
-                    if (child.userData?.isFeature) {
-                        const featOp = galaxyZoom >= 1.0 ? Math.min(opacity, (galaxyZoom - 1.0) / 0.5) : 0;
-                        child.material.opacity = featOp;
-                        return;
-                    }
-                    // GHZ: visible at overview, subtle enough not to drown the galaxy texture
-                    if (child.userData?.isGHZ) {
-                        child.material.opacity = opacity * 0.32;
-                        return;
-                    }
-                    // Globular clusters: visible from zoom >= 0.7
-                    if (child.userData?.isGlobular) {
-                        const gOp = galaxyZoom >= 0.7 ? Math.min(opacity * 0.9, (galaxyZoom - 0.7) / 0.3) : 0;
-                        child.material.opacity = gOp;
-                        return;
-                    }
-                    // Magellanic Clouds: visible at overview
-                    if (child.userData?.isMagellanicCloud) {
-                        const mcOp = galaxyZoom >= 0.7 ? Math.min(opacity * 0.85, (galaxyZoom - 0.7) / 0.3) : 0;
-                        child.material.opacity = mcOp;
-                        return;
-                    }
-                    // Gaia ring: visible at overview zoom (Sun's position is on the disk)
-                    if (child.userData?.isGaiaRing) {
-                        const gaOp = galaxyZoom >= 0.8 ? Math.min(opacity * 0.8, (galaxyZoom - 0.8) / 0.4) : 0;
-                        child.material.opacity = gaOp;
-                        return;
-                    }
-                    // Kepler cone: visible from zoom >= 0.8
-                    if (child.userData?.isKeplerCone) {
-                        const kOp = galaxyZoom >= 0.8 ? Math.min(opacity * 0.55, (galaxyZoom - 0.8) / 0.4) : 0;
-                        child.material.opacity = kOp;
-                        return;
-                    }
-                    // Deep field beams: visible from zoom >= 0.8
-                    if (child.userData?.isDeepFieldBeam) {
-                        const dbOp = galaxyZoom >= 0.8 ? Math.min(opacity * 0.75, (galaxyZoom - 0.8) / 0.4) : 0;
-                        child.material.opacity = dbOp;
-                        return;
-                    }
-                    child.material.opacity = opacity;
+                const mat = child.material;
+                if (!mat || mat.isShaderMaterial || mat.opacity === undefined) return;
+                if (child.userData.isSunOrbit) { mat.opacity = opacity * 0.5; return; }
+                if (child.userData.isKepler) {
+                    mat.opacity = opacity * (activeHotspot === 'kepler' ? 0.5 : 0.14);
+                    return;
                 }
+                const hs = child.userData.isHotspot || child.userData.isHotspotRing;
+                if (hs) {
+                    const on = activeHotspot === hs || hoveredHotspot === hs;
+                    const base = child.userData.isHotspotRing ? 0.35 : 0.75;
+                    mat.opacity = opacity * (on ? 1 : base);
+                    return;
+                }
+                mat.opacity = opacity;
             });
         }
 
@@ -4840,15 +4539,280 @@
             const label = document.getElementById('galaxy-scale-label');
             if (!el) return;
             el.textContent = galaxyZoom.toFixed(1) + 'x';
-            // Scale bar: at 1x the full galaxy (~100,000 ly) fits; at 5x, ~20,000 ly
             const visibleLy = Math.round(100000 / galaxyZoom);
-            const barWidth = Math.max(30, Math.min(100, 60 / galaxyZoom * 1.5));
-            bar.style.width = barWidth + 'px';
+            bar.style.width = Math.max(30, Math.min(100, 60 / galaxyZoom * 1.5)) + 'px';
             if (visibleLy >= 10000) label.textContent = (visibleLy / 1000).toFixed(0) + ',000 ly';
             else label.textContent = visibleLy.toLocaleString() + ' ly';
-            // Update arm label / feature visibility via re-setting opacity
-            if (galaxyViewActive && galaxyTransition?.phase === 'idle-galaxy') {
-                setGalaxyOpacity(1);
+            if (galaxyViewActive && galaxyTransition && galaxyTransition.phase === 'idle-galaxy') setGalaxyOpacity(1);
+        }
+
+        // ---- Hotspots: the chips and the 3D markers drive each other ---------
+        const GALAXY_FACTS = {
+            sun:    { name: 'The Sun', text: 'We sit 26,000 light years from the centre, and one lap takes about 225 million years.', src: 'NASA' },
+            core:   { name: 'Galactic centre', text: 'Sagittarius A*, a black hole of about 4 million solar masses.', src: 'NASA / EHT' },
+            kepler: { name: 'Kepler field', text: 'Kepler watched about 150,000 stars in this one patch of Cygnus and confirmed 2,700+ planets.', src: 'NASA Kepler' },
+            orion:  { name: 'Orion Spur', text: 'Our minor arm, running between the larger Sagittarius and Perseus arms.', src: 'NASA' },
+        };
+
+        function setActiveHotspot(id) {
+            activeHotspot = (activeHotspot === id) ? null : id;
+            document.querySelectorAll('#galaxy-hotspots button').forEach(b => {
+                b.setAttribute('aria-pressed', String(b.dataset.hs === activeHotspot));
+            });
+            const card = document.getElementById('galaxy-fact');
+            if (activeHotspot && GALAXY_FACTS[activeHotspot]) {
+                const f = GALAXY_FACTS[activeHotspot];
+                card.innerHTML = '<strong>' + f.name + '</strong> ' + f.text + ' <span class="src">' + f.src + '</span>';
+                card.hidden = false;
+            } else {
+                card.hidden = true;
+            }
+            if (galaxyViewActive) setGalaxyOpacity(1);
+        }
+
+        const galaxyRaycaster = new THREE.Raycaster();
+        function hotspotAt(clientX, clientY) {
+            if (!galaxyGroup || !galaxyViewActive) return null;
+            const rect = renderer.domElement.getBoundingClientRect();
+            const ndc = new THREE.Vector2(
+                ((clientX - rect.left) / rect.width) * 2 - 1,
+                -((clientY - rect.top) / rect.height) * 2 + 1
+            );
+            galaxyRaycaster.setFromCamera(ndc, camera);
+            const hit = galaxyRaycaster.intersectObjects(galaxyHotspots.map(h => h.dot), false)[0];
+            return hit ? hit.object.userData.isHotspot : null;
+        }
+
+        function toggleGalaxyView() {
+            // Toggling is allowed while idle in the galaxy, blocked mid-transition
+            if (galaxyTransition && galaxyTransition.phase !== 'idle-galaxy') return;
+            if (!galaxyGroup) createGalaxy();
+
+            const reduced = galaxyReducedMotion();
+
+            if (!galaxyViewActive) {
+                galaxyViewActive = true;
+                galaxyGroup.visible = true;
+                galaxyStarMaterials.forEach(m => { m.uniforms.uScale.value = galaxyPointScale(); });
+                // Hide every solar-system object so nothing bleeds into the galaxy
+                planets.forEach(p => { if (p.mesh) p.mesh.visible = false; });
+                if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = false;
+                if (sun) sun.visible = false;
+                glowLayers.forEach(g => { if (g) g.visible = false; });
+                if (asteroidBelt) asteroidBelt.visible = false;
+                if (referenceGrid) referenceGrid.visible = false;
+                orbitRingLines.forEach(l => { l.visible = false; });
+                trailLines.forEach(l => { l.visible = false; });
+                document.querySelectorAll('.planet-label').forEach(l => l.style.display = 'none');
+                exitDiveImmediate();
+                document.getElementById('dive-hud').classList.remove('visible');
+                document.getElementById('dive-altitude').classList.remove('visible');
+
+                const savedCam = {
+                    px: camera.position.x, py: camera.position.y, pz: camera.position.z,
+                    tx: cameraTarget.x, ty: cameraTarget.y, tz: cameraTarget.z,
+                    fov: camera.fov
+                };
+                // display:none via body.mode-galaxy, so no click traps are left behind
+                setState({ mode: 'galaxy', sheet: null, tool: 'none' });
+                setActiveHotspot(null);
+                galaxyZoom = 1.0;
+                galaxyCamOrbit = { theta: GALAXY_IDLE_THETA, phi: GALAXY_IDLE_PHI };
+                galaxyLookOffset = { x: 0, z: 0 };
+                galaxyCamDist = galaxyFitDistance();
+
+                const target = galaxyCamPos(GALAXY_IDLE_THETA, GALAXY_IDLE_PHI, 1);
+                galaxyTransition = {
+                    phase: 'zoom-out',
+                    startTime: performance.now(),
+                    duration: reduced ? 600 : 3200,
+                    reduced: reduced,
+                    savedCamera: savedCam,
+                    targetPos: target,
+                    control: new THREE.Vector3(
+                        (savedCam.px + target.x) / 2,
+                        Math.max(savedCam.py, target.y) + 700,
+                        (savedCam.pz + target.z) / 2
+                    ),
+                    targetLookAt: GALAXY_CENTER.clone()
+                };
+                if (!reduced) {
+                    const veil = document.getElementById('galaxy-transition-flash');
+                    veil.style.opacity = '0.18';
+                    setTimeout(() => { veil.style.opacity = '0'; }, 900);
+                }
+            } else {
+                const savedCam = (galaxyTransition && galaxyTransition.savedCamera) || {
+                    px: 100, py: 80, pz: 120 + sun.position.z,
+                    tx: 0, ty: 0, tz: sun.position.z, fov: 60
+                };
+                document.body.classList.remove('galaxy-ready');
+                setActiveHotspot(null);
+                const start = camera.position.clone();
+                galaxyTransition = {
+                    phase: 'zoom-in',
+                    startTime: performance.now(),
+                    duration: reduced ? 600 : 2600,
+                    reduced: reduced,
+                    savedCamera: savedCam,
+                    startPos: start,
+                    control: new THREE.Vector3(
+                        (start.x + savedCam.px) / 2,
+                        Math.max(start.y, savedCam.py) + 700,
+                        (start.z + savedCam.pz) / 2
+                    ),
+                    startLookAt: GALAXY_CENTER.clone()
+                };
+            }
+        }
+
+        // Restore the solar system after galaxy view. sc = saved camera, or null
+        // to leave the camera to the caller (Reset).
+        function finishGalaxyReturn(sc) {
+            galaxyViewActive = false;
+            if (galaxyGroup) galaxyGroup.visible = false;
+            setGalaxyOpacity(0);
+            planets.forEach(p => { if (p.mesh) p.mesh.visible = true; });
+            if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = true;
+            if (sun) sun.visible = true;
+            glowLayers.forEach(g => { if (g) g.visible = true; });
+            if (asteroidBelt) asteroidBelt.visible = true;
+            if (referenceGrid) referenceGrid.visible = showGrid;
+            orbitRingLines.forEach(l => { l.visible = showOrbitRings; });
+            trailLines.forEach(l => { l.visible = true; });
+            document.querySelectorAll('.planet-label').forEach(l => l.style.display = '');
+            setSolarSystemOpacity(1);
+            camera.fov = 60;
+            camera.updateProjectionMatrix();
+            if (sc) {
+                camera.position.set(sc.px, sc.py, sc.pz);
+                cameraTarget = { x: sc.tx, y: sc.ty, z: sc.tz };
+            }
+            setState({ mode: 'solar' });
+            document.body.classList.remove('galaxy-ready');
+            setActiveHotspot(null);
+            if (galaxySunOrbit) galaxySunOrbit.geometry.setDrawRange(0, 0);
+            galaxyTransition = null;
+        }
+
+        function bezier3(a, ctrl, b, t, out) {
+            const u = 1 - t;
+            out.set(
+                u * u * a.x + 2 * u * t * ctrl.x + t * t * b.x,
+                u * u * a.y + 2 * u * t * ctrl.y + t * t * b.y,
+                u * u * a.z + 2 * u * t * ctrl.z + t * t * b.z
+            );
+            return out;
+        }
+
+        const _gTmp = new THREE.Vector3();
+
+        function updateGalaxyTransition(now) {
+            if (!galaxyTransition) return;
+            const g = galaxyTransition;
+
+            if (g.phase === 'idle-galaxy') {
+                const dt = galaxyLastNow ? Math.min((now - galaxyLastNow) / 1000, 0.05) : 0;
+                galaxyLastNow = now;
+                const reduced = galaxyReducedMotion();
+                if (!reduced) galaxyClock += dt;
+                galaxyStarMaterials.forEach(m => { m.uniforms.uTime.value = galaxyClock; });
+
+                if (!galaxyDragging && !reduced) galaxyCamOrbit.theta += 0.018 * dt;
+                galaxyCamDist = galaxyFitDistance();
+                camera.position.copy(galaxyCamPos(galaxyCamOrbit.theta, galaxyCamOrbit.phi, galaxyZoom));
+                camera.lookAt(
+                    GALAXY_CENTER.x + galaxyLookOffset.x,
+                    GALAXY_CENTER.y,
+                    GALAXY_CENTER.z + galaxyLookOffset.z
+                );
+                camera.fov = 75 / Math.sqrt(galaxyZoom);
+                camera.updateProjectionMatrix();
+
+                if (galaxyMarker) {
+                    const pulse = reduced ? 1 : Math.sin(now / 600) * 0.16 + 1;
+                    galaxyMarker.scale.setScalar(pulse);
+                    if (galaxyMarkerGlow) galaxyMarkerGlow.scale.setScalar(0.9 + pulse * 0.2);
+                }
+                galaxyHotspots.forEach(h => {
+                    const on = activeHotspot === h.id || hoveredHotspot === h.id;
+                    const want = on ? 1.45 : 1;
+                    h.dot.scale.setScalar(h.dot.scale.x + (want - h.dot.scale.x) * 0.15);
+                    h.ring.scale.setScalar(h.ring.scale.x + (want - h.ring.scale.x) * 0.15);
+                    if (!reduced) h.ring.rotation.z += 0.004;
+                });
+                return;
+            }
+
+            const elapsed = now - g.startTime;
+            const t = Math.min(1, elapsed / g.duration);
+            const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            const sc = g.savedCamera;
+
+            if (g.phase === 'zoom-out') {
+                setSolarSystemOpacity(Math.max(0, 1 - eased / 0.3));
+                setGalaxyOpacity(Math.max(0, Math.min(1, (eased - 0.2) / 0.55)));
+
+                if (g.reduced) {
+                    camera.position.copy(g.targetPos);
+                    camera.lookAt(GALAXY_CENTER);
+                    camera.fov = 75;
+                } else {
+                    const from = _gTmp.set(sc.px, sc.py, sc.pz);
+                    const p = bezier3(from.clone(), g.control, g.targetPos, eased, new THREE.Vector3());
+                    camera.position.copy(p);
+                    camera.lookAt(
+                        sc.tx + (g.targetLookAt.x - sc.tx) * eased,
+                        sc.ty + (g.targetLookAt.y - sc.ty) * eased,
+                        sc.tz + (g.targetLookAt.z - sc.tz) * eased
+                    );
+                    camera.fov = 60 + eased * 15;
+                }
+                camera.updateProjectionMatrix();
+
+                // The marker arrives, then its orbit draws itself
+                if (galaxyMarker) galaxyMarker.scale.setScalar(Math.max(0.001, (eased - 0.55) / 0.45));
+                if (galaxyMarkerGlow) galaxyMarkerGlow.scale.setScalar(Math.max(0.001, (eased - 0.55) / 0.45));
+                if (galaxySunOrbit) {
+                    const drawn = Math.max(0, (eased - 0.6) / 0.4);
+                    galaxySunOrbit.geometry.setDrawRange(0, Math.round(drawn * galaxySunOrbitCount));
+                }
+
+                if (t >= 1) {
+                    galaxyZoom = 1.0;
+                    galaxyCamOrbit = { theta: GALAXY_IDLE_THETA, phi: GALAXY_IDLE_PHI };
+                    galaxyLookOffset = { x: 0, z: 0 };
+                    galaxyLastNow = 0;
+                    galaxyTransition = { phase: 'idle-galaxy', savedCamera: sc };
+                    if (galaxySunOrbit) galaxySunOrbit.geometry.setDrawRange(0, galaxySunOrbitCount);
+                    if (galaxyMarker) galaxyMarker.scale.setScalar(1);
+                    if (galaxyMarkerGlow) galaxyMarkerGlow.scale.setScalar(1);
+                    setGalaxyOpacity(1);
+                    document.body.classList.add('galaxy-ready');
+                    updateGalaxyZoomUI();
+                }
+            } else if (g.phase === 'zoom-in') {
+                setGalaxyOpacity(Math.max(0, 1 - eased / 0.6));
+                setSolarSystemOpacity(Math.max(0, Math.min(1, (eased - 0.3) / 0.7)));
+
+                if (g.reduced) {
+                    camera.position.set(sc.px, sc.py, sc.pz);
+                    camera.lookAt(sc.tx, sc.ty, sc.tz);
+                    camera.fov = 60;
+                } else {
+                    const to = _gTmp.set(sc.px, sc.py, sc.pz);
+                    const p = bezier3(g.startPos, g.control, to.clone(), eased, new THREE.Vector3());
+                    camera.position.copy(p);
+                    camera.lookAt(
+                        g.startLookAt.x + (sc.tx - g.startLookAt.x) * eased,
+                        g.startLookAt.y + (sc.ty - g.startLookAt.y) * eased,
+                        g.startLookAt.z + (sc.tz - g.startLookAt.z) * eased
+                    );
+                    camera.fov = 75 - eased * 15;
+                }
+                camera.updateProjectionMatrix();
+
+                if (t >= 1) finishGalaxyReturn(sc);
             }
         }
 
@@ -4883,256 +4847,6 @@
             // Labels
             const labels = document.querySelectorAll('.planet-label');
             labels.forEach(l => l.style.opacity = opacity);
-        }
-
-        function toggleGalaxyView() {
-            // Allow toggling when idle in galaxy, block only during active transitions
-            if (galaxyTransition && galaxyTransition.phase !== 'idle-galaxy') return;
-
-            if (!galaxyGroup) createGalaxy();
-
-            if (!galaxyViewActive) {
-                // ZOOM OUT to galaxy
-                galaxyViewActive = true;
-                galaxyGroup.visible = true;
-                // Hide ALL solar system objects so nothing bleeds into galaxy view
-                planets.forEach(p => { if (p.mesh) p.mesh.visible = false; });
-                if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = false;
-                if (sun) sun.visible = false;
-                glowLayers.forEach(g => { if (g) g.visible = false; });
-                if (asteroidBelt) asteroidBelt.visible = false;
-                if (referenceGrid) referenceGrid.visible = false;
-                orbitRingLines.forEach(l => { l.visible = false; });
-                trailLines.forEach(l => { l.visible = false; });
-                document.querySelectorAll('.planet-label').forEach(l => l.style.display = 'none');
-                // Leave dive at once if the user entered galaxy mid-dive
-                exitDiveImmediate();
-                document.getElementById('dive-hud').classList.remove('visible');
-                document.getElementById('dive-altitude').classList.remove('visible');
-                const savedCam = {
-                    px: camera.position.x, py: camera.position.y, pz: camera.position.z,
-                    tx: cameraTarget.x, ty: cameraTarget.y, tz: cameraTarget.z,
-                    fov: camera.fov
-                };
-                // Hide solar system UI (display:none via body.mode-galaxy, so no click traps)
-                setState({ mode: 'galaxy', sheet: null, tool: 'none' });
-
-                // Flash effect
-                const flash = document.getElementById('galaxy-transition-flash');
-                flash.style.opacity = '1';
-                setTimeout(() => { flash.style.opacity = '0'; }, 1500);
-
-                galaxyTransition = {
-                    phase: 'zoom-out',
-                    progress: 0,
-                    startTime: performance.now(),
-                    duration: 3500,
-                    savedCamera: savedCam,
-                    targetPos: new THREE.Vector3(
-                        GALAXY_CENTER.x + 50,
-                        GALAXY_CENTER.y + 450,
-                        GALAXY_CENTER.z + 200
-                    ),
-                    targetLookAt: GALAXY_CENTER.clone()
-                };
-            } else {
-                // ZOOM BACK to solar system
-                const savedCam = galaxyTransition?.savedCamera || {
-                    px: 100, py: 80, pz: 120 + sun.position.z,
-                    tx: 0, ty: 0, tz: sun.position.z,
-                    fov: 60
-                };
-                // Hide galaxy UI
-                document.getElementById('galaxy-info').classList.remove('visible');
-                document.getElementById('galaxy-return-btn').classList.remove('visible');
-                document.getElementById('galaxy-zoom-indicator').classList.remove('visible');
-                document.getElementById('galaxy-info-toggle').style.display = 'none';
-
-                // Flash
-                const flash = document.getElementById('galaxy-transition-flash');
-                flash.style.opacity = '1';
-                setTimeout(() => { flash.style.opacity = '0'; }, 1500);
-
-                galaxyTransition = {
-                    phase: 'zoom-in',
-                    progress: 0,
-                    startTime: performance.now(),
-                    duration: 3000,
-                    savedCamera: savedCam,
-                    startPos: camera.position.clone(),
-                    startLookAt: GALAXY_CENTER.clone()
-                };
-            }
-        }
-
-        // Restore the solar system after galaxy view. sc = saved camera, or null
-        // to leave the camera to the caller (Reset). Used by the animated return
-        // and by Reset, which skips the animation.
-        function finishGalaxyReturn(sc) {
-            galaxyViewActive = false;
-            if (galaxyGroup) galaxyGroup.visible = false;
-            setGalaxyOpacity(0);
-            planets.forEach(p => { if (p.mesh) p.mesh.visible = true; });
-            if (typeof saturnRingGroup !== 'undefined') saturnRingGroup.visible = true;
-            if (sun) sun.visible = true;
-            glowLayers.forEach(g => { if (g) g.visible = true; });
-            if (asteroidBelt) asteroidBelt.visible = true;
-            if (referenceGrid) referenceGrid.visible = showGrid;
-            orbitRingLines.forEach(l => { l.visible = showOrbitRings; });
-            trailLines.forEach(l => { l.visible = true; });
-            document.querySelectorAll('.planet-label').forEach(l => l.style.display = '');
-            setSolarSystemOpacity(1);
-            camera.fov = 60;
-            camera.updateProjectionMatrix();
-            if (sc) {
-                camera.position.set(sc.px, sc.py, sc.pz);
-                cameraTarget = { x: sc.tx, y: sc.ty, z: sc.tz };
-            }
-
-            // Show solar system UI
-            setState({ mode: 'solar' });
-            // Galaxy UI sits at opacity 0 with display:block and would trap clicks
-            ['galaxy-info', 'galaxy-return-btn', 'galaxy-zoom-indicator'].forEach(id => {
-                const el = document.getElementById(id);
-                el.classList.remove('visible');
-                el.style.display = 'none';
-            });
-            document.getElementById('galaxy-info-toggle').style.display = 'none';
-            galaxyTransition = null;
-        }
-
-        function updateGalaxyTransition(now) {
-            if (!galaxyTransition) return;
-
-            const elapsed = now - galaxyTransition.startTime;
-            const t = Math.min(1, elapsed / galaxyTransition.duration);
-            // Smooth ease in-out
-            const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-
-            if (galaxyTransition.phase === 'zoom-out') {
-                const sc = galaxyTransition.savedCamera;
-                // Fade solar system out, galaxy in
-                setSolarSystemOpacity(Math.max(0, 1 - eased * 2)); // fade out in first half
-                setGalaxyOpacity(Math.max(0, (eased - 0.3) / 0.7)); // fade in from 30%
-
-                // Camera moves from solar system to galaxy overlook
-                const tp = galaxyTransition.targetPos;
-                camera.position.set(
-                    sc.px + (tp.x - sc.px) * eased,
-                    sc.py + (tp.y - sc.py) * eased,
-                    sc.pz + (tp.z - sc.pz) * eased
-                );
-                const tl = galaxyTransition.targetLookAt;
-                camera.lookAt(
-                    sc.tx + (tl.x - sc.tx) * eased,
-                    sc.ty + (tl.y - sc.ty) * eased,
-                    sc.tz + (tl.z - sc.tz) * eased
-                );
-                // Widen FOV slightly for epic scale
-                camera.fov = 60 + eased * 15;
-                camera.updateProjectionMatrix();
-
-                // Pulse the marker
-                if (galaxyMarker && eased > 0.5) {
-                    const pulse = Math.sin((now / 400)) * 0.3 + 0.7;
-                    galaxyMarker.scale.setScalar(pulse);
-                    if (galaxyMarkerGlow) {
-                        galaxyMarkerGlow.rotation.z += 0.01;
-                        galaxyMarkerGlow.scale.setScalar(0.8 + pulse * 0.4);
-                    }
-                }
-
-                if (t >= 1) {
-                    // Transition complete - show UI, reset zoom state
-                    const savedCam = galaxyTransition.savedCamera;
-                    galaxyZoom = 1.0;
-                    galaxyCamOrbit = { theta: 0, phi: Math.PI * 0.35 };
-                    galaxyCamDist = 480;
-                    galaxyLookOffset = { x: 0, z: 0 };
-                    galaxyTransition = { phase: 'idle-galaxy', savedCamera: savedCam };
-                    loadGalaxyHiRes(); // load hi-res texture as soon as galaxy is fully visible
-                    // On mobile: don't auto-show info panel — show info toggle button instead
-                    const isMobileView = window.innerWidth <= 768;
-                    if (!isMobileView) {
-                        document.getElementById('galaxy-info').style.display = 'block';
-                        requestAnimationFrame(() => document.getElementById('galaxy-info').classList.add('visible'));
-                    }
-                    document.getElementById('galaxy-info-toggle').style.display = isMobileView ? 'flex' : 'none';
-                    document.getElementById('galaxy-return-btn').style.display = 'block';
-                    requestAnimationFrame(() => document.getElementById('galaxy-return-btn').classList.add('visible'));
-                    // Show zoom indicator
-                    document.getElementById('galaxy-zoom-indicator').style.display = 'block';
-                    requestAnimationFrame(() => document.getElementById('galaxy-zoom-indicator').classList.add('visible'));
-                    updateGalaxyZoomUI();
-                }
-            } else if (galaxyTransition.phase === 'zoom-in') {
-                const sc = galaxyTransition.savedCamera;
-                const sp = galaxyTransition.startPos;
-
-                // Fade galaxy out, solar system in
-                setGalaxyOpacity(Math.max(0, 1 - eased * 2));
-                setSolarSystemOpacity(Math.max(0, (eased - 0.3) / 0.7));
-
-                // Camera returns
-                camera.position.set(
-                    sp.x + (sc.px - sp.x) * eased,
-                    sp.y + (sc.py - sp.y) * eased,
-                    sp.z + (sc.pz - sp.z) * eased
-                );
-                camera.lookAt(
-                    GALAXY_CENTER.x + (sc.tx - GALAXY_CENTER.x) * eased,
-                    GALAXY_CENTER.y + (sc.ty - GALAXY_CENTER.y) * eased,
-                    GALAXY_CENTER.z + (sc.tz - GALAXY_CENTER.z) * eased
-                );
-                camera.fov = 75 - eased * 15;
-                camera.updateProjectionMatrix();
-
-                if (t >= 1) finishGalaxyReturn(sc);
-            } else if (galaxyTransition.phase === 'idle-galaxy') {
-                // Slow auto-rotation (only when not dragging)
-                const gdt = galaxyTransition.lastNow ? Math.min((now - galaxyTransition.lastNow) / 1000, 0.05) : 0;
-                galaxyTransition.lastNow = now;
-                if (!galaxyDragging) {
-                    galaxyCamOrbit.theta += 0.024 * gdt;
-                }
-
-                // Compute camera position from spherical coords + zoom
-                const effectiveDist = galaxyCamDist / galaxyZoom;
-                const cx = GALAXY_CENTER.x + Math.sin(galaxyCamOrbit.phi) * Math.cos(galaxyCamOrbit.theta) * effectiveDist;
-                const cy = GALAXY_CENTER.y + Math.cos(galaxyCamOrbit.phi) * effectiveDist;
-                const cz = GALAXY_CENTER.z + Math.sin(galaxyCamOrbit.phi) * Math.sin(galaxyCamOrbit.theta) * effectiveDist;
-                camera.position.set(cx, cy, cz);
-
-                // Look at galaxy center + pan offset
-                const lookAt = new THREE.Vector3(
-                    GALAXY_CENTER.x + galaxyLookOffset.x,
-                    GALAXY_CENTER.y,
-                    GALAXY_CENTER.z + galaxyLookOffset.z
-                );
-                camera.lookAt(lookAt);
-
-                // Adjust FOV based on zoom for wider/tighter framing
-                camera.fov = 75 / Math.sqrt(galaxyZoom);
-                camera.updateProjectionMatrix();
-
-                // Marker pulse
-                if (galaxyMarker) {
-                    const pulse = Math.sin(now / 400) * 0.3 + 0.7;
-                    galaxyMarker.scale.setScalar(pulse);
-                    if (galaxyMarkerGlow) {
-                        galaxyMarkerGlow.rotation.z += 0.008;
-                        galaxyMarkerGlow.scale.setScalar(0.8 + pulse * 0.4);
-                    }
-                }
-
-                // Pulsate feature markers
-                galaxyFeatureMarkers.forEach(f => {
-                    if (f.dot && f.dot.material.opacity > 0) {
-                        const p = Math.sin(now / 600 + f.dot.position.x) * 0.2 + 0.8;
-                        f.dot.scale.setScalar(p);
-                    }
-                });
-            }
         }
 
         // =====================================================================
