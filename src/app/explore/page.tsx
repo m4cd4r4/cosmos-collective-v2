@@ -9,9 +9,12 @@ import { Header } from '@/components/layout/Header'
 import { ExploreGallery } from '@/components/features/explore/ExploreGallery'
 import { ExploreFilters } from '@/components/features/explore/ExploreFilters'
 import { ExploreSearch } from '@/components/features/explore/ExploreSearch'
+import { WebbExplorerPanel } from '@/components/features/explore/WebbExplorerPanel'
 import { getFeaturedJWSTImages, getFeaturedHubbleImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
+import Link from 'next/link'
 import { Telescope, Layers } from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { PageHeader } from '@/components/ui/PageHeader'
 import { StatsBar } from '@/components/ui/StatsBar'
 
@@ -41,6 +44,8 @@ export default function ExplorePage({
   const category = typeof searchParams.category === 'string' ? searchParams.category : undefined
   const wavelength = typeof searchParams.wavelength === 'string' ? searchParams.wavelength : undefined
   const query = typeof searchParams.q === 'string' ? searchParams.q : undefined
+  // ?view=webb is the former /jwst page, merged in on 2026-10-14
+  const view = searchParams.view === 'webb' ? 'webb' : 'gallery'
 
   // Get real counts from data layer (server component — free to call directly)
   const jwstCount = getFeaturedJWSTImages().length
@@ -66,14 +71,46 @@ export default function ExplorePage({
         }
       />
 
-      {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
-      <StatsBar items={[
-        { label: 'JWST', value: String(jwstCount), color: '#e040fb' },
-        { label: 'Hubble', value: String(hubbleCount), color: '#4a90e2' },
-        { label: 'Radio', value: String(radioCount), color: '#f59e0b' },
-        { label: 'Total', value: String(totalCount), color: '#d4af37' },
-      ]} />
+      {/* ── View Tabs ─────────────────────────────────────────────────────── */}
+      <nav
+        className="flex items-center gap-1 px-4 sm:px-5 py-2 bg-[rgba(4,6,18,0.97)] border-b border-white/[0.08] shrink-0"
+        aria-label="Explore views"
+      >
+        {([
+          { id: 'gallery', label: 'All Observations', href: '/explore', hint: 'JWST, Hubble and radio, filterable' },
+          { id: 'webb', label: 'Webb Explorer', href: '/explore?view=webb', hint: 'Wavelength bands and feature annotations' },
+        ] as const).map((tab) => (
+          <Link
+            key={tab.id}
+            href={tab.href}
+            title={tab.hint}
+            aria-current={view === tab.id ? 'page' : undefined}
+            className={cn(
+              'px-3 py-1.5 rounded text-[11px] uppercase tracking-[0.12em] transition-colors',
+              view === tab.id
+                ? 'bg-[rgba(212,175,55,0.15)] text-[#d4af37] border border-[rgba(212,175,55,0.3)]'
+                : 'text-gray-400 border border-transparent hover:text-white hover:bg-white/5',
+            )}
+          >
+            {tab.label}
+          </Link>
+        ))}
+      </nav>
 
+      {/* ── Stats Bar ─────────────────────────────────────────────────────── */}
+      {/* The Webb view carries its own counts, so only the gallery shows these */}
+      {view === 'gallery' && (
+        <StatsBar items={[
+          { label: 'JWST', value: String(jwstCount), color: '#e040fb' },
+          { label: 'Hubble', value: String(hubbleCount), color: '#4a90e2' },
+          { label: 'Radio', value: String(radioCount), color: '#f59e0b' },
+          { label: 'Total', value: String(totalCount), color: '#d4af37' },
+        ]} />
+      )}
+
+      {view === 'webb' ? (
+        <WebbExplorerPanel />
+      ) : (
       <div className="flex-1 overflow-auto px-4 sm:px-5 py-5 pb-20 lg:pb-5 max-w-7xl mx-auto w-full">
 
         {/* ── Search + Filters ──────────────────────────────────────────── */}
@@ -100,6 +137,7 @@ export default function ExplorePage({
           />
         </Suspense>
       </div>
+      )}
 
     </div>
   )

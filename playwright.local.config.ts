@@ -5,6 +5,7 @@ export default defineConfig({
   timeout: 60_000,
   expect: { timeout: 10_000 },
   use: {
+    // BASE_URL lets a worktree run against its own port (the specs read it too)
     baseURL: process.env.BASE_URL || 'http://localhost:3099',
     headless: true,
     viewport: { width: 1440, height: 900 },

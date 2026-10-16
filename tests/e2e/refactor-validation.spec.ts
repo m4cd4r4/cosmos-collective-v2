@@ -11,23 +11,32 @@ const BASE = process.env.BASE_URL || 'http://localhost:3099'
 // ── Redirects ──────────────────────────────────────────────────────────────
 
 test.describe('Redirects', () => {
-  test('/mission-control redirects to /explore', async ({ page }) => {
-    const response = await page.goto(`${BASE}/mission-control`, { waitUntil: 'domcontentloaded' })
-    await page.waitForURL('**/explore')
-    expect(page.url()).toContain('/explore')
-  })
+  // Every route cut by the 2026-10-14 prune. These are permanent redirects in
+  // next.config.js redirects(), so nothing that used to resolve may 404.
+  const redirects: Array<[string, string]> = [
+    ['/mission-control', '/explore'],
+    ['/dashboard', '/'],
+    ['/observatory', '/sky-map'],
+    ['/test-error', '/'],
+    ['/devlog', '/'],
+    ['/devlog/march-2026-design-audit', '/'],
+    ['/jwst', '/explore?view=webb'],
+    ['/spacecraft', '/events'],
+    ['/spacecraft/jwst', '/events'],
+  ]
 
-  test('/dashboard redirects to /', async ({ page }) => {
-    const response = await page.goto(`${BASE}/dashboard`, { waitUntil: 'domcontentloaded' })
-    await page.waitForURL(url => url.pathname === '/' || url.pathname === '')
-    expect(page.url().replace(/\/$/, '')).toBe(BASE.replace(/\/$/, ''))
-  })
-
-  test('/observatory redirects to /sky-map', async ({ page }) => {
-    const response = await page.goto(`${BASE}/observatory`, { waitUntil: 'domcontentloaded' })
-    await page.waitForURL('**/sky-map')
-    expect(page.url()).toContain('/sky-map')
-  })
+  for (const [from, to] of redirects) {
+    test(`${from} redirects to ${to}`, async ({ page }) => {
+      const response = await page.goto(`${BASE}${from}`, { waitUntil: 'domcontentloaded' })
+      expect(response?.status(), `${from} must not 404`).toBeLessThan(400)
+      const target = new URL(to, BASE)
+      await page.waitForURL(url => url.pathname === target.pathname)
+      expect(new URL(page.url()).pathname).toBe(target.pathname)
+      for (const [key, value] of target.searchParams) {
+        expect(new URL(page.url()).searchParams.get(key)).toBe(value)
+      }
+    })
+  }
 })
 
 // ── Desktop Navigation ─────────────────────────────────────────────────────
@@ -115,7 +124,7 @@ test.describe('Font Size Minimums', () => {
   const pagesToCheck = [
     { url: '/explore', name: 'Explore' },
     { url: '/events', name: 'Events' },
-    { url: '/jwst', name: 'JWST' },
+    { url: '/explore?view=webb', name: 'Webb Explorer' },
     { url: '/kepler', name: 'Kepler' },
   ]
 
@@ -167,8 +176,7 @@ test.describe('All Pages Load', () => {
     { url: '/solar-system', name: 'Solar System' },
     { url: '/sky-map', name: 'Sky Map' },
     { url: '/kepler', name: 'Kepler' },
-    { url: '/jwst', name: 'JWST' },
-    { url: '/devlog', name: 'Devlog' },
+    { url: '/explore?view=webb', name: 'Webb Explorer' },
     { url: '/credits', name: 'Credits' },
     { url: '/accessibility', name: 'Accessibility' },  // slow render - extended timeout below
   ]
@@ -233,7 +241,8 @@ test.describe('Landing Page', () => {
     expect(hrefs).toContain('/events')
     expect(hrefs).toContain('/solar-system')
     expect(hrefs).toContain('/kepler')
-    expect(hrefs).toContain('/jwst')
+    expect(hrefs).toContain('/sky-map')
+    expect(hrefs).not.toContain('/jwst')
   })
 })
 

@@ -135,32 +135,32 @@ test.describe('Responsive Fixes', () => {
     await screenshotViewport(page, 'kepler-mobile-padding')
   })
 
-  test('JWST page has mobile bottom nav padding', async ({ page }) => {
+  test('Webb Explorer view has mobile bottom nav padding', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto('/jwst', { waitUntil: 'domcontentloaded' })
+    await page.goto('/explore?view=webb', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(3000)
 
     const hasPadding = await page.evaluate(() => {
       const els = document.querySelectorAll('.pb-16')
       return els.length > 0
     })
-    expect(hasPadding, 'JWST page should have pb-16 for mobile nav').toBeTruthy()
+    expect(hasPadding, 'Webb Explorer should have pb-16 for mobile nav').toBeTruthy()
 
-    await screenshotViewport(page, 'jwst-mobile-padding')
+    await screenshotViewport(page, 'webb-explorer-mobile-padding')
   })
 
-  test('Observatory page has mobile bottom nav padding', async ({ page }) => {
+  test('Sky Map page has mobile bottom nav padding', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto('/observatory', { waitUntil: 'domcontentloaded' })
+    await page.goto('/sky-map', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(3000)
 
     const hasPadding = await page.evaluate(() => {
       const els = document.querySelectorAll('.pb-16')
       return els.length > 0
     })
-    expect(hasPadding, 'Observatory page should have pb-16 for mobile nav').toBeTruthy()
+    expect(hasPadding, 'Sky Map page should have pb-16 for mobile nav').toBeTruthy()
 
-    await screenshotViewport(page, 'observatory-mobile-padding')
+    await screenshotViewport(page, 'sky-map-mobile-padding')
   })
 })
 
@@ -189,19 +189,23 @@ test.describe('Bug Fixes', () => {
       '/sky-map',
       '/kepler',
       '/events',
-      '/jwst',
       '/solar-system',
-      '/observatory',
-      '/mission-control',
+      '/gravitational-lens',
       '/credits',
       '/privacy',
       '/terms',
       '/accessibility',
-      '/devlog',
     ]
 
     for (const route of requiredRoutes) {
       expect(content, `sitemap should include ${route}`).toContain(route)
+    }
+
+    // Cut by the 2026-10-14 prune: a sitemap entry for a redirected URL is a
+    // crawl-budget leak, so these must be absent.
+    const cutRoutes = ['/jwst', '/devlog', '/spacecraft', '/observatory', '/mission-control', '/dashboard', '/test-error']
+    for (const route of cutRoutes) {
+      expect(content, `sitemap should not include the cut route ${route}`).not.toContain(`${route}<`)
     }
   })
 
@@ -289,48 +293,43 @@ test.describe('UI Improvements', () => {
 })
 
 // ============================================
-// 5. MISSION CONTROL HUB
+// 5. HEADER NAV IS THE HUB
 // ============================================
-test.describe('Mission Control Hub', () => {
-  test('Mission Control shows all 8 features', async ({ page }) => {
-    await page.goto('/mission-control', { waitUntil: 'domcontentloaded' })
-    await page.waitForTimeout(3000)
+// The /mission-control hub page was cut on 2026-10-14 (it duplicated the
+// header nav). The nav itself now carries the contract that page used to.
+test.describe('Header nav', () => {
+  test('header links to every live experience and to nothing cut', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 })
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(1500)
 
-    const consoleErrors = watchConsole(page)
-
-    // Check for the key feature tiles
-    const expectedFeatures = ['Explore', 'Live Events', 'Observatory', 'Dashboard']
-    for (const feature of expectedFeatures) {
-      const featureElement = page.getByText(feature, { exact: false }).first()
-      const isVisible = await featureElement.isVisible().catch(() => false)
-      expect(isVisible, `Mission Control should show "${feature}"`).toBeTruthy()
-    }
-
-    // Check for newly added features
-    const newFeatures = ['Solar System', 'Sky Map', 'Kepler', 'JWST']
-    let newFeatureCount = 0
-    for (const feature of newFeatures) {
-      const featureElement = page.getByText(feature, { exact: false }).first()
-      if (await featureElement.isVisible().catch(() => false)) {
-        newFeatureCount++
-      }
-    }
-    expect(newFeatureCount, 'Mission Control should have at least some new feature tiles').toBeGreaterThan(0)
-
-    // Check "8 Features Active" counter
-    const counterText = page.getByText(/\d+ Features? Active/i)
-    if (await counterText.isVisible().catch(() => false)) {
-      const text = await counterText.textContent()
-      expect(text).toContain('8')
-    }
-
-    await screenshotViewport(page, 'mission-control-all-features')
-
-    // No fatal JS errors
-    const fatalErrors = consoleErrors.filter(e =>
-      e.includes('TypeError') || e.includes('ReferenceError') || e.includes('Cannot read properties')
+    const nav = page.locator('nav[aria-label="Main navigation"]')
+    const hrefs = await nav.locator('a[href]').evaluateAll(els =>
+      els.map(el => el.getAttribute('href')),
     )
-    expect(fatalErrors, 'Mission Control: no JS crash errors').toHaveLength(0)
+
+    for (const href of ['/explore', '/events', '/sky-map', '/solar-system', '/gravitational-lens', '/kepler']) {
+      expect(hrefs, `header nav should link to ${href}`).toContain(href)
+    }
+    for (const href of ['/jwst', '/spacecraft', '/devlog', '/mission-control', '/observatory', '/dashboard']) {
+      expect(hrefs, `header nav should not link to the cut route ${href}`).not.toContain(href)
+    }
+  })
+
+  test('mobile bottom nav links to nothing cut', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 })
+    await page.goto('/', { waitUntil: 'domcontentloaded' })
+    await page.waitForTimeout(1500)
+
+    const nav = page.locator('nav[aria-label="Mobile navigation"]')
+    const hrefs = await nav.locator('a[href]').evaluateAll(els =>
+      els.map(el => el.getAttribute('href')),
+    )
+
+    expect(hrefs, 'mobile nav should link to /sky-map').toContain('/sky-map')
+    for (const href of ['/jwst', '/spacecraft', '/devlog']) {
+      expect(hrefs, `mobile nav should not link to the cut route ${href}`).not.toContain(href)
+    }
   })
 })
 
@@ -432,13 +431,11 @@ test.describe('Page Stability - Changed Pages', () => {
   const changedPages = [
     { slug: '/', label: 'Home (hero changes)' },
     { slug: '/kepler', label: 'Kepler (padding + canvas)' },
-    { slug: '/jwst', label: 'JWST (padding + jargon)' },
-    { slug: '/observatory', label: 'Observatory (padding + canvas)' },
-    { slug: '/mission-control', label: 'Mission Control (new features)' },
+    { slug: '/explore?view=webb', label: 'Webb Explorer (merged from /jwst)' },
+    { slug: '/sky-map', label: 'Sky Map' },
     { slug: '/credits', label: 'Credits (type fix)' },
     { slug: '/privacy', label: 'Privacy (type fix)' },
     { slug: '/terms', label: 'Terms (type fix)' },
-    { slug: '/devlog', label: 'Devlog (type fix)' },
     { slug: '/events', label: 'Events (shared utils)' },
     { slug: '/explore', label: 'Explore (error page)' },
     { slug: '/solar-system', label: 'Solar System' },
@@ -468,7 +465,8 @@ test.describe('Page Stability - Changed Pages', () => {
       )
       expect(fatalErrors, `${label}: no JS crash errors`).toHaveLength(0)
 
-      await screenshotViewport(page, `stability-${slug.replace(/\//g, '_') || 'home'}`)
+      // A slug can carry a query string now, and ? and = are illegal in a filename
+      await screenshotViewport(page, `stability-${slug.replace(/[^a-z0-9]+/gi, '_').replace(/^_|_$/g, '') || 'home'}`)
     })
   }
 })
@@ -477,8 +475,8 @@ test.describe('Page Stability - Changed Pages', () => {
 // 9. SCIENTIFIC JARGON EXPANSION
 // ============================================
 test.describe('Scientific Jargon', () => {
-  test('JWST viewer has instrument tooltips', async ({ page }) => {
-    await page.goto('/jwst', { waitUntil: 'domcontentloaded' })
+  test('Webb Explorer has instrument tooltips', async ({ page }) => {
+    await page.goto('/explore?view=webb', { waitUntil: 'domcontentloaded' })
     await page.waitForTimeout(3000)
 
     // Look for instrument filter chips with title attributes
@@ -491,10 +489,10 @@ test.describe('Scientific Jargon', () => {
 
     expect(
       hasNircamTooltip || hasExpandedText,
-      'JWST viewer should expand NIRCam abbreviation'
+      'Webb Explorer should expand NIRCam abbreviation'
     ).toBeTruthy()
 
-    await screenshotViewport(page, 'jwst-instrument-tooltips')
+    await screenshotViewport(page, 'webb-explorer-instrument-tooltips')
   })
 
   test('Kepler viewer has spectral class tooltips', async ({ page }) => {

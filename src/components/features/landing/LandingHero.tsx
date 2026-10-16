@@ -22,7 +22,7 @@ const HeroScene = dynamic(
 )
 
 const SECONDARY_LINKS = [
-  { label: 'Latest from JWST', href: '/jwst' },
+  { label: 'Latest from JWST', href: '/explore?view=webb' },
   { label: '2,700+ exoplanets', href: '/kepler' },
 ]
 

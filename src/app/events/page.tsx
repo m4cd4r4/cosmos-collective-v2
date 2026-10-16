@@ -6,6 +6,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react'
+import dynamic from 'next/dynamic'
 import { Header } from '@/components/layout/Header'
 import { WorldMapSVG } from '@/components/ui/WorldMapSVG'
 import { NeoApproachDiagram } from '@/components/features/events/NeoApproachDiagram'
@@ -14,6 +15,7 @@ import { EventSkyMap, type EventSkyMapHandle } from '@/components/features/event
 import { useLiveTelemetry } from '@/hooks/useLiveTelemetry'
 import { LaunchTracker } from '@/components/features/events/LaunchTracker'
 import { getMeteorShowers } from '@/services/real-time-events'
+import { SPACECRAFT_CATALOG } from '@/data/spacecraft-catalog'
 import type { AstronomicalEvent } from '@/types'
 import {
   Calendar,
@@ -25,6 +27,7 @@ import {
   Loader2,
   Sparkles,
   Satellite,
+  Rocket,
   Video,
   ChevronDown,
   ChevronUp,
@@ -68,6 +71,23 @@ async function checkYouTubeAvailable(videoId: string): Promise<boolean> {
   }
 }
 
+// The spacecraft encyclopedia was its own route until the 2026-10-14 prune.
+// It is a static catalogue, so it belongs beside the launch tracker rather
+// than on a page of its own. /spacecraft now 301s to /events#spacecraft.
+const SpacecraftExplorer = dynamic(
+  () => import('@/components/features/spacecraft/SpacecraftExplorer').then(m => ({ default: m.SpacecraftExplorer })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex items-center justify-center py-16">
+        <div className="w-8 h-8 rounded-full border-2 border-cosmos-gold/15 border-t-cosmos-gold animate-spin" />
+      </div>
+    ),
+  },
+)
+
+type CraftTab = 'launches' | 'spacecraft'
+
 const INITIAL_EVENT_COUNT = 8
 const LOAD_MORE_COUNT = 8
 
@@ -110,6 +130,18 @@ export default function EventsPage() {
   const [displayCount, setDisplayCount] = useState(INITIAL_EVENT_COUNT)
   const [apodExpanded, setApodExpanded] = useState(false)
   const [highlightedEvent, setHighlightedEvent] = useState<string | null>(null)
+  const [craftTab, setCraftTab] = useState<CraftTab>('launches')
+
+  // Arriving from the old /spacecraft URL opens the catalogue, not the launches.
+  // hashchange covers a same-page link, where React does not remount.
+  useEffect(() => {
+    const syncFromHash = () => {
+      if (window.location.hash === '#spacecraft') setCraftTab('spacecraft')
+    }
+    syncFromHash()
+    window.addEventListener('hashchange', syncFromHash)
+    return () => window.removeEventListener('hashchange', syncFromHash)
+  }, [])
 
   const skyMapRef = useRef<EventSkyMapHandle>(null)
   const skyMapSectionRef = useRef<HTMLElement>(null)
@@ -204,7 +236,7 @@ export default function EventsPage() {
             <span className="text-[11px] uppercase tracking-[0.15em] text-red-400">Live</span>
           </div>
           <span className="hidden sm:inline text-[11px] uppercase tracking-[0.12em] text-cosmos-muted border border-[rgba(212,175,55,0.1)] px-2 py-0.5 rounded">
-            Astronomical · Space Weather · ISS
+            Astronomical · Space Weather · ISS · Spacecraft
           </span>
         </div>
 
@@ -314,8 +346,38 @@ export default function EventsPage() {
               </div>
             </section>
 
-            {/* ── Upcoming Launches ─────────────────────────────────────── */}
-            <LaunchTracker launches={launches} isLoading={isLoading} />
+            {/* ── Launches / Spacecraft ─────────────────────────────────── */}
+            <section id="spacecraft" className="scroll-mt-28">
+              <div className="flex items-center gap-1 mb-3" role="tablist" aria-label="Launches and spacecraft">
+                {([
+                  { id: 'launches' as const, label: 'Upcoming Launches', icon: Rocket },
+                  { id: 'spacecraft' as const, label: `Spacecraft (${SPACECRAFT_CATALOG.length})`, icon: Satellite },
+                ]).map(({ id, label, icon: TabIcon }) => (
+                  <button
+                    key={id}
+                    type="button"
+                    role="tab"
+                    aria-selected={craftTab === id}
+                    onClick={() => setCraftTab(id)}
+                    className={cn(
+                      'flex items-center gap-1.5 px-3 py-1.5 rounded text-[11px] uppercase tracking-[0.12em] border transition-colors',
+                      craftTab === id
+                        ? 'bg-[rgba(212,175,55,0.15)] text-[#d4af37] border-[rgba(212,175,55,0.3)]'
+                        : 'text-gray-400 border-transparent hover:text-white hover:bg-white/5',
+                    )}
+                  >
+                    <TabIcon className="w-3 h-3" aria-hidden="true" />
+                    {label}
+                  </button>
+                ))}
+              </div>
+
+              {craftTab === 'launches' ? (
+                <LaunchTracker launches={launches} isLoading={isLoading} showHeader={false} />
+              ) : (
+                <SpacecraftExplorer />
+              )}
+            </section>
 
             {/* ── Events Gallery ───────────────────────────────────────── */}
             <section>

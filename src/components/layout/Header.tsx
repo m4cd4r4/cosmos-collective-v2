@@ -9,16 +9,15 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Telescope, Calendar, Globe, Orbit, Sun, Hexagon, Satellite, Aperture } from 'lucide-react'
+import { Telescope, Calendar, Globe, Orbit, Sun, Aperture } from 'lucide-react'
 
 const navItems = [
   { label: 'Explore', href: '/explore', icon: Telescope, description: 'Browse JWST, Hubble, and radio telescope observations' },
-  { label: 'Live', href: '/events', icon: Calendar, description: 'ISS tracker, solar weather, and real-time events' },
-  { label: 'Spacecraft', href: '/spacecraft', icon: Satellite, description: 'Space telescopes, probes, and stations encyclopedia' },
+  { label: 'Live', href: '/events', icon: Calendar, description: 'ISS tracker, solar weather, spacecraft, and real-time events' },
+  { label: 'Sky Map', href: '/sky-map', icon: Globe, description: 'Interactive multi-wavelength sky atlas' },
   { label: 'Solar System', href: '/solar-system', icon: Sun, description: 'Interactive 3D solar system' },
   { label: 'Grav Lens', href: '/gravitational-lens', icon: Aperture, description: 'Solar Gravitational Lens telescope mission concept' },
   { label: 'Kepler', href: '/kepler', icon: Orbit, description: '2,600+ Kepler exoplanets' },
-  { label: 'JWST', href: '/jwst', icon: Hexagon, description: 'JWST observation explorer' },
 ]
 
 // ============================================
@@ -161,11 +160,10 @@ function DesktopNav() {
 const mobileNavItems = [
   { label: 'Explore', href: '/explore', icon: Telescope },
   { label: 'Live', href: '/events', icon: Calendar },
-  { label: 'Craft', href: '/spacecraft', icon: Satellite },
+  { label: 'Sky', href: '/sky-map', icon: Globe },
   { label: 'Solar', href: '/solar-system', icon: Sun },
   { label: 'Lens', href: '/gravitational-lens', icon: Aperture },
   { label: 'Kepler', href: '/kepler', icon: Orbit },
-  { label: 'Webb', href: '/jwst', icon: Hexagon },
 ]
 
 function MobileBottomNav() {

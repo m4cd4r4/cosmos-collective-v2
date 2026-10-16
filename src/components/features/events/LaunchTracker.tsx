@@ -60,13 +60,15 @@ function LaunchCountdown({ net }: { net: string }) {
 interface LaunchTrackerProps {
   launches: LiveLaunch[]
   isLoading: boolean
+  /** Off when the caller already labels the section, as the /events tabs do. */
+  showHeader?: boolean
 }
 
-export function LaunchTracker({ launches, isLoading }: LaunchTrackerProps) {
+export function LaunchTracker({ launches, isLoading, showHeader = true }: LaunchTrackerProps) {
   if (isLoading) {
     return (
       <section>
-        <SectionHeader />
+        {showHeader && <SectionHeader />}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {[0, 1, 2, 3].map(i => (
             <div key={i} className="h-48 rounded-xl bg-white/[0.03] animate-pulse" />
@@ -80,7 +82,7 @@ export function LaunchTracker({ launches, isLoading }: LaunchTrackerProps) {
 
   return (
     <section>
-      <SectionHeader />
+      {showHeader && <SectionHeader />}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {launches.slice(0, 6).map(launch => (
           <LaunchCard key={launch.id} launch={launch} />
