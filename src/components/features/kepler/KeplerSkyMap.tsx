@@ -52,7 +52,7 @@ export const KeplerSkyMap = forwardRef<
     },
   }))
 
-  const initAladin = useCallback(() => {
+  const buildAladin = useCallback(() => {
     if (typeof window === 'undefined' || !window.A || !containerRef.current || aladinRef.current) return
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
@@ -84,6 +84,15 @@ export const KeplerSkyMap = forwardRef<
 
     setIsLoaded(true)
   }, [])
+
+  // Aladin Lite v3 builds its WASM core asynchronously: calling A.aladin before
+  // A.init resolves throws "reading 'setProjection'" and the map never appears.
+  const initAladin = useCallback(() => {
+    if (typeof window === 'undefined' || !window.A) return
+    const ready = (window.A as unknown as { init?: Promise<unknown> }).init
+    if (ready && typeof ready.then === 'function') void ready.then(buildAladin)
+    else buildAladin()
+  }, [buildAladin])
 
   useEffect(() => {
     const timer = setTimeout(() => {
