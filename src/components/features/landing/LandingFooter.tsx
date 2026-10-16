@@ -8,8 +8,8 @@ const EXPLORE_LINKS = [
   { label: 'Gravitational Lens', href: '/gravitational-lens' },
   { label: 'Kepler Exoplanets', href: '/kepler' },
   { label: 'Sky Map', href: '/sky-map' },
-  { label: 'Live Events', href: '/events' },
-  { label: 'Spacecraft', href: '/events#spacecraft' },
+  { label: 'Satellites', href: '/satellites' },
+  { label: 'Spacecraft', href: '/satellites#spacecraft' },
 ]
 
 const SITE_LINKS = [

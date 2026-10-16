@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { PLANET_HERO_IMAGES } from '@/components/features/planet-hero-images'
-import { Globe, Search, Radio, Orbit, Sun, Aperture } from 'lucide-react'
+import { Globe, Search, Satellite, Orbit, Sun, Aperture } from 'lucide-react'
 
 const FEATURES = [
   {
@@ -33,11 +33,11 @@ const FEATURES = [
     color: '#d4af37',
   },
   {
-    title: 'Live Events',
-    href: '/events',
-    description: 'ISS position, solar flares, and meteor showers as they happen',
+    title: 'Satellites',
+    href: '/satellites',
+    description: 'Every active satellite at its position right now, from Starlink to the ISS',
     image: PLANET_HERO_IMAGES.earthBlueMarble,
-    icon: Radio,
+    icon: Satellite,
     color: '#ef4444',
   },
   {

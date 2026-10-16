@@ -152,9 +152,10 @@ const nextConfig = {
     { source: '/devlog/:slug', destination: '/', permanent: true },
     // JWST explorer merged into /explore (same catalogue)
     { source: '/jwst', destination: '/explore?view=webb', permanent: true },
-    // Spacecraft encyclopedia merged into /events as a tab
-    { source: '/spacecraft', destination: '/events#spacecraft', permanent: true },
-    { source: '/spacecraft/:slug', destination: '/events#spacecraft', permanent: true },
+    // Live page replaced by the satellite app (2026-10-16); the spacecraft guide lives inside it
+    { source: '/events', destination: '/satellites', permanent: true },
+    { source: '/spacecraft', destination: '/satellites#spacecraft', permanent: true },
+    { source: '/spacecraft/:slug', destination: '/satellites#spacecraft', permanent: true },
   ],
 
   headers: async () => [

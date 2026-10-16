@@ -17,8 +17,8 @@ const PAGES = [
   ['home', '/'],
   ['explore-gallery', '/explore'],
   ['explore-webb', '/explore?view=webb'],
-  ['events', '/events'],
-  ['events-spacecraft', '/events#spacecraft'],
+  ['satellites', '/satellites'],
+  ['satellites-spacecraft', '/satellites#spacecraft'],
 ]
 const VIEWPORTS = [
   ['1440', 1440, 900],
