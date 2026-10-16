@@ -9,11 +9,11 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { Telescope, Calendar, Globe, Orbit, Sun, Aperture } from 'lucide-react'
+import { Telescope, Satellite, Globe, Orbit, Sun, Aperture } from 'lucide-react'
 
 const navItems = [
   { label: 'Explore', href: '/explore', icon: Telescope, description: 'Browse JWST, Hubble, and radio telescope observations' },
-  { label: 'Live', href: '/events', icon: Calendar, description: 'ISS tracker, solar weather, spacecraft, and real-time events' },
+  { label: 'Satellites', href: '/satellites', icon: Satellite, description: 'Every active satellite at its position right now, by orbit class' },
   { label: 'Sky Map', href: '/sky-map', icon: Globe, description: 'Interactive multi-wavelength sky atlas' },
   { label: 'Solar System', href: '/solar-system', icon: Sun, description: 'Interactive 3D solar system' },
   { label: 'Grav Lens', href: '/gravitational-lens', icon: Aperture, description: 'Solar Gravitational Lens telescope mission concept' },
@@ -159,7 +159,7 @@ function DesktopNav() {
 
 const mobileNavItems = [
   { label: 'Explore', href: '/explore', icon: Telescope },
-  { label: 'Live', href: '/events', icon: Calendar },
+  { label: 'Orbits', href: '/satellites', icon: Satellite },
   { label: 'Sky', href: '/sky-map', icon: Globe },
   { label: 'Solar', href: '/solar-system', icon: Sun },
   { label: 'Lens', href: '/gravitational-lens', icon: Aperture },

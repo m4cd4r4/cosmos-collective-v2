@@ -47,8 +47,10 @@ export function LiveDataPreview() {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {/* APOD */}
-          <Link
-            href="/events"
+          <a
+            href="https://apod.nasa.gov/apod/astropix.html"
+            target="_blank"
+            rel="noopener noreferrer"
             className="group rounded-xl border border-white/[0.08] bg-white/[0.03] overflow-hidden hover:border-white/20 transition-colors"
           >
             <div className="relative h-32 overflow-hidden">
@@ -78,11 +80,11 @@ export function LiveDataPreview() {
                 {apod?.date ? `Astronomy Picture of the Day · ${apod.date}` : 'Astronomy Picture of the Day'}
               </p>
             </div>
-          </Link>
+          </a>
 
           {/* ISS Position */}
           <Link
-            href="/events"
+            href="/satellites"
             className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-5 py-4 flex flex-col justify-center hover:border-white/20 transition-colors"
           >
             <div className="flex items-center gap-2 mb-3">
@@ -126,8 +128,10 @@ export function LiveDataPreview() {
           </Link>
 
           {/* Solar Weather */}
-          <Link
-            href="/events"
+          <a
+            href="https://www.swpc.noaa.gov/"
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-5 py-4 flex flex-col justify-center hover:border-white/20 transition-colors"
           >
             <div className="flex items-center gap-2 mb-3">
@@ -161,7 +165,7 @@ export function LiveDataPreview() {
                 {isLoading ? 'Reading sensors' : 'No data'}
               </span>
             )}
-          </Link>
+          </a>
         </div>
 
         <p className="text-xs text-gray-500 mt-6">

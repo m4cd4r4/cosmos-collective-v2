@@ -37,8 +37,8 @@ Eight explorers, one dark-sky instrument aesthetic. Deep space void backgrounds,
 | **Kepler Exoplanets** | `/kepler` | 2,700+ confirmed worlds in an interactive stellar field |
 | **Sky Map** | `/sky-map` | The whole celestial sphere across radio, infrared, optical, and X-ray |
 | **Explore Gallery** | `/explore` | 132 curated JWST, Hubble, and Australian radio observations |
-| **Live Events** | `/events` | Live ISS position, solar weather, meteor showers, launches |
-| **Spacecraft** | `/spacecraft` | Space telescopes, probes, and stations reference |
+| **Satellites** | `/satellites` | Every active satellite at its position right now, by orbit class |
+| **Spacecraft guide** | `/satellites#spacecraft` | Space telescopes, probes, and stations reference |
 
 ---
 

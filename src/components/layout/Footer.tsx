@@ -17,12 +17,12 @@ const footerLinks = {
     { label: 'JWST Gallery', href: '/explore?source=JWST' },
     { label: 'Australian Telescopes', href: '/explore?source=ASKAP' },
     { label: 'Sky Map', href: '/sky-map' },
-    { label: 'Live Events', href: '/events' },
+    { label: 'Satellites', href: '/satellites' },
   ],
   interactive: [
     { label: 'Solar System', href: '/solar-system' },
     { label: 'Kepler Exoplanets', href: '/kepler' },
-    { label: 'Spacecraft', href: '/events#spacecraft' },
+    { label: 'Spacecraft', href: '/satellites#spacecraft' },
   ],
   learn: [
     { label: 'About SKA', href: 'https://www.skao.int/', external: true },
