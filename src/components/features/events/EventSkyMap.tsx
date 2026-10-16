@@ -64,7 +64,7 @@ export const EventSkyMap = forwardRef<
     },
   }))
 
-  const initAladin = useCallback(() => {
+  const buildAladin = useCallback(() => {
     if (typeof window === 'undefined' || !window.A || !containerRef.current || aladinRef.current) return
 
     // Cast options to any — some fields (showStatusBar, showCooGrid) aren't in the typed interface
@@ -155,6 +155,15 @@ export const EventSkyMap = forwardRef<
       }
     })
   }, [onMarkerHover])
+
+  // Aladin Lite v3 builds its WASM core asynchronously: calling A.aladin before
+  // A.init resolves throws "reading 'setProjection'" and the map never appears.
+  const initAladin = useCallback(() => {
+    if (typeof window === 'undefined' || !window.A) return
+    const ready = (window.A as unknown as { init?: Promise<unknown> }).init
+    if (ready && typeof ready.then === 'function') void ready.then(buildAladin)
+    else buildAladin()
+  }, [buildAladin])
 
   useEffect(() => {
     const timer = setTimeout(() => {
