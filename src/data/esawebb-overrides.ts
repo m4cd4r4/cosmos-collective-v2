@@ -67,6 +67,8 @@ export const ESAWEBB_OVERRIDES: Record<string, EsaWebbOverride> = {
   'jwst-wasp39b': { esaId: 'weic2213a', credit: 'NASA, ESA, CSA, and J. Olmsted (STScI) (illustration)' },
   'jwst-vhs1256b': { esaId: 'weic2308a', credit: 'NASA, ESA, CSA, J. Olmsted (STScI) (illustration)' },
   'jwst-lhs475b': { esaId: 'weic2302b', credit: 'NASA, ESA, CSA, L. Hustak (STScI) (illustration)' },
+  'jwst-southern-ring': { esaId: 'weic2207b', credit: 'NASA, ESA, CSA, STScI, and the Webb ERO Production Team' },
+  'jwst-stephans-quintet': { esaId: 'weic2208a', credit: 'NASA, ESA, CSA, and STScI' },
   'jwst-l1527': { esaId: 'weic2219a', credit: 'NASA, ESA, CSA, and STScI, J. DePasquale (STScI)' },
   'jwst-fomalhaut': { esaId: 'weic2312a', credit: 'NASA, ESA, CSA, A. Pagan (STScI), A. Gáspár (University of Arizona)' },
   'jwst-didymos': { esaId: 'weic2215c', credit: 'NASA, ESA, CSA, and STScI' },
