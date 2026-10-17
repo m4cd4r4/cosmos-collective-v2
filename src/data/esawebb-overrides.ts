@@ -9,7 +9,15 @@ export interface EsaWebbOverride {
   credit: string
 }
 
-export const ESAWEBB_IMAGE_BASE = 'https://cdn.esawebb.org/archives/images'
+/** Hubble tiles whose original image showed a different object: real NASA Hubble image + credit. */
+export const HUBBLE_IMAGE_OVERRIDES: Record<string, { url: string; credit: string }> = {
+  'hubble-lagoon-nebula': {
+    url: 'https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001955/GSFC_20171208_Archive_e001955~medium.jpg',
+    credit: 'NASA, ESA, and the Hubble Space Telescope team',
+  },
+}
+
+export const ESAWEBB_IMAGE_BASE ='https://cdn.esawebb.org/archives/images'
 
 export const ESAWEBB_OVERRIDES: Record<string, EsaWebbOverride> = {
   'jwst-phantom-galaxy': { esaId: 'weic2403c', credit: 'NASA, ESA, CSA, STScI, J. Lee (STScI), T. Williams (Oxford), PHANGS Team' },
@@ -44,5 +52,10 @@ export const ESAWEBB_OVERRIDES: Record<string, EsaWebbOverride> = {
   'jwst-wasp39b': { esaId: 'weic2213a', credit: 'NASA, ESA, CSA, and J. Olmsted (STScI) (illustration)' },
   'jwst-vhs1256b': { esaId: 'weic2308a', credit: 'NASA, ESA, CSA, J. Olmsted (STScI) (illustration)' },
   'jwst-lhs475b': { esaId: 'weic2302b', credit: 'NASA, ESA, CSA, L. Hustak (STScI) (illustration)' },
+  'jwst-l1527': { esaId: 'weic2219a', credit: 'NASA, ESA, CSA, and STScI, J. DePasquale (STScI)' },
+  'jwst-fomalhaut': { esaId: 'weic2312a', credit: 'NASA, ESA, CSA, A. Pagan (STScI), A. Gáspár (University of Arizona)' },
+  'jwst-didymos': { esaId: 'weic2215c', credit: 'NASA, ESA, CSA, and STScI' },
+  'jwst-cosmos-web': { esaId: 'weic2603c', credit: 'NASA, ESA, CSA, STScI, R. Naidu (MIT), Image Processing: J. DePasquale (STScI)' },
+  'jwst-m51-whirlpool': { esaId: 'weic2608a', credit: 'NASA, ESA, CSA, STScI' },
   'jwst-wr124': { esaId: 'weic2307d', credit: 'NASA, ESA, CSA, STScI, Webb ERO Production Team' },
 }

@@ -4,7 +4,7 @@
  */
 
 import type { Observation } from '@/types'
-import { ESAWEBB_IMAGE_BASE, ESAWEBB_OVERRIDES } from '@/data/esawebb-overrides'
+import { ESAWEBB_IMAGE_BASE, ESAWEBB_OVERRIDES, HUBBLE_IMAGE_OVERRIDES } from '@/data/esawebb-overrides'
 
 // ============================================
 // Featured Images (Curated)
@@ -1616,6 +1616,14 @@ function curatedJWSTImages(): Observation[] {
  * These are hand-picked iconic images with verified URLs from NASA.gov
  */
 export function getFeaturedHubbleImages(): Observation[] {
+  return curatedHubbleImages().map((obs) => {
+    const o = HUBBLE_IMAGE_OVERRIDES[obs.id]
+    if (!o) return obs
+    return { ...obs, images: { thumbnail: o.url, preview: o.url, full: o.url, credit: o.credit } }
+  })
+}
+
+function curatedHubbleImages(): Observation[] {
   return [
     {
       id: 'hubble-helix-nebula',
