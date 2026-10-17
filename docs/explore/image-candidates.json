@@ -1,0 +1,605 @@
+[
+  {
+    "id": "jwst-phantom-galaxy",
+    "name": "Phantom Galaxy",
+    "currentNasaId": "PIA25440",
+    "currentTitle": "A Black Hole Destroys a Star (Illustration)",
+    "candidate": {
+      "id": "PIA08533",
+      "title": "Supernova Dust Factory in M74",
+      "center": "JPL",
+      "keywords": "Spitzer Space Telescope",
+      "desc": "Astronomers using NASA Spitzer Space Telescope have spotted a dust factory 30 million light-years away in the spiral galaxy M74. The factory is located at the scene of a massive star explosive death, or supernova. ",
+      "url": "https://images-assets.nasa.gov/image/PIA08533/PIA08533~medium.jpg",
+      "q": "M74"
+    }
+  },
+  {
+    "id": "jwst-butterfly-nebula",
+    "name": "Butterfly Nebula",
+    "currentNasaId": "PIA16009",
+    "currentTitle": "Dying Star Creates Fantasy-like Sculpture of Gas and Dust",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc346",
+    "name": "NGC 346",
+    "currentNasaId": "PIA22565",
+    "currentTitle": "Ultrahot Jupiter WASP-121b",
+    "candidate": {
+      "id": "PIA11227",
+      "title": "Stellar Work of Art",
+      "center": "JPL",
+      "keywords": "NGC 346 Spitzer Space Telescope",
+      "desc": "This painterly portrait of a star-forming cloud, called NGC 346, is a combination of multiwavelength light from NASA Spitzer Space Telescope, the European Southern Observatory New Technology Telescope, and the European Space Agency.",
+      "url": "https://images-assets.nasa.gov/image/PIA11227/PIA11227~medium.jpg",
+      "q": "NGC 346"
+    }
+  },
+  {
+    "id": "jwst-l1527",
+    "name": "L1527 Protostar",
+    "currentNasaId": "PIA13108",
+    "currentTitle": "Menkhib and the California Nebula",
+    "candidate": null
+  },
+  {
+    "id": "jwst-wr140",
+    "name": "WR 140",
+    "currentNasaId": "GSFC_20171208_Archive_e000833",
+    "currentTitle": "Hubble's High-Definition Panoramic View of the Andromeda Galaxy",
+    "candidate": {
+      "id": "PIA25431",
+      "title": "Comparing Sizes: the Sun and WR 140",
+      "center": "JPL",
+      "keywords": "Sun WR 140",
+      "desc": "This graphic shows the relative size of the Sun, upper left, compared to the two stars in the binary system known as Wolf-Rayet 140, or WR 140. The O-type star is roughly 30 times the mass of the Sun, while its companion is about 10 times t",
+      "url": "https://images-assets.nasa.gov/image/PIA25431/PIA25431~medium.jpg",
+      "q": "WR 140"
+    }
+  },
+  {
+    "id": "jwst-ngc3603",
+    "name": "NGC 3603",
+    "currentNasaId": "PIA22565",
+    "currentTitle": "Ultrahot Jupiter WASP-121b",
+    "candidate": {
+      "id": "0200209",
+      "title": "History of Chandra X-Ray Observatory",
+      "center": "MSFC",
+      "keywords": "Chandra X-Ray Observatory CXO NGC 3603",
+      "desc": "NGC 3603 is a bustling region of star birth in the Carina spiral arm of the Milky Way galaxy, about 20,000 light-years from Earth. For the first time, this Chandra image resolves the multitude of individual x-ray sources in this star-formin",
+      "url": "https://images-assets.nasa.gov/image/0200209/0200209~medium.jpg",
+      "q": "NGC 3603"
+    }
+  },
+  {
+    "id": "jwst-hh46-47",
+    "name": "HH 46/47",
+    "currentNasaId": "PIA13108",
+    "currentTitle": "Menkhib and the California Nebula",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc604",
+    "name": "NGC 604",
+    "currentNasaId": "PIA14415",
+    "currentTitle": "A New View of the Tarantula Nebula",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1365",
+    "name": "NGC 1365",
+    "currentNasaId": "GSFC_20171208_Archive_e002087",
+    "currentTitle": "NASA's Fermi Telescope Resolves Radio Galaxy Centaurus A",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc7469",
+    "name": "NGC 7469",
+    "currentNasaId": "PIA23020",
+    "currentTitle": "Multi-Elevation Gullies",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ic5332",
+    "name": "IC 5332",
+    "currentNasaId": "PIA25440",
+    "currentTitle": "A Black Hole Destroys a Star (Illustration)",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc3351",
+    "name": "NGC 3351",
+    "currentNasaId": "PIA25440",
+    "currentTitle": "A Black Hole Destroys a Star (Illustration)",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc3627",
+    "name": "NGC 3627",
+    "currentNasaId": "PIA23020",
+    "currentTitle": "Multi-Elevation Gullies",
+    "candidate": {
+      "id": "PIA15806",
+      "title": "NGC 3627: Revealing Hidden Black Holes",
+      "center": "JPL",
+      "keywords": "Chandra X-ray Observatory,Hubble Space Telescope,Spitzer Space T",
+      "desc": "The spiral galaxy NGC 3627, located about 30 million light years from Earth as seen by four NASA telescopes; inset shows the central region, which contains a bright X-ray source that is likely powered by material falling onto a supermassive",
+      "url": "https://images-assets.nasa.gov/image/PIA15806/PIA15806~medium.jpg",
+      "q": "NGC 3627"
+    }
+  },
+  {
+    "id": "jwst-ngc4254",
+    "name": "NGC 4254",
+    "currentNasaId": "PIA25440",
+    "currentTitle": "A Black Hole Destroys a Star (Illustration)",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc4321",
+    "name": "NGC 4321",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": {
+      "id": "9408670",
+      "title": "History of Hubble Space Telescope (HST)",
+      "center": "MSFC",
+      "keywords": "Hubble Space Telescope HST M100 Galactic Nucleus Wide Field Planetary Camera WF/PC",
+      "desc": "A comparison image of the M100 Galactic Nucleus, taken by the Hubble Space Telescope (HST) Wide Field Planetary Camera-1 (WF/PC1) and Wide Field Planetary Camera-2 (WF/PC2). The HST was placed in a low-Earth orbit by the Space Shuttle Disco",
+      "url": "https://images-assets.nasa.gov/image/9408670/9408670~medium.jpg",
+      "q": "M100"
+    }
+  },
+  {
+    "id": "jwst-ngc5068",
+    "name": "NGC 5068",
+    "currentNasaId": "PIA25440",
+    "currentTitle": "A Black Hole Destroys a Star (Illustration)",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1300",
+    "name": "NGC 1300",
+    "currentNasaId": "PIA03296",
+    "currentTitle": "A Stellar Ripple",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1512",
+    "name": "NGC 1512",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1566",
+    "name": "NGC 1566",
+    "currentNasaId": "PIA23020",
+    "currentTitle": "Multi-Elevation Gullies",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1672",
+    "name": "NGC 1672",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": null
+  },
+  {
+    "id": "jwst-m51-whirlpool",
+    "name": "Whirlpool Galaxy",
+    "currentNasaId": "PIA23020",
+    "currentTitle": "Multi-Elevation Gullies",
+    "candidate": {
+      "id": "GSFC_20171208_Archive_e001935",
+      "title": "The Two-faced Whirlpool Galaxy",
+      "center": "GSFC",
+      "keywords": "The Two-faced Whirlpool Galaxy heritage nasa hubble twofacedwhirlpoolgalaxy",
+      "desc": "NASA image release January 13, 2011  <b><a href=\"http://www.flickr.com/photos/gsfc/5352962836\">These images</a></b> by NASA's Hubble Space Telescope show off two dramatically different face-on views of the spiral galaxy M51, dubbed the Whir",
+      "url": "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001935/GSFC_20171208_Archive_e001935~medium.jpg",
+      "q": "Whirlpool Galaxy"
+    }
+  },
+  {
+    "id": "jwst-m81-bodes",
+    "name": "Bode's Galaxy",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": {
+      "id": "PIA09579",
+      "title": "M81 Galaxy is Pretty in Pink",
+      "center": "JPL",
+      "keywords": "Messier 81 Galaxy Evolution Explorer GALEX,Hubble Space Telescope,Spitzer",
+      "desc": "The perfectly picturesque spiral galaxy known as Messier 81, or M81, looks sharp in this new composite from NASA Spitzer and Hubble space telescopes and NASA Galaxy Evolution Explorer. ",
+      "url": "https://images-assets.nasa.gov/image/PIA09579/PIA09579~medium.jpg",
+      "q": "M81"
+    }
+  },
+  {
+    "id": "jwst-m33-triangulum",
+    "name": "Triangulum Galaxy",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": {
+      "id": "PIA25165",
+      "title": "Triangulum Galaxy Imaged by Herschel, Planck, IRAS, COBE",
+      "center": "JPL",
+      "keywords": "Herschel Space Observatory Triangulum Galaxy",
+      "desc": "This image of the Triangulum galaxy, or M33, includes data from the ESA (European Space Agency) Herschel mission, supplemented with data from ESA's retired Planck observatory and two retired NASA missions: the Infrared Astronomical Satellit",
+      "url": "https://images-assets.nasa.gov/image/PIA25165/PIA25165~medium.jpg",
+      "q": "Triangulum Galaxy"
+    }
+  },
+  {
+    "id": "jwst-ngc253-sculptor",
+    "name": "Sculptor Galaxy",
+    "currentNasaId": "PIA23010",
+    "currentTitle": "The Cigar Galaxy's Magnetic Field",
+    "candidate": {
+      "id": "PIA17256",
+      "title": "The Barred Sculptor Galaxy",
+      "center": "JPL",
+      "keywords": "Spitzer Space Telescope",
+      "desc": "The spectacular swirling arms and central bar of the Sculptor galaxy are revealed in this new view from NASA Spitzer Space Telescope.",
+      "url": "https://images-assets.nasa.gov/image/PIA17256/PIA17256~medium.jpg",
+      "q": "Sculptor Galaxy"
+    }
+  },
+  {
+    "id": "jwst-arp220",
+    "name": "Arp 220",
+    "currentNasaId": "PIA16613",
+    "currentTitle": "Dwarf Galaxy Spotted",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc4631-whale",
+    "name": "Whale Galaxy",
+    "currentNasaId": "PIA23010",
+    "currentTitle": "The Cigar Galaxy's Magnetic Field",
+    "candidate": {
+      "id": "0200205",
+      "title": "History of Chandra X-Ray Observatory",
+      "center": "MSFC",
+      "keywords": "Chandra X-Ray Observatory CXO Hubble Space Telescope HST NGC 4631 Milky Way",
+      "desc": "This image shows the central region of the spiral galaxy NGC 4631 as seen edge-on from the Chandra X-Ray Observatory (CXO) and the Hubble Space Telescope (HST). The Chandra data, shown in blue and purple, provide the first unambiguous evide",
+      "url": "https://images-assets.nasa.gov/image/0200205/0200205~medium.jpg",
+      "q": "NGC 4631"
+    }
+  },
+  {
+    "id": "jwst-ngc891",
+    "name": "NGC 891",
+    "currentNasaId": "PIA23010",
+    "currentTitle": "The Cigar Galaxy's Magnetic Field",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc4826-blackeye",
+    "name": "Black Eye Galaxy",
+    "currentNasaId": "PIA16613",
+    "currentTitle": "Dwarf Galaxy Spotted",
+    "candidate": {
+      "id": "0400392",
+      "title": "History of Hubble Space Telescope (HST)",
+      "center": "MSFC",
+      "keywords": "Messier 64 M64 Black Eye Hubble Space Telescope HST",
+      "desc": "Residing roughly 17 million light years from Earth, in the northern constellation Coma Berenices, is a merged star system known as Messier 64 (M64). First cataloged in the 18th century by the French astronomer Messier, M64 is a result of tw",
+      "url": "https://images-assets.nasa.gov/image/0400392/0400392~medium.jpg",
+      "q": "Black Eye Galaxy"
+    }
+  },
+  {
+    "id": "jwst-ngc6946-fireworks",
+    "name": "Fireworks Galaxy",
+    "currentNasaId": "PIA16613",
+    "currentTitle": "Dwarf Galaxy Spotted",
+    "candidate": {
+      "id": "PIA23401",
+      "title": "NASA Telescope Spots Mystery in Fireworks Galaxy",
+      "center": "JPL",
+      "keywords": "NuSTAR",
+      "desc": "This visible-light image of the Fireworks galaxy (NGC 6946) comes from the Digital Sky Survey and is overlaid with data from NASA's NuSTAR observatory (shown in blue and green). Blue light indicates X-rays captured during the first of two o",
+      "url": "https://images-assets.nasa.gov/image/PIA23401/PIA23401~medium.jpg",
+      "q": "Fireworks Galaxy"
+    }
+  },
+  {
+    "id": "jwst-ngc2903",
+    "name": "NGC 2903",
+    "currentNasaId": "PIA23020",
+    "currentTitle": "Multi-Elevation Gullies",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1087",
+    "name": "NGC 1087",
+    "currentNasaId": "PIA25440",
+    "currentTitle": "A Black Hole Destroys a Star (Illustration)",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc4535",
+    "name": "NGC 4535",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1385",
+    "name": "NGC 1385",
+    "currentNasaId": "PIA25440",
+    "currentTitle": "A Black Hole Destroys a Star (Illustration)",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1433",
+    "name": "NGC 1433",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc2835",
+    "name": "NGC 2835",
+    "currentNasaId": "PIA25440",
+    "currentTitle": "A Black Hole Destroys a Star (Illustration)",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc7496",
+    "name": "NGC 7496",
+    "currentNasaId": "PIA03296",
+    "currentTitle": "A Stellar Ripple",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc4303",
+    "name": "NGC 4303",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ngc1559",
+    "name": "NGC 1559",
+    "currentNasaId": "PIA23020",
+    "currentTitle": "Multi-Elevation Gullies",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ic342",
+    "name": "IC 342",
+    "currentNasaId": "PIA15416",
+    "currentTitle": "Andromeda",
+    "candidate": {
+      "id": "PIA14402",
+      "title": "A Twisted Star-Forming Web in the Galaxy IC 342",
+      "center": "JPL",
+      "keywords": "IC 342 Spitzer Space Telescope",
+      "desc": "Looking like a spider web swirled into a spiral, galaxy IC 342 presents its delicate pattern of dust in this infrared light image from NASA Spitzer Space Telescope. The very center glows especially brightly in the infrared.",
+      "url": "https://images-assets.nasa.gov/image/PIA14402/PIA14402~medium.jpg",
+      "q": "IC 342"
+    }
+  },
+  {
+    "id": "jwst-ngc1068",
+    "name": "NGC 1068",
+    "currentNasaId": "GSFC_20171208_Archive_e002087",
+    "currentTitle": "NASA's Fermi Telescope Resolves Radio Galaxy Centaurus A",
+    "candidate": {
+      "id": "PIA20057",
+      "title": "NuSTAR View of Galaxy NGC 1068",
+      "center": "JPL",
+      "keywords": "Hubble Space Telescope,NuSTAR NGC 1068 spiral galaxy",
+      "desc": "Galaxy NGC 1068 is shown in visible light and X-rays in this composite image. High-energy X-rays (magenta) captured by NASA's Nuclear Spectroscopic Telescope Array, or NuSTAR, are overlaid on visible-light images from both NASA's Hubble Spa",
+      "url": "https://images-assets.nasa.gov/image/PIA20057/PIA20057~medium.jpg",
+      "q": "NGC 1068"
+    }
+  },
+  {
+    "id": "jwst-cosmos-web",
+    "name": "COSMOS-Web Field",
+    "currentNasaId": "webb_first_deep_field",
+    "currentTitle": "Webb_first_deep_field_SMACS_0723",
+    "candidate": null
+  },
+  {
+    "id": "jwst-pandoras-cluster",
+    "name": "Pandora's Cluster",
+    "currentNasaId": "webb_first_deep_field",
+    "currentTitle": "Webb_first_deep_field_SMACS_0723",
+    "candidate": null
+  },
+  {
+    "id": "jwst-glass-field",
+    "name": "GLASS-JWST Deep Field",
+    "currentNasaId": "webb_first_deep_field",
+    "currentTitle": "Webb_first_deep_field_SMACS_0723",
+    "candidate": null
+  },
+  {
+    "id": "jwst-europa",
+    "name": "Europa",
+    "currentNasaId": "PIA22949",
+    "currentTitle": "Tumultuous Clouds of Jupiter",
+    "candidate": {
+      "id": "PIA02960",
+      "title": "Folds on Europa",
+      "center": "JPL",
+      "keywords": "Europa Galileo",
+      "desc": "Folds on Europa",
+      "url": "https://images-assets.nasa.gov/image/PIA02960/PIA02960~medium.jpg",
+      "q": "Europa"
+    }
+  },
+  {
+    "id": "jwst-titan",
+    "name": "Titan",
+    "currentNasaId": "PIA11141",
+    "currentTitle": "Saturn … Four Years On",
+    "candidate": {
+      "id": "PIA01533",
+      "title": "Titan Haze",
+      "center": "JPL",
+      "keywords": "Titan Voyager",
+      "desc": "Titan Haze",
+      "url": "https://images-assets.nasa.gov/image/PIA01533/PIA01533~medium.jpg",
+      "q": "Titan"
+    }
+  },
+  {
+    "id": "jwst-enceladus",
+    "name": "Enceladus",
+    "currentNasaId": "PIA21274",
+    "currentTitle": "Hematite-Rich Deposits in Capri Chasma",
+    "candidate": {
+      "id": "PIA08417",
+      "title": "Map of Enceladus",
+      "center": "JPL",
+      "keywords": "Enceladus Cassini-Huygens",
+      "desc": "Map of Enceladus",
+      "url": "https://images-assets.nasa.gov/image/PIA08417/PIA08417~medium.jpg",
+      "q": "Enceladus"
+    }
+  },
+  {
+    "id": "jwst-didymos",
+    "name": "Didymos/Dimorphos (DART Impact)",
+    "currentNasaId": "PIA24420",
+    "currentTitle": "Frosty Sand Dunes of Mars",
+    "candidate": null
+  },
+  {
+    "id": "jwst-comet-238p",
+    "name": "Comet 238P/Read",
+    "currentNasaId": "PIA01492",
+    "currentTitle": "PIA01492",
+    "candidate": null
+  },
+  {
+    "id": "jwst-io",
+    "name": "Io",
+    "currentNasaId": "PIA22949",
+    "currentTitle": "Tumultuous Clouds of Jupiter",
+    "candidate": null
+  },
+  {
+    "id": "jwst-ganymede",
+    "name": "Ganymede",
+    "currentNasaId": "PIA22949",
+    "currentTitle": "Tumultuous Clouds of Jupiter",
+    "candidate": null
+  },
+  {
+    "id": "jwst-wasp39b",
+    "name": "WASP-39 b",
+    "currentNasaId": "PIA04201",
+    "currentTitle": "Stephan Quintet",
+    "candidate": null
+  },
+  {
+    "id": "jwst-hip65426b",
+    "name": "HIP 65426 b",
+    "currentNasaId": "PIA22565",
+    "currentTitle": "Ultrahot Jupiter WASP-121b",
+    "candidate": null
+  },
+  {
+    "id": "jwst-vhs1256b",
+    "name": "VHS 1256 b",
+    "currentNasaId": "PIA22565",
+    "currentTitle": "Ultrahot Jupiter WASP-121b",
+    "candidate": null
+  },
+  {
+    "id": "jwst-lhs475b",
+    "name": "LHS 475 b",
+    "currentNasaId": "PIA13108",
+    "currentTitle": "Menkhib and the California Nebula",
+    "candidate": null
+  },
+  {
+    "id": "jwst-fomalhaut",
+    "name": "Fomalhaut Debris Disc",
+    "currentNasaId": "PIA03296",
+    "currentTitle": "A Stellar Ripple",
+    "candidate": null
+  },
+  {
+    "id": "jwst-wr124",
+    "name": "WR 124",
+    "currentNasaId": "GSFC_20171208_Archive_e000833",
+    "currentTitle": "Hubble's High-Definition Panoramic View of the Andromeda Galaxy",
+    "candidate": {
+      "id": "a-hubble-cosmic-couple_20140593234_o",
+      "title": "A cosmic couple",
+      "center": "GSFC",
+      "keywords": "M1-67 WR 124",
+      "desc": "Here we see the spectacular cosmic pairing of the star Hen 2-427 — more commonly known as WR 124 — and the nebula M1-67 which surrounds it. Both objects, captured here by the NASA/ESA Hubble Space Telescope are found in the constellation of",
+      "url": "https://images-assets.nasa.gov/image/a-hubble-cosmic-couple_20140593234_o/a-hubble-cosmic-couple_20140593234_o~medium.jpg",
+      "q": "WR 124"
+    }
+  },
+  {
+    "id": "hubble-whirlpool-galaxy",
+    "name": "Whirlpool Galaxy",
+    "currentNasaId": "PIA23020",
+    "currentTitle": "Multi-Elevation Gullies",
+    "candidate": {
+      "id": "GSFC_20171208_Archive_e001935",
+      "title": "The Two-faced Whirlpool Galaxy",
+      "center": "GSFC",
+      "keywords": "The Two-faced Whirlpool Galaxy heritage nasa hubble twofacedwhirlpoolgalaxy",
+      "desc": "NASA image release January 13, 2011  <b><a href=\"http://www.flickr.com/photos/gsfc/5352962836\">These images</a></b> by NASA's Hubble Space Telescope show off two dramatically different face-on views of the spiral galaxy M51, dubbed the Whir",
+      "url": "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001935/GSFC_20171208_Archive_e001935~medium.jpg",
+      "q": "Whirlpool Galaxy"
+    }
+  },
+  {
+    "id": "hubble-antennae-galaxies",
+    "name": "Antennae Galaxies",
+    "currentNasaId": "PIA16613",
+    "currentTitle": "Dwarf Galaxy Spotted",
+    "candidate": {
+      "id": "A Galactic Spectacle_4862916839_o",
+      "title": "A Galactic Spectacle",
+      "center": "GSFC",
+      "keywords": "Hubble HST Galaxy NASA Antennae galaxies",
+      "desc": "NASA image release August 5, 2010  A beautiful new image of two colliding galaxies has been released by NASA's Great Observatories. The Antennae galaxies, located about 62 million light-years from Earth, are shown in this composite image fr",
+      "url": "https://images-assets.nasa.gov/image/A Galactic Spectacle_4862916839_o/A Galactic Spectacle_4862916839_o~medium.jpg",
+      "q": "Antennae Galaxies"
+    }
+  },
+  {
+    "id": "hubble-lagoon-nebula",
+    "name": "Lagoon Nebula",
+    "currentNasaId": "PIA15810",
+    "currentTitle": "A Sky Chock-Full of Black Holes",
+    "candidate": {
+      "id": "GSFC_20171208_Archive_e001955",
+      "title": "Hubble reveals heart of Lagoon Nebula",
+      "center": "GSFC",
+      "keywords": "Hubble reveals heart of Lagoon Nebula space nasa nebula hubble hubblespacetelescope lagoonnebula goddardspaceflightcenter",
+      "desc": "Image release date September 22, 2010  To view a video of this image go here: <a href=\"http://www.flickr.com/photos/gsfc/5014452203\">www.flickr.com/photos/gsfc/5014452203</a>  Caption: A spectacular new NASA/ESA Hubble Space Telescope image",
+      "url": "https://images-assets.nasa.gov/image/GSFC_20171208_Archive_e001955/GSFC_20171208_Archive_e001955~medium.jpg",
+      "q": "Lagoon Nebula"
+    }
+  },
+  {
+    "id": "hubble-bubble-nebula",
+    "name": "Bubble Nebula",
+    "currentNasaId": "GSFC_20171208_Archive_e000833",
+    "currentTitle": "Hubble's High-Definition Panoramic View of the Andromeda Galaxy",
+    "candidate": null
+  },
+  {
+    "id": "hubble-westerlund-2",
+    "name": "Westerlund 2",
+    "currentNasaId": "PIA22565",
+    "currentTitle": "Ultrahot Jupiter WASP-121b",
+    "candidate": null
+  }
+]

@@ -1,0 +1,1841 @@
+[
+  {
+    "id": "jwst-carina-nebula",
+    "name": "Carina Nebula (Cosmic Cliffs)",
+    "aliases": [
+      "NGC 3324",
+      "Cosmic Cliffs"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "carina_nebula",
+    "nasaTitle": "James Webb Space Telescope NIRCam Image of the “Cosmic Cliffs” in Carina Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Eta Carinae"
+    ]
+  },
+  {
+    "id": "jwst-smacs-0723",
+    "name": "SMACS 0723 (Webb's First Deep Field)",
+    "aliases": [
+      "SMACS J0723.3-7327",
+      "First Deep Field"
+    ],
+    "source": "JWST",
+    "category": "deep-field",
+    "nasaId": "webb_first_deep_field",
+    "nasaTitle": "Webb_first_deep_field_SMACS_0723",
+    "verdict": "ok",
+    "sharedWith": [
+      "CEERS Deep Field",
+      "JADES Deep Field",
+      "COSMOS-Web Field",
+      "Pandora's Cluster",
+      "MACS J0416.1-2403",
+      "GLASS-JWST Deep Field"
+    ]
+  },
+  {
+    "id": "jwst-stephans-quintet",
+    "name": "Stephan's Quintet",
+    "aliases": [
+      "HCG 92",
+      "Arp 319"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA04201",
+    "nasaTitle": "Stephan Quintet",
+    "verdict": "ok",
+    "sharedWith": [
+      "WASP-39 b"
+    ]
+  },
+  {
+    "id": "jwst-southern-ring",
+    "name": "Southern Ring Nebula",
+    "aliases": [
+      "NGC 3132",
+      "Eight-Burst Nebula"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "southern_ring_nebula",
+    "nasaTitle": "James Webb Space Telescope Southern Ring Nebula (NIRCam and MIRI Images Side by Side)",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "jwst-pillars-creation",
+    "name": "Pillars of Creation",
+    "aliases": [
+      "M16",
+      "Eagle Nebula Pillars"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "GSFC_20171208_Archive_e000842",
+    "nasaTitle": "Hubble Goes High Def to Revisit the Iconic 'Pillars of Creation'",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "jwst-jupiter",
+    "name": "Jupiter",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA22949",
+    "nasaTitle": "Tumultuous Clouds of Jupiter",
+    "verdict": "ok",
+    "sharedWith": [
+      "Europa",
+      "Io",
+      "Ganymede"
+    ]
+  },
+  {
+    "id": "jwst-tarantula-nebula",
+    "name": "Tarantula Nebula",
+    "aliases": [
+      "30 Doradus",
+      "NGC 2070"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA14415",
+    "nasaTitle": "A New View of the Tarantula Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "NGC 604"
+    ]
+  },
+  {
+    "id": "jwst-cartwheel-galaxy",
+    "name": "Cartwheel Galaxy",
+    "aliases": [
+      "ESO 350-40",
+      "PGC 2248"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA03296",
+    "nasaTitle": "A Stellar Ripple",
+    "verdict": "ok",
+    "sharedWith": [
+      "NGC 1300",
+      "NGC 7496",
+      "Fomalhaut Debris Disc"
+    ]
+  },
+  {
+    "id": "jwst-phantom-galaxy",
+    "name": "Phantom Galaxy",
+    "aliases": [
+      "M74",
+      "NGC 628"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA25440",
+    "nasaTitle": "A Black Hole Destroys a Star (Illustration)",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "IC 5332",
+      "NGC 3351",
+      "NGC 4254",
+      "NGC 5068",
+      "NGC 1087",
+      "NGC 1385",
+      "NGC 2835"
+    ]
+  },
+  {
+    "id": "jwst-neptune",
+    "name": "Neptune",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA01492",
+    "nasaTitle": "PIA01492",
+    "verdict": "ok",
+    "sharedWith": [
+      "Comet 238P/Read"
+    ]
+  },
+  {
+    "id": "jwst-uranus",
+    "name": "Uranus",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA18182",
+    "nasaTitle": "Uranus as seen by NASA Voyager 2",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "jwst-saturn",
+    "name": "Saturn",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA11141",
+    "nasaTitle": "Saturn … Four Years On",
+    "verdict": "ok",
+    "sharedWith": [
+      "Titan"
+    ]
+  },
+  {
+    "id": "jwst-mars",
+    "name": "Mars",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA24420",
+    "nasaTitle": "Frosty Sand Dunes of Mars",
+    "verdict": "ok",
+    "sharedWith": [
+      "Didymos/Dimorphos (DART Impact)"
+    ]
+  },
+  {
+    "id": "jwst-rho-ophiuchi",
+    "name": "Rho Ophiuchi Cloud Complex",
+    "aliases": [
+      "Rho Oph",
+      "L1688"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA13108",
+    "nasaTitle": "Menkhib and the California Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "L1527 Protostar",
+      "NGC 1333",
+      "HH 46/47",
+      "LHS 475 b"
+    ]
+  },
+  {
+    "id": "jwst-ring-nebula",
+    "name": "Ring Nebula",
+    "aliases": [
+      "M57",
+      "NGC 6720"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA18164",
+    "nasaTitle": "Iridescent Glory of Nearby Helix Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Helix Nebula"
+    ]
+  },
+  {
+    "id": "jwst-crab-nebula",
+    "name": "Crab Nebula",
+    "aliases": [
+      "M1",
+      "NGC 1952",
+      "Taurus A"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA03606",
+    "nasaTitle": "Most Detailed Image of the Crab Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Crab Nebula"
+    ]
+  },
+  {
+    "id": "jwst-orion-nebula",
+    "name": "Orion Nebula",
+    "aliases": [
+      "M42",
+      "NGC 1976",
+      "Great Nebula in Orion"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA01322",
+    "nasaTitle": "Chaos at the Heart of Orion",
+    "verdict": "ok",
+    "sharedWith": [
+      "Orion Nebula"
+    ]
+  },
+  {
+    "id": "jwst-horsehead-nebula",
+    "name": "Horsehead Nebula",
+    "aliases": [
+      "Barnard 33",
+      "IC 434"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA16008",
+    "nasaTitle": "Hubble Sees a Horsehead of a Different Color",
+    "verdict": "ok",
+    "sharedWith": [
+      "Horsehead Nebula"
+    ]
+  },
+  {
+    "id": "jwst-sn1987a",
+    "name": "SN 1987A",
+    "aliases": [
+      "Supernova 1987A",
+      "SNR 0535-69.3"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA19335",
+    "nasaTitle": "Tracing Titanium Escape",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "jwst-cassiopeia-a",
+    "name": "Cassiopeia A",
+    "aliases": [
+      "Cas A",
+      "3C 461"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "GSFC_20171208_Archive_e002183",
+    "nasaTitle": "Cassiopeia A supernova",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "jwst-eta-carinae",
+    "name": "Eta Carinae",
+    "aliases": [
+      "NGC 3372",
+      "Carina Nebula Core",
+      "Eta Car"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "carina_nebula",
+    "nasaTitle": "James Webb Space Telescope NIRCam Image of the “Cosmic Cliffs” in Carina Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Carina Nebula (Cosmic Cliffs)"
+    ]
+  },
+  {
+    "id": "jwst-butterfly-nebula",
+    "name": "Butterfly Nebula",
+    "aliases": [
+      "NGC 6302",
+      "Bug Nebula"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA16009",
+    "nasaTitle": "Dying Star Creates Fantasy-like Sculpture of Gas and Dust",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Cat's Eye Nebula"
+    ]
+  },
+  {
+    "id": "jwst-ngc346",
+    "name": "NGC 346",
+    "aliases": [
+      "DEM S 103",
+      "Lindsay 113"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA22565",
+    "nasaTitle": "Ultrahot Jupiter WASP-121b",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 3603",
+      "HIP 65426 b",
+      "VHS 1256 b",
+      "Westerlund 2"
+    ]
+  },
+  {
+    "id": "jwst-l1527",
+    "name": "L1527 Protostar",
+    "aliases": [
+      "IRAS 04368+2557",
+      "TMC-1A"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA13108",
+    "nasaTitle": "Menkhib and the California Nebula",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Rho Ophiuchi Cloud Complex",
+      "NGC 1333",
+      "HH 46/47",
+      "LHS 475 b"
+    ]
+  },
+  {
+    "id": "jwst-wr140",
+    "name": "WR 140",
+    "aliases": [
+      "V1687 Cygni"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "GSFC_20171208_Archive_e000833",
+    "nasaTitle": "Hubble's High-Definition Panoramic View of the Andromeda Galaxy",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "WR 124",
+      "Bubble Nebula"
+    ]
+  },
+  {
+    "id": "jwst-ngc3603",
+    "name": "NGC 3603",
+    "aliases": [
+      "HD 97950"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA22565",
+    "nasaTitle": "Ultrahot Jupiter WASP-121b",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 346",
+      "HIP 65426 b",
+      "VHS 1256 b",
+      "Westerlund 2"
+    ]
+  },
+  {
+    "id": "jwst-omega-nebula",
+    "name": "Omega Nebula",
+    "aliases": [
+      "M17",
+      "NGC 6618",
+      "Swan Nebula"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "0302063",
+    "nasaTitle": "History of Hubble Space Telescope (HST)",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "jwst-ngc1333",
+    "name": "NGC 1333",
+    "aliases": [
+      "Perseus Molecular Cloud Core"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA13108",
+    "nasaTitle": "Menkhib and the California Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Rho Ophiuchi Cloud Complex",
+      "L1527 Protostar",
+      "HH 46/47",
+      "LHS 475 b"
+    ]
+  },
+  {
+    "id": "jwst-veil-nebula",
+    "name": "Veil Nebula",
+    "aliases": [
+      "NGC 6960",
+      "Cygnus Loop",
+      "Witch's Broom Nebula"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA15413",
+    "nasaTitle": "An Audience Favorite Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Veil Nebula"
+    ]
+  },
+  {
+    "id": "jwst-hh46-47",
+    "name": "HH 46/47",
+    "aliases": [
+      "Herbig-Haro 46/47"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA13108",
+    "nasaTitle": "Menkhib and the California Nebula",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Rho Ophiuchi Cloud Complex",
+      "L1527 Protostar",
+      "NGC 1333",
+      "LHS 475 b"
+    ]
+  },
+  {
+    "id": "jwst-ngc604",
+    "name": "NGC 604",
+    "aliases": [
+      "Triangulum Galaxy Nebula"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "PIA14415",
+    "nasaTitle": "A New View of the Tarantula Nebula",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Tarantula Nebula"
+    ]
+  },
+  {
+    "id": "jwst-ngc1365",
+    "name": "NGC 1365",
+    "aliases": [
+      "Great Barred Spiral"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "GSFC_20171208_Archive_e002087",
+    "nasaTitle": "NASA's Fermi Telescope Resolves Radio Galaxy Centaurus A",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Centaurus A",
+      "NGC 1068",
+      "Centaurus A"
+    ]
+  },
+  {
+    "id": "jwst-ngc7469",
+    "name": "NGC 7469",
+    "aliases": [
+      "Markarian 1514"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23020",
+    "nasaTitle": "Multi-Elevation Gullies",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 3627",
+      "NGC 1566",
+      "Whirlpool Galaxy",
+      "NGC 2903",
+      "NGC 1559",
+      "Whirlpool Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ic5332",
+    "name": "IC 5332",
+    "aliases": [
+      "PGC 70559"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA25440",
+    "nasaTitle": "A Black Hole Destroys a Star (Illustration)",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Phantom Galaxy",
+      "NGC 3351",
+      "NGC 4254",
+      "NGC 5068",
+      "NGC 1087",
+      "NGC 1385",
+      "NGC 2835"
+    ]
+  },
+  {
+    "id": "jwst-ngc3351",
+    "name": "NGC 3351",
+    "aliases": [
+      "M95"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA25440",
+    "nasaTitle": "A Black Hole Destroys a Star (Illustration)",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Phantom Galaxy",
+      "IC 5332",
+      "NGC 4254",
+      "NGC 5068",
+      "NGC 1087",
+      "NGC 1385",
+      "NGC 2835"
+    ]
+  },
+  {
+    "id": "jwst-ngc3627",
+    "name": "NGC 3627",
+    "aliases": [
+      "M66"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23020",
+    "nasaTitle": "Multi-Elevation Gullies",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 7469",
+      "NGC 1566",
+      "Whirlpool Galaxy",
+      "NGC 2903",
+      "NGC 1559",
+      "Whirlpool Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc4254",
+    "name": "NGC 4254",
+    "aliases": [
+      "M99"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA25440",
+    "nasaTitle": "A Black Hole Destroys a Star (Illustration)",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Phantom Galaxy",
+      "IC 5332",
+      "NGC 3351",
+      "NGC 5068",
+      "NGC 1087",
+      "NGC 1385",
+      "NGC 2835"
+    ]
+  },
+  {
+    "id": "jwst-ngc4321",
+    "name": "NGC 4321",
+    "aliases": [
+      "M100"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 1512",
+      "NGC 1672",
+      "Bode's Galaxy",
+      "Triangulum Galaxy",
+      "NGC 4535",
+      "NGC 1433",
+      "NGC 4303",
+      "IC 342",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc5068",
+    "name": "NGC 5068",
+    "aliases": [
+      "PGC 46400"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA25440",
+    "nasaTitle": "A Black Hole Destroys a Star (Illustration)",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Phantom Galaxy",
+      "IC 5332",
+      "NGC 3351",
+      "NGC 4254",
+      "NGC 1087",
+      "NGC 1385",
+      "NGC 2835"
+    ]
+  },
+  {
+    "id": "jwst-ngc1300",
+    "name": "NGC 1300",
+    "aliases": [
+      "Eridanus Barred Spiral"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA03296",
+    "nasaTitle": "A Stellar Ripple",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Cartwheel Galaxy",
+      "NGC 7496",
+      "Fomalhaut Debris Disc"
+    ]
+  },
+  {
+    "id": "jwst-ngc1512",
+    "name": "NGC 1512",
+    "aliases": [
+      "PGC 14391"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1672",
+      "Bode's Galaxy",
+      "Triangulum Galaxy",
+      "NGC 4535",
+      "NGC 1433",
+      "NGC 4303",
+      "IC 342",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc1566",
+    "name": "NGC 1566",
+    "aliases": [
+      "Spanish Dancer Galaxy"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23020",
+    "nasaTitle": "Multi-Elevation Gullies",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 7469",
+      "NGC 3627",
+      "Whirlpool Galaxy",
+      "NGC 2903",
+      "NGC 1559",
+      "Whirlpool Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc1672",
+    "name": "NGC 1672",
+    "aliases": [
+      "Dorado Barred Spiral"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1512",
+      "Bode's Galaxy",
+      "Triangulum Galaxy",
+      "NGC 4535",
+      "NGC 1433",
+      "NGC 4303",
+      "IC 342",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-m51-whirlpool",
+    "name": "Whirlpool Galaxy",
+    "aliases": [
+      "M51",
+      "NGC 5194"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23020",
+    "nasaTitle": "Multi-Elevation Gullies",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 7469",
+      "NGC 3627",
+      "NGC 1566",
+      "NGC 2903",
+      "NGC 1559",
+      "Whirlpool Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-centaurus-a",
+    "name": "Centaurus A",
+    "aliases": [
+      "NGC 5128",
+      "Caldwell 77"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "GSFC_20171208_Archive_e002087",
+    "nasaTitle": "NASA's Fermi Telescope Resolves Radio Galaxy Centaurus A",
+    "verdict": "ok",
+    "sharedWith": [
+      "NGC 1365",
+      "NGC 1068",
+      "Centaurus A"
+    ]
+  },
+  {
+    "id": "jwst-m81-bodes",
+    "name": "Bode's Galaxy",
+    "aliases": [
+      "M81",
+      "NGC 3031"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1512",
+      "NGC 1672",
+      "Triangulum Galaxy",
+      "NGC 4535",
+      "NGC 1433",
+      "NGC 4303",
+      "IC 342",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-m82-cigar",
+    "name": "Cigar Galaxy",
+    "aliases": [
+      "M82",
+      "NGC 3034"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23010",
+    "nasaTitle": "The Cigar Galaxy's Magnetic Field",
+    "verdict": "ok",
+    "sharedWith": [
+      "Sculptor Galaxy",
+      "Whale Galaxy",
+      "NGC 891",
+      "Cigar Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-m33-triangulum",
+    "name": "Triangulum Galaxy",
+    "aliases": [
+      "M33",
+      "NGC 598"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1512",
+      "NGC 1672",
+      "Bode's Galaxy",
+      "NGC 4535",
+      "NGC 1433",
+      "NGC 4303",
+      "IC 342",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc253-sculptor",
+    "name": "Sculptor Galaxy",
+    "aliases": [
+      "NGC 253",
+      "Silver Coin Galaxy"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23010",
+    "nasaTitle": "The Cigar Galaxy's Magnetic Field",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Cigar Galaxy",
+      "Whale Galaxy",
+      "NGC 891",
+      "Cigar Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-arp220",
+    "name": "Arp 220",
+    "aliases": [
+      "IC 4553",
+      "UGC 9913"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA16613",
+    "nasaTitle": "Dwarf Galaxy Spotted",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Black Eye Galaxy",
+      "Fireworks Galaxy",
+      "Antennae Galaxies"
+    ]
+  },
+  {
+    "id": "jwst-ngc4631-whale",
+    "name": "Whale Galaxy",
+    "aliases": [
+      "NGC 4631"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23010",
+    "nasaTitle": "The Cigar Galaxy's Magnetic Field",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Cigar Galaxy",
+      "Sculptor Galaxy",
+      "NGC 891",
+      "Cigar Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc891",
+    "name": "NGC 891",
+    "aliases": [
+      "Silver Sliver Galaxy",
+      "Caldwell 23"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23010",
+    "nasaTitle": "The Cigar Galaxy's Magnetic Field",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Cigar Galaxy",
+      "Sculptor Galaxy",
+      "Whale Galaxy",
+      "Cigar Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc4826-blackeye",
+    "name": "Black Eye Galaxy",
+    "aliases": [
+      "M64",
+      "NGC 4826"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA16613",
+    "nasaTitle": "Dwarf Galaxy Spotted",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Arp 220",
+      "Fireworks Galaxy",
+      "Antennae Galaxies"
+    ]
+  },
+  {
+    "id": "jwst-ngc6946-fireworks",
+    "name": "Fireworks Galaxy",
+    "aliases": [
+      "NGC 6946",
+      "Caldwell 12"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA16613",
+    "nasaTitle": "Dwarf Galaxy Spotted",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Arp 220",
+      "Black Eye Galaxy",
+      "Antennae Galaxies"
+    ]
+  },
+  {
+    "id": "jwst-ngc2903",
+    "name": "NGC 2903",
+    "aliases": [
+      "Leo Barred Spiral"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23020",
+    "nasaTitle": "Multi-Elevation Gullies",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 7469",
+      "NGC 3627",
+      "NGC 1566",
+      "Whirlpool Galaxy",
+      "NGC 1559",
+      "Whirlpool Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc1087",
+    "name": "NGC 1087",
+    "aliases": [
+      "PGC 10522"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA25440",
+    "nasaTitle": "A Black Hole Destroys a Star (Illustration)",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Phantom Galaxy",
+      "IC 5332",
+      "NGC 3351",
+      "NGC 4254",
+      "NGC 5068",
+      "NGC 1385",
+      "NGC 2835"
+    ]
+  },
+  {
+    "id": "jwst-ngc4535",
+    "name": "NGC 4535",
+    "aliases": [
+      "Lost Galaxy of Virgo"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1512",
+      "NGC 1672",
+      "Bode's Galaxy",
+      "Triangulum Galaxy",
+      "NGC 1433",
+      "NGC 4303",
+      "IC 342",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc1385",
+    "name": "NGC 1385",
+    "aliases": [
+      "PGC 13336"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA25440",
+    "nasaTitle": "A Black Hole Destroys a Star (Illustration)",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Phantom Galaxy",
+      "IC 5332",
+      "NGC 3351",
+      "NGC 4254",
+      "NGC 5068",
+      "NGC 1087",
+      "NGC 2835"
+    ]
+  },
+  {
+    "id": "jwst-ngc1433",
+    "name": "NGC 1433",
+    "aliases": [
+      "PGC 13737"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1512",
+      "NGC 1672",
+      "Bode's Galaxy",
+      "Triangulum Galaxy",
+      "NGC 4535",
+      "NGC 4303",
+      "IC 342",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc2835",
+    "name": "NGC 2835",
+    "aliases": [
+      "PGC 26232"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA25440",
+    "nasaTitle": "A Black Hole Destroys a Star (Illustration)",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Phantom Galaxy",
+      "IC 5332",
+      "NGC 3351",
+      "NGC 4254",
+      "NGC 5068",
+      "NGC 1087",
+      "NGC 1385"
+    ]
+  },
+  {
+    "id": "jwst-ngc7496",
+    "name": "NGC 7496",
+    "aliases": [
+      "PGC 70488"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA03296",
+    "nasaTitle": "A Stellar Ripple",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Cartwheel Galaxy",
+      "NGC 1300",
+      "Fomalhaut Debris Disc"
+    ]
+  },
+  {
+    "id": "jwst-ngc4303",
+    "name": "NGC 4303",
+    "aliases": [
+      "M61"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1512",
+      "NGC 1672",
+      "Bode's Galaxy",
+      "Triangulum Galaxy",
+      "NGC 4535",
+      "NGC 1433",
+      "IC 342",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc1559",
+    "name": "NGC 1559",
+    "aliases": [
+      "PGC 14944"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA23020",
+    "nasaTitle": "Multi-Elevation Gullies",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 7469",
+      "NGC 3627",
+      "NGC 1566",
+      "Whirlpool Galaxy",
+      "NGC 2903",
+      "Whirlpool Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ic342",
+    "name": "IC 342",
+    "aliases": [
+      "Hidden Galaxy",
+      "Caldwell 5"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1512",
+      "NGC 1672",
+      "Bode's Galaxy",
+      "Triangulum Galaxy",
+      "NGC 4535",
+      "NGC 1433",
+      "NGC 4303",
+      "Andromeda Galaxy"
+    ]
+  },
+  {
+    "id": "jwst-ngc1068",
+    "name": "NGC 1068",
+    "aliases": [
+      "M77",
+      "Squid Galaxy"
+    ],
+    "source": "JWST",
+    "category": "galaxy",
+    "nasaId": "GSFC_20171208_Archive_e002087",
+    "nasaTitle": "NASA's Fermi Telescope Resolves Radio Galaxy Centaurus A",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 1365",
+      "Centaurus A",
+      "Centaurus A"
+    ]
+  },
+  {
+    "id": "jwst-ceers-field",
+    "name": "CEERS Deep Field",
+    "aliases": [
+      "Cosmic Evolution ERS",
+      "EGS Field"
+    ],
+    "source": "JWST",
+    "category": "deep-field",
+    "nasaId": "webb_first_deep_field",
+    "nasaTitle": "Webb_first_deep_field_SMACS_0723",
+    "verdict": "ok",
+    "sharedWith": [
+      "SMACS 0723 (Webb's First Deep Field)",
+      "JADES Deep Field",
+      "COSMOS-Web Field",
+      "Pandora's Cluster",
+      "MACS J0416.1-2403",
+      "GLASS-JWST Deep Field"
+    ]
+  },
+  {
+    "id": "jwst-jades-goodss",
+    "name": "JADES Deep Field",
+    "aliases": [
+      "JWST Advanced Deep Extragalactic Survey",
+      "GOODS-S JWST"
+    ],
+    "source": "JWST",
+    "category": "deep-field",
+    "nasaId": "webb_first_deep_field",
+    "nasaTitle": "Webb_first_deep_field_SMACS_0723",
+    "verdict": "ok",
+    "sharedWith": [
+      "SMACS 0723 (Webb's First Deep Field)",
+      "CEERS Deep Field",
+      "COSMOS-Web Field",
+      "Pandora's Cluster",
+      "MACS J0416.1-2403",
+      "GLASS-JWST Deep Field"
+    ]
+  },
+  {
+    "id": "jwst-cosmos-web",
+    "name": "COSMOS-Web Field",
+    "aliases": [
+      "COSMOS JWST Survey"
+    ],
+    "source": "JWST",
+    "category": "deep-field",
+    "nasaId": "webb_first_deep_field",
+    "nasaTitle": "Webb_first_deep_field_SMACS_0723",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "SMACS 0723 (Webb's First Deep Field)",
+      "CEERS Deep Field",
+      "JADES Deep Field",
+      "Pandora's Cluster",
+      "MACS J0416.1-2403",
+      "GLASS-JWST Deep Field"
+    ]
+  },
+  {
+    "id": "jwst-pandoras-cluster",
+    "name": "Pandora's Cluster",
+    "aliases": [
+      "Abell 2744",
+      "ACO 2744"
+    ],
+    "source": "JWST",
+    "category": "deep-field",
+    "nasaId": "webb_first_deep_field",
+    "nasaTitle": "Webb_first_deep_field_SMACS_0723",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "SMACS 0723 (Webb's First Deep Field)",
+      "CEERS Deep Field",
+      "JADES Deep Field",
+      "COSMOS-Web Field",
+      "MACS J0416.1-2403",
+      "GLASS-JWST Deep Field"
+    ]
+  },
+  {
+    "id": "jwst-macs-j0416",
+    "name": "MACS J0416.1-2403",
+    "aliases": [
+      "Hubble Frontier Field",
+      "MACS 0416"
+    ],
+    "source": "JWST",
+    "category": "deep-field",
+    "nasaId": "webb_first_deep_field",
+    "nasaTitle": "Webb_first_deep_field_SMACS_0723",
+    "verdict": "ok",
+    "sharedWith": [
+      "SMACS 0723 (Webb's First Deep Field)",
+      "CEERS Deep Field",
+      "JADES Deep Field",
+      "COSMOS-Web Field",
+      "Pandora's Cluster",
+      "GLASS-JWST Deep Field"
+    ]
+  },
+  {
+    "id": "jwst-glass-field",
+    "name": "GLASS-JWST Deep Field",
+    "aliases": [
+      "Abell 2744 Background",
+      "GLASS ERS"
+    ],
+    "source": "JWST",
+    "category": "deep-field",
+    "nasaId": "webb_first_deep_field",
+    "nasaTitle": "Webb_first_deep_field_SMACS_0723",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "SMACS 0723 (Webb's First Deep Field)",
+      "CEERS Deep Field",
+      "JADES Deep Field",
+      "COSMOS-Web Field",
+      "Pandora's Cluster",
+      "MACS J0416.1-2403"
+    ]
+  },
+  {
+    "id": "jwst-europa",
+    "name": "Europa",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA22949",
+    "nasaTitle": "Tumultuous Clouds of Jupiter",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Jupiter",
+      "Io",
+      "Ganymede"
+    ]
+  },
+  {
+    "id": "jwst-titan",
+    "name": "Titan",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA11141",
+    "nasaTitle": "Saturn … Four Years On",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Saturn"
+    ]
+  },
+  {
+    "id": "jwst-enceladus",
+    "name": "Enceladus",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA21274",
+    "nasaTitle": "Hematite-Rich Deposits in Capri Chasma",
+    "verdict": "FLAG",
+    "sharedWith": []
+  },
+  {
+    "id": "jwst-didymos",
+    "name": "Didymos/Dimorphos (DART Impact)",
+    "aliases": [
+      "65803 Didymos",
+      "DART Target"
+    ],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA24420",
+    "nasaTitle": "Frosty Sand Dunes of Mars",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Mars"
+    ]
+  },
+  {
+    "id": "jwst-comet-238p",
+    "name": "Comet 238P/Read",
+    "aliases": [
+      "238P",
+      "Main Belt Comet"
+    ],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA01492",
+    "nasaTitle": "PIA01492",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Neptune"
+    ]
+  },
+  {
+    "id": "jwst-io",
+    "name": "Io",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA22949",
+    "nasaTitle": "Tumultuous Clouds of Jupiter",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Jupiter",
+      "Europa",
+      "Ganymede"
+    ]
+  },
+  {
+    "id": "jwst-ganymede",
+    "name": "Ganymede",
+    "aliases": [],
+    "source": "JWST",
+    "category": "solar-system",
+    "nasaId": "PIA22949",
+    "nasaTitle": "Tumultuous Clouds of Jupiter",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Jupiter",
+      "Europa",
+      "Io"
+    ]
+  },
+  {
+    "id": "jwst-trappist-1",
+    "name": "TRAPPIST-1 System",
+    "aliases": [
+      "2MASS J23062928-0502285"
+    ],
+    "source": "JWST",
+    "category": "other",
+    "nasaId": "PIA21429",
+    "nasaTitle": "Transit Illustration of TRAPPIST-1",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "jwst-wasp39b",
+    "name": "WASP-39 b",
+    "aliases": [
+      "HD 159868 b"
+    ],
+    "source": "JWST",
+    "category": "other",
+    "nasaId": "PIA04201",
+    "nasaTitle": "Stephan Quintet",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Stephan's Quintet"
+    ]
+  },
+  {
+    "id": "jwst-hip65426b",
+    "name": "HIP 65426 b",
+    "aliases": [],
+    "source": "JWST",
+    "category": "other",
+    "nasaId": "PIA22565",
+    "nasaTitle": "Ultrahot Jupiter WASP-121b",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 346",
+      "NGC 3603",
+      "VHS 1256 b",
+      "Westerlund 2"
+    ]
+  },
+  {
+    "id": "jwst-vhs1256b",
+    "name": "VHS 1256 b",
+    "aliases": [
+      "VHS J125601.92-125723.9 b"
+    ],
+    "source": "JWST",
+    "category": "other",
+    "nasaId": "PIA22565",
+    "nasaTitle": "Ultrahot Jupiter WASP-121b",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 346",
+      "NGC 3603",
+      "HIP 65426 b",
+      "Westerlund 2"
+    ]
+  },
+  {
+    "id": "jwst-lhs475b",
+    "name": "LHS 475 b",
+    "aliases": [
+      "G 239-25 b"
+    ],
+    "source": "JWST",
+    "category": "other",
+    "nasaId": "PIA13108",
+    "nasaTitle": "Menkhib and the California Nebula",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Rho Ophiuchi Cloud Complex",
+      "L1527 Protostar",
+      "NGC 1333",
+      "HH 46/47"
+    ]
+  },
+  {
+    "id": "jwst-fomalhaut",
+    "name": "Fomalhaut Debris Disc",
+    "aliases": [
+      "Alpha Piscis Austrini"
+    ],
+    "source": "JWST",
+    "category": "other",
+    "nasaId": "PIA03296",
+    "nasaTitle": "A Stellar Ripple",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Cartwheel Galaxy",
+      "NGC 1300",
+      "NGC 7496"
+    ]
+  },
+  {
+    "id": "jwst-wr124",
+    "name": "WR 124",
+    "aliases": [
+      "M1-67"
+    ],
+    "source": "JWST",
+    "category": "nebula",
+    "nasaId": "GSFC_20171208_Archive_e000833",
+    "nasaTitle": "Hubble's High-Definition Panoramic View of the Andromeda Galaxy",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "WR 140",
+      "Bubble Nebula"
+    ]
+  },
+  {
+    "id": "hubble-helix-nebula",
+    "name": "Helix Nebula",
+    "aliases": [
+      "NGC 7293",
+      "The Eye of God"
+    ],
+    "source": "Hubble",
+    "category": "nebula",
+    "nasaId": "PIA18164",
+    "nasaTitle": "Iridescent Glory of Nearby Helix Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Ring Nebula"
+    ]
+  },
+  {
+    "id": "hubble-sombrero-galaxy",
+    "name": "Sombrero Galaxy",
+    "aliases": [
+      "M104",
+      "NGC 4594"
+    ],
+    "source": "Hubble",
+    "category": "galaxy",
+    "nasaId": "PIA15226",
+    "nasaTitle": "Hubble Spies Spectacular Sombrero",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "hubble-crab-nebula",
+    "name": "Crab Nebula",
+    "aliases": [
+      "M1",
+      "NGC 1952",
+      "Taurus A"
+    ],
+    "source": "Hubble",
+    "category": "supernova",
+    "nasaId": "PIA03606",
+    "nasaTitle": "Most Detailed Image of the Crab Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Crab Nebula"
+    ]
+  },
+  {
+    "id": "hubble-orion-nebula",
+    "name": "Orion Nebula",
+    "aliases": [
+      "M42",
+      "NGC 1976"
+    ],
+    "source": "Hubble",
+    "category": "nebula",
+    "nasaId": "PIA01322",
+    "nasaTitle": "Chaos at the Heart of Orion",
+    "verdict": "ok",
+    "sharedWith": [
+      "Orion Nebula"
+    ]
+  },
+  {
+    "id": "hubble-horsehead-nebula",
+    "name": "Horsehead Nebula",
+    "aliases": [
+      "Barnard 33",
+      "IC 434"
+    ],
+    "source": "Hubble",
+    "category": "nebula",
+    "nasaId": "PIA16008",
+    "nasaTitle": "Hubble Sees a Horsehead of a Different Color",
+    "verdict": "ok",
+    "sharedWith": [
+      "Horsehead Nebula"
+    ]
+  },
+  {
+    "id": "hubble-cats-eye-nebula",
+    "name": "Cat's Eye Nebula",
+    "aliases": [
+      "NGC 6543"
+    ],
+    "source": "Hubble",
+    "category": "nebula",
+    "nasaId": "PIA16009",
+    "nasaTitle": "Dying Star Creates Fantasy-like Sculpture of Gas and Dust",
+    "verdict": "ok",
+    "sharedWith": [
+      "Butterfly Nebula"
+    ]
+  },
+  {
+    "id": "hubble-milky-way-center",
+    "name": "Milky Way Center",
+    "aliases": [
+      "Galactic Center",
+      "Sagittarius A*"
+    ],
+    "source": "Hubble",
+    "category": "other",
+    "nasaId": "PIA12348",
+    "nasaTitle": "Great Observatories Unique Views of the Milky Way",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "hubble-andromeda",
+    "name": "Andromeda Galaxy",
+    "aliases": [
+      "M31",
+      "NGC 224"
+    ],
+    "source": "Hubble",
+    "category": "galaxy",
+    "nasaId": "PIA15416",
+    "nasaTitle": "Andromeda",
+    "verdict": "ok",
+    "sharedWith": [
+      "NGC 4321",
+      "NGC 1512",
+      "NGC 1672",
+      "Bode's Galaxy",
+      "Triangulum Galaxy",
+      "NGC 4535",
+      "NGC 1433",
+      "NGC 4303",
+      "IC 342"
+    ]
+  },
+  {
+    "id": "hubble-whirlpool-galaxy",
+    "name": "Whirlpool Galaxy",
+    "aliases": [
+      "M51",
+      "NGC 5194"
+    ],
+    "source": "Hubble",
+    "category": "galaxy",
+    "nasaId": "PIA23020",
+    "nasaTitle": "Multi-Elevation Gullies",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 7469",
+      "NGC 3627",
+      "NGC 1566",
+      "Whirlpool Galaxy",
+      "NGC 2903",
+      "NGC 1559"
+    ]
+  },
+  {
+    "id": "hubble-antennae-galaxies",
+    "name": "Antennae Galaxies",
+    "aliases": [
+      "NGC 4038",
+      "NGC 4039",
+      "Arp 244"
+    ],
+    "source": "Hubble",
+    "category": "galaxy",
+    "nasaId": "PIA16613",
+    "nasaTitle": "Dwarf Galaxy Spotted",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "Arp 220",
+      "Black Eye Galaxy",
+      "Fireworks Galaxy"
+    ]
+  },
+  {
+    "id": "hubble-eagle-nebula",
+    "name": "Eagle Nebula",
+    "aliases": [
+      "M16",
+      "NGC 6611",
+      "Star Queen Nebula"
+    ],
+    "source": "Hubble",
+    "category": "nebula",
+    "nasaId": "PIA15985",
+    "nasaTitle": "Hubble Captures View of Mystic Mountain",
+    "verdict": "ok",
+    "sharedWith": []
+  },
+  {
+    "id": "hubble-lagoon-nebula",
+    "name": "Lagoon Nebula",
+    "aliases": [
+      "M8",
+      "NGC 6523"
+    ],
+    "source": "Hubble",
+    "category": "nebula",
+    "nasaId": "PIA15810",
+    "nasaTitle": "A Sky Chock-Full of Black Holes",
+    "verdict": "FLAG",
+    "sharedWith": []
+  },
+  {
+    "id": "hubble-bubble-nebula",
+    "name": "Bubble Nebula",
+    "aliases": [
+      "NGC 7635",
+      "Sharpless 162"
+    ],
+    "source": "Hubble",
+    "category": "nebula",
+    "nasaId": "GSFC_20171208_Archive_e000833",
+    "nasaTitle": "Hubble's High-Definition Panoramic View of the Andromeda Galaxy",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "WR 140",
+      "WR 124"
+    ]
+  },
+  {
+    "id": "hubble-westerlund-2",
+    "name": "Westerlund 2",
+    "aliases": [
+      "Gum 29"
+    ],
+    "source": "Hubble",
+    "category": "star-cluster",
+    "nasaId": "PIA22565",
+    "nasaTitle": "Ultrahot Jupiter WASP-121b",
+    "verdict": "FLAG",
+    "sharedWith": [
+      "NGC 346",
+      "NGC 3603",
+      "HIP 65426 b",
+      "VHS 1256 b"
+    ]
+  },
+  {
+    "id": "hubble-veil-nebula",
+    "name": "Veil Nebula",
+    "aliases": [
+      "NGC 6960",
+      "Cygnus Loop"
+    ],
+    "source": "Hubble",
+    "category": "supernova",
+    "nasaId": "PIA15413",
+    "nasaTitle": "An Audience Favorite Nebula",
+    "verdict": "ok",
+    "sharedWith": [
+      "Veil Nebula"
+    ]
+  },
+  {
+    "id": "hubble-centaurus-a",
+    "name": "Centaurus A",
+    "aliases": [
+      "NGC 5128",
+      "Arp 153"
+    ],
+    "source": "Hubble",
+    "category": "galaxy",
+    "nasaId": "GSFC_20171208_Archive_e002087",
+    "nasaTitle": "NASA's Fermi Telescope Resolves Radio Galaxy Centaurus A",
+    "verdict": "ok",
+    "sharedWith": [
+      "NGC 1365",
+      "Centaurus A",
+      "NGC 1068"
+    ]
+  },
+  {
+    "id": "hubble-m82-cigar-galaxy",
+    "name": "Cigar Galaxy",
+    "aliases": [
+      "M82",
+      "NGC 3034"
+    ],
+    "source": "Hubble",
+    "category": "galaxy",
+    "nasaId": "PIA23010",
+    "nasaTitle": "The Cigar Galaxy's Magnetic Field",
+    "verdict": "ok",
+    "sharedWith": [
+      "Cigar Galaxy",
+      "Sculptor Galaxy",
+      "Whale Galaxy",
+      "NGC 891"
+    ]
+  },
+  {
+    "id": "hubble-ngc2014-cosmic-reef",
+    "name": "Cosmic Reef",
+    "aliases": [
+      "NGC 2014",
+      "NGC 2020"
+    ],
+    "source": "Hubble",
+    "category": "nebula",
+    "nasaId": "GSFC_20171208_Archive_e000226",
+    "nasaTitle": "Hubble Peers into the Storm",
+    "verdict": "ok",
+    "sharedWith": []
+  }
+]
