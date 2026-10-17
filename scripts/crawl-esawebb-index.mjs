@@ -19,7 +19,7 @@ const ids = new Set()
 for (let page = 1; page <= 80; page++) {
   const html = await get(`https://esawebb.org/images/archive/search/page/${page}/?query=`)
   if (!html) break
-  const found = [...html.matchAll(/\/images\/((?:weic|potw)\d+[a-z]?)\//g)].map((m) => m[1])
+  const found = [...html.matchAll(/\/images\/([A-Za-z0-9-]*\d[A-Za-z0-9-]*)\//g)].map((m) => m[1])
   const before = ids.size
   found.forEach((i) => ids.add(i))
   process.stdout.write(`p${page}:${ids.size - before} `)
