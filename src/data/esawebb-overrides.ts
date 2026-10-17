@@ -9,6 +9,17 @@ export interface EsaWebbOverride {
   credit: string
 }
 
+/**
+ * Tiles hidden from /explore: the original image showed a different object and no genuine image
+ * of the target was found (docs/explore/image-audit.json). Remove an id once a real image is added.
+ */
+export const HIDDEN_TILE_IDS: ReadonlySet<string> = new Set([
+  'jwst-ngc3603', 'jwst-m81-bodes', 'jwst-m33-triangulum', 'jwst-ngc253-sculptor',
+  'jwst-ngc4631-whale', 'jwst-ngc891', 'jwst-ngc4826-blackeye', 'jwst-ngc6946-fireworks',
+  'jwst-ngc2903', 'jwst-ic342', 'jwst-glass-field', 'jwst-io', 'jwst-ganymede',
+  'hubble-whirlpool-galaxy', 'hubble-antennae-galaxies', 'hubble-bubble-nebula',
+])
+
 /** Hubble tiles whose original image showed a different object: real NASA Hubble image + credit. */
 export const HUBBLE_IMAGE_OVERRIDES: Record<string, { url: string; credit: string }> = {
   'hubble-westerlund-2': {

@@ -4,7 +4,7 @@
  */
 
 import type { Observation } from '@/types'
-import { ESAWEBB_IMAGE_BASE, ESAWEBB_OVERRIDES, HUBBLE_IMAGE_OVERRIDES } from '@/data/esawebb-overrides'
+import { ESAWEBB_IMAGE_BASE, ESAWEBB_OVERRIDES, HIDDEN_TILE_IDS, HUBBLE_IMAGE_OVERRIDES } from '@/data/esawebb-overrides'
 
 // ============================================
 // Featured Images (Curated)
@@ -78,7 +78,7 @@ export function getFeaturedJWSTImages(): Observation[] {
  * Thumbnail and preview use the ~1280px "screen" size; full uses "large".
  */
 function withEsaWebbImages(observations: Observation[]): Observation[] {
-  return observations.map((obs) => {
+  return observations.filter((obs) => !HIDDEN_TILE_IDS.has(obs.id)).map((obs) => {
     const o = ESAWEBB_OVERRIDES[obs.id]
     if (!o) return obs
     const screen = `${ESAWEBB_IMAGE_BASE}/screen/${o.esaId}.jpg`
@@ -1616,7 +1616,7 @@ function curatedJWSTImages(): Observation[] {
  * These are hand-picked iconic images with verified URLs from NASA.gov
  */
 export function getFeaturedHubbleImages(): Observation[] {
-  return curatedHubbleImages().map((obs) => {
+  return curatedHubbleImages().filter((obs) => !HIDDEN_TILE_IDS.has(obs.id)).map((obs) => {
     const o = HUBBLE_IMAGE_OVERRIDES[obs.id]
     if (!o) return obs
     return { ...obs, images: { thumbnail: o.url, preview: o.url, full: o.url, credit: o.credit } }

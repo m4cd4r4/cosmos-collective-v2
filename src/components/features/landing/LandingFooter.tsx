@@ -22,7 +22,7 @@ const SITE_LINKS = [
 
 const FACTS = [
   { value: '11', label: 'live data sources' },
-  { value: '132', label: 'curated observations' },
+  { value: '116', label: 'curated observations' },
   { value: '2,600+', label: 'confirmed exoplanets' },
 ]
 
