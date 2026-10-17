@@ -10,6 +10,7 @@ import { ExploreGallery } from '@/components/features/explore/ExploreGallery'
 import { ExploreFilters } from '@/components/features/explore/ExploreFilters'
 import { ExploreSearch } from '@/components/features/explore/ExploreSearch'
 import { ExploreHero, type HeroSlide } from '@/components/features/explore/ExploreHero'
+import { ExploreRails } from '@/components/features/explore/ExploreRails'
 import { WebbExplorerPanel } from '@/components/features/explore/WebbExplorerPanel'
 import { getFeaturedJWSTImages, getFeaturedHubbleImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
@@ -105,6 +106,7 @@ export default function ExplorePage({
       <Header />
 
       {showHero && <ExploreHero slides={buildHeroSlides()} />}
+      {showHero && <ExploreRails />}
 
       {/* ── App Header Strip ──────────────────────────────────────────────── */}
       {!showHero && (
