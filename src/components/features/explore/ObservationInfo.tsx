@@ -68,6 +68,11 @@ export function ObservationInfo({ observation }: ObservationInfoProps) {
                   Also known as: {observation.aliases.join(', ')}
                 </p>
               )}
+              {observation.images.credit && (
+                <p className="text-xs text-gray-500 mt-2">
+                  Image credit: {observation.images.credit}
+                </p>
+              )}
             </div>
 
             <Button
