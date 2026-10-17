@@ -4,6 +4,7 @@
  */
 
 import type { Observation } from '@/types'
+import { ESAWEBB_IMAGE_BASE, ESAWEBB_OVERRIDES, HIDDEN_TILE_IDS, HUBBLE_IMAGE_OVERRIDES } from '@/data/esawebb-overrides'
 
 // ============================================
 // Featured Images (Curated)
@@ -69,6 +70,24 @@ const NASA_IMAGE_URLS = {
  * These are hand-picked iconic images with verified URLs from NASA.gov
  */
 export function getFeaturedJWSTImages(): Observation[] {
+  return withEsaWebbImages(curatedJWSTImages())
+}
+
+/**
+ * Swap in the real ESA/Webb image (with credit) for tiles whose original image showed another object.
+ * Thumbnail and preview use the ~1280px "screen" size; full uses "large".
+ */
+function withEsaWebbImages(observations: Observation[]): Observation[] {
+  return observations.filter((obs) => !HIDDEN_TILE_IDS.has(obs.id)).map((obs) => {
+    const o = ESAWEBB_OVERRIDES[obs.id]
+    if (!o) return obs
+    const screen = `${ESAWEBB_IMAGE_BASE}/screen/${o.esaId}.jpg`
+    const large = `${ESAWEBB_IMAGE_BASE}/large/${o.esaId}.jpg`
+    return { ...obs, images: { thumbnail: screen, preview: screen, full: large, credit: o.credit } }
+  })
+}
+
+function curatedJWSTImages(): Observation[] {
   return [
     {
       id: 'jwst-carina-nebula',
@@ -1597,6 +1616,14 @@ export function getFeaturedJWSTImages(): Observation[] {
  * These are hand-picked iconic images with verified URLs from NASA.gov
  */
 export function getFeaturedHubbleImages(): Observation[] {
+  return curatedHubbleImages().filter((obs) => !HIDDEN_TILE_IDS.has(obs.id)).map((obs) => {
+    const o = HUBBLE_IMAGE_OVERRIDES[obs.id]
+    if (!o) return obs
+    return { ...obs, images: { thumbnail: o.url, preview: o.url, full: o.url, credit: o.credit } }
+  })
+}
+
+function curatedHubbleImages(): Observation[] {
   return [
     {
       id: 'hubble-helix-nebula',

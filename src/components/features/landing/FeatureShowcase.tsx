@@ -27,7 +27,7 @@ const FEATURES = [
   {
     title: 'Explore',
     href: '/explore',
-    description: '132 curated JWST, Hubble, and Australian radio observations',
+    description: '116 curated JWST, Hubble, and Australian radio observations',
     image: PLANET_HERO_IMAGES.carina,
     icon: Search,
     color: '#d4af37',

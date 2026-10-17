@@ -16,7 +16,7 @@ const withPWA = require('next-pwa')({
   runtimeCaching: [
     // Astronomical imagery - CacheFirst (rarely changes)
     {
-      urlPattern: /^https:\/\/esawebb\.org\/archives\/images\/.*/i,
+      urlPattern: /^https:\/\/(cdn\.)?esawebb\.org\/archives\/images\/.*/i,
       handler: 'CacheFirst',
       options: {
         cacheName: 'esawebb-images',
@@ -122,6 +122,7 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.stsci.edu' },
       { protocol: 'https', hostname: 'mast.stsci.edu' },
       { protocol: 'https', hostname: 'esawebb.org' },
+      { protocol: 'https', hostname: 'cdn.esawebb.org' },
       { protocol: 'https', hostname: 'apod.nasa.gov' },
       { protocol: 'https', hostname: 'images-api.nasa.gov' },
       { protocol: 'https', hostname: 'images-assets.nasa.gov' },

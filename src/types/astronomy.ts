@@ -137,6 +137,8 @@ export interface ImageSet {
   full: string
   /** Raw/FITS data URL (if available) */
   raw?: string
+  /** Image credit line, shown where the image is shown (required for CC BY images) */
+  credit?: string
   /** Different wavelength versions */
   wavelengthVersions?: {
     band: WavelengthBand
