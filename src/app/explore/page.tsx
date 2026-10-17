@@ -9,6 +9,7 @@ import { Header } from '@/components/layout/Header'
 import { ExploreGallery } from '@/components/features/explore/ExploreGallery'
 import { ExploreFilters } from '@/components/features/explore/ExploreFilters'
 import { ExploreSearch } from '@/components/features/explore/ExploreSearch'
+import { ExploreHero, type HeroSlide } from '@/components/features/explore/ExploreHero'
 import { WebbExplorerPanel } from '@/components/features/explore/WebbExplorerPanel'
 import { getFeaturedJWSTImages, getFeaturedHubbleImages } from '@/services/mast-api'
 import { getFeaturedRadioObservations } from '@/services/australian-telescopes'
@@ -21,6 +22,48 @@ import { StatsBar } from '@/components/ui/StatsBar'
 export const metadata: Metadata = {
   title: 'Explore',
   description: 'Browse thousands of astronomical observations from JWST, Hubble, and Australian radio telescopes. Filter by category, wavelength, and more.',
+}
+
+const HERO_CATEGORIES = ['nebula', 'galaxy', 'deep-field', 'star-cluster']
+
+// NASA serves ~medium (about 1000px) everywhere, but that is soft at full-bleed.
+// Each id below was HEAD-checked 2026-10-17; a slide not listed keeps its ~medium URL.
+const HERO_NASA_IDS_LARGE = ['carina_nebula', 'webb_first_deep_field', 'PIA15985', 'PIA04201', 'PIA15810']
+const HERO_NASA_IDS_ORIG = ['PIA15226'] // no ~large exists; ~orig is only 422 KB
+function heroImageUrl(url: string): string {
+  const id = url.match(/\/image\/([^/]+)\/[^/]+~medium\.jpg$/)?.[1]
+  if (!id) return url
+  if (HERO_NASA_IDS_LARGE.includes(id)) return url.replace('~medium', '~large')
+  if (HERO_NASA_IDS_ORIG.includes(id)) return url.replace('~medium', '~orig')
+  return url
+}
+
+// Hero slides: real JWST and Hubble images only. Radio tiles reuse generic
+// stand-in images, so they never appear here. Duplicated image URLs are dropped.
+function buildHeroSlides(): HeroSlide[] {
+  const seen = new Set<string>()
+  const pick = (list: ReturnType<typeof getFeaturedJWSTImages>) =>
+    list
+      .filter((o) => HERO_CATEGORIES.includes(o.category) && o.images.full)
+      .filter((o) => {
+        if (seen.has(o.images.full)) return false
+        seen.add(o.images.full)
+        return true
+      })
+  const jwst = pick(getFeaturedJWSTImages())
+  const hubble = pick(getFeaturedHubbleImages())
+  const mixed = []
+  for (let i = 0; mixed.length < 6 && (i < jwst.length || i < hubble.length); i++) {
+    if (jwst[i]) mixed.push(jwst[i])
+    if (hubble[i] && mixed.length < 6) mixed.push(hubble[i])
+  }
+  return mixed.slice(0, 6).map((o) => ({
+    id: o.id,
+    name: o.targetName,
+    telescope: o.source,
+    caption: o.description ?? o.analysis?.summary ?? '',
+    image: heroImageUrl(o.images.full),
+  }))
 }
 
 // Loading skeleton for gallery — dark themed
@@ -53,23 +96,31 @@ export default function ExplorePage({
   const radioCount = getFeaturedRadioObservations().length
   const totalCount = jwstCount + hubbleCount + radioCount
 
+  // The hero only opens a clean /explore; filtered or searched links go straight to results
+  const hasFilters = Boolean(source || category || wavelength || query)
+  const showHero = view === 'gallery' && !hasFilters
+
   return (
     <div className="min-h-[100dvh] flex flex-col bg-[#0a0e1a] text-[#c8d4f0] font-mono">
       <Header />
 
+      {showHero && <ExploreHero slides={buildHeroSlides()} />}
+
       {/* ── App Header Strip ──────────────────────────────────────────────── */}
-      <PageHeader
-        icon={Telescope}
-        title="Explore"
-        badge={{ text: `${totalCount} Observations`, color: '#d4af37' }}
-        subtitle="JWST · Hubble · Radio"
-        rightContent={
-          <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-gray-500">
-            <Layers className="w-3 h-3" />
-            <span className="hidden sm:inline">Multi-source Archive</span>
-          </div>
-        }
-      />
+      {!showHero && (
+        <PageHeader
+          icon={Telescope}
+          title="Explore"
+          badge={{ text: `${totalCount} Observations`, color: '#d4af37' }}
+          subtitle="JWST · Hubble · Radio"
+          rightContent={
+            <div className="flex items-center gap-2 text-[11px] uppercase tracking-wider text-gray-500">
+              <Layers className="w-3 h-3" />
+              <span className="hidden sm:inline">Multi-source Archive</span>
+            </div>
+          }
+        />
+      )}
 
       {/* ── View Tabs ─────────────────────────────────────────────────────── */}
       <nav
@@ -111,7 +162,7 @@ export default function ExplorePage({
       {view === 'webb' ? (
         <WebbExplorerPanel />
       ) : (
-      <div className="flex-1 overflow-auto px-4 sm:px-5 py-5 pb-20 lg:pb-5 max-w-7xl mx-auto w-full">
+      <div id="browse" className="flex-1 overflow-auto scroll-mt-4 px-4 sm:px-5 py-5 pb-20 lg:pb-5 max-w-7xl mx-auto w-full">
 
         {/* ── Search + Filters ──────────────────────────────────────────── */}
         <div className="rounded-xl border border-[rgba(212,175,55,0.15)] bg-[rgba(8,12,28,0.7)] overflow-hidden mb-5">
