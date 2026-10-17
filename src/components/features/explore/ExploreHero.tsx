@@ -85,11 +85,11 @@ export function ExploreHero({ slides }: { slides: HeroSlide[] }) {
       ))}
 
       {/* Legibility scrim: bottom for text, soft top for the header */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] via-[#0a0e1a]/35 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a] via-[#0a0e1a]/60 to-transparent pointer-events-none" />
       <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-[#0a0e1a]/70 to-transparent pointer-events-none" />
 
       <div className="absolute inset-x-0 bottom-0 px-4 sm:px-8 pb-8 sm:pb-12 max-w-7xl mx-auto">
-        <p className="text-[11px] uppercase tracking-[0.2em] text-[#d4af37] mb-2">
+        <p className="text-[11px] uppercase tracking-[0.2em] text-[#f0cd5a] mb-2 [text-shadow:0_1px_6px_rgba(10,14,26,0.9)]">
           {active.telescope} · Real data
         </p>
         <h1 className="font-display text-3xl sm:text-5xl lg:text-6xl text-white font-semibold leading-tight max-w-3xl">

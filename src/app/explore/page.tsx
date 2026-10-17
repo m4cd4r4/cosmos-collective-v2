@@ -26,6 +26,18 @@ export const metadata: Metadata = {
 
 const HERO_CATEGORIES = ['nebula', 'galaxy', 'deep-field', 'star-cluster']
 
+// NASA serves ~medium (about 1000px) everywhere, but that is soft at full-bleed.
+// Each id below was HEAD-checked 2026-10-17; a slide not listed keeps its ~medium URL.
+const HERO_NASA_IDS_LARGE = ['carina_nebula', 'webb_first_deep_field', 'PIA15985', 'PIA04201', 'PIA15810']
+const HERO_NASA_IDS_ORIG = ['PIA15226'] // no ~large exists; ~orig is only 422 KB
+function heroImageUrl(url: string): string {
+  const id = url.match(/\/image\/([^/]+)\/[^/]+~medium\.jpg$/)?.[1]
+  if (!id) return url
+  if (HERO_NASA_IDS_LARGE.includes(id)) return url.replace('~medium', '~large')
+  if (HERO_NASA_IDS_ORIG.includes(id)) return url.replace('~medium', '~orig')
+  return url
+}
+
 // Hero slides: real JWST and Hubble images only. Radio tiles reuse generic
 // stand-in images, so they never appear here. Duplicated image URLs are dropped.
 function buildHeroSlides(): HeroSlide[] {
@@ -50,7 +62,7 @@ function buildHeroSlides(): HeroSlide[] {
     name: o.targetName,
     telescope: o.source,
     caption: o.description ?? o.analysis?.summary ?? '',
-    image: o.images.full,
+    image: heroImageUrl(o.images.full),
   }))
 }
 
