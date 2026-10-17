@@ -413,6 +413,22 @@
   }
 }
 
+/* Explore hero: slow Ken Burns drift on the active slide */
+@keyframes hero-drift {
+  from { transform: scale(1) translate(0, 0); }
+  to { transform: scale(1.1) translate(-1.5%, -1%); }
+}
+
+.hero-drift {
+  animation: hero-drift 14s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-drift {
+    animation: none;
+  }
+}
+
 /* ---------- Print styles ---------- */
 @media print {
   body {
