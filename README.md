@@ -6,6 +6,7 @@
 
 Fly a 3D solar system, image an exoplanet through the Sun's own gravity, browse JWST's infrared sky, and map 2,700+ Kepler worlds. Every datum is real, sourced, and dated - drawn live from NASA, ESA, STScI, NOAA, and CSIRO.
 
+[![CI](https://github.com/m4cd4r4/cosmos-collective-v2/actions/workflows/ci.yml/badge.svg)](https://github.com/m4cd4r4/cosmos-collective-v2/actions/workflows/ci.yml)
 [![Website](https://img.shields.io/badge/live-cosmos--collective.com.au-d4af37?style=flat-square)](https://cosmos-collective.com.au)
 [![Next.js](https://img.shields.io/badge/Next.js-14-000?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-18-4a90e2?style=flat-square&logo=react)](https://react.dev/)
@@ -17,9 +18,9 @@ Fly a 3D solar system, image an exoplanet through the Sun's own gravity, browse 
 
 <br />
 
-![Interactive 3D Solar System](./docs/readme/solar-system-demo.gif)
+![The Solar System explorer: every planet where it really is today, then a dive to the Sun](./docs/readme/solar-system.gif)
 
-<sub>The Solar System explorer - real orbital mechanics, 8 planets, 16 tidally-locked moons, a true-scale toggle, and an Earth Dive.</sub>
+<sub>The Solar System explorer - real orbital mechanics, speed control from real time to a year per second, top and side views, and a dive to the Sun.</sub>
 
 </div>
 
@@ -27,18 +28,31 @@ Fly a 3D solar system, image an exoplanet through the Sun's own gravity, browse 
 
 ## What's inside
 
-Eight explorers, one dark-sky instrument aesthetic. Deep space void backgrounds, stellar-gold accents, tabular data readouts. Built for the curious - a 14-year-old can navigate it, and the numbers are all real.
+Six explorers, one dark-sky instrument aesthetic. Deep space void backgrounds, stellar-gold accents, tabular data readouts. Built for the curious - a 14-year-old can navigate it, and the numbers are all real.
 
 | Explorer | Route | What it does |
 |----------|-------|--------------|
-| **Solar System** | `/solar-system` | Photorealistic 3D orbits, true-scale toggle, Earth Dive |
-| **Gravitational Lens Telescope** | `/gravitational-lens` | The Solar Gravitational Lens mission concept, act by act |
-| **JWST Explorer** | `/jwst` | 85 Webb observations with NIRCam/MIRI wavelength switching |
-| **Kepler Exoplanets** | `/kepler` | 2,700+ confirmed worlds in an interactive stellar field |
-| **Sky Map** | `/sky-map` | The whole celestial sphere across radio, infrared, optical, and X-ray |
-| **Explore Gallery** | `/explore` | 116 curated JWST, Hubble, and Australian radio observations |
-| **Satellites** | `/satellites` | Every active satellite at its position right now, by orbit class |
-| **Spacecraft guide** | `/satellites#spacecraft` | Space telescopes, probes, and stations reference |
+| **Explore** | `/explore` | Curated JWST, Hubble, and Australian radio observations, with a Webb explorer at `/explore?view=webb` |
+| **Satellites** | `/satellites` | Every active satellite at its position right now, by orbit class and constellation, plus a spacecraft guide |
+| **Sky Map** | `/sky-map` | The whole celestial sphere across radio, infrared, optical, UV, and gamma surveys |
+| **Solar System** | `/solar-system` | Orbits where the planets really are today, time-speed control, top and side views, a dive to the Sun |
+| **Gravitational Lens** | `/gravitational-lens` | The Solar Gravitational Lens mission concept, act by act, with a string-of-pearls CubeSat anatomy |
+| **Kepler Exoplanets** | `/kepler` | 2,700+ confirmed worlds from a live NASA Exoplanet Archive query |
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/readme/explore.jpg" alt="Explore: curated observations"/></td>
+    <td width="50%"><img src="./docs/readme/webb.jpg" alt="Webb explorer: JWST observations by category and instrument"/></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="./docs/readme/satellites.jpg" alt="Satellites: every active satellite by orbit class"/></td>
+    <td width="50%"><img src="./docs/readme/sky-map.jpg" alt="Sky Map: Aladin Lite with a spectrum switcher"/></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="./docs/readme/kepler.jpg" alt="Kepler: confirmed exoplanets in an interactive stellar field"/></td>
+    <td width="50%"><img src="./docs/readme/solar-system.jpg" alt="Solar System: orbit view with speed and view controls"/></td>
+  </tr>
+</table>
 
 ---
 
@@ -46,11 +60,13 @@ Eight explorers, one dark-sky instrument aesthetic. Deep space void backgrounds,
 
 <div align="center">
 
-![Solar Gravitational Lens mission](./docs/readme/gravitational-lens-demo.gif)
+![String of pearls: six CubeSats self-assemble into a one-metre telescope, shown exploded](./docs/readme/string-of-pearls.gif)
 
 </div>
 
 A standalone, interactive walkthrough of the **Solar Gravitational Lens** mission concept (NASA/JPL NIAC, Turyshev et al) - flying a solar-sail spacecraft past 650 AU to use the Sun's gravity as a lens and image an exoplanet's surface. Eight acts, each with a scripted **Tour** and a free-camera **Explore** mode: why JWST can't do this, how gravity bends light, the focal line, the sundiver trajectory, the string of pearls, the Einstein-ring imaging dance, the real stellar neighbourhood, and a lens-to-lens comms epilogue.
+
+The clip above is Act 4. Each launch carries six CubeSats that self-assemble in flight into a one-metre telescope; the tour opens a pearl, explodes it into its parts, then docks it back.
 
 Real physics throughout (test-verified against published anchors), dramatised visuals clearly labelled as such. It is a separate Vite + Three.js app ([m4cd4r4/550-AU](https://github.com/m4cd4r4/550-AU)), built and vendored into `public/embeds/` and served in a same-origin iframe - fully offline, no external calls at runtime.
 
@@ -58,15 +74,15 @@ Real physics throughout (test-verified against published anchors), dramatised vi
 
 ## Feature highlights
 
-**Solar System** - accurate orbital mechanics, an Earth Dive descent, and a **True Scale** toggle that rescales all 8 planets and 16 moons to their real relative sizes (Phobos and Deimos shrink to near-invisible captured-asteroid specks). Every moon stays tidally locked, keeping one face to its parent. Zoom out to see the Sun's place in the Milky Way.
+**Solar System** - accurate orbital mechanics with a speed control from real time to a year per second, free, top and side camera views, and a dive to the Sun. Zoom out to see the Sun's place in the Milky Way.
 
-**JWST Explorer** - 85 curated Webb observations with NIRCam/MIRI wavelength switching, feature annotations scoped precisely to image bounds, a Hubble comparison mode, and deep links into the Sky Map.
+**Webb explorer** - JWST observations browsable by category and instrument (NIRCam, MIRI, NIRSpec), with feature annotations, a Hubble comparison mode, and deep links into the Sky Map.
 
-**Kepler Exoplanets** - a live NASA Exoplanet Archive query rendering 2,700+ confirmed planets across Sky, Galaxy, and HR-diagram views. Opens on a genuinely weird world (Kepler-16b, the real Tatooine) with the full catalogue one click away. Filter by size, stellar temperature, orbital period, and habitable zone.
+**Kepler Exoplanets** - a live NASA Exoplanet Archive query rendering the confirmed planets across Sky, Galaxy, and HR-diagram views. Opens on a genuinely weird world (Kepler-16b, the real Tatooine) with the full catalogue one click away. Filter by size, stellar temperature, orbital period, and habitable zone.
 
 **Sky Map** - the entire celestial sphere via Aladin Lite, with a first-class spectrum switcher (CMB, mid-IR, near-IR, optical, UV, gamma) and a live RA/Dec/FoV readout. Search any object; JWST markers deep-link back to their observation pages.
 
-**Live Events** - real ISS position on a world map, a live solar-activity gauge from NOAA SWPC, upcoming meteor showers, launches from Launch Library 2, and NASA's Astronomy Picture of the Day.
+**Satellites** - active satellites drawn at their current positions around a 3D Earth, filterable by orbit class (LEO, MEO, GEO, HEO) and constellation, with a follow-the-ISS mode.
 
 ---
 
@@ -76,9 +92,10 @@ Real physics throughout (test-verified against published anchors), dramatised vi
 |-------|--------|
 | Framework | Next.js 14 (App Router), React 18, TypeScript (strict) |
 | Styling | Tailwind CSS 3, Radix UI primitives |
-| 3D / viz | Three.js (r183), Aladin Lite, Leaflet, HTML canvas |
+| 3D / viz | Three.js (r183), Aladin Lite, HTML canvas |
 | State / data | Zustand, TanStack Query |
 | Motion | Framer Motion + CSS keyframes (reduced-motion honoured) |
+| Quality | Vitest unit tests, Playwright e2e, ESLint, `tsc --noEmit`, GitHub Actions CI on every push and PR |
 | Platform | PWA (offline-capable), Vercel |
 
 ---
@@ -94,6 +111,7 @@ Every readout is real and attributed. Nothing is invented or decorative.
 | [NASA APIs](https://api.nasa.gov/) | APOD, Near-Earth Objects | API key (server-side) |
 | [NOAA SWPC](https://www.swpc.noaa.gov/) | Solar X-ray flux, space weather | Public |
 | [Where the ISS at](https://wheretheiss.at/) | Live ISS position | Public |
+| [CelesTrak](https://celestrak.org/) | Active satellite catalogue | Public |
 | [Launch Library 2](https://thespacedevs.com/llapi) | Upcoming launches | Public |
 | [Aladin Lite / CDS](https://aladin.cds.unistra.fr/) | Multi-wavelength sky surveys | Public |
 | [CSIRO CASDA](https://casda.csiro.au/) | ASKAP radio data | Public TAP |
@@ -139,8 +157,9 @@ The Gravitational Lens embed is a vendored build. To refresh it after an upstrea
 | `npm run dev` | Development server |
 | `npm run build` | Production build (type-checked and linted) |
 | `npm run start` | Serve the production build |
-| `npm test` | Vitest unit tests |
+| `npm test` | Vitest unit tests (watch mode); `npx vitest run` for a single pass |
 | `npm run type-check` | `tsc --noEmit` |
+| `npm run lint` | ESLint via `next lint` |
 
 ---
 
@@ -169,6 +188,5 @@ MIT - see [LICENSE](LICENSE).
 <div align="center">
 <br />
 <a href="https://cosmos-collective.com.au">Live Site</a> &bull;
-<a href="https://cosmos-collective.com.au/devlog">Devlog</a> &bull;
 <a href="https://cosmos-collective.com.au/gravitational-lens">Gravitational Lens</a>
 </div>
