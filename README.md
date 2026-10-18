@@ -18,7 +18,7 @@ Fly a 3D solar system, image an exoplanet through the Sun's own gravity, browse 
 
 <br />
 
-![The Solar System explorer: every planet where it really is today, then a dive to the Sun](./docs/readme/solar-system.gif)
+https://github.com/user-attachments/assets/387dabfd-d125-4025-9da5-4c3c484b72b7
 
 <sub>The Solar System explorer - real orbital mechanics, speed control from real time to a year per second, top and side views, and a dive to the Sun.</sub>
 
@@ -60,7 +60,7 @@ Six explorers, one dark-sky instrument aesthetic. Deep space void backgrounds, s
 
 <div align="center">
 
-![String of pearls: six CubeSats self-assemble into a one-metre telescope, shown exploded](./docs/readme/string-of-pearls.gif)
+https://github.com/user-attachments/assets/ffe6dfcc-9efb-4790-bc14-74de24500203
 
 </div>
 
