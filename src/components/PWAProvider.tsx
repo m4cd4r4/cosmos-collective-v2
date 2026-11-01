@@ -5,16 +5,27 @@
  * Handles service worker registration and PWA features
  */
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
+// beforeinstallprompt fires once per page load, usually before the footer is on screen,
+// so the provider keeps it here for whichever component asks later.
+let installEvent: BeforeInstallPromptEvent | null = null
+const installListeners = new Set<() => void>()
+function setInstallEvent(e: BeforeInstallPromptEvent | null) {
+  installEvent = e
+  installListeners.forEach((listener) => listener())
+}
+function subscribeInstallEvent(listener: () => void) {
+  installListeners.add(listener)
+  return () => { installListeners.delete(listener) }
+}
+
 export function PWAProvider({ children }: { children: React.ReactNode }) {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
-  const [isInstalled, setIsInstalled] = useState(false)
 
   useEffect(() => {
     let updateIntervalId: ReturnType<typeof setInterval> | undefined
@@ -37,18 +48,12 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
     // Handle install prompt
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault()
-      setDeferredPrompt(e as BeforeInstallPromptEvent)
+      setInstallEvent(e as BeforeInstallPromptEvent)
     }
 
     // Check if already installed
     const handleAppInstalled = () => {
-      setIsInstalled(true)
-      setDeferredPrompt(null)
-    }
-
-    // Check if running as PWA
-    if (window.matchMedia('(display-mode: standalone)').matches) {
-      setIsInstalled(true)
+      setInstallEvent(null)
     }
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
@@ -85,22 +90,7 @@ export function PWAProvider({ children }: { children: React.ReactNode }) {
 
 // Hook to access install prompt
 export function useInstallPrompt() {
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
-  const [canInstall, setCanInstall] = useState(false)
-
-  useEffect(() => {
-    const handleBeforeInstallPrompt = (e: Event) => {
-      e.preventDefault()
-      setDeferredPrompt(e as BeforeInstallPromptEvent)
-      setCanInstall(true)
-    }
-
-    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt)
-    }
-  }, [])
+  const deferredPrompt = useSyncExternalStore(subscribeInstallEvent, () => installEvent, () => null)
 
   const install = async () => {
     if (!deferredPrompt) return false
@@ -108,13 +98,12 @@ export function useInstallPrompt() {
     deferredPrompt.prompt()
     const { outcome } = await deferredPrompt.userChoice
 
-    setDeferredPrompt(null)
-    setCanInstall(false)
+    setInstallEvent(null)
 
     return outcome === 'accepted'
   }
 
-  return { canInstall, install }
+  return { canInstall: deferredPrompt !== null, install }
 }
 
 // Hook to check online status

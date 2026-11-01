@@ -36,7 +36,7 @@ Six explorers, one dark-sky instrument aesthetic. Deep space void backgrounds, s
 | **Satellites** | `/satellites` | Every active satellite at its position right now, by orbit class and constellation, plus a spacecraft guide |
 | **Sky Map** | `/sky-map` | The whole celestial sphere across radio, infrared, optical, UV, and gamma surveys |
 | **Solar System** | `/solar-system` | Orbits where the planets really are today, time-speed control, top and side views, a dive to the Sun |
-| **Gravitational Lens** | `/gravitational-lens` | The Solar Gravitational Lens mission concept, act by act, with a string-of-pearls CubeSat anatomy |
+| **550-AU** | `/gravitational-lens` | The Solar Gravitational Lens mission concept, act by act, with a string-of-pearls CubeSat anatomy |
 | **Kepler Exoplanets** | `/kepler` | 2,700+ confirmed worlds from a live NASA Exoplanet Archive query |
 
 <table>
@@ -56,7 +56,7 @@ Six explorers, one dark-sky instrument aesthetic. Deep space void backgrounds, s
 
 ---
 
-## The Gravitational Lens Telescope
+## 550-AU: the Gravitational Lens Telescope
 
 <div align="center">
 
@@ -188,5 +188,5 @@ MIT - see [LICENSE](LICENSE).
 <div align="center">
 <br />
 <a href="https://cosmos-collective.com.au">Live Site</a> &bull;
-<a href="https://cosmos-collective.com.au/gravitational-lens">Gravitational Lens</a>
+<a href="https://cosmos-collective.com.au/gravitational-lens">550-AU</a>
 </div>

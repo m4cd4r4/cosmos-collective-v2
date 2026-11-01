@@ -251,9 +251,15 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     }
     window.addEventListener('resize', onResize)
 
-    if (reduced) { onReadyRef.current?.(); render() } else animate()
+    // Stop drawing once the hero has scrolled away
+    const observer = new IntersectionObserver(([entry]) => {
+      cancelAnimationFrame(raf)
+      if (entry.isIntersecting) animate()
+    })
+    if (reduced) { onReadyRef.current?.(); render() } else observer.observe(mount)
 
     return () => {
+      observer.disconnect()
       cancelAnimationFrame(raf)
       window.removeEventListener('resize', onResize)
       renderer.dispose()

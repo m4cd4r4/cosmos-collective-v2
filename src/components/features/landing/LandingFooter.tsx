@@ -1,11 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import { useInstallPrompt } from '@/components/PWAProvider'
 
 const EXPLORE_LINKS = [
   { label: 'Solar System', href: '/solar-system' },
   { label: 'Webb Explorer', href: '/explore?view=webb' },
-  { label: 'Gravitational Lens', href: '/gravitational-lens' },
+  { label: '550-AU', href: '/gravitational-lens' },
   { label: 'Kepler Exoplanets', href: '/kepler' },
   { label: 'Sky Map', href: '/sky-map' },
   { label: 'Satellites', href: '/satellites' },
@@ -27,29 +28,30 @@ const FACTS = [
 ]
 
 export function LandingFooter() {
+  const { canInstall, install } = useInstallPrompt()
+
   return (
     <footer className="bg-[rgba(4,6,18,0.97)] border-t border-white/[0.06] px-4 sm:px-6 pt-14 pb-24 lg:pb-14">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           {/* Brand */}
           <div className="md:col-span-2 max-w-sm">
-            <p className="font-display font-bold text-white text-lg mb-3">
+            <p className="font-display font-semibold text-white text-lg mb-3">
               Cosmos Collective
             </p>
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
               Real astronomical data from NASA, ESA, STScI, NOAA, and CSIRO,
-              presented for curious people. No invented numbers, no fake
-              imagery.
+              presented for curious people. Every number has a source.
             </p>
             <dl className="flex gap-8">
               {FACTS.map(({ value, label }) => (
                 <div key={label}>
                   <dt className="sr-only">{label}</dt>
                   <dd>
-                    <span className="block text-xl font-mono tabular-nums font-bold text-white">
+                    <span className="block text-xl font-mono tabular-nums font-medium text-white">
                       {value}
                     </span>
-                    <span className="block text-[11px] uppercase tracking-[0.12em] text-gray-500 mt-1">
+                    <span className="block text-xs text-gray-500 mt-1">
                       {label}
                     </span>
                   </dd>
@@ -60,7 +62,7 @@ export function LandingFooter() {
 
           {/* Explore */}
           <nav aria-label="Explore">
-            <p className="text-xs uppercase tracking-[0.2em] text-gray-500 font-semibold mb-4">
+            <p className="text-sm text-gray-400 font-medium mb-4">
               Explore
             </p>
             <ul className="space-y-2.5">
@@ -79,7 +81,7 @@ export function LandingFooter() {
 
           {/* Site */}
           <nav aria-label="Site">
-            <p className="text-xs uppercase tracking-[0.2em] text-gray-500 font-semibold mb-4">
+            <p className="text-sm text-gray-400 font-medium mb-4">
               Site
             </p>
             <ul className="space-y-2.5">
@@ -93,6 +95,17 @@ export function LandingFooter() {
                   </Link>
                 </li>
               ))}
+              {canInstall && (
+                <li>
+                  <button
+                    type="button"
+                    onClick={install}
+                    className="text-sm text-gray-400 hover:text-white transition-colors"
+                  >
+                    Install Cosmos Collective
+                  </button>
+                </li>
+              )}
             </ul>
           </nav>
         </div>
