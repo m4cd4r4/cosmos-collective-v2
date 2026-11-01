@@ -4,11 +4,11 @@ import { useQuery } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
 import {
   getISSPosition,
-  getAstronomyPictureOfTheDay,
+  getClosestAsteroid,
   getSolarWeather,
   getAllCurrentEvents,
   getUpcomingEvents,
-  type APODData,
+  type ClosestAsteroid,
 } from '@/services/real-time-events'
 import type { AstronomicalEvent } from '@/types/astronomy'
 import { fetchUpcomingLaunches, type LiveLaunch } from '@/services/launch-api'
@@ -20,7 +20,7 @@ export interface LiveTelemetry {
   issVelocity: number | null
   issError: boolean
   issUpdatedAt: number | null
-  apod: APODData | null
+  closestAsteroid: ClosestAsteroid | null
   solarWeather: { flareLevel: string; currentFlux: number } | null
   solarUpdatedAt: number | null
   events: AstronomicalEvent[]
@@ -50,14 +50,15 @@ export function useLiveTelemetry(): LiveTelemetry {
     retry: 2,
   })
 
-  // APOD - fetch once, stale for 1 hour
-  const apod = useQuery({
-    queryKey: ['apod'],
+  // Closest asteroid - refresh every hour
+  const closestAsteroid = useQuery({
+    queryKey: ['closest-asteroid'],
     queryFn: async () => {
-      const result = await getAstronomyPictureOfTheDay()
-      if (!result.success || !result.data) throw new Error('APOD unavailable')
+      const result = await getClosestAsteroid()
+      if (!result.success || !result.data) throw new Error('Asteroid data unavailable')
       return result.data
     },
+    refetchInterval: 60 * 60 * 1000,
     staleTime: 60 * 60 * 1000,
     retry: 1,
   })
@@ -105,7 +106,7 @@ export function useLiveTelemetry(): LiveTelemetry {
     return () => clearInterval(interval)
   }, [])
 
-  const isLoading = iss.isLoading || apod.isLoading || solar.isLoading
+  const isLoading = iss.isLoading || closestAsteroid.isLoading || solar.isLoading
 
   return {
     issPosition: iss.data
@@ -114,7 +115,7 @@ export function useLiveTelemetry(): LiveTelemetry {
     issVelocity: iss.data?.velocity ?? null,
     issError: iss.isError,
     issUpdatedAt: iss.dataUpdatedAt || null,
-    apod: apod.data ?? null,
+    closestAsteroid: closestAsteroid.data ?? null,
     solarWeather: solar.data ?? null,
     solarUpdatedAt: solar.dataUpdatedAt || null,
     events: events.data ?? [],

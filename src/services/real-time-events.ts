@@ -14,7 +14,6 @@ import { SEVERITY_ORDER } from '@/lib/event-utils'
 
 // NASA calls go through the server proxy so the API key stays server-side
 const API_ENDPOINTS = {
-  nasaApod: '/api/proxy/nasa?endpoint=apod',
   nasaNeo: '/api/proxy/nasa?endpoint=neo',
   issPosition: 'https://api.wheretheiss.at/v1/satellites/25544',
   solarWeather: 'https://services.swpc.noaa.gov/json/goes/primary/xrays-1-day.json',
@@ -23,51 +22,15 @@ const API_ENDPOINTS = {
 }
 
 // ============================================
-// NASA Astronomy Picture of the Day
-// ============================================
-
-export interface APODData {
-  title: string
-  explanation: string
-  url: string
-  hdurl?: string
-  media_type: 'image' | 'video'
-  date: string
-  copyright?: string
-}
-
-export async function getAstronomyPictureOfTheDay(): Promise<ApiResponse<APODData>> {
-  try {
-    const response = await axios.get<APODData>(API_ENDPOINTS.nasaApod, {
-      timeout: 10000,
-    })
-
-    return {
-      success: true,
-      data: response.data,
-      meta: {
-        requestId: `apod-${Date.now()}`,
-        timestamp: new Date().toISOString(),
-      },
-    }
-  } catch (error) {
-    const msg = error instanceof Error ? error.message : String(error)
-    if (!msg.includes('timeout') && !msg.includes('cancel') && !msg.includes('abort')) {
-      console.error('NASA APOD error:', error)
-    }
-    return {
-      success: false,
-      error: {
-        code: 'APOD_ERROR',
-        message: 'Failed to fetch Astronomy Picture of the Day',
-      },
-    }
-  }
-}
-
-// ============================================
 // Near Earth Objects (Asteroids)
 // ============================================
+
+export interface ClosestAsteroid {
+  name: string
+  lunarDistances: number
+  approachTime: number
+  url: string
+}
 
 interface NasaNEO {
   id: string
@@ -78,6 +41,7 @@ interface NasaNEO {
   close_approach_data: {
     close_approach_date: string
     close_approach_date_full: string
+    epoch_date_close_approach: number
     relative_velocity: {
       kilometers_per_hour: string
     }
@@ -156,6 +120,49 @@ export async function getNearEarthObjects(
         message: 'Failed to fetch near-Earth object data',
       },
     }
+  }
+}
+
+export async function getClosestAsteroid(): Promise<ApiResponse<ClosestAsteroid>> {
+  const failure = {
+    success: false,
+    error: {
+      code: 'NEO_ERROR',
+      message: 'No upcoming asteroid approach in the NASA feed',
+    },
+  }
+
+  try {
+    const response = await axios.get<{
+      near_earth_objects: Record<string, NasaNEO[]>
+    }>(API_ENDPOINTS.nasaNeo, {
+      timeout: 15000,
+    })
+
+    const now = Date.now()
+    let closest: ClosestAsteroid | null = null
+
+    // Approaches already passed today are still in the feed, so skip them
+    for (const neos of Object.values(response.data.near_earth_objects)) {
+      for (const neo of neos) {
+        const approach = neo.close_approach_data[0]
+        const lunarDistances = parseFloat(approach?.miss_distance.lunar)
+        const approachTime = approach?.epoch_date_close_approach
+
+        if (!Number.isFinite(lunarDistances) || !(approachTime > now)) continue
+        if (!closest || lunarDistances < closest.lunarDistances) {
+          closest = { name: neo.name, lunarDistances, approachTime, url: neo.nasa_jpl_url }
+        }
+      }
+    }
+
+    return closest ? { success: true, data: closest } : failure
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error)
+    if (!msg.includes('timeout') && !msg.includes('cancel') && !msg.includes('abort')) {
+      console.error('NASA NEO error:', error)
+    }
+    return failure
   }
 }
 
