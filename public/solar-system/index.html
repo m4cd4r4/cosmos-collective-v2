@@ -660,7 +660,7 @@
 
     <!-- Earth date counter -->
     <div id="earth-date-counter">
-        <div class="date-label">Earth Date</div>
+        <div class="date-label">Earth date</div>
         <div class="date-value" id="earth-date-value">04 Feb 2026</div>
     </div>
 
@@ -793,7 +793,7 @@
 
     <!-- Distance tool hint -->
     <div id="tool-hint" role="status" hidden>
-        <span>Click two planet names to measure</span>
+        <span>Pick two planets to measure</span>
         <button type="button" id="tool-hint-done">Done</button>
     </div>
 
@@ -841,7 +841,7 @@
         <div id="planet-info-stats" class="planet-info-stats"></div>
         <div id="planet-info-funfact" class="planet-info-funfact"></div>
         <div class="planet-info-actions">
-            <button id="planet-info-dive" class="planet-info-dive-btn">Dive Into</button>
+            <button id="planet-info-dive" class="planet-info-dive-btn">Dive in</button>
         </div>
     </div>
 
@@ -855,7 +855,7 @@
     <!-- Accuracy overlay -->
     <div id="accuracy-panel" style="display:none;">
         <button type="button" id="accuracy-close" class="planet-info-close-btn" aria-label="Close accuracy notes">&times;</button>
-        <h4 class="panel-title">Scientific Accuracy Notes</h4>
+        <h4 class="panel-title">Accuracy notes</h4>
         <div class="accuracy-group">
             <strong>Accurate:</strong><br>
             &bull; Orbital periods (Mercury 88d through Neptune 60,190d)<br>
@@ -900,7 +900,7 @@
         </div>
         <div class="tour-body" id="tour-body"></div>
         <div class="tour-buttons">
-            <button type="button" class="tour-btn tour-btn-skip" id="tour-skip-btn">Skip Tour</button>
+            <button type="button" class="tour-btn tour-btn-skip" id="tour-skip-btn">Skip tour</button>
             <button type="button" class="tour-btn tour-btn-next" id="tour-next-btn">Next</button>
         </div>
         <div class="tour-progress" id="tour-progress"></div>
@@ -1943,7 +1943,7 @@
                 if (!diving && v.z < 1 && v.x > -1.5 && v.x < 1.5 && v.y > -1.5 && v.y < 1.5) {
                     const distToCam = camera.position.distanceTo(planet.mesh.position);
                     const scaleFactor = Math.max(0.55, Math.min(1.4, 80 / distToCam));
-                    const fontSize = Math.round((state.look === 'kid' ? 20 : 12) * scaleFactor);
+                    const fontSize = Math.max(11, Math.round((state.look === 'kid' ? 20 : 12) * scaleFactor));
                     const opacity = Math.max(0.4, Math.min(1.0, 120 / distToCam));
 
                     label.style.left = (v.x * halfW + halfW) + 'px';
@@ -1966,10 +1966,11 @@
                 allMoons.forEach(moon => {
                     const label = moonLabels.get(moon.name);
                     const v = moon.mesh.position.clone().project(camera);
-                    if (v.z < 1 && v.x > -1.5 && v.x < 1.5 && v.y > -1.5 && v.y < 1.5) {
-                        const distToCam = camera.position.distanceTo(moon.mesh.position);
+                    const distToCam = camera.position.distanceTo(moon.mesh.position);
+                    const near = distToCam < 40 || (distToCam < 90 && moon.parent.name.toLowerCase() === state.follow);
+                    if (near && v.z < 1 && v.x > -1.5 && v.x < 1.5 && v.y > -1.5 && v.y < 1.5) {
                         const scaleFactor = Math.max(0.5, Math.min(1.2, 40 / distToCam));
-                        const fontSize = Math.round(10 * scaleFactor);
+                        const fontSize = Math.max(11, Math.round(10 * scaleFactor));
                         const opacity = Math.max(0.3, Math.min(0.7, 60 / distToCam));
 
                         label.style.left = (v.x * halfW + halfW) + 'px';
@@ -2223,7 +2224,7 @@
                 diveCamLight.intensity = 0.55 * eased;
 
                 const altitude = ((dist - targetRadius) * kmPerUnit).toFixed(0);
-                document.getElementById('dive-altitude').textContent = `ALT ${Number(altitude).toLocaleString()} km | ${(dist/targetRadius).toFixed(1)}${info.symbol}`;
+                document.getElementById('dive-altitude').textContent = `Altitude ${Number(altitude).toLocaleString()} km, ${(dist/targetRadius).toFixed(1)}${info.symbol}`;
 
                 if (t >= 1) {
                     diveState = 'orbiting';
@@ -2243,7 +2244,7 @@
                 diveCamLight.intensity = 0.55;
 
                 const altitude = ((orbitDist - targetRadius) * kmPerUnit).toFixed(0);
-                document.getElementById('dive-altitude').textContent = `ALT ${Number(altitude).toLocaleString()} km | ORBIT ${(diveProgress * 180 / Math.PI % 360).toFixed(0)}\u00B0`;
+                document.getElementById('dive-altitude').textContent = `Altitude ${Number(altitude).toLocaleString()} km, orbit ${(diveProgress * 180 / Math.PI % 360).toFixed(0)}\u00B0`;
             }
             else if (diveState === 'returning') {
                 diveProgress += dt * 0.5;
@@ -3210,10 +3211,10 @@
                     ${name !== 'Sun' ? `<tr><td>Distance from Sun</td><td>${data.distanceAU} AU</td></tr>` : ''}
                     <tr><td>Radius</td><td>${data.realRadius.toLocaleString()} km (${data.realRadiusEarth}x Earth)</td></tr>
                     <tr><td>Mass</td><td>${data.mass}</td></tr>
-                    <tr><td>Surface Gravity</td><td>${data.gravity}</td></tr>
+                    <tr><td>Surface gravity</td><td>${data.gravity}</td></tr>
                     <tr><td>Temperature</td><td>${data.temp}</td></tr>
-                    ${data.dayLength ? `<tr><td>Day Length</td><td>${data.dayLength}</td></tr>` : ''}
-                    ${data.tilt ? `<tr><td>Axial Tilt</td><td>${data.tilt}</td></tr>` : ''}
+                    ${data.dayLength ? `<tr><td>Day length</td><td>${data.dayLength}</td></tr>` : ''}
+                    ${data.tilt ? `<tr><td>Axial tilt</td><td>${data.tilt}</td></tr>` : ''}
                     ${data.atmosphere ? `<tr><td>Atmosphere</td><td>${data.atmosphere}</td></tr>` : ''}
                 </table>
                 <div class="science-fact">
@@ -3250,6 +3251,7 @@
             infoCardPlanet = name;
             document.getElementById('planet-info-symbol').textContent = planetSymbols[name] || '';
             document.getElementById('planet-info-name').textContent = name;
+            document.getElementById('planet-info-dive').textContent = `Dive into ${name}`;
             document.getElementById('planet-info-subtitle').textContent = planetSubtitles[name] || '';
 
             let statsHTML = '';
@@ -3259,8 +3261,8 @@
                 ['Mass', data.mass],
                 ['Gravity', data.gravity],
                 ['Temperature', data.temp],
-                ['Day Length', data.dayLength],
-                ['Axial Tilt', data.tilt],
+                ['Day length', data.dayLength],
+                ['Axial tilt', data.tilt],
                 ['Atmosphere', data.atmosphere],
             ];
             fields.forEach(([key, val]) => {
@@ -3638,7 +3640,7 @@
                 {
                     id: 'welcome',
                     target: null,
-                    title: 'Welcome to the Solar System',
+                    title: 'Our solar system',
                     text: 'Every planet here sits where it really is today, and the whole system is racing through the galaxy at 220 km/s. Here is a quick look around.',
                     position: 'center',
                     duration: 0,
@@ -3908,10 +3910,10 @@
 
                     // Update buttons
                     if (step.isFinalStep) {
-                        nextBtn.textContent = 'End Tour';
+                        nextBtn.textContent = 'End tour';
                         nextBtn.className = 'tour-btn tour-btn-end';
                     } else {
-                        nextBtn.textContent = 'Next \u25B6';
+                        nextBtn.textContent = 'Next';
                         nextBtn.className = 'tour-btn tour-btn-next';
                     }
 
@@ -4028,11 +4030,11 @@
                 var el = document.createElement('div');
                 el.id = 'welcome-prompt';
                 el.innerHTML = '<div class="welcome-card">' +
-                    '<h3>Our Solar System</h3>' +
+                    '<h3>Our solar system</h3>' +
                     '<p>Every planet where it really is today, racing through the galaxy at 220 km/s.</p>' +
                     '<div class="welcome-actions">' +
-                    '<button id="welcome-tour">Take the Tour</button>' +
-                    '<button id="welcome-skip">Jump In</button>' +
+                    '<button id="welcome-tour">Take the tour</button>' +
+                    '<button id="welcome-skip">Jump in</button>' +
                     '</div></div>';
                 document.body.appendChild(el);
                 document.getElementById('welcome-tour').addEventListener('click', function() {
