@@ -233,6 +233,7 @@
             line-height: 1;
         }
         #ui-toggle-btn:hover { color: var(--text); border-color: var(--line-strong); }
+        body.embed #ui-toggle-btn, body.embed #loading-overlay { display: none; }
         body.ui-hidden #dock,
         body.ui-hidden #sheet,
         body.ui-hidden #tool-hint,
@@ -908,6 +909,22 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
+        // ?embed=1: running inside the landing page card (see EMBED MODE below)
+        const EMBED = new URLSearchParams(location.search).has('embed');
+        let embedPaused = false;
+        // Gives up on a device that cannot hold 20 fps over 5 seconds; the card keeps its poster.
+        // Measures only once loaded (texture uploads stall any device), and starts again
+        // after a pause or a hidden tab, when no frames are due. start 0 = start again.
+        const embedFrames = { loaded: false, start: 0, count: 0 };
+        function watchEmbedFrames(now) {
+            if (!embedFrames.loaded) return;
+            if (!embedFrames.start) { embedFrames.start = now; embedFrames.count = 0; return; }
+            embedFrames.count++;
+            const elapsed = now - embedFrames.start;
+            if (elapsed < 5000) return;
+            if (embedFrames.count / (elapsed / 1000) < 20) { embedPaused = true; window.parent.postMessage('solar-embed-slow', location.origin); }
+            embedFrames.start = 0;
+        }
         // Check Three.js loaded
         if (typeof THREE === 'undefined') {
             document.querySelector('.loading-text').textContent = 'Failed to load 3D engine';
@@ -940,7 +957,7 @@
             throw e;
         }
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, EMBED ? 1.5 : 2));
         renderer.setClearColor(0x000000, 1); // Solid black — ensures screenshots/video have correct background
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.2;
@@ -2452,7 +2469,9 @@
         let pausedOffset = 0;   // total ms spent paused (for animation-time continuity)
 
         function animate(now) {
+            if (embedPaused) return;
             requestAnimationFrame(animate);
+            if (EMBED) watchEmbedFrames(now);
             frameCount++;
             if (frameCount === 1) console.log('[SolarSystem] First frame rendering');
             if (frameCount === 60) console.log('[SolarSystem] 60 frames rendered, sun pos:', sun.position.toArray(), 'camera pos:', camera.position.toArray());
@@ -2823,6 +2842,7 @@
 
         function loadPersisted() {
             try {
+                if (EMBED) return {};
                 const saved = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}');
                 const out = {};
                 PERSISTED.forEach(k => { if (k in saved && typeof saved[k] === typeof DEFAULTS[k]) out[k] = saved[k]; });
@@ -2835,6 +2855,7 @@
             } catch (e) { return {}; }
         }
         function persist() {
+            if (EMBED) return;
             try {
                 const out = {};
                 PERSISTED.forEach(k => { out[k] = k in viewBorrowed ? viewBorrowed[k] : state[k]; });
@@ -3551,7 +3572,10 @@
         console.log('[SolarSystem] Starting texture load for', totalTextures, 'textures');
         Promise.all(Object.keys(textureURLs).map(k => loadTextureWithFallback(k))).then(() => {
             console.log('[SolarSystem] All textures loaded, hiding overlay');
-            setTimeout(() => loadingOverlay.classList.add('hidden'), 500);
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                if (EMBED) { embedFrames.loaded = true; window.parent.postMessage('solar-embed-ready', location.origin); }
+            }, 500);
         }).catch(err => {
             console.error('[SolarSystem] Texture loading failed:', err);
         });
@@ -4014,10 +4038,26 @@
         })();
 
         // =====================================================================
+        // EMBED MODE (?embed=1): the landing page card, Cinema with no UI
+        // =====================================================================
+        if (EMBED) {
+            document.body.classList.add('ui-hidden', 'embed');
+            setView('cinema');
+            setState({ labels: false });
+            window.addEventListener('message', function(e) {
+                if (e.origin !== location.origin || e.source !== window.parent) return;
+                if (typeof e.data?.solarEmbedPaused !== 'boolean' || e.data.solarEmbedPaused === embedPaused) return;
+                embedPaused = e.data.solarEmbedPaused;
+                if (!embedPaused) { embedFrames.start = 0; lastTime = performance.now(); requestAnimationFrame(animate); }
+            });
+            document.addEventListener('visibilitychange', function() { embedFrames.start = 0; });
+        }
+
+        // =====================================================================
         // WELCOME PROMPT (first visit only)
         // =====================================================================
         (function() {
-            if (localStorage.getItem('solar-vortex-visited')) return;
+            if (EMBED || localStorage.getItem('solar-vortex-visited')) return;
             // Wait for loading to finish before showing
             var checkLoaded = setInterval(function() {
                 var overlay = document.getElementById('loading-overlay');

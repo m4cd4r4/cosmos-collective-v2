@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { PLANET_HERO_IMAGES } from '@/components/features/planet-hero-images'
+import { SolarCinemaFrame } from './SolarCinemaFrame'
 
 const FEATURES = [
   {
@@ -11,6 +12,7 @@ const FEATURES = [
     description: 'Photorealistic 3D orbits of all 8 planets and 16 moons, with an Earth Dive descent',
     image: PLANET_HERO_IMAGES.saturnRings,
     featured: true,
+    live: true,
   },
   {
     title: '550-AU',
@@ -60,7 +62,7 @@ export function FeatureShowcase() {
 
         {/* 2 featured + 4 standard */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {FEATURES.map(({ title, href, description, image, featured }) => (
+          {FEATURES.map(({ title, href, description, image, featured, live }) => (
             <Link
               key={href}
               href={href}
@@ -80,6 +82,7 @@ export function FeatureShowcase() {
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                   unoptimized
                 />
+                {live && <SolarCinemaFrame />}
                 <div className="absolute inset-0 bg-gradient-to-t from-[rgba(10,14,26,0.92)] via-[rgba(10,14,26,0.25)] to-transparent" />
               </div>
 
