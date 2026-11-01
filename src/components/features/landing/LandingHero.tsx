@@ -21,11 +21,6 @@ const HeroScene = dynamic(
   { ssr: false },
 )
 
-const SECONDARY_LINKS = [
-  { label: 'Latest from JWST', href: '/explore?view=webb' },
-  { label: '2,700+ exoplanets', href: '/kepler' },
-]
-
 // The visitor's own local time plus their timezone abbreviation (e.g. AWST,
 // GMT, PDT). No timeZone option, so the browser uses its detected zone.
 function formatLocalClock(): string {
@@ -100,7 +95,7 @@ export function LandingHero() {
               <span className="motion-safe:animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
             </span>
-            <span className="text-xs uppercase tracking-[0.2em] text-emerald-300/90 font-semibold">
+            <span className="text-xs text-emerald-300/90 font-medium">
               Live
             </span>
             <span
@@ -118,7 +113,7 @@ export function LandingHero() {
 
           <h1
             id="hero-heading"
-            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white leading-[1.05] mb-5"
+            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-display font-semibold text-white leading-[1.05] mb-5"
           >
             Earth and Moon,
             <br />
@@ -146,21 +141,9 @@ export function LandingHero() {
               href="/gravitational-lens"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-lg border border-white/20 bg-white/[0.06] text-gray-100 font-semibold text-sm sm:text-base hover:bg-white/[0.12] hover:border-white/35 transition-colors focus-visible:ring-2 focus-visible:ring-cosmos-gold focus-visible:ring-offset-2 focus-visible:ring-offset-cosmos-void"
             >
-              String of Pearls
+              550-AU
               <ArrowRight className="w-4 h-4" aria-hidden="true" />
             </Link>
-
-            <nav aria-label="Featured destinations" className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              {SECONDARY_LINKS.map(({ label, href }) => (
-                <Link
-                  key={href}
-                  href={href}
-                  className="text-sm text-gray-300 hover:text-white underline decoration-white/25 underline-offset-4 hover:decoration-cosmos-gold transition-colors"
-                >
-                  {label}
-                </Link>
-              ))}
-            </nav>
           </div>
         </div>
       </div>
@@ -172,7 +155,7 @@ export function LandingHero() {
           role="status"
           aria-label="Current International Space Station position"
         >
-          <span className="text-[11px] uppercase tracking-[0.15em] text-gray-400 font-semibold">
+          <span className="text-[11px] text-gray-400 font-medium">
             ISS
           </span>
           <span className="text-xs font-mono tabular-nums text-gray-200">
@@ -192,7 +175,7 @@ export function LandingHero() {
           onClick={() => {
             document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })
           }}
-          className="p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors motion-safe:animate-bounce"
+          className="p-2 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 transition-colors"
           aria-label="Scroll to features"
         >
           <ChevronDown className="w-5 h-5 text-gray-300" aria-hidden="true" />

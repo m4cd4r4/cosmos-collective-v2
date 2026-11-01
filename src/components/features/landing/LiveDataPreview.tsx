@@ -22,6 +22,15 @@ function freshness(updatedAt: number | null, now: number): string | null {
   return `updated ${m} min ago`
 }
 
+// Same notation as the masses in the solar system app: 4.58 × 10⁻⁷
+function formatFlux(flux: number): string {
+  const [mantissa, exponent] = flux.toExponential(2).split('e')
+  const superscript = [...String(Number(exponent))]
+    .map((c) => (c === '-' ? '⁻' : '⁰¹²³⁴⁵⁶⁷⁸⁹'[Number(c)]))
+    .join('')
+  return `${mantissa} × 10${superscript}`
+}
+
 export function LiveDataPreview() {
   const { apod, issPosition, issUpdatedAt, solarWeather, solarUpdatedAt, isLoading } =
     useTelemetryData()
@@ -39,8 +48,8 @@ export function LiveDataPreview() {
     >
       <div className="max-w-6xl mx-auto">
         <div className="mb-8">
-          <span className="text-xs uppercase tracking-[0.2em] text-gray-500">Live telemetry</span>
-          <h2 id="live-data-heading" className="text-2xl sm:text-3xl font-display font-bold text-white mt-2">
+          <span className="text-sm text-gray-400">Live telemetry</span>
+          <h2 id="live-data-heading" className="text-2xl sm:text-3xl font-display font-semibold text-white mt-2">
             Real data, right now
           </h2>
         </div>
@@ -60,7 +69,7 @@ export function LiveDataPreview() {
                   alt={apod.title}
                   fill
                   loading="lazy"
-                  className="object-cover motion-safe:group-hover:scale-105 transition-transform duration-500"
+                  className="object-cover"
                   sizes="(max-width: 640px) 100vw, 33vw"
                   unoptimized
                 />
@@ -68,7 +77,7 @@ export function LiveDataPreview() {
                 <div className="w-full h-full bg-gradient-to-br from-[#131a35] to-[#0a0e1a]" />
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-[rgba(4,6,18,0.9)] to-transparent" />
-              <span className="absolute top-2.5 left-2.5 text-[11px] uppercase tracking-[0.12em] text-cosmos-gold font-semibold px-1.5 py-0.5 rounded bg-black/50 border border-white/15">
+              <span className="absolute top-2.5 left-2.5 text-xs text-gray-200 font-medium px-1.5 py-0.5 rounded bg-black/50 border border-white/15">
                 NASA APOD
               </span>
             </div>
@@ -93,10 +102,9 @@ export function LiveDataPreview() {
                 aria-hidden="true"
                 style={{
                   background: issPosition ? '#34d399' : isLoading ? '#6b7280' : '#ef4444',
-                  boxShadow: issPosition ? '0 0 8px rgba(52,211,153,0.6)' : undefined,
                 }}
               />
-              <span className="text-[11px] uppercase tracking-[0.15em] text-gray-400 font-semibold">
+              <span className="text-xs text-gray-400 font-medium">
                 ISS position
               </span>
             </div>
@@ -104,14 +112,14 @@ export function LiveDataPreview() {
               <>
                 <div className="flex items-baseline gap-4 mb-1.5">
                   <div>
-                    <span className="text-[11px] uppercase text-gray-500 block">Lat</span>
-                    <span className="text-xl font-mono tabular-nums font-bold text-emerald-300">
+                    <span className="text-xs text-gray-500 block">Lat</span>
+                    <span className="text-xl font-mono tabular-nums font-medium text-white">
                       {issPosition.lat.toFixed(2)}°
                     </span>
                   </div>
                   <div>
-                    <span className="text-[11px] uppercase text-gray-500 block">Lon</span>
-                    <span className="text-xl font-mono tabular-nums font-bold text-emerald-300">
+                    <span className="text-xs text-gray-500 block">Lon</span>
+                    <span className="text-xl font-mono tabular-nums font-medium text-white">
                       {issPosition.lon.toFixed(2)}°
                     </span>
                   </div>
@@ -146,17 +154,17 @@ export function LiveDataPreview() {
                     : '#6b7280',
                 }}
               />
-              <span className="text-[11px] uppercase tracking-[0.15em] text-gray-400 font-semibold">
+              <span className="text-xs text-gray-400 font-medium">
                 Solar activity
               </span>
             </div>
             {solarWeather ? (
               <>
-                <span className="text-2xl font-mono tabular-nums font-bold text-cosmos-amber mb-1">
+                <span className="text-xl font-mono tabular-nums font-medium text-white capitalize mb-1">
                   {solarWeather.flareLevel}
                 </span>
                 <span className="text-xs text-gray-500 tabular-nums">
-                  Flux {solarWeather.currentFlux.toExponential(2)} W/m² · NOAA SWPC
+                  Flux {formatFlux(solarWeather.currentFlux)} W/m² · NOAA SWPC
                   {solarFresh ? ` · ${solarFresh}` : ''}
                 </span>
               </>

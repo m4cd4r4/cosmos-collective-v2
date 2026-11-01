@@ -16,7 +16,7 @@ const navItems = [
   { label: 'Satellites', href: '/satellites', icon: Satellite, description: 'Every active satellite at its position right now, by orbit class' },
   { label: 'Sky Map', href: '/sky-map', icon: Globe, description: 'Interactive multi-wavelength sky atlas' },
   { label: 'Solar System', href: '/solar-system', icon: Sun, description: 'Interactive 3D solar system' },
-  { label: 'Grav Lens', href: '/gravitational-lens', icon: Aperture, description: 'Solar Gravitational Lens telescope mission concept' },
+  { label: '550-AU', href: '/gravitational-lens', icon: Aperture, description: 'Solar Gravitational Lens telescope mission concept' },
   { label: 'Kepler', href: '/kepler', icon: Orbit, description: '2,600+ Kepler exoplanets' },
 ]
 
@@ -162,7 +162,7 @@ const mobileNavItems = [
   { label: 'Orbits', href: '/satellites', icon: Satellite },
   { label: 'Sky', href: '/sky-map', icon: Globe },
   { label: 'Solar', href: '/solar-system', icon: Sun },
-  { label: 'Lens', href: '/gravitational-lens', icon: Aperture },
+  { label: '550-AU', href: '/gravitational-lens', icon: Aperture },
   { label: 'Kepler', href: '/kepler', icon: Orbit },
 ]
 

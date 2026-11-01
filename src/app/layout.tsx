@@ -24,11 +24,6 @@ const WebVitals = dynamic(() => import('@/components/analytics/WebVitals').then(
   ssr: false,
 })
 
-// Lazy load PWA install prompt
-const InstallPrompt = dynamic(() => import('@/components/pwa/InstallPrompt').then(mod => ({ default: mod.InstallPrompt })), {
-  ssr: false,
-})
-
 // ============================================
 // Font Configuration
 // ============================================
@@ -261,9 +256,6 @@ export default async function RootLayout({
           <main id="main-content" tabIndex={-1} className="relative min-h-screen grain-overlay">
             {children}
           </main>
-
-          {/* PWA install prompt */}
-          <InstallPrompt />
         </Providers>
 
         <Analytics />
