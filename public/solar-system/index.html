@@ -804,9 +804,14 @@
         .time-now { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 4px; }
         #scrubber-date { font: 600 20px/1.2 var(--mono); color: var(--gold); }
         #scrubber-speed { color: var(--muted); font-size: 12px; }
-        #scrubber-slider { width: 100%; margin: 16px 0; }
-        #scrubber-slider::-webkit-slider-thumb { width: 22px; height: 22px; background: var(--gold); }
-        #scrubber-slider::-moz-range-thumb { width: 22px; height: 22px; background: var(--gold); border: none; border-radius: 50%; }
+        #sheet input[type="range"] { display: block; width: 100%; margin: 16px 0; cursor: pointer; }
+        #sheet input[type="range"]::-webkit-slider-thumb { width: 22px; height: 22px; background: var(--gold); }
+        #sheet input[type="range"]::-moz-range-thumb { width: 22px; height: 22px; background: var(--gold); border: none; border-radius: 50%; }
+        #sheet input[type="range"]:focus-visible { outline: 2px solid var(--gold); outline-offset: 6px; }
+        .slider-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+        .slider-head .sheet-label { margin-bottom: 0; }
+        .slider-head output { font: 600 13px/1 var(--mono); color: var(--gold); }
+        .view-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
         #events-list { max-height: 200px; font-size: 13px; }
         .tool-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 10px; }
         #sheet .tool-grid button {
@@ -977,6 +982,7 @@
                 <button type="button" data-view="free" aria-label="Free view" aria-pressed="false">Free</button>
                 <button type="button" data-view="top" aria-label="Top view" aria-pressed="false">Top</button>
                 <button type="button" data-view="side" aria-label="Side view" aria-pressed="false">Side</button>
+                <button type="button" data-view="cinema" aria-label="Cinema view" aria-pressed="false">Cinema</button>
             </div>
         </div>
         <button type="button" id="planet-dive-btn" aria-pressed="false"><span class="dive-word">Dive</span> <span class="dive-target">Sun</span></button>
@@ -1001,6 +1007,15 @@
                     <button type="button" data-look="real" aria-pressed="false">Real scale</button>
                     <button type="button" data-look="explorer" aria-pressed="false">Explorer</button>
                     <button type="button" data-look="kid" aria-pressed="false">Kid mode</button>
+                </div>
+                <span class="sheet-label" id="more-views-label">More views</span>
+                <div class="seg view-grid" id="more-views" role="group" aria-labelledby="more-views-label">
+                    <button type="button" data-view="overview" title="Bird's-eye view of the full coil" aria-pressed="false">Overview</button>
+                    <button type="button" data-view="vortex" title="Side on to the spiral" aria-pressed="false">Vortex</button>
+                    <button type="button" data-view="moonwatch" title="Close to Earth with the moons on" aria-pressed="false">Moon Watch</button>
+                    <button type="button" data-view="surfboard" title="Grazing along the orbital plane" aria-pressed="false">Surfboard</button>
+                    <button type="button" data-view="helix" title="Inside the spiral, planets crossing your view" aria-pressed="false">Helix</button>
+                    <button type="button" data-view="chase" title="Low behind the Sun" aria-pressed="false">Chase</button>
                 </div>
                 <label class="sheet-label" for="follow-target">Centre on</label>
                 <select id="follow-target">
@@ -1029,13 +1044,15 @@
                     <label class="switch"><input type="checkbox" id="show-moons"><span>Moons</span></label>
                     <label class="switch"><input type="checkbox" id="show-milky-way"><span>Milky Way</span></label>
                     <label class="switch"><input type="checkbox" id="show-trails"><span>Trails</span></label>
+                    <label class="switch"><input type="checkbox" id="show-corona"><span>Corona</span></label>
+                    <label class="switch"><input type="checkbox" id="show-grid"><span>Grid</span></label>
                 </div>
-                <span class="sheet-label" id="trail-length-label">Trail length</span>
-                <div class="seg seg-wide" id="trail-length" role="group" aria-labelledby="trail-length-label">
-                    <button type="button" data-trail="short" aria-pressed="false">Short</button>
-                    <button type="button" data-trail="medium" aria-pressed="false">Medium</button>
-                    <button type="button" data-trail="long" aria-pressed="false">Long</button>
-                </div>
+                <div class="slider-head"><label class="sheet-label" for="trail-days">Trail length</label><output id="trail-days-val" for="trail-days"></output></div>
+                <input type="range" id="trail-days" min="0" max="1000" step="1">
+                <div class="slider-head"><label class="sheet-label" for="trail-opacity">Trail brightness</label><output id="trail-opacity-val" for="trail-opacity"></output></div>
+                <input type="range" id="trail-opacity" min="0.2" max="1" step="0.05">
+                <div class="slider-head"><label class="sheet-label" for="sun-drift">Sun speed</label><output id="sun-drift-val" for="sun-drift"></output></div>
+                <input type="range" id="sun-drift" min="0" max="2" step="0.05">
             </div>
             <div role="tabpanel" id="panel-time" aria-labelledby="tab-time" hidden>
                 <div class="time-now">
@@ -1085,6 +1102,7 @@
             <dl>
                 <dt><kbd>Space</kbd></dt><dd>Play or pause</dd>
                 <dt><kbd>E</kbd></dt><dd>Dive into the planet you follow</dd>
+                <dt><kbd>C</kbd></dt><dd>Cinema view</dd>
                 <dt><kbd>Esc</kbd></dt><dd>Close, or leave dive</dd>
                 <dt><kbd>R</kbd></dt><dd>Reset everything</dd>
                 <dt><kbd>?</kbd></dt><dd>This list</dd>
@@ -1913,7 +1931,6 @@
                     return ((elem.L0 + elem.n * DAYS_FROM_J2000_TO_START_EARLY) % 360) * Math.PI / 180;
                 })(),
                 trail: [],
-                maxTrailLength: 800,
                 period: data.orbitalPeriod,
                 name: data.name,
                 originalRadius: data.radius,
@@ -2023,21 +2040,50 @@
         // =====================================================================
         const trailLines = new Map();
         const sunTrail = [];
-        // Trails span at most a few simulated days. The Sun drifts SUN_DRIFT_PER_DAY
-        // units a day (Earth's orbit radius is 16), so a longer trail turns into a
-        // streak across the screen instead of a short tail by the planet.
-        // Samples are trimmed by simulated age, not count, so a slow frame rate
-        // cannot stretch them.
-        const TRAIL_MAX_DAYS = 8;
-        const sunTrailMaxLength = 2000;
-        const TRAIL_ORBIT_FRACTION = 0.25;
-        function pushTrail(trail, pos, periodDays, maxCount) {
+        // state.trailDays is the span the slider picks. The Sun drifts sunDriftPerDay()
+        // units a day (Earth's orbit radius is 16), so a short span reads as a tail by
+        // the planet and a long one as the full spiral.
+        // Planet and Sun samples are computed from the date, not recorded per frame,
+        // so a long trail appears at once and a slow frame rate cannot bend it.
+        const TRAIL_SAMPLES = 800;
+        const TRAIL_STEP_DAYS = 0.25;
+        const TRAIL_MOON_MAX_DAYS = 30; // moons lap in days: a longer span is a solid blur
+
+        function syncTrail(trail, pointAt) {
+            const span = state.trailDays;
+            const step = Math.max(span / TRAIL_SAMPLES, TRAIL_STEP_DAYS);
+            const last = trail[trail.length - 1];
+            // Time went backwards or jumped past the span: nothing old is still valid
+            const usable = last && last.day <= simulationDays && simulationDays - last.day < span;
+            if (!usable) trail.length = 0;
+            for (let day = usable ? last.day + step : simulationDays - span; day <= simulationDays; day += step) {
+                const p = pointAt(day);
+                p.day = day;
+                trail.push(p);
+            }
+            while (trail.length > 2 && trail[0].day < simulationDays - span) trail.shift();
+        }
+        function sunTrailPoint(day) {
+            return new THREE.Vector3(sun.position.x, sun.position.y, sun.position.z + (simulationDays - day) * sunDriftPerDay());
+        }
+        function planetTrailPoint(planet, day) {
+            const p = orbitXY(planet, planetMeanAnomaly(planet, day));
+            return new THREE.Vector3(p.x, p.y, sun.position.z + (simulationDays - day) * sunDriftPerDay());
+        }
+        // The span or the drift changed: redraw the whole history now
+        function rebuildTrails() {
+            sunTrail.length = 0;
+            planets.forEach(p => { p.trail = []; });
+            if (showTrails) updateTrails();
+        }
+
+        function pushTrail(trail, pos, maxCount) {
             // Time went backwards (scrubber): the old samples are in the future
             if (trail.length && trail[trail.length - 1].day > simulationDays) trail.length = 0;
             const p = pos.clone();
             p.day = simulationDays;
             trail.push(p);
-            const oldest = simulationDays - Math.min(TRAIL_ORBIT_FRACTION * periodDays, TRAIL_DAYS[state.trailLen] || TRAIL_MAX_DAYS);
+            const oldest = simulationDays - Math.min(state.trailDays, TRAIL_MOON_MAX_DAYS);
             while (trail.length > maxCount || (trail.length > 2 && trail[0].day < oldest)) trail.shift();
         }
 
@@ -2107,14 +2153,13 @@
 
         function updateTrails() {
             // Sun trail — shows the vortex forward path
-            pushTrail(sunTrail, sun.position, Infinity, sunTrailMaxLength);
+            syncTrail(sunTrail, sunTrailPoint);
 
             const oldSunLine = trailLines.get('__sun__');
             if (oldSunLine) { scene.remove(oldSunLine); oldSunLine.geometry.dispose(); oldSunLine.material.dispose(); }
 
             if (sunTrail.length > 2) {
-                const points = sunTrail.map(p => new THREE.Vector3(p.x, p.y, p.z));
-                const geo = new THREE.BufferGeometry().setFromPoints(points);
+                const geo = new THREE.BufferGeometry().setFromPoints(sunTrail.concat(sun.position));
                 const mat = new THREE.LineBasicMaterial({
                     color: new THREE.Color(0xfdb813),
                     transparent: true,
@@ -2127,16 +2172,15 @@
 
             // Planet trails
             planets.forEach(planet => {
-                pushTrail(planet.trail, planet.mesh.position, planet.period, planet.maxTrailLength);
+                syncTrail(planet.trail, day => planetTrailPoint(planet, day));
 
                 const old = trailLines.get(planet.name);
                 if (old) { scene.remove(old); old.geometry.dispose(); old.material.dispose(); }
 
                 if (planet.trail.length > 2) {
-                    const points = planet.trail.map(p => new THREE.Vector3(p.x, p.y, p.z));
-                    const geo = new THREE.BufferGeometry().setFromPoints(points);
+                    const geo = new THREE.BufferGeometry().setFromPoints(planet.trail.concat(planet.mesh.position));
                     const mat = new THREE.LineBasicMaterial({
-                        color: planet.mesh.material.color || new THREE.Color(planetsData.find(d=>d.name===planet.name).color),
+                        color: new THREE.Color(planetsData.find(d=>d.name===planet.name).color),
                         transparent: true,
                         opacity: trailOpacity
                     });
@@ -2149,7 +2193,7 @@
             // Moon trails
             if (showMoons) {
                 allMoons.forEach(moon => {
-                    pushTrail(moon.trail, moon.mesh.position, Infinity, moon.maxTrailLength);
+                    pushTrail(moon.trail, moon.mesh.position, moon.maxTrailLength);
 
                     const key = 'moon_' + moon.name;
                     const old = trailLines.get(key);
@@ -2239,7 +2283,7 @@
         // CORONA UPDATE
         // =====================================================================
         function updateCorona() {
-            if (!coronaParticles) return;
+            if (!coronaParticles || !showParticles) return;
             const pos = coronaParticles.geometry.attributes.position.array;
             const vel = coronaParticles.userData.velocities;
             for (let i = 0; i < pos.length / 3; i++) {
@@ -2585,11 +2629,10 @@
         // Sun drift along -Z per simulated day (the vortex helix pitch). Tied to
         // the date, so the helix has the same shape at every speed.
         const SUN_DRIFT_PER_DAY = 2;
-        const DEFAULT_SUN_SPEED = 2.047 * 2.047; // ~4.19, slider midpoint = 1x drift
+        const SUN_KM_PER_S = 220; // SUN_DRIFT_PER_DAY at Earth's 16-unit orbit is about this
+        function sunDriftPerDay() { return SUN_DRIFT_PER_DAY * state.sunDrift; }
         let isPaused = false;
-        let currentSunSpeed = DEFAULT_SUN_SPEED;
         let showLabels = true;
-        let showGrid = false; // Grid control cut: fixed off
         let followTarget = 'sun'; // 'sun', planet name, 'moon', or 'none'
         let showParticles = false;
         let showMoons = false;
@@ -2603,32 +2646,34 @@
         // Place every body for the current simulationDays. Planets use J2000 mean
         // longitudes, moons and asteroids use their periods, the Sun drifts by
         // the days elapsed since the last call.
+        function planetMeanAnomaly(planet, days) {
+            const elem = J2000_EPOCH_EARLY[planet.name];
+            return elem ? ((elem.L0 + elem.n * (DAYS_FROM_J2000_TO_START_EARLY + days)) % 360) * Math.PI / 180 : planet.angle;
+        }
+        function orbitXY(planet, M) {
+            if (ellipticalOrbits && planet.ecc > 0) {
+                const E = solveKepler(M, planet.ecc);
+                const a = planet.distance;
+                const b = a * Math.sqrt(1 - planet.ecc * planet.ecc);
+                return { x: a * (Math.cos(E) - planet.ecc), y: b * Math.sin(E) };
+            }
+            return { x: Math.cos(M) * planet.distance, y: Math.sin(M) * planet.distance };
+        }
+
         function positionBodies() {
             const dDays = simulationDays - lastPositionedDays;
             lastPositionedDays = simulationDays;
-            sunPosition += dDays * SUN_DRIFT_PER_DAY * (currentSunSpeed / DEFAULT_SUN_SPEED);
+            sunPosition += dDays * sunDriftPerDay();
             sun.position.z = -sunPosition;
             sunLight.position.copy(sun.position);
             glowLayers.forEach(glow => { glow.position.z = -sunPosition; });
 
-            const daysFromJ2000 = DAYS_FROM_J2000_TO_START_EARLY + simulationDays;
             const z = sun.position.z;
             planets.forEach(planet => {
-                const elem = J2000_EPOCH_EARLY[planet.name];
-                const M = elem ? ((elem.L0 + elem.n * daysFromJ2000) % 360) * Math.PI / 180 : planet.angle;
+                const M = planetMeanAnomaly(planet, simulationDays);
                 planet.angle = M;
                 planet.meanAnomaly = M;
-                let x, y;
-                if (ellipticalOrbits && planet.ecc > 0) {
-                    const E = solveKepler(M, planet.ecc);
-                    const a = planet.distance;
-                    const b = a * Math.sqrt(1 - planet.ecc * planet.ecc);
-                    x = a * (Math.cos(E) - planet.ecc);
-                    y = b * Math.sin(E);
-                } else {
-                    x = Math.cos(M) * planet.distance;
-                    y = Math.sin(M) * planet.distance;
-                }
+                const { x, y } = orbitXY(planet, M);
                 planet.mesh.position.set(x, y, z);
                 if (planet.cloudsMesh) planet.cloudsMesh.position.set(x, y, z);
                 if (planet.atmosphereMesh) planet.atmosphereMesh.position.set(x, y, z);
@@ -2724,6 +2769,7 @@
                 });
                 glowLayers.forEach((glow, i) => { glow.rotation.y += 0.06 * (i + 1) * dt; });
                 saturnRingGroup.rotation.z += 0.03 * dt;
+                cinematicAngle += 0.09 * dt;
 
                 trailTimer += dt;
                 if (showTrails && trailTimer >= TRAIL_SAMPLE_SECONDS) {
@@ -2804,10 +2850,20 @@
         let cameraMode = 'free';
         let cinematicAngle = 0;
 
+        // Dragging always switches to Free so rotation is responsive. It starts from
+        // where the camera is now; a plain tap leaves a moving camera running.
+        function dragToFree() {
+            if (cameraMode === 'free' || cameraMode === 'dive') return;
+            const dx = camera.position.x - cameraTarget.x;
+            const dy = camera.position.y - cameraTarget.y;
+            const dz = camera.position.z - cameraTarget.z;
+            cameraDistance = Math.max(5, Math.min(800, Math.hypot(dx, dy, dz)));
+            cameraRotation = { x: Math.asin(dy / Math.hypot(dx, dy, dz)), y: Math.atan2(dz, dx) };
+            setState({ view: 'free' });
+        }
+
         renderer.domElement.addEventListener('mousedown', (e) => {
             if (diveState !== 'none' && diveState !== 'orbiting') return;
-            // Dragging always switches to Free so rotation is responsive
-            if (cameraMode !== 'free' && cameraMode !== 'dive') setState({ view: 'free' });
             isDragging = true;
             isPanning = e.shiftKey;
             previousMousePosition = { x: e.clientX, y: e.clientY };
@@ -2816,6 +2872,8 @@
             if (!isDragging) return;
             const dx = e.clientX - previousMousePosition.x;
             const dy = e.clientY - previousMousePosition.y;
+            if (cameraMode !== 'free' && cameraMode !== 'dive' && Math.hypot(dx, dy) < 3) return; // a tap with a wobble
+            dragToFree();
             if (isPanning) { cameraTarget.x -= dx * 0.1; cameraTarget.y += dy * 0.1; }
             else { cameraRotation.y += dx * 0.005; cameraRotation.x += dy * 0.005; cameraRotation.x = Math.max(-Math.PI/2, Math.min(Math.PI/2, cameraRotation.x)); }
             if (diveState === 'none') updateCameraPosition();
@@ -2845,8 +2903,6 @@
             if (touchCount === 1) {
                 // Single finger: orbit (same as mouse drag)
                 if (diveState !== 'none' && diveState !== 'orbiting') return;
-                // Dragging always switches to Free so rotation is responsive
-                if (cameraMode !== 'free' && cameraMode !== 'dive') setState({ view: 'free' });
                 isDragging = true;
                 isPanning = false;
                 previousMousePosition = { x: e.touches[0].clientX, y: e.touches[0].clientY };
@@ -2871,6 +2927,8 @@
                 if (!isDragging) return;
                 const dx = tx - previousMousePosition.x;
                 const dy = ty - previousMousePosition.y;
+                if (cameraMode !== 'free' && cameraMode !== 'dive' && Math.hypot(dx, dy) < 6) return; // a tap with a wobble
+                dragToFree();
                 cameraRotation.y += dx * 0.005;
                 cameraRotation.x += dy * 0.005;
                 cameraRotation.x = Math.max(-Math.PI / 2, Math.min(Math.PI / 2, cameraRotation.x));
@@ -2933,7 +2991,6 @@
             if (cameraMode === 'cinematic') {
                 // Lemniscate (figure-of-eight) path with slow elevation breathing.
                 // Parametric: x = cos(a) / (1 + sin²(a)), z = sin(a)cos(a) / (1 + sin²(a))
-                cinematicAngle += 0.0015;
                 const lemDenom = 1 + Math.pow(Math.sin(cinematicAngle), 2);
                 const lemX = Math.cos(cinematicAngle) / lemDenom;
                 const lemZ = Math.sin(cinematicAngle) * Math.cos(cinematicAngle) / lemDenom;
@@ -3003,8 +3060,18 @@
         // =====================================================================
         const $ = id => document.getElementById(id);
         const SPEED_DPS = { real: 1 / 86400, day: 1, week: 7, month: DEFAULT_DAYS_PER_SECOND, year: 365.25 };
-        // Trail span in simulated days; 'long' is capped only by each body's quarter orbit
-        const TRAIL_DAYS = { short: 8, medium: 30, long: Infinity };
+        // Trail span in simulated days. The slider is logarithmic: a day and a week
+        // sit as far apart as a year and seven years.
+        const TRAIL_MIN_DAYS = 1;
+        const TRAIL_MAX_DAYS = 1825;
+        const sliderToTrailDays = v => Math.round(TRAIL_MIN_DAYS * Math.pow(TRAIL_MAX_DAYS / TRAIL_MIN_DAYS, v / 1000));
+        const trailDaysToSlider = d => Math.round(1000 * Math.log(d / TRAIL_MIN_DAYS) / Math.log(TRAIL_MAX_DAYS / TRAIL_MIN_DAYS));
+        function formatTrailDays(d) {
+            if (d === 1) return '1 day';
+            if (d < 60) return d + ' days';
+            if (d < 700) return Math.round(d / 30.44) + ' months';
+            return (d / 365.25).toFixed(1) + ' years';
+        }
         const LOOK_PRESETS = {
             real:   { speed: 'week',  trueScale: true,  labels: true, orbitLines: true, moons: false, trails: false, milkyWay: true },
             explorer: { speed: 'week', trueScale: false, labels: true, orbitLines: true, moons: true,  trails: true,  milkyWay: true },
@@ -3012,11 +3079,15 @@
         };
         const DEFAULTS = Object.freeze({
             playing: true,
-            view: 'free',            // 'free' | 'top' | 'side'
+            view: 'free',            // a key of VIEW_MODE
             follow: 'sun',
             look: 'explorer',        // 'real' | 'explorer' | 'kid' | 'custom'
             ...LOOK_PRESETS.explorer,
-            trailLen: 'short',       // 'short' | 'medium' | 'long'
+            trailDays: 8,            // TRAIL_MIN_DAYS to TRAIL_MAX_DAYS
+            trailOpacity: 0.7,
+            sunDrift: 1,             // multiple of the Sun's 220 km/s
+            corona: false,
+            grid: false,
             mode: 'solar',           // 'solar' | 'dive' (set by their transitions)
             tool: 'none',            // 'none' | 'distance'
             sheet: null,             // null | 'look' | 'time' | 'tools'
@@ -3025,12 +3096,23 @@
         const LOOK_TOGGLES = ['labels', 'orbitLines', 'moons', 'trails', 'milkyWay'];
         // v2: the default speed and preset changed, so earlier saved choices are dropped once
         const PERSIST_KEY = 'solar-system-state-v2';
-        const PERSISTED = ['speed', 'look', 'trueScale', 'labels', 'orbitLines', 'moons', 'milkyWay', 'trails', 'trailLen'];
-        const VIEW_MODE = { free: 'free', top: 'orbital', side: 'side' };
+        const PERSISTED = ['speed', 'look', 'trueScale', 'labels', 'orbitLines', 'moons', 'milkyWay', 'trails', 'trailDays', 'trailOpacity', 'sunDrift', 'corona', 'grid'];
+        const VIEW_MODE = {
+            free: 'free', top: 'orbital', side: 'side', cinema: 'cinematic',
+            overview: 'free', vortex: 'side', moonwatch: 'free', surfboard: 'surfboard', helix: 'helix', chase: 'chase',
+        };
+        // scene: what a view needs to look right, applied with it. The spirals need long trails.
         const VIEW_INIT = {
             free: { rot: { x: 0.3, y: 0.7 }, dist: 140 },
             top:  { rot: { x: 1.35, y: 0 }, dist: 200 },
             side: { rot: { x: 0.1, y: 0 },  dist: 220 },
+            cinema:    { rot: { x: 0.15, y: 0.7 },  dist: 300, scene: { trails: true, trailDays: 730,  moons: false, follow: 'sun' } },
+            overview:  { rot: { x: 0.45, y: 0.35 }, dist: 420, scene: { trails: true, trailDays: 1095, moons: false, follow: 'sun' } },
+            vortex:    { rot: { x: 0.08, y: 0.7 },  dist: 220, scene: { trails: true, trailDays: 730,  moons: false, follow: 'sun' } },
+            moonwatch: { rot: { x: 0.35, y: 1 },    dist: 65,  scene: { trails: true, trailDays: 30,   moons: true,  follow: 'earth' } },
+            surfboard: { rot: { x: 0.04, y: 1.4 },  dist: 280, scene: { trails: true, trailDays: 730,  moons: false, follow: 'sun' } },
+            helix:     { rot: { x: 0, y: 0 },       dist: 260, scene: { trails: true, trailDays: 365,  moons: false, follow: 'sun' } },
+            chase:     { rot: { x: 0.05, y: 3.14 }, dist: 120, scene: { trails: true, trailDays: 365,  moons: false, follow: 'sun' } },
         };
 
         function loadPersisted() {
@@ -3040,7 +3122,9 @@
                 PERSISTED.forEach(k => { if (k in saved && typeof saved[k] === typeof DEFAULTS[k]) out[k] = saved[k]; });
                 if (out.speed && !(out.speed in SPEED_DPS)) delete out.speed;
                 if (out.look && !(out.look in LOOK_PRESETS) && out.look !== 'custom') delete out.look;
-                if (out.trailLen && !(out.trailLen in TRAIL_DAYS)) delete out.trailLen;
+                if (out.trailDays < TRAIL_MIN_DAYS || out.trailDays > TRAIL_MAX_DAYS) delete out.trailDays;
+                if (out.sunDrift < 0 || out.sunDrift > 2) delete out.sunDrift;
+                if (out.trailOpacity < 0.2 || out.trailOpacity > 1) delete out.trailOpacity;
                 return out;
             } catch (e) { return {}; }
         }
@@ -3095,7 +3179,7 @@
             if (changed('view')) {
                 if (cameraMode !== 'dive') cameraMode = VIEW_MODE[s.view];
                 cinematicAngle = cameraRotation.y;
-                markPressed('#dock-view [data-view]', 'view', s.view);
+                markPressed('[data-view]', 'view', s.view);
             }
             if (changed('follow')) {
                 followTarget = s.follow;
@@ -3132,7 +3216,39 @@
                 $('show-trails').checked = s.trails;
                 if (!s.trails) { clearTrailLines(); clearAllTrails(); }
             }
-            if (changed('trailLen')) markPressed('#trail-length [data-trail]', 'trail', s.trailLen);
+            if (changed('trailDays')) {
+                const label = formatTrailDays(s.trailDays);
+                $('trail-days').value = trailDaysToSlider(s.trailDays);
+                $('trail-days').setAttribute('aria-valuetext', label);
+                $('trail-days-val').textContent = label;
+            }
+            if (changed('trailOpacity')) {
+                trailOpacity = s.trailOpacity;
+                $('trail-opacity').value = s.trailOpacity;
+                $('trail-opacity-val').textContent = Math.round(s.trailOpacity * 100) + '%';
+            }
+            if (changed('sunDrift')) {
+                const label = s.sunDrift === 0 ? 'Still' : Math.round(SUN_KM_PER_S * s.sunDrift) + ' km/s';
+                $('sun-drift').value = s.sunDrift;
+                $('sun-drift').setAttribute('aria-valuetext', label);
+                $('sun-drift-val').textContent = label;
+            }
+            if (changed('trailDays') || changed('sunDrift') || (changed('trails') && s.trails)) rebuildTrails();
+            else if (changed('trailOpacity') && showTrails) updateTrails();
+            if (changed('corona')) {
+                showParticles = s.corona;
+                $('show-corona').checked = s.corona;
+                if (s.corona && !coronaParticles) createCoronaParticles();
+                if (coronaParticles) {
+                    coronaParticles.visible = s.corona;
+                    coronaParticles.position.copy(sun.position);
+                }
+            }
+            if (changed('grid')) {
+                $('show-grid').checked = s.grid;
+                referenceGrid.visible = s.grid;
+                referenceGrid.position.z = sun.position.z;
+            }
             if (changed('mode')) {
                 document.body.classList.toggle('mode-dive', s.mode === 'dive');
                 $('planet-dive-btn').setAttribute('aria-pressed', String(s.mode === 'dive'));
@@ -3176,13 +3292,13 @@
             sunTrail.length = 0;
         }
 
-        // Camera views. The dock sets a starting angle; drag takes over from there.
+        // Camera views. Each sets a starting angle; drag takes over from there.
         function setView(view) {
             if (diveState !== 'none') exitDiveImmediate();
             const init = VIEW_INIT[view];
             cameraRotation = { ...init.rot };
             cameraDistance = init.dist;
-            setState({ view });
+            setState({ view, ...init.scene });
             cameraMode = VIEW_MODE[view];
             cinematicAngle = cameraRotation.y;
             updateCameraPosition();
@@ -3252,7 +3368,7 @@
         document.querySelectorAll('#dock-speed [data-speed]').forEach(btn => {
             btn.addEventListener('click', () => setState({ speed: btn.dataset.speed }));
         });
-        document.querySelectorAll('#dock-view [data-view]').forEach(btn => {
+        document.querySelectorAll('[data-view]').forEach(btn => {
             btn.addEventListener('click', () => setView(btn.dataset.view));
         });
         $('planet-dive-btn').addEventListener('click', startDive);
@@ -3287,12 +3403,12 @@
         document.querySelectorAll('#look-presets [data-look]').forEach(btn => {
             btn.addEventListener('click', () => setLook(btn.dataset.look));
         });
-        document.querySelectorAll('#trail-length [data-trail]').forEach(btn => {
-            btn.addEventListener('click', () => setState({ trailLen: btn.dataset.trail, trails: true }));
-        });
+        $('trail-days').addEventListener('input', e => setState({ trailDays: sliderToTrailDays(+e.target.value), trails: true }));
+        $('trail-opacity').addEventListener('input', e => setState({ trailOpacity: +e.target.value, trails: true }));
+        $('sun-drift').addEventListener('input', e => setState({ sunDrift: +e.target.value }));
         $('follow-target').addEventListener('change', e => setFollow(e.target.value));
         [['show-labels', 'labels'], ['show-orbit-rings', 'orbitLines'], ['show-moons', 'moons'],
-         ['show-milky-way', 'milkyWay'], ['show-trails', 'trails']].forEach(([id, key]) => {
+         ['show-milky-way', 'milkyWay'], ['show-trails', 'trails'], ['show-corona', 'corona'], ['show-grid', 'grid']].forEach(([id, key]) => {
             $(id).addEventListener('change', e => setState({ [key]: e.target.checked }));
         });
 
@@ -3570,7 +3686,7 @@
             simulationDays = dayOffset;
             lastPositionedDays = dayOffset; // scrubbing does not drag the Sun along the helix
             positionBodies();
-            if (showTrails) { clearTrailLines(); clearAllTrails(); }
+            if (showTrails) { clearTrailLines(); clearAllTrails(); rebuildTrails(); }
             updateStats();
             syncTimeTab(true);
         }
@@ -3709,6 +3825,7 @@
             if (e.code === 'Space') { e.preventDefault(); setState({ playing: !state.playing }); }
             if (e.code === 'KeyR') resetAll();
             if (e.code === 'KeyE') startDive();
+            if (e.code === 'KeyC') setView('cinema');
         });
 
         // =====================================================================
@@ -3736,7 +3853,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        if (referenceGrid) referenceGrid.visible = false; // Grid control cut: fixed off
         applyState(null, state);
         updateCameraPosition();
         updateEventsDisplay();
@@ -3788,12 +3904,22 @@
                 },
                 {
                     id: 'view-side',
-                    target: '#dock-view',
+                    target: null,
                     title: 'The vortex',
                     text: 'From the side you can see the Sun pulling every planet along behind it, so each orbit becomes a spiral.',
-                    position: 'above',
+                    position: 'center',
                     duration: 6000,
-                    action: function() { setView('side'); },
+                    action: function() { setView('vortex'); },
+                    delay: 600,
+                },
+                {
+                    id: 'view-cinema',
+                    target: '#dock-view',
+                    title: 'Cinema',
+                    text: 'Sit back. The camera drifts in a slow figure of eight around the spirals. Press C any time.',
+                    position: 'above',
+                    duration: 7000,
+                    action: function() { setView('cinema'); setState({ speed: 'week' }); },
                     delay: 600,
                 },
                 {
@@ -3813,7 +3939,7 @@
                     text: 'Click any planet name to follow it and read its data. Here is Saturn and its rings.',
                     position: 'center',
                     duration: 5000,
-                    action: function() { setView('free'); setFollow('saturn'); cameraDistance = 45; },
+                    action: function() { setView('free'); setState({ trailDays: DEFAULTS.trailDays }); setFollow('saturn'); cameraDistance = 45; },
                     delay: 800,
                 },
                 {

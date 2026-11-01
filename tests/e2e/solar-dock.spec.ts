@@ -20,6 +20,9 @@ async function load(page: Page, errors: string[]) {
 }
 
 const simDays = (page: Page) => page.evaluate(() => (window as any).eval('simulationDays') as number)
+const evalApp = (page: Page, expr: string) => page.evaluate(e => (window as any).eval(e), expr) as Promise<any>
+const trailSpan = (page: Page, planet: string) => evalApp(page,
+  `(t => t[t.length - 1].day - t[0].day)(planets.find(p => p.name === '${planet}').trail)`) as Promise<number>
 const pressed = (page: Page, sel: string) => expect(page.locator(sel)).toHaveAttribute('aria-pressed', 'true')
 
 test.describe('solar system dock', () => {
@@ -91,7 +94,7 @@ test.describe('solar system dock', () => {
     await page.click('#dock-more')
     await page.click('#tab-look')
     await pressed(page, '#look-presets [data-look="explorer"]')
-    await pressed(page, '#trail-length [data-trail="short"]')
+    await expect(page.locator('#trail-days-val')).toHaveText('8 days')
     await expect(page.locator('#show-labels')).toBeChecked()
     expect(Math.abs(await simDays(page))).toBeLessThan(200)
     expect(errors).toEqual([])
@@ -136,6 +139,107 @@ test.describe('solar system dock', () => {
     await page.keyboard.press('g')
     await page.waitForTimeout(600)
     await expect(page.locator('#dock')).toBeVisible()
+    expect(errors).toEqual([])
+  })
+
+  test('Cinema flies its own path with full spirals; a tap keeps it, a drag leaves it', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    await page.click('#dock-view [data-view="cinema"]')
+    await pressed(page, '#dock-view [data-view="cinema"]')
+    expect(await evalApp(page, 'cameraMode')).toBe('cinematic')
+    // The spiral is there at once, not after minutes of recording
+    expect(await trailSpan(page, 'Earth')).toBeGreaterThan(700)
+
+    const before = await evalApp(page, 'camera.position.x')
+    await page.waitForTimeout(1000)
+    expect(Math.abs((await evalApp(page, 'camera.position.x')) - before)).toBeGreaterThan(0.5)
+    await page.waitForTimeout(2000)
+    await page.screenshot({ path: `${SHOTS}/1440-cinema.png` })
+
+    await page.mouse.click(720, 200)
+    expect(await evalApp(page, 'cameraMode')).toBe('cinematic')
+    await page.mouse.move(720, 200)
+    await page.mouse.down()
+    await page.mouse.move(780, 240, { steps: 4 })
+    await page.mouse.up()
+    expect(await evalApp(page, 'cameraMode')).toBe('free')
+    await pressed(page, '#dock-view [data-view="free"]')
+    // Keeps the viewpoint instead of snapping back to the default distance
+    expect(await evalApp(page, 'cameraDistance')).toBeGreaterThan(200)
+
+    await page.keyboard.press('c')
+    expect(await evalApp(page, 'cameraMode')).toBe('cinematic')
+    expect(errors).toEqual([])
+  })
+
+  test('trail length is a slider: any span, drawn at once, also while paused, saved', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    await page.click('#toggle-pause')
+    await page.click('#dock-more')
+    await expect(page.locator('#trail-days')).toHaveAttribute('type', 'range')
+    await expect(page.locator('[data-trail]')).toHaveCount(0)
+
+    expect(await trailSpan(page, 'Earth')).toBeLessThan(9)
+    await page.locator('#trail-days').fill('1000')
+    await expect(page.locator('#trail-days-val')).toHaveText('5.0 years')
+    expect(await trailSpan(page, 'Earth')).toBeGreaterThan(1800)
+    expect(await evalApp(page, `planets.find(p => p.name === 'Earth').trail.length`)).toBeLessThanOrEqual(802)
+
+    await page.locator('#trail-days').fill('500')
+    await expect(page.locator('#trail-days-val')).toHaveText('43 days')
+    const span = await trailSpan(page, 'Earth')
+    expect(span).toBeGreaterThan(42)
+    expect(span).toBeLessThan(44)
+    expect(await evalApp(page, `JSON.parse(localStorage.getItem(PERSIST_KEY)).trailDays`)).toBe(43)
+    expect(errors).toEqual([])
+  })
+
+  test('every view in More sets its camera', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    await page.click('#dock-more')
+    await page.screenshot({ path: `${SHOTS}/1440-sheet-views.png` })
+    const modes: Record<string, string> = {
+      overview: 'free', vortex: 'side', surfboard: 'surfboard', helix: 'helix', chase: 'chase',
+    }
+    for (const [view, mode] of Object.entries(modes)) {
+      await page.click(`#more-views [data-view="${view}"]`)
+      await pressed(page, `#more-views [data-view="${view}"]`)
+      expect(await evalApp(page, 'cameraMode')).toBe(mode)
+      expect(await evalApp(page, 'followTarget')).toBe('sun')
+    }
+    await page.click('#more-views [data-view="moonwatch"]')
+    expect(await evalApp(page, 'followTarget')).toBe('earth')
+    await expect(page.locator('#show-moons')).toBeChecked()
+    expect(errors).toEqual([])
+  })
+
+  test('trail brightness, Sun speed, corona and grid all reach the scene', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    await page.click('#dock-more')
+
+    await page.locator('#trail-opacity').fill('1')
+    await expect(page.locator('#trail-opacity-val')).toHaveText('100%')
+    expect(await evalApp(page, `trailLines.get('Earth').material.opacity`)).toBe(1)
+
+    await page.locator('#sun-drift').fill('0')
+    await expect(page.locator('#sun-drift-val')).toHaveText('Still')
+    const z0 = await evalApp(page, 'sun.position.z')
+    await page.waitForTimeout(400)
+    expect(await evalApp(page, 'sun.position.z')).toBe(z0)
+
+    expect(await evalApp(page, 'coronaParticles')).toBeNull()
+    await page.locator('#show-corona').check({ force: true })
+    expect(await evalApp(page, 'coronaParticles.visible')).toBe(true)
+    await page.locator('#show-corona').uncheck({ force: true })
+    expect(await evalApp(page, 'coronaParticles.visible')).toBe(false)
+
+    expect(await evalApp(page, 'referenceGrid.visible')).toBe(false)
+    await page.locator('#show-grid').check({ force: true })
+    expect(await evalApp(page, 'referenceGrid.visible')).toBe(true)
     expect(errors).toEqual([])
   })
 
