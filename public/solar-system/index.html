@@ -875,14 +875,14 @@
         </div>
         <div class="accuracy-group accuracy-note">
             Pick <strong>Real scale</strong> (More, Look) to see real relative planet sizes.<br>
-            Click any planet name to see its data.
+            Pick any planet name to see its data.
         </div>
     </div>
 
     <!-- Planet Dive HUD -->
     <div id="dive-hud">
         <h2 id="dive-planet-name">Earth</h2>
-        <div class="dive-subtitle" id="dive-subtitle">Low Earth orbit</div>
+        <div class="dive-subtitle" id="dive-subtitle">Earth orbit</div>
     </div>
     <div id="dive-altitude"></div>
 
@@ -1249,17 +1249,17 @@
         // SCIENCE DATA (NASA/JPL)
         // =====================================================================
         const scienceData = {
-            Sun:     { realRadius: 696340, realRadiusEarth: 109.2, mass: '1.989 x 10^30 kg', gravity: '274 m/s\u00B2', temp: '5,778 K surface', funFact: 'Contains 99.86% of all mass in the solar system' },
-            Mercury: { realRadius: 2439.7, realRadiusEarth: 0.383, distanceAU: 0.387, mass: '3.301 x 10^23 kg', gravity: '3.7 m/s\u00B2', temp: '-180 to 430\u00B0C', dayLength: '58.6 Earth days', tilt: '0.034\u00B0', atmosphere: 'None (trace exosphere)', funFact: 'A year is shorter than its day-night cycle (176 Earth days)' },
-            Venus:   { realRadius: 6051.8, realRadiusEarth: 0.949, distanceAU: 0.723, mass: '4.867 x 10^24 kg', gravity: '8.87 m/s\u00B2', temp: '462\u00B0C (hottest planet)', dayLength: '243 Earth days (retrograde)', tilt: '177.4\u00B0', atmosphere: '96.5% CO2, 3.5% N2', funFact: 'Rotates backwards \u2013 sun rises in the west' },
-            Earth:   { realRadius: 6371, realRadiusEarth: 1.0, distanceAU: 1.0, mass: '5.972 x 10^24 kg', gravity: '9.81 m/s\u00B2', temp: '15\u00B0C average', dayLength: '23h 56m', tilt: '23.44\u00B0', atmosphere: '78% N2, 21% O2', funFact: 'Only known planet with liquid surface water and life' },
-            Mars:    { realRadius: 3389.5, realRadiusEarth: 0.532, distanceAU: 1.524, mass: '6.417 x 10^23 kg', gravity: '3.72 m/s\u00B2', temp: '-65\u00B0C average', dayLength: '24h 37m', tilt: '25.19\u00B0', atmosphere: '95% CO2, 2.7% N2', funFact: 'Olympus Mons is 21.9 km tall \u2013 tallest volcano in the solar system' },
-            Jupiter: { realRadius: 69911, realRadiusEarth: 10.97, distanceAU: 5.203, mass: '1.898 x 10^27 kg', gravity: '24.79 m/s\u00B2', temp: '-110\u00B0C cloud tops', dayLength: '9h 55m (fastest)', tilt: '3.13\u00B0', atmosphere: '90% H2, 10% He', funFact: 'Great Red Spot is a storm bigger than Earth, raging for 350+ years' },
-            Saturn:  { realRadius: 58232, realRadiusEarth: 9.14, distanceAU: 9.537, mass: '5.683 x 10^26 kg', gravity: '10.44 m/s\u00B2', temp: '-140\u00B0C cloud tops', dayLength: '10h 33m', tilt: '26.73\u00B0', atmosphere: '96% H2, 3% He', funFact: 'Density is 0.687 g/cm\u00B3 \u2013 it would float in water' },
-            Uranus:  { realRadius: 25362, realRadiusEarth: 3.98, distanceAU: 19.19, mass: '8.681 x 10^25 kg', gravity: '8.87 m/s\u00B2', temp: '-195\u00B0C', dayLength: '17h 14m', tilt: '97.77\u00B0', atmosphere: '83% H2, 15% He, 2% CH4', funFact: 'Rotates on its side \u2013 likely from a massive ancient collision' },
-            Neptune: { realRadius: 24622, realRadiusEarth: 3.86, distanceAU: 30.07, mass: '1.024 x 10^26 kg', gravity: '11.15 m/s\u00B2', temp: '-200\u00B0C', dayLength: '16h 6m', tilt: '28.32\u00B0', atmosphere: '80% H2, 19% He, 1% CH4', funFact: 'Winds reach 2,100 km/h \u2013 fastest in the solar system' },
-            Ceres:   { realRadius: 473, realRadiusEarth: 0.074, distanceAU: 2.77, mass: '9.39 x 10^20 kg', gravity: '0.28 m/s\u00B2', temp: '-106\u00B0C', dayLength: '9h 4m', tilt: '4\u00B0', atmosphere: 'Transient water vapor', funFact: 'Largest object in the asteroid belt - contains a third of the belt\'s total mass' },
-            Pluto:   { realRadius: 1188, realRadiusEarth: 0.186, distanceAU: 39.5, mass: '1.303 x 10^22 kg', gravity: '0.62 m/s\u00B2', temp: '-230\u00B0C', dayLength: '6.4 Earth days (retrograde)', tilt: '122.5\u00B0', atmosphere: 'Thin N2, CH4, CO', funFact: 'Pluto and Charon are tidally locked to each other - both always show the same face' }
+            Sun:     { realRadius: 696340, realRadiusEarth: 109.2, mass: '1.989 \u00D7 10\u00B3\u2070 kg', gravity: '274 m/s\u00B2', temp: '5,778 K surface', funFact: 'Contains 99.86% of all mass in the solar system' },
+            Mercury: { realRadius: 2439.7, realRadiusEarth: 0.383, distanceAU: 0.387, mass: '3.301 \u00D7 10\u00B2\u00B3 kg', gravity: '3.7 m/s\u00B2', temp: '-180 to 430\u00B0C', dayLength: '58.6 Earth days', tilt: '0.034\u00B0', atmosphere: 'None (trace exosphere)', funFact: 'A year is shorter than its day-night cycle (176 Earth days)' },
+            Venus:   { realRadius: 6051.8, realRadiusEarth: 0.949, distanceAU: 0.723, mass: '4.867 \u00D7 10\u00B2\u2074 kg', gravity: '8.87 m/s\u00B2', temp: '462\u00B0C (hottest planet)', dayLength: '243 Earth days (retrograde)', tilt: '177.4\u00B0', atmosphere: '96.5% CO2, 3.5% N2', funFact: 'Rotates backwards \u2013 sun rises in the west' },
+            Earth:   { realRadius: 6371, realRadiusEarth: 1.0, distanceAU: 1.0, mass: '5.972 \u00D7 10\u00B2\u2074 kg', gravity: '9.81 m/s\u00B2', temp: '15\u00B0C average', dayLength: '23h 56m', tilt: '23.44\u00B0', atmosphere: '78% N2, 21% O2', funFact: 'Only known planet with liquid surface water and life' },
+            Mars:    { realRadius: 3389.5, realRadiusEarth: 0.532, distanceAU: 1.524, mass: '6.417 \u00D7 10\u00B2\u00B3 kg', gravity: '3.72 m/s\u00B2', temp: '-65\u00B0C average', dayLength: '24h 37m', tilt: '25.19\u00B0', atmosphere: '95% CO2, 2.7% N2', funFact: 'Olympus Mons is 21.9 km tall \u2013 tallest volcano in the solar system' },
+            Jupiter: { realRadius: 69911, realRadiusEarth: 10.97, distanceAU: 5.203, mass: '1.898 \u00D7 10\u00B2\u2077 kg', gravity: '24.79 m/s\u00B2', temp: '-110\u00B0C cloud tops', dayLength: '9h 55m (fastest)', tilt: '3.13\u00B0', atmosphere: '90% H2, 10% He', funFact: 'Great Red Spot is a storm bigger than Earth, raging for 350+ years' },
+            Saturn:  { realRadius: 58232, realRadiusEarth: 9.14, distanceAU: 9.537, mass: '5.683 \u00D7 10\u00B2\u2076 kg', gravity: '10.44 m/s\u00B2', temp: '-140\u00B0C cloud tops', dayLength: '10h 33m', tilt: '26.73\u00B0', atmosphere: '96% H2, 3% He', funFact: 'Density is 0.687 g/cm\u00B3 \u2013 it would float in water' },
+            Uranus:  { realRadius: 25362, realRadiusEarth: 3.98, distanceAU: 19.19, mass: '8.681 \u00D7 10\u00B2\u2075 kg', gravity: '8.87 m/s\u00B2', temp: '-195\u00B0C', dayLength: '17h 14m', tilt: '97.77\u00B0', atmosphere: '83% H2, 15% He, 2% CH4', funFact: 'Rotates on its side \u2013 likely from a massive ancient collision' },
+            Neptune: { realRadius: 24622, realRadiusEarth: 3.86, distanceAU: 30.07, mass: '1.024 \u00D7 10\u00B2\u2076 kg', gravity: '11.15 m/s\u00B2', temp: '-200\u00B0C', dayLength: '16h 6m', tilt: '28.32\u00B0', atmosphere: '80% H2, 19% He, 1% CH4', funFact: 'Winds reach 2,100 km/h \u2013 fastest in the solar system' },
+            Ceres:   { realRadius: 473, realRadiusEarth: 0.074, distanceAU: 2.77, mass: '9.39 \u00D7 10\u00B2\u2070 kg', gravity: '0.28 m/s\u00B2', temp: '-106\u00B0C', dayLength: '9h 4m', tilt: '4\u00B0', atmosphere: 'Transient water vapor', funFact: 'Largest object in the asteroid belt - contains a third of the belt\'s total mass' },
+            Pluto:   { realRadius: 1188, realRadiusEarth: 0.186, distanceAU: 39.5, mass: '1.303 \u00D7 10\u00B2\u00B2 kg', gravity: '0.62 m/s\u00B2', temp: '-230\u00B0C', dayLength: '6.4 Earth days (retrograde)', tilt: '122.5\u00B0', atmosphere: 'Thin N2, CH4, CO', funFact: 'Pluto and Charon are tidally locked to each other - both always show the same face' }
         };
 
         // =====================================================================
@@ -2088,7 +2088,7 @@
             Sun:     { subtitle: 'Solar corona',       symbol: '\u2609', orbitMult: 4.0, realRadius: 696340, speedMult: 0.3, tilt: 0.15 },
             Mercury: { subtitle: 'Hermean orbit',      symbol: '\u263F', orbitMult: 3.5, realRadius: 2439.7, speedMult: 1.2, tilt: 0.2 },
             Venus:   { subtitle: 'Cytherean orbit',    symbol: '\u2640', orbitMult: 3.5, realRadius: 6051.8, speedMult: 0.9, tilt: 0.25 },
-            Earth:   { subtitle: 'Low Earth orbit',    symbol: 'R\u2295', orbitMult: 3.5, realRadius: 6371,  speedMult: 0.8, tilt: 0.3 },
+            Earth:   { subtitle: 'Earth orbit',    symbol: 'R\u2295', orbitMult: 3.5, realRadius: 6371,  speedMult: 0.8, tilt: 0.3 },
             Mars:    { subtitle: 'Areocentric orbit',  symbol: '\u2642', orbitMult: 3.5, realRadius: 3389.5, speedMult: 1.0, tilt: 0.25 },
             Jupiter: { subtitle: 'Jovian orbit',       symbol: '\u2643', orbitMult: 2.8, realRadius: 69911,  speedMult: 0.5, tilt: 0.2 },
             Saturn:  { subtitle: 'Saturnian orbit',    symbol: '\u2644', orbitMult: 3.0, realRadius: 58232,  speedMult: 0.5, tilt: 0.35 },
@@ -3691,7 +3691,7 @@
                     id: 'follow-saturn',
                     target: null,
                     title: 'Follow a planet',
-                    text: 'Click any planet name to follow it and read its data. Here is Saturn and its rings.',
+                    text: 'Pick any planet name to follow it and read its data. Here is Saturn and its rings.',
                     position: 'center',
                     duration: 5000,
                     action: function() { setView('free'); setState({ trailDays: DEFAULTS.trailDays }); setFollow('saturn'); cameraDistance = 45; },
