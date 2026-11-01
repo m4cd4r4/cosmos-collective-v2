@@ -164,9 +164,22 @@ const nextConfig = {
       source: '/(.*)',
       headers: [
         { key: 'X-Content-Type-Options', value: 'nosniff' },
-        { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
         { key: 'X-XSS-Protection', value: '1; mode=block' },
         { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      ],
+    },
+    {
+      source: '/((?!solar-system/index\\.html).*)',
+      headers: [{ key: 'X-Frame-Options', value: 'SAMEORIGIN' }],
+    },
+    // The solar system is framed on the portfolio site. Public page with no sign-in.
+    {
+      source: '/solar-system/index.html',
+      headers: [
+        {
+          key: 'Content-Security-Policy',
+          value: "frame-ancestors 'self' https://macdaraomurchu.com https://www.macdaraomurchu.com http://localhost:3046",
+        },
       ],
     },
     // Service worker must never be cached by the browser

@@ -22,6 +22,23 @@ async function load(page: Page, errors: string[]) {
 const simDays = (page: Page) => page.evaluate(() => (window as any).eval('simulationDays') as number)
 const pressed = (page: Page, sel: string) => expect(page.locator(sel)).toHaveAttribute('aria-pressed', 'true')
 
+test('embed mode shows only the picture, keeps the camera moving and saves nothing', async ({ page }) => {
+  const errors: string[] = []
+  page.on('pageerror', e => errors.push(e.message))
+  await page.goto(`${APP}?embed=1`)
+  await expect(page.locator('#loading-overlay')).toHaveClass(/\bhidden\b/, { timeout: 30_000 })
+  await expect(page.locator('#dock')).toBeHidden()
+  await expect(page.locator('#earth-date-counter')).toBeHidden()
+  await page.waitForTimeout(2000)
+  await expect(page.locator('#welcome-prompt')).toHaveCount(0)
+  const cameraX = () => page.evaluate(() => (window as any).eval('camera.position.x') as number)
+  const before = await cameraX()
+  await page.waitForTimeout(1500)
+  expect(await cameraX()).not.toBe(before)
+  expect(await page.evaluate(() => localStorage.getItem('solar-system-state-v2'))).toBeNull()
+  expect(errors).toEqual([])
+})
+
 test.describe('solar system dock', () => {
   test('loads with the dock visible and no page errors', async ({ page }) => {
     const errors: string[] = []
