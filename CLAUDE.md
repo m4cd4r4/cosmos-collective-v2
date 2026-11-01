@@ -10,7 +10,7 @@ Space enthusiasts and hobbyists - curious people who love astronomy but aren't p
 
 ### Aesthetic Direction
 - **Dark-first**: Deep space void (#0a0e1a) background, always. No light mode.
-- **Glassmorphism**: Glass panels with backdrop blur, subtle white borders, cosmic shadows
+- **Glass panels**: Navy panels with backdrop blur and subtle white borders. No glow on chrome; glow belongs to the 3D scene only
 - **Astronomy-authentic colors**: Gold (#d4af37) from stellar cores, amber (#ff9a3c) from infrared, nebula blue (#4a90e2) from reflection nebulae, hydrogen red (#ff6b6b) from H-alpha emission
 - **Typography**: Outfit (display/headlines), Inter (body), JetBrains Mono (data/code)
 - **Motion**: Purposeful animations - twinkling stars, orbital rotations, scroll reveals. Respect prefers-reduced-motion.
@@ -21,7 +21,7 @@ Space enthusiasts and hobbyists - curious people who love astronomy but aren't p
 2. **Dark sky, bright details** - Deep void backgrounds with gold/amber accents that pop like stars against the night.
 3. **Explore, don't explain** - Interactive discovery over walls of text. Let users find their own path through the cosmos.
 4. **Accessible universe** - WCAG 2.1 AA, keyboard navigation, reduced motion support. The cosmos is for everyone.
-5. **Glass and glow** - Glassmorphism panels, glow shadows, grain textures. The UI itself should feel like looking through a telescope.
+5. **Quiet glass, glowing scene** - Panels stay quiet so the 3D scene is the only rich moment. Gold marks selection only; the primary action is off-white. The UI should feel like an observatory at night.
 
 ### Design System Reference
 - **Tailwind config**: `tailwind.config.ts` - Full color palette, animations, glass components

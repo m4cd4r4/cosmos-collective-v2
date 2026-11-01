@@ -121,6 +121,36 @@ test.describe('solar system dock', () => {
     expect(errors).toEqual([])
   })
 
+  test('with More open the scene moves clear of the sheet and tapping still lands', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    await page.click('#toggle-pause')
+    await page.click('#dock-more')
+    await page.waitForTimeout(1000) // the scene eases across
+    const at = (name: string) => page.evaluate(n => (window as any).eval(`(() => {
+      const r = renderer.domElement.getBoundingClientRect();
+      const body = '${n}' === 'Sun' ? sun : planets.find(p => p.name === '${n}').mesh;
+      const v = body.position.clone().project(camera);
+      return { x: r.left + (v.x + 1) / 2 * r.width, y: r.top + (1 - v.y) / 2 * r.height };
+    })()`), name) as Promise<{ x: number, y: number }>
+
+    const sheet = (await page.locator('#sheet').boundingBox())!
+    expect(sheet.x + sheet.width).toBeGreaterThan(1400) // docked to the right edge
+    const sun = await at('Sun')
+    expect(sun.x).toBeLessThan(sheet.x)
+    // Centred in the space left of the sheet, not the window
+    expect(Math.abs(sun.x - sheet.x / 2)).toBeLessThan(40)
+
+    const jupiter = await at('Jupiter')
+    expect(jupiter.x).toBeLessThan(sheet.x)
+    await page.mouse.click(jupiter.x, jupiter.y)
+    await expect(page.locator('#follow-target')).toHaveValue('jupiter')
+    await page.waitForTimeout(1500)
+    const centred = await at('Jupiter')
+    expect(Math.abs(centred.x - sheet.x / 2)).toBeLessThan(40)
+    expect(errors).toEqual([])
+  })
+
   test('? opens the shortcuts and Esc closes it', async ({ page }) => {
     const errors: string[] = []
     await load(page, errors)
@@ -196,6 +226,25 @@ test.describe('solar system dock', () => {
     expect(errors).toEqual([])
   })
 
+  test('a view does not save its own trail settings; a slider moved during it does', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    const saved = () => evalApp(page, 'JSON.parse(localStorage.getItem(PERSIST_KEY))')
+
+    await page.click('#dock-view [data-view="cinema"]')
+    expect(await trailSpan(page, 'Earth')).toBeGreaterThan(700)
+    await page.click('#dock-view [data-view="free"]')
+    await page.click('#dock-speed [data-speed="day"]') // any later save still keeps the view's values out
+    expect((await saved()).trailDays).toBe(8)
+    expect((await saved()).moons).toBe(true)
+
+    await page.click('#dock-view [data-view="cinema"]')
+    await page.click('#dock-more')
+    await page.locator('#trail-days').fill('500')
+    expect((await saved()).trailDays).toBe(43)
+    expect(errors).toEqual([])
+  })
+
   test('every view in More sets its camera', async ({ page }) => {
     const errors: string[] = []
     await load(page, errors)
@@ -240,6 +289,23 @@ test.describe('solar system dock', () => {
     expect(await evalApp(page, 'referenceGrid.visible')).toBe(false)
     await page.locator('#show-grid').check({ force: true })
     expect(await evalApp(page, 'referenceGrid.visible')).toBe(true)
+    expect(errors).toEqual([])
+  })
+
+  test('phone width: the accuracy notes move the scene up so the Sun stays in view', async ({ page }) => {
+    const errors: string[] = []
+    await page.setViewportSize({ width: 390, height: 844 })
+    await load(page, errors)
+    await page.click('#dock-more')
+    await page.click('#tab-tools')
+    await page.click('#toggle-accuracy')
+    await page.waitForTimeout(1000)
+    const panel = (await page.locator('#accuracy-panel').boundingBox())!
+    const sunY = await evalApp(page, `(() => {
+      const r = renderer.domElement.getBoundingClientRect();
+      return r.top + (1 - sun.position.clone().project(camera).y) / 2 * r.height;
+    })()`) as number
+    expect(sunY).toBeLessThan(panel.y)
     expect(errors).toEqual([])
   })
 
