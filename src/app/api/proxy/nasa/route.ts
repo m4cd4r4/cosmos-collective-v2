@@ -1,7 +1,7 @@
 /**
  * NASA API Proxy
  * Keeps NASA_API_KEY server-side instead of exposing via NEXT_PUBLIC_
- * Proxies APOD and NEO requests
+ * Proxies NEO requests
  */
 
 import { NextRequest, NextResponse } from 'next/server'
@@ -10,7 +10,6 @@ import { apiLimiter, getClientIdentifier } from '@/lib/rate-limit'
 const NASA_API_KEY = process.env.NASA_API_KEY ?? process.env.NEXT_PUBLIC_NASA_API_KEY ?? 'DEMO_KEY'
 
 const ENDPOINTS: Record<string, string> = {
-  apod: `https://api.nasa.gov/planetary/apod`,
   neo: `https://api.nasa.gov/neo/rest/v1/feed`,
 }
 
@@ -30,7 +29,7 @@ export async function GET(request: NextRequest) {
 
   if (!endpoint || !ENDPOINTS[endpoint]) {
     return NextResponse.json(
-      { error: 'Invalid endpoint. Use ?endpoint=apod or ?endpoint=neo' },
+      { error: 'Invalid endpoint. Use ?endpoint=neo' },
       { status: 400 },
     )
   }
@@ -61,9 +60,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(data, {
       headers: {
-        'Cache-Control': endpoint === 'apod'
-          ? 'public, s-maxage=3600, stale-while-revalidate=7200'
-          : 'public, s-maxage=300, stale-while-revalidate=600',
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
       },
     })
   } catch (error) {

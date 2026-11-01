@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { useTelemetryData } from '@/components/features/mission-control/useTelemetryData'
 
 function useNow(intervalMs = 1000): number {
@@ -31,8 +30,17 @@ function formatFlux(flux: number): string {
   return `${mantissa} × 10${superscript}`
 }
 
+// NASA reports close approaches in UTC
+function formatApproachDate(time: number): string {
+  return new Date(time).toLocaleDateString('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    timeZone: 'UTC',
+  })
+}
+
 export function LiveDataPreview() {
-  const { apod, issPosition, issUpdatedAt, solarWeather, solarUpdatedAt, isLoading } =
+  const { closestAsteroid, issPosition, issUpdatedAt, solarWeather, solarUpdatedAt, isLoading } =
     useTelemetryData()
   const now = useNow()
   const [mounted, setMounted] = useState(false)
@@ -55,40 +63,40 @@ export function LiveDataPreview() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {/* APOD */}
+          {/* Closest asteroid */}
           <a
-            href="https://apod.nasa.gov/apod/astropix.html"
+            href={closestAsteroid?.url ?? 'https://cneos.jpl.nasa.gov/ca/'}
             target="_blank"
             rel="noopener noreferrer"
-            className="group rounded-xl border border-white/[0.08] bg-white/[0.03] overflow-hidden hover:border-white/20 transition-colors"
+            className="rounded-xl border border-white/[0.08] bg-white/[0.03] px-5 py-4 flex flex-col justify-center hover:border-white/20 transition-colors"
           >
-            <div className="relative h-32 overflow-hidden">
-              {apod && apod.media_type === 'image' ? (
-                <Image
-                  src={apod.url}
-                  alt={apod.title}
-                  fill
-                  loading="lazy"
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, 33vw"
-                  unoptimized
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-[#131a35] to-[#0a0e1a]" />
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-[rgba(4,6,18,0.9)] to-transparent" />
-              <span className="absolute top-2.5 left-2.5 text-xs text-gray-200 font-medium px-1.5 py-0.5 rounded bg-black/50 border border-white/15">
-                NASA APOD
+            <div className="flex items-center gap-2 mb-3">
+              <span
+                className="w-2 h-2 rounded-full shrink-0"
+                aria-hidden="true"
+                style={{
+                  background: closestAsteroid ? '#34d399' : isLoading ? '#6b7280' : '#ef4444',
+                }}
+              />
+              <span className="text-xs text-gray-400 font-medium">
+                Closest asteroid
               </span>
             </div>
-            <div className="px-4 py-3">
-              <p className="text-sm font-semibold text-white truncate">
-                {apod?.title ?? (isLoading ? 'Loading picture of the day' : 'Picture of the day unavailable')}
-              </p>
-              <p className="text-xs text-gray-500 mt-1">
-                {apod?.date ? `Astronomy Picture of the Day · ${apod.date}` : 'Astronomy Picture of the Day'}
-              </p>
-            </div>
+            {closestAsteroid ? (
+              <>
+                <span className="text-xl font-mono tabular-nums font-medium text-white mb-1">
+                  {closestAsteroid.name}
+                </span>
+                <span className="text-xs text-gray-500 tabular-nums">
+                  {closestAsteroid.lunarDistances.toFixed(1)} lunar distances ·{' '}
+                  {formatApproachDate(closestAsteroid.approachTime)} · NASA NeoWs
+                </span>
+              </>
+            ) : (
+              <span className="text-sm font-mono text-gray-500">
+                {isLoading ? 'Loading' : 'No data'}
+              </span>
+            )}
           </a>
 
           {/* ISS Position */}

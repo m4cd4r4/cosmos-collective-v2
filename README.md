@@ -108,7 +108,7 @@ Every readout is real and attributed. Nothing is invented or decorative.
 |--------|------|--------|
 | [STScI MAST](https://mast.stsci.edu/) | JWST, Hubble observations | Public API |
 | [NASA Exoplanet Archive](https://exoplanetarchive.ipac.caltech.edu/) | Kepler exoplanets | Public TAP |
-| [NASA APIs](https://api.nasa.gov/) | APOD, Near-Earth Objects | API key (server-side) |
+| [NASA APIs](https://api.nasa.gov/) | Near-Earth Objects | API key (server-side) |
 | [NOAA SWPC](https://www.swpc.noaa.gov/) | Solar X-ray flux, space weather | Public |
 | [Where the ISS at](https://wheretheiss.at/) | Live ISS position | Public |
 | [CelesTrak](https://celestrak.org/) | Active satellite catalogue | Public |
