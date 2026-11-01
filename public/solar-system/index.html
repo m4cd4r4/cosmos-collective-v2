@@ -923,10 +923,17 @@
             #dock *, #sheet *, .switch input, .switch input::after { transition: none !important; }
             .rec-dot { animation: none; }
         }
+        /* Embed mode: picture only, the page around the frame keeps its scroll and clicks */
+        html.embed body > *:not(#canvas-container):not(#loading-overlay):not(script) { display: none !important; }
+        html.embed #canvas-container { pointer-events: none; transition: opacity 0.6s ease; }
     </style>
 </head>
 <body>
     <script>
+        // ?embed runs the page as a hands-free showreel for framing on other sites
+        const EMBED = new URLSearchParams(location.search).get('embed');
+        document.documentElement.classList.toggle('embed', EMBED !== null);
+
         // Unregister any service worker that might interfere with texture loading
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.getRegistrations().then(registrations => {
@@ -2941,7 +2948,7 @@
                 // Elevation rises and falls over a ~52 s period — never flat
                 camera.position.y = ty + cameraDistance * (0.55 + Math.sin(t * 0.12) * 0.25);
                 camera.position.z = tz + lemZ * cameraDistance * 1.3;
-                camera.lookAt(tx, ty - 10, tz + 90);
+                camera.lookAt(tx, ty, tz);
 
             } else if (cameraMode === 'orbital') {
                 // Slow lazy satellite drift — wide lazy circle far above, period ~4 min
@@ -3034,6 +3041,7 @@
         };
 
         function loadPersisted() {
+            if (EMBED !== null) return {};
             try {
                 const saved = JSON.parse(localStorage.getItem(PERSIST_KEY) || '{}');
                 const out = {};
@@ -3045,6 +3053,7 @@
             } catch (e) { return {}; }
         }
         function persist() {
+            if (EMBED !== null) return;
             try {
                 const out = {};
                 PERSISTED.forEach(k => { out[k] = state[k]; });
@@ -4136,7 +4145,7 @@
         // WELCOME PROMPT (first visit only)
         // =====================================================================
         (function() {
-            if (localStorage.getItem('solar-vortex-visited')) return;
+            if (EMBED !== null || localStorage.getItem('solar-vortex-visited')) return;
             // Wait for loading to finish before showing
             var checkLoaded = setInterval(function() {
                 var overlay = document.getElementById('loading-overlay');
@@ -4166,6 +4175,30 @@
                     localStorage.setItem('solar-vortex-visited', '1');
                 });
             }
+        })();
+
+        // =====================================================================
+        // EMBED SHOWREEL (?embed)
+        // =====================================================================
+        (function() {
+            if (EMBED === null) return;
+            const reel = [
+                { mode: 'cinematic', dist: 140, ms: 24000 },
+                { mode: 'chase',     dist: 140, ms: 12000 },
+                { mode: 'helix',     dist: 140, ms: 12000 },
+            ];
+            setState({ trails: false, moons: false });
+            const container = $('canvas-container');
+            function cut(i) {
+                const shot = reel[i % reel.length];
+                cameraMode = shot.mode;
+                cameraDistance = shot.dist;
+                container.style.opacity = 1;
+                setTimeout(function() { container.style.opacity = 0; }, shot.ms - 600);
+                setTimeout(function() { cut(i + 1); }, shot.ms);
+            }
+            setState({ speed: 'month' });
+            cut(0);
         })();
     </script>
 </body>
