@@ -151,6 +151,33 @@ test.describe('solar system dock', () => {
     expect(errors).toEqual([])
   })
 
+  test('labels stay readable: 11px floor, moon names only for the planet you follow', async ({ page }) => {
+    const errors: string[] = []
+    await load(page, errors)
+    await page.waitForTimeout(500)
+    const visible = () => page.evaluate(() => (window as any).eval(`({
+      planets: [...planetLabels.values()].filter(l => l.style.display !== 'none').map(l => parseFloat(l.style.fontSize)),
+      moons: [...moonLabels.entries()].filter(([, l]) => l.style.display !== 'none').map(([name, l]) => ({ name, size: parseFloat(l.style.fontSize) })),
+    })`)) as Promise<{ planets: number[], moons: { name: string, size: number }[] }>
+
+    const overview = await visible()
+    expect(overview.planets.length).toBeGreaterThan(5)
+    expect(Math.min(...overview.planets)).toBeGreaterThanOrEqual(11)
+    expect(overview.moons).toEqual([])
+
+    await page.click('#dock-more')
+    await page.selectOption('#follow-target', 'jupiter')
+    await page.waitForTimeout(300)
+    expect((await visible()).moons).toEqual([]) // following from afar is not near
+    await evalApp(page, 'cameraDistance = 60; updateCameraPosition()')
+    await page.waitForTimeout(1500)
+    const near = await visible()
+    expect(near.moons.map(m => m.name)).toContain('Ganymede')
+    expect(near.moons.map(m => m.name)).not.toContain('Titan')
+    expect(Math.min(...near.moons.map(m => m.size))).toBeGreaterThanOrEqual(11)
+    expect(errors).toEqual([])
+  })
+
   test('? opens the shortcuts and Esc closes it', async ({ page }) => {
     const errors: string[] = []
     await load(page, errors)
