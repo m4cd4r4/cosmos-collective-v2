@@ -638,15 +638,6 @@
 </head>
 <body>
     <script>
-        // Unregister any service worker that might interfere with texture loading
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                registrations.forEach(r => {
-                    r.unregister();
-                    console.log('[SolarSystem] Unregistered service worker:', r.scope);
-                });
-            });
-        }
         console.log('[SolarSystem] Init start, window:', window.innerWidth, 'x', window.innerHeight);
     </script>
 
