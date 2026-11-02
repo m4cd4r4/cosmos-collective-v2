@@ -13,7 +13,19 @@ const withPWA = require('next-pwa')({
     // Exclude large planetary textures from precache - served via runtime CacheFirst
     /solar-system\/textures\/.*/,
   ],
+  // Precached HTML is served cache-first, so a returning visitor saw the previous
+  // 550-AU build. Its bundles have hashed names, so only the page needs to be fresh.
+  publicExcludes: ['!noprecache/**/*', '!embeds/gravitational-lens/index.html'],
   runtimeCaching: [
+    {
+      urlPattern: /\/embeds\/gravitational-lens\/index\.html$/i,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'lens-embed-page',
+        networkTimeoutSeconds: 5,
+        expiration: { maxEntries: 1, maxAgeSeconds: 60 * 60 * 24 * 30 }
+      }
+    },
     // Astronomical imagery - CacheFirst (rarely changes)
     {
       urlPattern: /^https:\/\/(cdn\.)?esawebb\.org\/archives\/images\/.*/i,
