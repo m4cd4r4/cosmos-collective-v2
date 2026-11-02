@@ -1,5 +1,5 @@
 import sharp from 'sharp'
-import { readFileSync, mkdirSync } from 'fs'
+import { readFileSync, writeFileSync, mkdirSync } from 'fs'
 import { resolve, dirname } from 'path'
 import { fileURLToPath } from 'url'
 
@@ -40,6 +40,27 @@ async function appleTouch() {
   console.log('  apple-touch-icon.png')
 }
 
+// ICO container holding PNG payloads, which every current browser reads
+async function favicon(sizes) {
+  const pngs = await Promise.all(sizes.map((size) => sharp(svgBuffer).resize(size, size).png().toBuffer()))
+  const header = Buffer.alloc(6 + 16 * sizes.length)
+  header.writeUInt16LE(1, 2)
+  header.writeUInt16LE(sizes.length, 4)
+  let offset = header.length
+  sizes.forEach((size, i) => {
+    const entry = 6 + 16 * i
+    header.writeUInt8(size, entry)
+    header.writeUInt8(size, entry + 1)
+    header.writeUInt16LE(1, entry + 4)
+    header.writeUInt16LE(32, entry + 6)
+    header.writeUInt32LE(pngs[i].length, entry + 8)
+    header.writeUInt32LE(offset, entry + 12)
+    offset += pngs[i].length
+  })
+  writeFileSync(resolve(PUBLIC, 'favicon.ico'), Buffer.concat([header, ...pngs]))
+  console.log('  favicon.ico')
+}
+
 console.log('Generating PWA icons...')
 await iconAny(192, 'icon-192x192.png')
 await iconMaskable(192, 'icon-192x192-maskable.png')
@@ -48,4 +69,5 @@ await iconMaskable(512, 'icon-512x512-maskable.png')
 await iconMaskable(96, 'shortcut-jwst.png')
 await iconMaskable(96, 'shortcut-skymap.png')
 await appleTouch()
+await favicon([16, 32, 48])
 console.log('Done.')
