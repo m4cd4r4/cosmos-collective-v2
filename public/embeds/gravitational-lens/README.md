@@ -18,10 +18,14 @@ inside an iframe at `/gravitational-lens`.
 cd I:/Scratch/550-AU
 git pull
 npm install && npm run build
-# then re-vendor, dropping the dev-only spike files:
+# then re-vendor, dropping the dev-only pages. Keep assets/spike-controls-*.js:
+# the main bundle imports it.
+rm -f <cosmos>/public/embeds/gravitational-lens/assets/main-*
 cp -r dist/. <cosmos>/public/embeds/gravitational-lens/
 rm -f <cosmos>/public/embeds/gravitational-lens/spike.html \
-      <cosmos>/public/embeds/gravitational-lens/assets/spike-*
+      <cosmos>/public/embeds/gravitational-lens/pearl.html \
+      <cosmos>/public/embeds/gravitational-lens/assets/pearl-[!m]* \
+      <cosmos>/public/embeds/gravitational-lens/assets/spike-[!c]*
 ```
 
 `vite.config.ts` in 550-AU sets `base: './'`, so the bundle is subpath-portable
