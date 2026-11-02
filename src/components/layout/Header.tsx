@@ -31,77 +31,35 @@ function Logo() {
       className="flex items-center gap-2.5 group"
       aria-label="Cosmos Collective - Home"
     >
-      {/* Logo Icon — Armillary Sphere */}
+      {/* Logo Icon — Ringed Planet */}
       <div className="relative w-10 h-10">
         <svg
           viewBox="0 0 40 40"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"
-          className="w-full h-full"
+          className="w-full h-full text-[#f4f1e8]"
           aria-hidden="true"
         >
           <defs>
-            <radialGradient id="cc-core" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stopColor="#ffffff" stopOpacity="0.8" />
-              <stop offset="35%" stopColor="#d4af37" stopOpacity="0.3" />
-              <stop offset="100%" stopColor="#d4af37" stopOpacity="0" />
-            </radialGradient>
-            <linearGradient id="cc-ring-gold" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="#d4af37" />
-              <stop offset="100%" stopColor="#ff9a3c" />
-            </linearGradient>
-            <linearGradient id="cc-ring-blue" x1="1" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#4a90e2" />
-              <stop offset="100%" stopColor="#7ec4ff" />
-            </linearGradient>
-            <linearGradient id="cc-ring-red" x1="0.5" y1="0" x2="0.5" y2="1">
-              <stop offset="0%" stopColor="#ff6b6b" />
-              <stop offset="100%" stopColor="#d4af37" />
-            </linearGradient>
+            <mask id="cc-planet-back">
+              <rect width="40" height="40" fill="white" />
+              <circle cx="20" cy="20" r="11" fill="black" />
+            </mask>
+            <mask id="cc-planet-front">
+              <rect width="40" height="40" fill="white" />
+              <path d="M2 20 A18 5.5 0 0 0 38 20" stroke="black" strokeWidth="5.4" />
+            </mask>
           </defs>
 
-          {/* Core glow */}
-          <circle cx="20" cy="20" r="10" fill="url(#cc-core)" />
+          <g transform="rotate(-20, 20, 20)">
+            {/* Planet, cut where the ring passes in front */}
+            <circle cx="20" cy="20" r="9" fill="currentColor" mask="url(#cc-planet-front)" />
 
-          {/* Armillary rings */}
-          <ellipse
-            cx="20" cy="20" rx="17" ry="6"
-            stroke="url(#cc-ring-gold)" strokeWidth="1.2"
-            opacity="0.65"
-            transform="rotate(-25, 20, 20)"
-            className="transition-opacity duration-700 group-hover:opacity-100"
-          />
-          <ellipse
-            cx="20" cy="20" rx="17" ry="6"
-            stroke="url(#cc-ring-blue)" strokeWidth="1.2"
-            opacity="0.65"
-            transform="rotate(35, 20, 20)"
-            className="transition-opacity duration-700 group-hover:opacity-100"
-          />
-          <ellipse
-            cx="20" cy="20" rx="17" ry="6"
-            stroke="url(#cc-ring-red)" strokeWidth="1.2"
-            opacity="0.65"
-            transform="rotate(90, 20, 20)"
-            className="transition-opacity duration-700 group-hover:opacity-100"
-          />
-
-          {/* Central star */}
-          <circle cx="20" cy="20" r="3.5" fill="#d4af37" />
-          <circle cx="20" cy="20" r="1.8" fill="white" opacity="0.85" />
-
-          {/* Celestial bodies on orbits */}
-          <circle cx="35" cy="13" r="1.8" fill="#ff9a3c" />
-          <circle cx="7" cy="11" r="1.5" fill="#4a90e2" />
-          <circle cx="20" cy="3" r="1.5" fill="#ff6b6b" />
-
-          {/* Distant stars */}
-          <circle cx="33" cy="32" r="0.6" fill="white" opacity="0.4" />
-          <circle cx="8" cy="33" r="0.5" fill="white" opacity="0.3" />
+            {/* Ring: front arc, then back arc hidden behind the disc */}
+            <path d="M2 20 A18 5.5 0 0 0 38 20" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" />
+            <path d="M2 20 A18 5.5 0 0 1 38 20" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" mask="url(#cc-planet-back)" />
+          </g>
         </svg>
-
-        {/* Hover glow ring */}
-        <div className="absolute inset-0 rounded-full border border-cosmos-gold/0 group-hover:border-cosmos-gold/20 transition-all duration-500" />
       </div>
 
       {/* Logo Text */}
