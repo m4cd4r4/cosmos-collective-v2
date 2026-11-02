@@ -15,7 +15,7 @@ const FEATURES = [
   {
     title: '550-AU',
     href: '/gravitational-lens',
-    description: 'Fly to 650 AU and use the Sun itself as a telescope to image an exoplanet\'s surface',
+    description: 'Use the Sun as a telescope. Its focus starts at 550 AU, and imaging an exoplanet\'s surface starts at 650.',
     image: { url: '/images/gravitational-lens-card.webp' },
     featured: true,
   },

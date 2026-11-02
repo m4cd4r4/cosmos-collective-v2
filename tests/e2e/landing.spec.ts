@@ -22,6 +22,30 @@ test('the Solar System card is one link with its image and no live frame', async
   await expect(page).toHaveURL(/\/solar-system$/)
 })
 
+test('the nav follows the landing order, hero first', async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 })
+  await page.goto('/')
+  await expect(page.getByRole('navigation', { name: 'Main navigation' }).getByRole('link')).toHaveText([
+    'Solar System',
+    '550-AU',
+    'Explore',
+    'Satellites',
+    'Sky Map',
+    'Kepler',
+  ])
+})
+
+test('550-AU opens on its first act and every embed file loads', async ({ page }) => {
+  const missing: string[] = []
+  page.on('response', (r) => {
+    if (r.status() >= 400 && r.url().includes('/embeds/gravitational-lens/')) missing.push(r.url())
+  })
+  await page.goto('/gravitational-lens')
+  const active = page.frameLocator('iframe').locator('.chapter-rail .chapter[aria-current="true"]')
+  await expect(active).toContainText('THE PROBLEM', { timeout: 30000 })
+  expect(missing).toEqual([])
+})
+
 test('the asteroid card shows the closest approach still to come', async ({ page }) => {
   const hoursFromNow = (h: number) => Date.now() + h * 60 * 60 * 1000
   const neo = (name: string, lunar: string, epoch: number) => ({
