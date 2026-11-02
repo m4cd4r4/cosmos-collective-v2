@@ -15,8 +15,23 @@ const withPWA = require('next-pwa')({
   ],
   // Precached HTML is served cache-first, so a returning visitor saw the previous
   // 550-AU build. Its bundles have hashed names, so only the page needs to be fresh.
-  publicExcludes: ['!noprecache/**/*', '!embeds/gravitational-lens/index.html'],
+  // The solar system and Kepler pages are self-contained, so the same applies.
+  publicExcludes: [
+    '!noprecache/**/*',
+    '!embeds/gravitational-lens/index.html',
+    '!solar-system/index.html',
+    '!kepler-viewer.html',
+  ],
   runtimeCaching: [
+    {
+      urlPattern: /\/(solar-system\/index|kepler-viewer)\.html(\?.*)?$/i,
+      handler: 'NetworkFirst',
+      options: {
+        cacheName: 'viewer-pages',
+        networkTimeoutSeconds: 5,
+        expiration: { maxEntries: 4, maxAgeSeconds: 60 * 60 * 24 * 30 }
+      }
+    },
     {
       urlPattern: /\/embeds\/gravitational-lens\/index\.html$/i,
       handler: 'NetworkFirst',
