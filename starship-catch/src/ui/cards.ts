@@ -187,6 +187,10 @@ const OUTCOME: Record<Outcome, { title: string; line: string }> = {
     line: 'The booster was between the arms, but too fast or too far off vertical, and it was lost. Arrive slower and upright.',
   },
   missed: { title: 'Missed the arms', line: 'The booster came down outside the arms and was lost. Keep the white ring on the gold one all the way in.' },
+  'no-burn': {
+    title: 'No landing burn',
+    line: 'The engines were never relit, and the booster reached the tower at full speed. Light the burn when the cue says to.',
+  },
   'tower-strike': { title: 'Struck the tower', line: 'The booster drifted west into the tower and was lost. Tilt east sooner.' },
   splashdown: { title: 'Splashdown', line: 'A soft, controlled splashdown in the Gulf.' },
   'hard-splashdown': { title: 'Hit the sea hard', line: 'The booster reached the water too fast. Light the burn at the cue and throttle down to a slow sink.' },

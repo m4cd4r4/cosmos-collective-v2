@@ -40,7 +40,7 @@ const DEG = Math.PI / 180
 const INK = 0xf4f1e8
 const RED = 0xff6b6b
 const GOLD = 0xd4af37
-const VIOLENT: Outcome[] = ['missed', 'hard-catch', 'tower-strike', 'on-land', 'hard-splashdown', 'breakup']
+const VIOLENT: Outcome[] = ['missed', 'no-burn', 'hard-catch', 'tower-strike', 'on-land', 'hard-splashdown', 'breakup']
 
 export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion: boolean): World {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', logarithmicDepthBuffer: true })
@@ -236,8 +236,9 @@ void main() {
       if (seen && VIOLENT.includes(seen)) {
         wrecked = true
         const mid = at.clone().addScaledVector(axis, 25)
+        effects.burst('flash', mid, 7, 20)
         effects.burst('fire', mid, 46, 70)
-        effects.burst('smoke', mid, 40, 38)
+        effects.burst('smoke', mid, 36, 38)
         if (seen === 'hard-splashdown') effects.burst('spray', at, 40, 45)
       } else if (seen === 'splashdown') effects.burst('spray', at, 50, 30)
     }

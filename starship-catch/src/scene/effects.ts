@@ -2,7 +2,7 @@
 
 import * as THREE from 'three'
 
-export type Puff = 'steam' | 'dust' | 'fire' | 'smoke' | 'spray'
+export type Puff = 'steam' | 'dust' | 'flash' | 'fire' | 'smoke' | 'spray'
 
 interface Kind {
   colour: number
@@ -14,6 +14,11 @@ interface Kind {
   drag: number
   gravity: number
   opacity: number
+  /** Colour the puff cools to over its life, and how fast it fades in (higher is faster). */
+  cool?: number
+  fadeIn?: number
+  /** Puffs start scattered within this many metres, so a burst reads as a cloud and not one disc. */
+  spread?: number
 }
 
 const KINDS: Record<Puff, Kind> = {
@@ -21,8 +26,12 @@ const KINDS: Record<Puff, Kind> = {
   steam: { colour: 0xf4f4f0, additive: false, life: 7, size: 26, growth: 16, rise: 9, drag: 0.9, gravity: 0, opacity: 0.55 },
   // Tan dust: slower, lower, and it lingers.
   dust: { colour: 0xc9a67a, additive: false, life: 16, size: 22, growth: 9, rise: 2.5, drag: 0.7, gravity: 0, opacity: 0.5 },
-  fire: { colour: 0xffa040, additive: true, life: 1.6, size: 30, growth: 55, rise: 12, drag: 1.6, gravity: 0, opacity: 0.9 },
-  smoke: { colour: 0x2a2623, additive: false, life: 14, size: 34, growth: 14, rise: 9, drag: 0.8, gravity: 0, opacity: 0.6 },
+  // Not additive: 46 additive sprites on a daylight sky saturate to a white disc.
+  fire: { colour: 0xffb23c, cool: 0x7a1e08, additive: false, life: 2.6, size: 15, growth: 20, rise: 14, drag: 1.4, gravity: 0, opacity: 1, spread: 16 },
+  // The hot core: a few additive puffs only, brief, so it brightens the fire without washing it out.
+  flash: { colour: 0xffb060, additive: true, life: 0.9, size: 22, growth: 44, rise: 0, drag: 2, gravity: 0, opacity: 0.42, spread: 8 },
+  // Smoke fades in slowly so the fire is seen first.
+  smoke: { colour: 0x3a3532, additive: false, life: 14, size: 16, growth: 9, rise: 9, drag: 0.8, gravity: 0, opacity: 0.34, fadeIn: 0.6, spread: 20 },
   spray: { colour: 0xf2f6f6, additive: false, life: 4.5, size: 16, growth: 10, rise: 0, drag: 0.3, gravity: 9.8, opacity: 0.6 },
 }
 
@@ -31,6 +40,7 @@ interface Particle {
   velocity: THREE.Vector3
   kind: Kind
   age: number
+  scale: number
   life: number
 }
 
@@ -58,6 +68,8 @@ function softDisc(): THREE.CanvasTexture {
 }
 
 const POOL = 220
+const coolTo = new THREE.Color()
+const jitter = new THREE.Vector3()
 
 export function createEffects(): Effects {
   const group = new THREE.Group()
@@ -68,7 +80,7 @@ export function createEffects(): Effects {
     const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map, transparent: true, depthWrite: false, opacity: 0 }))
     sprite.visible = false
     group.add(sprite)
-    free.push({ sprite, velocity: new THREE.Vector3(), kind: KINDS.steam, age: 0, life: 1 })
+    free.push({ sprite, velocity: new THREE.Vector3(), kind: KINDS.steam, age: 0, scale: 1, life: 1 })
   }
 
   function emit(name: Puff, at: THREE.Vector3, speed: number) {
@@ -84,6 +96,10 @@ export function createEffects(): Effects {
     p.velocity.set(Math.cos(angle) * out, (name === 'spray' || name === 'fire' ? speed * (0.5 + Math.random()) : 0) + kind.rise * Math.random(), Math.sin(angle) * out)
     p.sprite.position.copy(at)
     p.sprite.position.y += Math.random() * 4
+    if (kind.spread) p.sprite.position.add(jitter.randomDirection().multiplyScalar(kind.spread * Math.random()))
+    p.scale = 0.6 + Math.random() * 0.9
+    // Fire is drawn over smoke, whatever the depth sort says.
+    p.sprite.renderOrder = name === 'smoke' ? 0 : 1
     p.sprite.material.color.setHex(kind.colour)
     p.sprite.material.blending = kind.additive ? THREE.AdditiveBlending : THREE.NormalBlending
     p.sprite.material.rotation = Math.random() * Math.PI
@@ -113,9 +129,10 @@ export function createEffects(): Effects {
         p.sprite.position.addScaledVector(p.velocity, dt)
         if (p.sprite.position.y < 1) p.sprite.position.y = 1
         const t = p.age / p.life
-        const size = k.size + k.growth * p.age
+        const size = (k.size + k.growth * p.age) * p.scale
         p.sprite.scale.set(size, size, 1)
-        p.sprite.material.opacity = k.opacity * Math.min(1, t * 8) * (1 - t) ** 1.5
+        if (k.cool !== undefined) p.sprite.material.color.setHex(k.colour).lerp(coolTo.setHex(k.cool), Math.min(1, t * 1.6))
+        p.sprite.material.opacity = k.opacity * Math.min(1, p.age * (k.fadeIn ?? 12)) * (1 - t) ** 1.5
       }
     },
     clear() {

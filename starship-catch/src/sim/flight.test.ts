@@ -63,6 +63,12 @@ describe('the decisions matter', () => {
     expect(['hard-catch', 'missed', 'tower-strike']).toContain(flight.outcome)
   })
 
+  it('never lighting the landing burn is its own ending, not a missed catch', () => {
+    const flight = flyWith(0, () => ({ ignite: false }))
+    expect(flight.events.landingStart).toBeUndefined()
+    expect(flight.outcome).toBe('no-burn')
+  })
+
   it('Flight 6: no-go on a tower fault ends in a soft splashdown offshore', () => {
     const { flight, log } = flyOnCue(2)
     expect(flight.goSent, log).toBe(false)

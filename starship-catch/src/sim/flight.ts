@@ -12,6 +12,7 @@ export type Outcome =
   | 'caught'
   | 'hard-catch'
   | 'missed'
+  | 'no-burn'
   | 'tower-strike'
   | 'splashdown'
   | 'hard-splashdown'
@@ -269,7 +270,7 @@ export function advance(flight: Flight, input: Input, dt: number): Flight {
           flight.events.catch = next.time
           return end(flight, 'caught')
         }
-        if (inArms) return end(flight, 'hard-catch')
+        if (inArms) return end(flight, flight.lit ? 'hard-catch' : 'no-burn')
         flight.pastArms = true
       }
       if (next.x < t.towerFace && next.x > t.towerFace - 14 && next.y < t.towerHeight) return end(flight, 'tower-strike')
@@ -277,7 +278,7 @@ export function advance(flight: Flight, input: Input, dt: number): Flight {
   }
   if (flight.phase !== 'ascent' && next.y <= 0) {
     flight.state = { ...next, y: 0 }
-    if (flight.committed) return end(flight, 'missed')
+    if (flight.committed) return end(flight, flight.lit ? 'missed' : 'no-burn')
     // The shoreline is about 400 m east of the tower.
     if (next.x < 400) return end(flight, 'on-land')
     const soft = flight.lit && Math.hypot(next.vx, next.vy) <= t.splashSpeed
