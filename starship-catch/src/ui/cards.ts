@@ -258,7 +258,7 @@ export function createEndCard(flight: Flight, options: EndOptions): HTMLElement 
       { class: 'panel card end', role: 'dialog', 'aria-labelledby': 'end-title' },
       el('h1', { id: 'end-title' }, outcome.title),
       el('p', {}, outcome.line),
-      call ? el('p', { class: 'muted' }, call) : null,
+      call ? el('p', { class: 'muted' }, call, ' The rule: ', link(QUOTES.defaultPath.source), '.') : null,
       el('div', { class: 'actions' }, retry, restart),
       el('div', { class: 'table-wrap' }, table),
       call ? el('p', { class: 'fine' }, `This run was modelled on ${flight.scenario.modelledOn} `, link(flight.scenario.source), '.') : null,

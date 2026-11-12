@@ -10,6 +10,11 @@ export interface Source {
 }
 
 export const SPACEX_F5: Source = { name: 'SpaceX, Starship Flight 5', url: 'https://www.spacex.com/launches/starship-flight-5' }
+/** SpaceX's page text before Flight 5 flew, as archived page data: the archived page itself renders blank, and the live page now carries only the post-flight account. */
+export const SPACEX_F5_PREFLIGHT: Source = {
+  name: "SpaceX, Starship's fifth flight test, page text before the flight (Internet Archive, 7 October 2024)",
+  url: 'https://web.archive.org/web/20241007234125/https://content.spacex.com/api/spacex-website/missions/starship-flight-5',
+}
 export const SPACEX_F6: Source = { name: 'SpaceX, Starship Flight 6', url: 'https://www.spacex.com/launches/starship-flight-6' }
 export const SPACEX_F8: Source = { name: 'SpaceX, Starship Flight 8', url: 'https://www.spacex.com/launches/starship-flight-8' }
 export const SPACEX_F14: Source = { name: 'SpaceX, Starship Flight 14', url: 'https://www.spacex.com/launches/starship-flight-14' }
@@ -75,6 +80,11 @@ export const QUOTES = {
   criteria: {
     text: 'Thousands of distinct vehicle and pad criteria had to be met prior to the catch attempt.',
     source: SPACEX_F5,
+  },
+  /** Not shown in full; it is the source for "with no go the booster takes its default path to the sea". */
+  defaultPath: {
+    text: 'If this command is not sent prior to the completion of the boostback burn, or if automated health checks show unacceptable conditions with Super Heavy or the tower, the booster will default to a trajectory that takes it to a landing burn and soft splashdown in the Gulf of Mexico.',
+    source: SPACEX_F5_PREFLIGHT,
   },
   flight6: {
     text: 'Automated health checks of critical hardware on the launch and catch tower triggered an abort of the catch attempt.',
