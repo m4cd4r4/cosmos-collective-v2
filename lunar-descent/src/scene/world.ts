@@ -5,8 +5,9 @@
 import * as THREE from 'three'
 import { MOON_RADIUS, type State } from '../sim/physics'
 import { BOULDER_HALF_WIDTH, type Prediction } from '../sim/flight'
-import { APOLLO_11, LIMITS, STARSHIP_HLS } from '../data/facts'
+import { APOLLO_11, LIMITS } from '../data/facts'
 import { createLander } from './lander'
+import { LANDER_HEIGHT, LANDER_RADIUS, createShadow } from './shadow'
 import type { Terrain } from './terrain'
 
 export interface View {
@@ -148,89 +149,8 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
   const sun = new THREE.DirectionalLight(0xfff4e0, SUN_INTENSITY)
   scene.add(sun, new THREE.AmbientLight(0x8090b0, 0.12))
 
-  // The lander's shadow, cast by the game's Sun on to the real terrain. With the Sun 1.5
-  // degrees up, a 50 m lander throws a shadow about 1.9 km long, and a lander 10 m up
-  // throws it 380 m to one side: it only reaches the lander's feet at touchdown.
-  const sunElevation = Math.asin(terrain.sunDirection.y)
-  const tanSun = Math.tan(sunElevation)
-  const awayAlong = -terrain.sunDirection.x / Math.cos(sunElevation)
-  const awayAcross = -terrain.sunDirection.z / Math.cos(sunElevation)
-  const SHADOW_POINTS = 96
-  const LANDER_HEIGHT = STARSHIP_HLS.height.value
-  const LANDER_RADIUS = 4.5
-  /** Shadows starting further than this from the lander are not drawn, m. */
-  const SHADOW_REACH = 6_000
-  const shadowPositions = new THREE.BufferAttribute(new Float32Array(SHADOW_POINTS * 2 * 3), 3)
-  const shadowAlpha = new THREE.BufferAttribute(new Float32Array(SHADOW_POINTS * 2), 1)
-  const shadowIndex: number[] = []
-  for (let i = 0; i < SHADOW_POINTS - 1; i++) shadowIndex.push(2 * i, 2 * i + 1, 2 * i + 2, 2 * i + 2, 2 * i + 1, 2 * i + 3)
-  const shadow = new THREE.Mesh(
-    new THREE.BufferGeometry().setAttribute('position', shadowPositions).setAttribute('alpha', shadowAlpha).setIndex(shadowIndex),
-    new THREE.ShaderMaterial({
-      transparent: true,
-      depthWrite: false,
-      side: THREE.DoubleSide,
-      polygonOffset: true,
-      polygonOffsetFactor: -4,
-      polygonOffsetUnits: -4,
-      vertexShader: 'attribute float alpha; varying float vAlpha; void main() { vAlpha = alpha; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-      fragmentShader: 'varying float vAlpha; void main() { gl_FragColor = vec4(0.0, 0.0, 0.0, vAlpha); }',
-    }),
-  )
-  shadow.frustumCulled = false
-  shadow.visible = false
-  moon.add(shadow)
-
-  /** True when nothing stands between this point and the Sun. Height is above the target's elevation. */
-  function sunlit(along: number, height: number): boolean {
-    for (let d = 20; d < 40_000; d *= 1.06) {
-      const ray = height + d * tanSun + (d * d) / (2 * MOON_RADIUS)
-      if (ray > 9_000) return true
-      if (ray < terrain.heightAt(along - awayAlong * d, -awayAcross * d)) return false
-    }
-    return true
-  }
-
-  /**
-   * Lay the shadow of the lander's axis on the ground. `poseDeg` is the axis angle above the
-   * horizon, as pitch is. Returns false when the shadow falls beyond `SHADOW_REACH`.
-   */
-  function castShadow(state: State, radarAltitude: number, poseDeg: number): boolean {
-    const pose = (poseDeg * Math.PI) / 180
-    const lean = -Math.cos(pose)
-    const rise = Math.sin(pose)
-    const near = (Math.max(0, radarAltitude) / tanSun) * 0.7
-    if (near > SHADOW_REACH) return false
-    const far = Math.min(SHADOW_REACH, ((radarAltitude + LANDER_HEIGHT) / tanSun) * 1.3 + 60)
-    const along0 = -state.range
-    for (let i = 0; i < SHADOW_POINTS; i++) {
-      const d = near + ((far - near) * i) / (SHADOW_POINTS - 1)
-      // Which point of the axis, `s` metres from the base, shades the ground this far away:
-      // its height must equal the ground height plus the rise of a ray to the Sun over `d`.
-      let s = 0
-      let ground = 0
-      for (let pass = 0; pass < 3; pass++) {
-        ground = terrain.heightAt(along0 + lean * s + awayAlong * d, awayAcross * d)
-        const need = ground + d * tanSun + (d * d) / (2 * MOON_RADIUS) - state.altitude
-        s = Math.abs(rise) > 0.05 ? need / rise : need > 0 ? LANDER_HEIGHT + 10 : -10
-        s = Math.min(LANDER_HEIGHT + 10, Math.max(-10, s))
-      }
-      const along = along0 + lean * s + awayAlong * d
-      const acrossTrack = awayAcross * d
-      // The Sun's disc is half a degree wide, so the shadow softens with distance.
-      const sharp = (2 * LANDER_RADIUS) / (2 * LANDER_RADIUS + 0.0093 * d)
-      const inside = Math.min(1, Math.max(0, s / 2)) * Math.min(1, Math.max(0, (LANDER_HEIGHT - s) / 2))
-      for (const edge of [-1, 1]) {
-        const k = 2 * i + (edge + 1) / 2
-        place(along - awayAcross * edge * LANDER_RADIUS, acrossTrack + awayAlong * edge * LANDER_RADIUS, ground + 0.4, point)
-        shadowPositions.setXYZ(k, point.x, point.y, point.z)
-        shadowAlpha.setX(k, 0.88 * sharp * inside)
-      }
-    }
-    shadowPositions.needsUpdate = true
-    shadowAlpha.needsUpdate = true
-    return true
-  }
+  const shadow = createShadow(terrain, place)
+  moon.add(shadow.mesh)
 
   // Dust: a sheet of streaks racing outwards under the engines.
   const dust = new THREE.Mesh(
@@ -254,8 +174,12 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
   dust.rotation.x = -Math.PI / 2
   scene.add(dust)
 
+  // After touchdown the dust thins out over the pause instead of vanishing with the throttle.
   const dustAmount = (view: View) =>
-    smooth(APOLLO_11.dustAltitude.value, 6, view.radarAltitude) * smooth(0.05, 0.3, view.throttle)
+    Math.max(
+      smooth(APOLLO_11.dustAltitude.value, 6, view.radarAltitude) * smooth(0.05, 0.3, view.throttle),
+      view.settle ? (view.settle.hard ? 0.8 : 0.55) * Math.exp(-view.settle.seconds * 1.1) : 0,
+    )
 
   const up = new THREE.Vector3()
   const forward = new THREE.Vector3()
@@ -300,12 +224,11 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
 
     // Real shadows both ways: the lander goes dark when the terrain hides the Sun from it,
     // and throws its own shadow when it is in the light.
-    const lit = sunlit(-state.range, state.altitude + LANDER_HEIGHT / 2)
+    const lit = shadow.sunlit(-state.range, state.altitude + LANDER_HEIGHT / 2)
     sun.intensity = lit ? SUN_INTENSITY : 0
-    shadow.visible = lit && castShadow(state, view.radarAltitude, poseDeg)
+    shadow.mesh.visible = lit && shadow.cast(state, view.radarAltitude, poseDeg)
 
-    const burst = view.settle ? (view.settle.hard ? 1 : 0.55) * Math.exp(-view.settle.seconds * 1.1) : 0
-    const amount = Math.max(dustAmount(view), burst)
+    const amount = dustAmount(view)
     const dustMaterial = dust.material as THREE.ShaderMaterial
     dustMaterial.uniforms.amount.value = amount
     dustMaterial.uniforms.time.value = view.clock

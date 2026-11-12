@@ -213,8 +213,14 @@ function reference(text: string, fact: Fact): HTMLElement {
   return el('span', { class: 'ref' }, `${text} `, el('span', { class: 'tag' }, fact.status), ' ', sourceLink(fact.source, fact.url))
 }
 
-function row(label: string, you: string, within: boolean | null, ...refs: HTMLElement[]): HTMLElement {
-  const verdict = within === null ? null : el('span', { class: within ? 'verdict' : 'verdict over' }, within ? 'within limit' : 'over limit')
+/** `within` is the verdict against a limit, or a plain note under the figure, or null for neither. */
+function row(label: string, you: string, within: boolean | string | null, ...refs: HTMLElement[]): HTMLElement {
+  const verdict =
+    within === null
+      ? null
+      : typeof within === 'string'
+        ? el('span', { class: 'verdict' }, within)
+        : el('span', { class: within ? 'verdict' : 'verdict over' }, within ? 'within limit' : 'over limit')
   return el('tr', {}, el('th', { scope: 'row' }, label), el('td', { class: 'you' }, el('span', { class: 'value' }, you), verdict), el('td', {}, ...refs))
 }
 
@@ -289,8 +295,8 @@ export function createEndCard(t: Touchdown, options: EndOptions): HTMLElement {
       row(
         'Propellant left',
         // Apollo's figure is a time, so the player's is given as a time too: delta-v over lunar gravity.
-        `about ${fmt.whole(hoverSeconds(t.deltaVLeft))} s of hover (${fmt.whole(t.deltaVLeft)} m/s of delta-v)`,
-        null,
+        `about ${fmt.whole(hoverSeconds(t.deltaVLeft))} s of hover`,
+        `${fmt.whole(t.deltaVLeft)} m/s of delta-v`,
         reference(`Apollo 11: about ${APOLLO_11.propellantSecondsLeft.value} s`, APOLLO_11.propellantSecondsLeft),
       ),
       options.burnSeconds === null
