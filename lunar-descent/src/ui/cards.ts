@@ -3,13 +3,13 @@
 
 import type { Touchdown } from '../sim/flight'
 import { BRAKING_TIME_SCALE } from '../sim/flight'
-import { APOLLO_11, ARTEMIS_URL, IAC, LIMITS, OIG, PLUME_URL, SHACKLETON, STARSHIP_HLS, SUN_URL, TERRAIN_CREDIT, type Fact } from '../data/facts'
+import { APOLLO_11, ARTEMIS_URL, IAC, LIMITS, OIG, PLUME_URL, SHACKLETON, STARS_CREDIT, STARSHIP_HLS, SUN_URL, TERRAIN_CREDIT, type Fact } from '../data/facts'
 import { el, fmt, sourceLink } from './dom'
 
 const NOT_AFFILIATED = 'An independent educational project. Not affiliated with NASA or SpaceX.'
 
 function credits(): HTMLElement {
-  return el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(TERRAIN_CREDIT.text, TERRAIN_CREDIT.url), '.')
+  return el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(TERRAIN_CREDIT.text, TERRAIN_CREDIT.url), '. ', sourceLink(STARS_CREDIT.text, STARS_CREDIT.url), '.')
 }
 
 // ---------- Start card ----------

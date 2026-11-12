@@ -53,9 +53,14 @@ async function load() {
   if (world) return begin('start')
   startCard.setBusy('Loading terrain')
   try {
-    const [{ loadTerrain }, { createWorld }] = await Promise.all([import('./scene/terrain'), import('./scene/world')])
+    const [{ loadTerrain }, { createWorld }, { loadStars }] = await Promise.all([
+      import('./scene/terrain'),
+      import('./scene/world'),
+      import('./scene/stars'),
+    ])
     terrain = await loadTerrain(window.innerWidth < 760)
-    world = createWorld(canvas, terrain, reducedMotion)
+    const stars = await loadStars(terrain.sunDirection.x, terrain.sunDirection.z)
+    world = createWorld(canvas, terrain, stars, reducedMotion)
     window.addEventListener('resize', () => world?.resize())
     startCard.root.remove()
     hud.root.hidden = false

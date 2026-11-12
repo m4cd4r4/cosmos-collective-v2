@@ -58,7 +58,30 @@ function bilinear(src, x, y) {
   const k = j * src.n + i
   return (src.get(k) * (1 - a) + src.get(k + 1) * a) * (1 - b) + (src.get(k + src.n) * (1 - a) + src.get(k + src.n + 1) * a) * b
 }
-const heightAt = (x, y) => sample(fine, x, y) ?? bilinear(region, x, y) ?? 0
+// Catmull-Rom through the source posts. Reading the 5 m posts as flat squares left
+// 5 m steps in the ground and stair-stepped shadows in the baked light.
+const weights = (t) => [
+  ((-0.5 * t + 1) * t - 0.5) * t,
+  (1.5 * t - 2.5) * t * t + 1,
+  ((-1.5 * t + 2) * t + 0.5) * t,
+  (0.5 * t - 0.5) * t * t,
+]
+function bicubic(src, x, y) {
+  const u = (x - src.x0) / src.px - 0.5
+  const v = (src.y1 - y) / src.px - 0.5
+  const i = Math.floor(u)
+  const j = Math.floor(v)
+  if (i < 1 || j < 1 || i >= src.n - 2 || j >= src.n - 2) return null
+  const wu = weights(u - i)
+  const wv = weights(v - j)
+  let h = 0
+  for (let b = 0; b < 4; b++) {
+    const k = (j - 1 + b) * src.n + i - 1
+    h += wv[b] * (src.get(k) * wu[0] + src.get(k + 1) * wu[1] + src.get(k + 2) * wu[2] + src.get(k + 3) * wu[3])
+  }
+  return h
+}
+const heightAt = (x, y) => bicubic(fine, x, y) ?? sample(fine, x, y) ?? bilinear(region, x, y) ?? 0
 const inFine = (x, y) => x > fx0 && x < fx1 && y > fy0 && y < fy1
 
 function slopeDeg(x, y, d) {
@@ -137,9 +160,9 @@ const approach = sides[0].reachM > sides[1].reachM ? sides[0] : sides[1]
 // ---- Layers.
 const NEAR_SIZE = 2560
 const layers = [
-  { name: 'region', x0: region.x0, y1: region.y1, size: RN * 240, shadePx: 2048, grad: 240 },
+  { name: 'region', x0: region.x0, y1: region.y1, size: RN * 240, shadePx: 4096, grad: 240 },
   { name: 'rim', x0: fx0, y1: fy1, size: fx1 - fx0, shadePx: 2048, grad: 5 },
-  { name: 'near', x0: target.x - NEAR_SIZE / 2, y1: target.y + NEAR_SIZE / 2, size: NEAR_SIZE, shadePx: 1024, grad: 5 },
+  { name: 'near', x0: target.x - NEAR_SIZE / 2, y1: target.y + NEAR_SIZE / 2, size: NEAR_SIZE, shadePx: 2048, grad: 5 },
 ]
 const H_MIN = -9000
 const H_STEP = 0.3 // metres per uint16 count: covers -9,000 m to +10,660 m

@@ -50,6 +50,11 @@ export const TERRAIN_CREDIT = {
   url: 'https://pgda.gsfc.nasa.gov/products/78',
 }
 
+export const STARS_CREDIT = {
+  text: 'Stars: Yale Bright Star Catalogue, as seen from the lunar south pole',
+  url: 'https://vizier.cfa.harvard.edu/ftp/cats/V/50/ReadMe',
+}
+
 export const ARTEMIS_URL = 'https://www.nasa.gov/humans-in-space/artemis/'
 export const PLUME_URL =
   'https://www.nasa.gov/directorates/esdmd/artemis-campaign-development-division/human-landing-system-program/nasa-marshall-fires-up-hybrid-rocket-motor-to-prep-for-moon-landings/'

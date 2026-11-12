@@ -36,7 +36,7 @@ const smooth = (edge0: number, edge1: number, x: number) => {
 }
 const mix = (a: number, b: number, t: number) => a + (b - a) * t
 
-export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, reducedMotion: boolean): World {
+export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: THREE.Object3D, reducedMotion: boolean): World {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
   renderer.setClearColor(0x000000)
@@ -48,6 +48,8 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, reduced
   const moon = new THREE.Group()
   moon.add(terrain.group)
   scene.add(moon)
+  // The world frame keeps the target's vertical, so the stars stay put while the Moon turns beneath.
+  scene.add(stars)
 
   // The landing accuracy NASA requires of the uncrewed demos, drawn on the ground.
   const ringPoints: THREE.Vector3[] = []

@@ -62,6 +62,10 @@ Gate for every slice: sources re-fetched on the day of the build, because the mi
 | Rim | 16 km square, Shackleton rim | 5 m/pixel |
 | Near | 2.56 km square around the target | 5 m/pixel |
 
+The bake reads the 5 m posts through a smooth (Catmull-Rom) curve and lights the near layer at 1.25 m per pixel, so the ground and its shadows have no 5 m steps. Nothing is added: no detail finer than the data is invented.
+
+**Sky.** All 9,096 stars with a position in the Yale Bright Star Catalogue, sized and dimmed by visual magnitude and tinted by colour index. They are placed as seen from the lunar south pole: the Moon's south celestial pole is overhead (in Dorado, beside the Large Magellanic Cloud) and the zodiac runs round the horizon. They do not twinkle. Two honest limits: the Sun's place along the zodiac (the time of year) is a game setting, and a camera or an eye exposed for sunlit ground would show few or no stars.
+
 The target is the flattest 100 m patch on the high ground of the rim tile, chosen by the bake script. It is a game target: NASA has not selected a landing site, and Shackleton's rim is not on NASA's 2024 list of nine candidate regions.
 
 **Palette (repo tokens).** Void `#0a0e1a` ground, glass panels (white 8 to 3 percent, 1 px white 10 percent border, blur), off-white `#f4f1e8` for the primary action, muted `#7c88a8` for labels, gold `#d4af37` for selection and the guidance cue only, hydrogen red `#ff6b6b` for limits exceeded. No glow on the HUD. Outfit for titles, Inter for copy, JetBrains Mono for instruments.
@@ -90,6 +94,8 @@ Fetched and checked on 2026-11-12. "Flown" means it happened. Imperial source va
 | 14 | Sun height in the landing regions | never more than a few degrees; 7 degrees at most | Environment | NASA NESC, https://www.nasa.gov/centers-and-facilities/nesc/characterizing-the-visual-experience-of-astronauts-at-the-lunar-south-pole/ |
 | 15 | First crewed Artemis landing | 2028 (Artemis IV) | Planned | NASA, https://www.nasa.gov/humans-in-space/artemis/ (page updated 21 Oct 2026) |
 | 16 | Terrain | 5 m and 240 m per pixel | Measured, LOLA | NASA Goddard PGDA product 78, https://pgda.gsfc.nasa.gov/products/78 (Barker et al. 2021); LOLA GDR (as 2) |
+| 17 | Stars | 9,096 stars to about magnitude 6.5 | Measured | Bright Star Catalogue, 5th Revised Ed. (Hoffleit and Warren 1991), CDS V/50, https://vizier.cfa.harvard.edu/ftp/cats/V/50/ReadMe |
+| 18 | Direction of the Moon's pole (not shown as a number; it orients the stars) | RA 269.9949, Dec 66.5392 degrees, J2000 | Constant, IAU | NASA NAIF `pck00010.tpc`, https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/pck00010.tpc |
 
 Statements on screen without a number:
 
@@ -98,7 +104,7 @@ Statements on screen without a number:
 - NASA has not said which lander flies Artemis IV: "NASA will announce the lander provider for each of those missions at a later date." IAC-26 paper (as 10).
 - Apollo 11's automatic descent was heading for a boulder field and the commander flew past it by hand: "Neil has to take manual control and fly beyond the boulder field surrounding West Crater." Apollo Lunar Surface Journal (as 4).
 
-**Game tuning, labelled as such on screen, not mission figures:** full-throttle thrust acceleration (4 m/s2), velocity change available (2,000 m/s, which leaves about 384 m/s at the takeover and about 100 m/s after a landing flown on the marks), the takeover range and ground speed (7.5 km, 150 m/s), the 32x time compression of the intro, the Sun's direction and its 1.5 degree height, the target point, and the start speed, which is the circular orbital speed at 15 km worked out from sources 1 and 2.
+**Game tuning, labelled as such on screen, not mission figures:** full-throttle thrust acceleration (4 m/s2), velocity change available (2,000 m/s, which leaves about 384 m/s at the takeover and about 100 m/s after a landing flown on the marks), the takeover range and ground speed (7.5 km, 150 m/s), the 32x time compression of the intro, the Sun's direction and its 1.5 degree height, the time of year that turns the star field (Sun at ecliptic longitude 150 degrees, chosen so Scorpius and Sagittarius stand ahead), the target point, and the start speed, which is the circular orbital speed at 15 km worked out from sources 1 and 2.
 
 **Game element, said so on the start card:** the boulders. 70 of them, 1 to 6 m across, within 30 m of the target along the track. The 5 m terrain data shows no rocks; these are placed by the game.
 
@@ -113,7 +119,7 @@ Not covered by the search (a usage limit cut it short): GAO 2026 assessments, NT
 1. **The catalogue.** Four gates and an explorer are all tempting. One slice per PR, in the order above.
 2. **The architecture moves.** Artemis III became a low Earth orbit docking test during 2026 and NASA has not named the Artemis IV lander. All mission copy lives in `lunar-descent/src/data/facts.ts` so one file changes when NASA does.
 3. **Vehicle naming.** Trademark caution from pilot-mode decision 20 still applies. The ruling here is factual naming with no logos and a not-affiliated credit.
-4. **Weight.** Terrain is about 2.3 MB and loads after the start card. The total is stated in the PR.
+4. **Weight.** Terrain is about 2.7 MB and the stars 91 kB; both load after the start card. The total is stated in the PR.
 
 ## 8. Follow-ups (not in slice 1)
 
