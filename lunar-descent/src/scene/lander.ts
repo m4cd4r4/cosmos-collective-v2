@@ -80,9 +80,10 @@ export function createLander(): Lander {
     setThrottle(throttle) {
       plume.visible = throttle > 0.01
       // The plume is the player's throttle feedback, so it runs from a stub to twice the old length.
+      // Length carries the throttle; the brightness has a floor so a low throttle can still be seen.
       plume.scale.set(0.5 + throttle * 0.9, 0.15 + throttle * 1.35, 0.5 + throttle * 0.9)
       plume.position.y = 2 - 30 * plume.scale.y
-      ;(plume.material as THREE.ShaderMaterial).uniforms.strength.value = 0.2 + throttle * 0.95
+      ;(plume.material as THREE.ShaderMaterial).uniforms.strength.value = 0.6 + throttle * 0.6
     },
   }
 }

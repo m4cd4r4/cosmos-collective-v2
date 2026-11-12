@@ -3,12 +3,16 @@
 
 import type { Control } from '../sim/physics'
 import type { Phase, Prediction } from '../sim/flight'
-import { BOULDER_HALF_WIDTH, BRAKING_TIME_SCALE } from '../sim/flight'
-import { LIMITS } from '../data/facts'
+import { BOULDER_HALF_WIDTH } from '../sim/flight'
+import { APOLLO_11, LIMITS } from '../data/facts'
 import { el, fmt } from './dom'
 
 export interface HudView {
   phase: Phase
+  /** Height above the target's elevation, m. Shown during the braking burn. */
+  altitude: number
+  /** How many times faster than real time the simulation is running. */
+  timeScale: number
   radarAltitude: number
   climbRate: number
   groundSpeed: number
@@ -73,7 +77,7 @@ function distance(metres: number): [string, string] {
 }
 
 export function createHud(): Hud {
-  const altitude = readout('Altitude', 'Height above the ground beneath the lander')
+  const altitude = readout('Altitude', 'Height above the ground beneath the lander. During the braking burn, height above the landing site')
   const vertical = readout('Vertical', 'Vertical speed. Negative is descending')
   const horizontal = readout('Horizontal', 'Speed over the ground')
   const deltaV = readout('Delta-v', 'Propellant left, as the change in speed it can still deliver')
@@ -143,8 +147,12 @@ export function createHud(): Hud {
   let lastText = ''
 
   function update(view: HudView) {
-    const low = view.radarAltitude < 150
-    altitude.set(...distance(Math.max(0, view.radarAltitude)))
+    // The speed limits apply at touchdown. Red from the height where the dust takes the view, not before.
+    const low = view.radarAltitude < APOLLO_11.dustAltitude.value
+    // During the burn the ground below rises and falls by kilometres, so height above it
+    // jumped about. Height above the landing site falls steadily.
+    if (view.phase === 'braking') altitude.set(fmt.one(view.altitude / 1000), 'km')
+    else altitude.set(...distance(Math.max(0, view.radarAltitude)))
     vertical.set(fmt.one(view.climbRate), 'm/s', low && -view.climbRate > LIMITS.verticalSpeed.value)
     horizontal.set(
       Math.abs(view.groundSpeed) >= 100 ? fmt.whole(view.groundSpeed) : fmt.one(view.groundSpeed),
@@ -165,13 +173,14 @@ export function createHud(): Hud {
       impact.set(fmt.one(hit.verticalSpeed), rocks ? 'm/s, rocks' : 'm/s', rocks || hard)
     }
 
-    const phaseKey = `${view.phase}|${view.paused}`
+    const scale = Math.round(view.timeScale)
+    const phaseKey = `${view.phase}|${view.paused}|${scale}`
     if (phaseKey !== lastPhase) {
       lastPhase = phaseKey
       const braking = view.phase === 'braking'
       phaseName.textContent = view.paused ? 'Paused' : braking ? 'Braking burn' : 'Manual descent'
       phaseNote.textContent = braking ? 'The computer is flying. You take over at high gate.' : 'You have throttle and pitch. Put the marker on clear ground.'
-      chip.textContent = braking ? `${BRAKING_TIME_SCALE}x time` : 'Real time'
+      chip.textContent = braking ? `${scale}x time` : 'Real time'
       skipButton.hidden = !braking
       throttleInput.disabled = braking
       pauseButton.textContent = view.paused ? 'Resume' : 'Pause'

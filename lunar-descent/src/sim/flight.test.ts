@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { DT, step, type State } from './physics'
-import { assessTouchdown, attitudeHold, guidance, predictTouchdown, reachedTakeover, startState, type Phase } from './flight'
+import { RETRY_RANGE, assessTouchdown, attitudeHold, flyCueTo, guidance, predictTouchdown, reachedTakeover, startState, takeoverState, type Phase } from './flight'
 
 describe('flight guidance', () => {
   // The computer cannot see the boulders at the target: its landing is gentle, upright and in the rocks.
@@ -26,6 +26,20 @@ describe('flight guidance', () => {
     expect(result.verticalSpeed, log.join('\n')).toBeLessThan(3.05)
     expect(result.missDistance, log.join('\n')).toBeLessThan(30)
     expect(result.deltaVLeft, log.join('\n')).toBeGreaterThan(60)
+  })
+})
+
+describe('retry point', () => {
+  // A retry skips the minute between the takeover and the decision: it starts on the
+  // computer's own line, 2 km out, with the propellant that line has used.
+  it('flying the cue from the takeover to 2 km out gives a state on the same line', () => {
+    const takeover = takeoverState()
+    const retry = flyCueTo(takeover, RETRY_RANGE, () => 0)
+    expect(retry.range).toBeLessThanOrEqual(RETRY_RANGE)
+    expect(retry.range).toBeGreaterThan(RETRY_RANGE - 5)
+    expect(retry.deltaV).toBeLessThan(takeover.deltaV - 50)
+    expect(retry.altitude).toBeGreaterThan(500)
+    expect(retry.altitude).toBeLessThan(takeover.altitude)
   })
 })
 

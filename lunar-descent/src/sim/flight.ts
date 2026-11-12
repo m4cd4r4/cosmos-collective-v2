@@ -1,7 +1,7 @@
 // Flight rules on top of the physics: phases, the guidance cue, the attitude hold used
 // during the braking burn, and the touchdown assessment. Pure functions, no rendering.
 
-import { MAX_THRUST_ACCEL, MOON_RADIUS, gravityAt, step, type Control, type State } from './physics'
+import { DT, MAX_THRUST_ACCEL, MOON_RADIUS, SURFACE_GRAVITY, gravityAt, step, type Control, type State } from './physics'
 import { APOLLO_11, LIMITS } from '../data/facts'
 
 export type Phase = 'braking' | 'approach' | 'ended'
@@ -38,6 +38,26 @@ export function startState(): State {
 /** State at the moment of takeover on a nominal burn. Used by "retry from takeover". */
 export function takeoverState(): State {
   return { ...HIGH_GATE, deltaV: START_DELTA_V - 1_616, time: 0 }
+}
+
+/** Game rule: a retry starts this far from the target, m, just before the decision. */
+export const RETRY_RANGE = 2_000
+
+/** The state after the computer's own line is flown from `state` in to `range`. Used by "fly again". */
+export function flyCueTo(state: State, range: number, heightAt: (range: number) => number): State {
+  let s = state
+  while (s.range > range && s.altitude > heightAt(s.range)) s = step(s, guidance(s, 'approach', heightAt(s.range)), DT)
+  return s
+}
+
+/** Propellant as time: seconds the lander could hover at lunar surface gravity on what is left. */
+export function hoverSeconds(deltaV: number): number {
+  return deltaV / SURFACE_GRAVITY
+}
+
+/** Seconds until the takeover on the braking profile. */
+export function timeToTakeover(state: State): number {
+  return (2 * Math.max(0, state.range - HIGH_GATE.range)) / Math.max(1, state.groundSpeed + HIGH_GATE.groundSpeed)
 }
 
 interface Aim {

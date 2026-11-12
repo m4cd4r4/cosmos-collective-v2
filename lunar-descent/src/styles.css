@@ -44,6 +44,24 @@ body {
   background: radial-gradient(circle at 50% 62%, rgb(178, 172, 160), rgb(112, 108, 100));
 }
 
+/* Rides beside the touchdown marker in the scene. No panel: it is part of the view, not the HUD. */
+.marker-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  font: 500 12px var(--mono);
+  color: var(--ink);
+  white-space: nowrap;
+  text-shadow:
+    0 0 3px #000,
+    0 0 6px #000;
+}
+
+.marker-label.over {
+  color: var(--red);
+}
+
 [hidden] {
   display: none !important;
 }

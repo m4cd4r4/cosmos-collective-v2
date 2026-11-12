@@ -5,7 +5,7 @@
 import * as THREE from 'three'
 import { MOON_RADIUS, type State } from '../sim/physics'
 import { BOULDER_HALF_WIDTH, type Prediction } from '../sim/flight'
-import { APOLLO_11, LIMITS } from '../data/facts'
+import { APOLLO_11, LIMITS, STARSHIP_HLS } from '../data/facts'
 import { createLander } from './lander'
 import type { Terrain } from './terrain'
 
@@ -21,11 +21,15 @@ export interface View {
   prediction: Prediction | null
   /** Draw the flying aids: the touchdown marker and the velocity arrow. */
   aids: boolean
+  /** Set once the lander is down: seconds since it touched, and whether it came down too hard. */
+  settle: { hard: boolean; seconds: number } | null
 }
 
 export interface World {
   render(view: View): void
   resize(): void
+  /** Where the touchdown marker was drawn, in CSS pixels from the canvas corner. Null when it is off screen or hidden. */
+  markerScreen(): { x: number; y: number } | null
   /** 0 to 1: how much of the surface the dust hides right now. */
   dustAmount(view: View): number
 }
@@ -97,20 +101,136 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
   marker.visible = false
   moon.add(marker)
 
-  // Velocity arrow: which way the lander is moving, and how fast.
-  const arrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(), 1, INK)
-  ;(arrow.line.material as THREE.LineBasicMaterial).depthTest = false
-  ;(arrow.cone.material as THREE.MeshBasicMaterial).depthTest = false
+  // Track coordinates and height above the target's elevation, to the Moon frame. The same
+  // wrap onto the sphere as the terrain mesh, so things sit on the ground far out too.
+  const datum = MOON_RADIUS + terrain.meta.target.heightM
+  const place = (along: number, across: number, height: number, out: THREE.Vector3) => {
+    const d = Math.hypot(along, across) || 1
+    const flat = ((datum + height) * Math.sin(d / MOON_RADIUS)) / d
+    return out.set(along * flat, (datum + height) * Math.cos(d / MOON_RADIUS) - datum, across * flat)
+  }
+  const point = new THREE.Vector3()
+
+  // Ground track: a line from the lander straight down, then along the ground to the marker.
+  const TRACK_POINTS = 24
+  const trackPositions = new THREE.BufferAttribute(new Float32Array((TRACK_POINTS + 2) * 3), 3)
+  const track = new THREE.Line(
+    new THREE.BufferGeometry().setAttribute('position', trackPositions),
+    new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.4, depthTest: false }),
+  )
+  track.frustumCulled = false
+  track.renderOrder = 9
+  track.visible = false
+  moon.add(track)
+
+  // Velocity arrow: which way the lander is moving, and how fast. A flat shape turned to
+  // face the camera; a cone read as a blob on a stick from most angles.
+  const arrowPositions = new THREE.BufferAttribute(new Float32Array(27), 3)
+  const arrow = new THREE.Mesh(
+    new THREE.BufferGeometry().setAttribute('position', arrowPositions),
+    new THREE.MeshBasicMaterial({ color: INK, side: THREE.DoubleSide, depthTest: false }),
+  )
+  arrow.frustumCulled = false
   arrow.renderOrder = 10
   arrow.visible = false
   scene.add(arrow)
   const velocity = new THREE.Vector3()
+  const across = new THREE.Vector3()
+  const tail = new THREE.Vector3()
+  const neck = new THREE.Vector3()
+  const tip = new THREE.Vector3()
   const markerWorld = new THREE.Vector3()
+  let markerAt: { x: number; y: number } | null = null
 
   const lander = createLander()
   scene.add(lander.group)
-  const sun = new THREE.DirectionalLight(0xfff4e0, 3.2)
+  const SUN_INTENSITY = 3.2
+  const sun = new THREE.DirectionalLight(0xfff4e0, SUN_INTENSITY)
   scene.add(sun, new THREE.AmbientLight(0x8090b0, 0.12))
+
+  // The lander's shadow, cast by the game's Sun on to the real terrain. With the Sun 1.5
+  // degrees up, a 50 m lander throws a shadow about 1.9 km long, and a lander 10 m up
+  // throws it 380 m to one side: it only reaches the lander's feet at touchdown.
+  const sunElevation = Math.asin(terrain.sunDirection.y)
+  const tanSun = Math.tan(sunElevation)
+  const awayAlong = -terrain.sunDirection.x / Math.cos(sunElevation)
+  const awayAcross = -terrain.sunDirection.z / Math.cos(sunElevation)
+  const SHADOW_POINTS = 96
+  const LANDER_HEIGHT = STARSHIP_HLS.height.value
+  const LANDER_RADIUS = 4.5
+  /** Shadows starting further than this from the lander are not drawn, m. */
+  const SHADOW_REACH = 6_000
+  const shadowPositions = new THREE.BufferAttribute(new Float32Array(SHADOW_POINTS * 2 * 3), 3)
+  const shadowAlpha = new THREE.BufferAttribute(new Float32Array(SHADOW_POINTS * 2), 1)
+  const shadowIndex: number[] = []
+  for (let i = 0; i < SHADOW_POINTS - 1; i++) shadowIndex.push(2 * i, 2 * i + 1, 2 * i + 2, 2 * i + 2, 2 * i + 1, 2 * i + 3)
+  const shadow = new THREE.Mesh(
+    new THREE.BufferGeometry().setAttribute('position', shadowPositions).setAttribute('alpha', shadowAlpha).setIndex(shadowIndex),
+    new THREE.ShaderMaterial({
+      transparent: true,
+      depthWrite: false,
+      side: THREE.DoubleSide,
+      polygonOffset: true,
+      polygonOffsetFactor: -4,
+      polygonOffsetUnits: -4,
+      vertexShader: 'attribute float alpha; varying float vAlpha; void main() { vAlpha = alpha; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: 'varying float vAlpha; void main() { gl_FragColor = vec4(0.0, 0.0, 0.0, vAlpha); }',
+    }),
+  )
+  shadow.frustumCulled = false
+  shadow.visible = false
+  moon.add(shadow)
+
+  /** True when nothing stands between this point and the Sun. Height is above the target's elevation. */
+  function sunlit(along: number, height: number): boolean {
+    for (let d = 20; d < 40_000; d *= 1.06) {
+      const ray = height + d * tanSun + (d * d) / (2 * MOON_RADIUS)
+      if (ray > 9_000) return true
+      if (ray < terrain.heightAt(along - awayAlong * d, -awayAcross * d)) return false
+    }
+    return true
+  }
+
+  /**
+   * Lay the shadow of the lander's axis on the ground. `poseDeg` is the axis angle above the
+   * horizon, as pitch is. Returns false when the shadow falls beyond `SHADOW_REACH`.
+   */
+  function castShadow(state: State, radarAltitude: number, poseDeg: number): boolean {
+    const pose = (poseDeg * Math.PI) / 180
+    const lean = -Math.cos(pose)
+    const rise = Math.sin(pose)
+    const near = (Math.max(0, radarAltitude) / tanSun) * 0.7
+    if (near > SHADOW_REACH) return false
+    const far = Math.min(SHADOW_REACH, ((radarAltitude + LANDER_HEIGHT) / tanSun) * 1.3 + 60)
+    const along0 = -state.range
+    for (let i = 0; i < SHADOW_POINTS; i++) {
+      const d = near + ((far - near) * i) / (SHADOW_POINTS - 1)
+      // Which point of the axis, `s` metres from the base, shades the ground this far away:
+      // its height must equal the ground height plus the rise of a ray to the Sun over `d`.
+      let s = 0
+      let ground = 0
+      for (let pass = 0; pass < 3; pass++) {
+        ground = terrain.heightAt(along0 + lean * s + awayAlong * d, awayAcross * d)
+        const need = ground + d * tanSun + (d * d) / (2 * MOON_RADIUS) - state.altitude
+        s = Math.abs(rise) > 0.05 ? need / rise : need > 0 ? LANDER_HEIGHT + 10 : -10
+        s = Math.min(LANDER_HEIGHT + 10, Math.max(-10, s))
+      }
+      const along = along0 + lean * s + awayAlong * d
+      const acrossTrack = awayAcross * d
+      // The Sun's disc is half a degree wide, so the shadow softens with distance.
+      const sharp = (2 * LANDER_RADIUS) / (2 * LANDER_RADIUS + 0.0093 * d)
+      const inside = Math.min(1, Math.max(0, s / 2)) * Math.min(1, Math.max(0, (LANDER_HEIGHT - s) / 2))
+      for (const edge of [-1, 1]) {
+        const k = 2 * i + (edge + 1) / 2
+        place(along - awayAcross * edge * LANDER_RADIUS, acrossTrack + awayAlong * edge * LANDER_RADIUS, ground + 0.4, point)
+        shadowPositions.setXYZ(k, point.x, point.y, point.z)
+        shadowAlpha.setX(k, 0.88 * sharp * inside)
+      }
+    }
+    shadowPositions.needsUpdate = true
+    shadowAlpha.needsUpdate = true
+    return true
+  }
 
   // Dust: a sheet of streaks racing outwards under the engines.
   const dust = new THREE.Mesh(
@@ -165,11 +285,27 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
     // Local vertical leans back along the track by the angle travelled round the Moon.
     up.set(-Math.sin(theta), Math.cos(theta), 0)
     forward.set(Math.cos(theta), Math.sin(theta), 0)
-    lander.group.rotation.z = theta + ((90 - view.pitchDeg) * Math.PI) / 180
+    // A hard landing ends with the lander going over: a game effect, falling the way it was moving.
+    let poseDeg = view.pitchDeg
+    let lift = 0
+    if (view.settle?.hard) {
+      const fall = Math.min(1, view.settle.seconds / 1.6) ** 2
+      poseDeg = mix(view.pitchDeg, state.groundSpeed >= 0 ? 176 : 4, fall)
+      lift = LANDER_RADIUS * fall
+    }
+    lander.group.rotation.z = theta + ((90 - poseDeg) * Math.PI) / 180
+    lander.group.position.copy(up).multiplyScalar(lift)
     lander.setThrottle(view.throttle)
     sun.position.copy(terrain.sunDirection)
 
-    const amount = dustAmount(view)
+    // Real shadows both ways: the lander goes dark when the terrain hides the Sun from it,
+    // and throws its own shadow when it is in the light.
+    const lit = sunlit(-state.range, state.altitude + LANDER_HEIGHT / 2)
+    sun.intensity = lit ? SUN_INTENSITY : 0
+    shadow.visible = lit && castShadow(state, view.radarAltitude, poseDeg)
+
+    const burst = view.settle ? (view.settle.hard ? 1 : 0.55) * Math.exp(-view.settle.seconds * 1.1) : 0
+    const amount = Math.max(dustAmount(view), burst)
     const dustMaterial = dust.material as THREE.ShaderMaterial
     dustMaterial.uniforms.amount.value = amount
     dustMaterial.uniforms.time.value = view.clock
@@ -202,14 +338,23 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
 
     const hit = view.aids ? view.prediction : null
     marker.visible = hit !== null
+    // From high up the point below the lander is far out of frame, and the line read as noise.
+    const trackOpacity = 0.45 * smooth(900, 400, view.radarAltitude)
+    track.visible = hit !== null && trackOpacity > 0.01
+    ;(track.material as THREE.LineBasicMaterial).opacity = trackOpacity
+    markerAt = null
     if (hit) {
-      // Same wrap onto the sphere as the terrain mesh, so the marker sits on the ground far out too.
       const along = -hit.range
-      const angle = along / MOON_RADIUS
-      const datum = MOON_RADIUS + terrain.meta.target.heightM
-      const r = datum + terrain.heightAt(along)
-      marker.position.set(r * Math.sin(angle), r * Math.cos(angle) - datum + 0.5, 0)
-      marker.rotation.z = -angle
+      place(along, 0, terrain.heightAt(along) + 0.5, marker.position)
+      marker.rotation.z = -along / MOON_RADIUS
+      place(-state.range, 0, state.altitude, point)
+      trackPositions.setXYZ(0, point.x, point.y, point.z)
+      for (let i = 0; i <= TRACK_POINTS; i++) {
+        const a = mix(-state.range, along, i / TRACK_POINTS)
+        place(a, 0, terrain.heightAt(a) + 0.5, point)
+        trackPositions.setXYZ(i + 1, point.x, point.y, point.z)
+      }
+      trackPositions.needsUpdate = true
       // Hold its apparent size so it reads from high gate and from 50 m.
       marker.getWorldPosition(markerWorld)
       marker.scale.setScalar(Math.max(1, markerWorld.distanceTo(eye) / 330))
@@ -218,6 +363,14 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
         hit.verticalSpeed > LIMITS.verticalSpeed.value ||
         hit.horizontalSpeed > LIMITS.horizontalSpeed.value
       markerMaterial.color.setHex(bad ? RED : INK)
+      camera.updateMatrixWorld()
+      markerWorld.project(camera)
+      if (markerWorld.z < 1 && Math.abs(markerWorld.x) < 1 && Math.abs(markerWorld.y) < 1) {
+        markerAt = {
+          x: canvas.offsetLeft + ((markerWorld.x + 1) / 2) * canvas.clientWidth,
+          y: canvas.offsetTop + ((1 - markerWorld.y) / 2) * canvas.clientHeight,
+        }
+      }
     }
 
     velocity.copy(forward).multiplyScalar(state.groundSpeed).addScaledVector(up, state.climbRate)
@@ -225,12 +378,26 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
     arrow.visible = view.aids && speed > 0.5
     if (arrow.visible) {
       const length = Math.min(110, 12 + speed * 1.6)
-      arrow.position.copy(up).multiplyScalar(26)
-      arrow.setDirection(velocity.divideScalar(speed))
-      arrow.setLength(length, Math.min(14, length * 0.3), Math.min(7, length * 0.15))
+      const head = Math.min(14, length * 0.3)
+      velocity.divideScalar(speed)
+      // Sideways on screen: at right angles to both the arrow and the line of sight.
+      across.crossVectors(velocity, eye)
+      if (across.lengthSq() < 1e-6) across.copy(side)
+      across.normalize()
+      const shaft = eye.length() / 420
+      tail.copy(up).multiplyScalar(26)
+      tip.copy(tail).addScaledVector(velocity, length)
+      neck.copy(tip).addScaledVector(velocity, -head)
+      const corners = [
+        [tail, -shaft], [tail, shaft], [neck, shaft],
+        [tail, -shaft], [neck, shaft], [neck, -shaft],
+        [neck, -head * 0.45], [neck, head * 0.45], [tip, 0],
+      ] as const
+      corners.forEach(([at, offset], i) => arrowPositions.setXYZ(i, at.x + across.x * offset, at.y + across.y * offset, at.z + across.z * offset))
+      arrowPositions.needsUpdate = true
     }
     renderer.render(scene, camera)
   }
 
-  return { render, resize, dustAmount }
+  return { render, resize, dustAmount, markerScreen: () => markerAt }
 }

@@ -2,11 +2,12 @@
 // its number and its source from data/facts.ts.
 
 import type { Touchdown } from '../sim/flight'
-import { BRAKING_TIME_SCALE } from '../sim/flight'
+import { BRAKING_TIME_SCALE, RETRY_RANGE, hoverSeconds } from '../sim/flight'
 import { APOLLO_11, ARTEMIS_URL, IAC, LIMITS, OIG, PLUME_URL, SHACKLETON, STARS_CREDIT, STARSHIP_HLS, SUN_URL, TERRAIN_CREDIT, type Fact } from '../data/facts'
 import { el, fmt, sourceLink } from './dom'
 
-const NOT_AFFILIATED = 'An independent educational project. Not affiliated with NASA or SpaceX.'
+const RETRY_LABEL = `Fly again from ${RETRY_RANGE / 1000} km out`
+const NOT_AFFILIATED ='An independent educational project. Not affiliated with NASA or SpaceX.'
 
 function credits(): HTMLElement {
   return el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(TERRAIN_CREDIT.text, TERRAIN_CREDIT.url), '. ', sourceLink(STARS_CREDIT.text, STARS_CREDIT.url), '.')
@@ -36,9 +37,9 @@ export function createStartCard(onBegin: () => void): StartCard {
       el(
         'p',
         {},
-        `Fly the powered descent to the rim of Shackleton, a crater ${SHACKLETON.diameter.value} km across at the Moon's south pole. `,
-        `The computer flies the braking burn from ${fmt.whole(APOLLO_11.startAltitude.value / 1000)} km up, as Apollo 11's did. `,
-        `At ${fmt.whole(APOLLO_11.highGateAltitude.value)} m it hands you the stick. It is steering for a patch of boulders it cannot see, and propellant is short.`,
+        `Land on the rim of Shackleton, a crater ${SHACKLETON.diameter.value} km across at the Moon's south pole. `,
+        `The computer flies the braking burn and hands you the stick at ${fmt.whole(APOLLO_11.highGateAltitude.value)} m, the height of Apollo 11's high gate. `,
+        'It is steering for boulders it cannot see, and propellant is short.',
       ),
       el(
         'ul',
@@ -51,7 +52,7 @@ export function createStartCard(onBegin: () => void): StartCard {
       el(
         'p',
         { class: 'muted' },
-        'Arrow keys work too. On a touch screen, use the slider and the pitch buttons. The marker on the ground shows where you will come down or stop, and Impact shows how hard. Gold marks show what the computer would do.',
+        'Arrow keys and the on-screen controls work too. The marker on the ground shows where you will come down. Gold marks show what the computer would do.',
       ),
       // Above the notes, so the button is on the first screen of a phone.
       el('div', { class: 'actions' }, button),
@@ -63,18 +64,17 @@ export function createStartCard(onBegin: () => void): StartCard {
           'li',
           {},
           "The lander is modelled on SpaceX's Starship HLS. NASA plans the first crewed Artemis landing for 2028 and has not said which lander will fly it (",
-          sourceLink('NASA', ARTEMIS_URL),
-          ', ',
-          sourceLink('NASA, 2026', IAC),
+          sourceLink('NASA Artemis page', ARTEMIS_URL),
+          '; ',
+          sourceLink('NASA paper to IAC 2026', IAC),
           ').',
         ),
-        el('li', {}, "The target is a game target on Shackleton's rim. NASA has not chosen a landing site."),
         el(
           'li',
           {},
-          `No descent figures are published for Starship HLS, so thrust, propellant and the ${BRAKING_TIME_SCALE}x speed of the braking burn are game settings. Propellant is shown as delta-v: the change in speed you have left.`,
+          `Game settings, not mission figures: the target, the boulders, thrust, propellant and the ${BRAKING_TIME_SCALE}x braking burn. NASA has not chosen a landing site and no descent figures are published for Starship HLS.`,
         ),
-        el('li', {}, 'The boulders are placed by the game. The terrain data is 5 m per pixel and shows no rocks.'),
+        el('li', {}, 'Propellant is shown as delta-v: the change in speed you have left.'),
       ),
       credits(),
     ),
@@ -143,7 +143,8 @@ const TIPS: Record<TipId, TipCopy> = {
   },
 }
 
-const TIP_SECONDS = 14
+// Short, because on a phone a tip card covers the lander while it is up.
+const TIP_SECONDS = 10
 
 export interface Tips {
   root: HTMLElement
@@ -233,7 +234,7 @@ interface EndOptions extends RetryOptions {
 
 /** Shown when the lander sails past the target without landing. */
 export function createOverflyCard(altitude: number, groundSpeed: number, options: RetryOptions): HTMLElement {
-  const retry = el('button', { class: 'primary', type: 'button', onclick: options.onRetry }, 'Fly again from the takeover')
+  const retry = el('button', { class: 'primary', type: 'button', onclick: options.onRetry }, RETRY_LABEL)
   const card = el(
     'div',
     { class: 'overlay' },
@@ -256,7 +257,7 @@ export function createOverflyCard(altitude: number, groundSpeed: number, options
 
 export function createEndCard(t: Touchdown, options: EndOptions): HTMLElement {
   const outcome = OUTCOME[t.outcome]
-  const retry = el('button', { class: 'primary', type: 'button', onclick: options.onRetry }, 'Fly again from the takeover')
+  const retry = el('button', { class: 'primary', type: 'button', onclick: options.onRetry }, RETRY_LABEL)
   const table = el(
     'table',
     {},
@@ -287,9 +288,10 @@ export function createEndCard(t: Touchdown, options: EndOptions): HTMLElement {
       ),
       row(
         'Propellant left',
-        `${fmt.whole(t.deltaVLeft)} m/s of delta-v`,
+        // Apollo's figure is a time, so the player's is given as a time too: delta-v over lunar gravity.
+        `about ${fmt.whole(hoverSeconds(t.deltaVLeft))} s of hover (${fmt.whole(t.deltaVLeft)} m/s of delta-v)`,
         null,
-        reference(`Apollo 11: about ${APOLLO_11.propellantSecondsLeft.value} seconds`, APOLLO_11.propellantSecondsLeft),
+        reference(`Apollo 11: about ${APOLLO_11.propellantSecondsLeft.value} s`, APOLLO_11.propellantSecondsLeft),
       ),
       options.burnSeconds === null
         ? null

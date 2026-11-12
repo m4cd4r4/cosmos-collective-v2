@@ -7,11 +7,17 @@ import '@fontsource-variable/jetbrains-mono'
 import './styles.css'
 
 import { DT, step, type State } from './sim/physics'
+import { APOLLO_11 } from './data/facts'
+import { el, fmt } from './ui/dom'
 import {
+  BOULDER_HALF_WIDTH,
   BRAKING_TIME_SCALE,
+  RETRY_RANGE,
   assessTouchdown,
   attitudeHold,
+  flyCueTo,
   guidance,
+  timeToTakeover,
   overflew,
   predictTouchdown,
   reachedTakeover,
@@ -34,9 +40,11 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 const hud = createHud()
 const tips = createTips()
 hud.root.append(tips.root)
-const controls = createControls(hud, { onPause: togglePause, onRetry: () => begin('takeover'), onSkip: skipIntro })
+const controls = createControls(hud, { onPause: togglePause, onRetry: () => begin('retry'), onSkip: skipIntro })
 const startCard = createStartCard(load)
-app.append(hud.root, startCard.root)
+// Rides beside the touchdown marker: how far short of the target, or long, the lander is heading.
+const markerLabel = el('div', { class: 'marker-label', hidden: true, 'aria-hidden': 'true' })
+app.append(markerLabel, hud.root, startCard.root)
 
 let terrain: Terrain | null = null
 let world: World | null = null
@@ -45,6 +53,8 @@ let phase: Phase = 'ended'
 let paused = false
 let fromStart = true
 let endCard: HTMLElement | null = null
+/** The pause between touching down and the end card. */
+let settle: { hard: boolean; seconds: number; card: HTMLElement } | null = null
 let accumulator = 0
 let lastFrame = 0
 const tipsShown = new Set<TipId>()
@@ -72,17 +82,20 @@ async function load() {
   }
 }
 
-function begin(mode: 'start' | 'takeover') {
+function begin(mode: 'start' | 'takeover' | 'retry') {
   if (!world || !terrain) return
   // The braking burn is a fast-forwarded intro flown by the computer. Reduced motion skips it.
   fromStart = mode === 'start' && !reducedMotion
-  state = fromStart ? startState() : takeoverState()
+  const ground = terrain.heightAt
+  // A retry starts on the computer's line just before the decision, not a minute's flying from it.
+  state = fromStart ? startState() : mode === 'retry' ? flyCueTo(takeoverState(), RETRY_RANGE, (range) => ground(-range)) : takeoverState()
   phase = fromStart ? 'braking' : 'approach'
   const cue = guidance(state, phase, groundBelow())
   controls.throttle = cue.throttle
   controls.pitchDeg = cue.pitchDeg
   paused = false
   accumulator = 0
+  settle = null
   endCard?.remove()
   endCard = null
   tips.clear()
@@ -118,14 +131,33 @@ function showTip(id: TipId) {
   tips.show(id)
 }
 
+/** Simulated seconds before the takeover over which the intro slows down and pitches over. */
+const PITCH_OVER_SECONDS = 30
+
+/** 0 during the braking burn, rising to 1 at the takeover. */
+function pitchOver(): number {
+  const t = Math.min(1, Math.max(0, 1 - timeToTakeover(state) / PITCH_OVER_SECONDS))
+  return t * t * (3 - 2 * t)
+}
+
+/** The intro runs at 32x and eases to 4x for the pitch-over, so the handover can be seen coming. */
+function timeScale(): number {
+  return phase === 'braking' ? BRAKING_TIME_SCALE + (4 - BRAKING_TIME_SCALE) * pitchOver() : 1
+}
+
 function advance(realSeconds: number) {
   if (phase === 'approach') controls.update(realSeconds)
-  accumulator += realSeconds * (phase === 'braking' ? BRAKING_TIME_SCALE : 1)
+  accumulator += realSeconds * timeScale()
   while (accumulator >= DT && phase !== 'ended') {
     accumulator -= DT
     if (phase === 'braking') {
-      controls.throttle = guidance(state, phase, groundBelow()).throttle
-      controls.pitchDeg = attitudeHold(state, controls.throttle)
+      // The braking law saturates in its last seconds and used to snap the lander upright.
+      // Blend to the line the player is about to be handed instead.
+      const blend = pitchOver()
+      const next = guidance(state, 'approach', groundBelow())
+      const throttle = guidance(state, phase, groundBelow()).throttle
+      controls.throttle = throttle + (next.throttle - throttle) * blend
+      controls.pitchDeg = attitudeHold(state, throttle) * (1 - blend) + next.pitchDeg * blend
     }
     state = step(state, { throttle: controls.throttle, pitchDeg: controls.pitchDeg }, DT)
 
@@ -142,15 +174,18 @@ function advance(realSeconds: number) {
     }
     if (state.altitude - groundBelow() <= 0) touchDown()
     else if (overflew(state)) {
-      const retry = { onRetry: () => begin('takeover'), onRestart: () => begin('start') }
+      const retry = { onRetry: () => begin('retry'), onRestart: () => begin('start') }
       endRun(createOverflyCard(state.altitude - groundBelow(), state.groundSpeed, retry))
     }
   }
 
   if (phase === 'approach') {
-    if (state.range < 1_200) showTip('boulders')
+    // The boulders tip comes early enough to be gone before the player is choosing a spot:
+    // on a phone a tip card covers the lander while it is up.
+    if (state.range < 1_800) showTip('boulders')
     else if (state.range < 3_000) showTip('ring')
     else if (state.range < 5_200) showTip('sun')
+    if (state.altitude - groundBelow() < APOLLO_11.dustAltitude.value) showTip('dust')
   }
 }
 
@@ -165,19 +200,26 @@ function touchDown() {
   const ground = groundBelow()
   state = { ...state, altitude: ground }
   const result = assessTouchdown(state, controls.pitchDeg, terrain.slopeAt(-state.range))
-  endRun(
-    createEndCard(result, {
-      burnSeconds: fromStart ? state.time : null,
-      onRetry: () => begin('takeover'),
-      onRestart: () => begin('start'),
-    }),
-  )
+  const card = createEndCard(result, {
+    burnSeconds: fromStart ? state.time : null,
+    onRetry: () => begin('retry'),
+    onRestart: () => begin('start'),
+  })
+  // Let the touchdown be seen before the card covers it.
+  phase = 'ended'
+  controls.throttle = 0
+  tips.clear()
+  settle = { hard: result.outcome === 'hard', seconds: 0, card }
 }
+
+/** How long the lander is left in view after it touches down, s. */
+const SETTLE_SECONDS = 2.4
 
 function endRun(card: HTMLElement) {
   phase = 'ended'
   controls.throttle = 0
   tips.clear()
+  settle = null
   endCard = card
   app.append(card)
 }
@@ -188,19 +230,43 @@ function frame(now: number) {
   lastFrame = now
   if (!world) return
   if (!paused && phase !== 'ended' && !document.hidden) advance(realSeconds)
+  if (settle && !document.hidden) {
+    settle.seconds += realSeconds
+    if (settle.seconds >= (reducedMotion ? 0.8 : SETTLE_SECONDS)) endRun(settle.card)
+  }
 
   const radarAltitude = state.altitude - groundBelow()
   const throttle = state.deltaV > 0 ? controls.throttle : 0
   const prediction = predict()
-  const view = { state, pitchDeg: controls.pitchDeg, throttle, radarAltitude, clock: now / 1000, prediction, aids: phase === 'approach' }
+  const view = {
+    state,
+    pitchDeg: controls.pitchDeg,
+    throttle,
+    radarAltitude,
+    clock: now / 1000,
+    prediction,
+    aids: phase === 'approach',
+    settle: settle && { hard: settle.hard, seconds: reducedMotion ? SETTLE_SECONDS : settle.seconds },
+  }
   world.render(view)
 
   const dust = world.dustAmount(view)
   dustOverlay.style.opacity = (dust * 0.94).toFixed(3)
-  if (dust > 0.25 && phase === 'approach') showTip('dust')
+
+  const at = prediction && phase === 'approach' ? world.markerScreen() : null
+  markerLabel.hidden = !at
+  if (at && prediction) {
+    const rocks = Math.abs(prediction.range) < BOULDER_HALF_WIDTH
+    const metres = fmt.whole(Math.abs(prediction.range))
+    markerLabel.textContent = rocks ? `${metres} m, in the rocks` : `${metres} m ${prediction.range > 0 ? 'short' : 'long'}`
+    markerLabel.classList.toggle('over', rocks)
+    markerLabel.style.transform = `translate(${Math.round(at.x + 14)}px, ${Math.round(at.y - 8)}px)`
+  }
 
   hud.update({
     phase,
+    altitude: state.altitude,
+    timeScale: timeScale(),
     radarAltitude,
     climbRate: state.climbRate,
     groundSpeed: state.groundSpeed,
