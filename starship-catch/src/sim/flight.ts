@@ -20,25 +20,27 @@ export type Outcome =
 
 export const TUNING = {
   /** Thrust acceleration of the full stack at liftoff, m/s2, and the burn time that sets how it grows. */
-  liftoffAccel: 14.2,
+  liftoffAccel: 13.6,
   ascentBurnScale: 270,
   ascentMinThrottle: 0.5,
   /** The pitch-over: thrust leans east by up to this many degrees as the stack climbs. */
-  pitchMaxDeg: 60,
+  pitchMaxDeg: 63,
   pitchStartAlt: 600,
   pitchFullAlt: 52_000,
   /** Most engines cut off at this speed, m/s. */
   mecoSpeed: 1_560,
   /** Structural limit on dynamic pressure, Pa, and how long it can be exceeded, s. */
-  qLimit: 24_000,
+  qLimit: 22_000,
   qTolerance: 2.5,
+  /** The cue starts easing the throttle at this fraction of the limit. */
+  qCue: 0.95,
   stackTerminalSpeed: 900,
   boosterTerminalSpeed: 230,
   /** Seconds from engine cutoff to hot staging, and from hot staging to the end of the flip. */
   stagingDelay: 8,
   flipDuration: 5,
   /** Boostback thrust acceleration with all 13 engines, m/s2. */
-  boostbackAccel: 24,
+  boostbackAccel: 28,
   /** Grid fins: the most sideways acceleration they give, and the dynamic pressure that gives it. */
   finAccel: 3.2,
   finFullQ: 9_000,
@@ -47,9 +49,12 @@ export const TUNING = {
   /** The landing phase begins below this height, m. */
   landingGate: 4_000,
   /** Landing burn thrust acceleration: 13 engines, then the 3 centre engines. */
-  landingAccel13: 46,
-  landingAccel3: 16,
+  landingAccel13: 70,
+  landingAccel3: 20,
   landingMinThrottle: 0.4,
+  /** Height above the target kept for the final descent on 3 engines, m, and the braking it is flown at, m/s2. */
+  finalRoom: 330,
+  finalDecel: 5,
   /** The burn drops to the 3 centre engines below this speed, m/s. */
   downselectSpeed: 55,
   tiltMaxDeg: 20,
@@ -64,7 +69,7 @@ export const TUNING = {
   towerFace: -9,
   towerHeight: 146,
   splashSpeed: 8,
-  startDeltaV: 6_050,
+  startDeltaV: 6_000,
 }
 
 export interface Input {
@@ -278,15 +283,26 @@ export function advance(flight: Flight, input: Input, dt: number): Flight {
   return flight
 }
 
-/** Height at which the landing burn must be lit to stop at the target with the engines that are expected. */
+/** Lean that points the thrust against the direction of travel, within the tilt limit, degrees. */
+function retrogradeTilt(s: State): number {
+  return clamp((Math.atan2(-s.vx, -s.vy) * 180) / Math.PI, -TUNING.tiltMaxDeg, TUNING.tiltMaxDeg)
+}
+
+/**
+ * Height at which the landing burn must be lit, with the engines that are expected to relight.
+ * Found by flying the burn ahead from here: drag does much of the braking, so no formula serves.
+ */
 export function igniteHeight(flight: Flight): number {
   const t = TUNING
-  const s = flight.state
-  const speed = Math.hypot(s.vx, s.vy)
-  const decel = (t.landingAccel13 * flight.scenario.landingLit) / ENGINES.centre - G0
+  const full = (t.landingAccel13 * flight.scenario.landingLit) / ENGINES.centre
   const target = flight.committed ? t.catchHeight : 0
-  // Room for the slow final descent on 3 engines, plus the height lost while 13 engines slow the booster.
-  return target + 330 + Math.max(0, speed ** 2 - t.downselectSpeed ** 2) / (2 * decel)
+  let s = flight.state
+  if (s.vy >= 0) return 0
+  for (let i = 0; i < 400 && s.y > 0 && Math.hypot(s.vx, s.vy) > t.downselectSpeed; i++) {
+    s = step(s, { accel: full, angleDeg: retrogradeTilt(s) }, t.boosterTerminalSpeed, 0.05)
+  }
+  // Lighting now would leave the booster at s.y when it drops to 3 engines. It needs finalRoom above the target.
+  return flight.state.y - (s.y - target - t.finalRoom)
 }
 
 /** What the flight computer would command now. Drawn as the gold cue marks; flown by the tests. */
@@ -296,7 +312,7 @@ export function guidance(flight: Flight): Input {
   const cue: Input = { throttle: 1, tiltDeg: 0, shutdown: false, go: false, ignite: false }
 
   if (flight.phase === 'ascent') {
-    cue.throttle = clamp(1 - 6 * (dynamicPressure(s) / t.qLimit - 0.82), t.ascentMinThrottle, 1)
+    cue.throttle = clamp(1 - 10 * (dynamicPressure(s) / t.qLimit - t.qCue), t.ascentMinThrottle, 1)
   } else if (flight.phase === 'boostback') {
     cue.go = !flight.scenario.towerFault
     cue.shutdown = flight.impactX <= (cue.go ? 0 : t.splashX)
@@ -305,18 +321,29 @@ export function guidance(flight: Flight): Input {
     const targetX = flight.committed ? 0 : s.x
     cue.ignite = s.y <= igniteHeight(flight)
     const height = s.y - target
-    const wantVx = clamp(-(s.x - targetX) * 0.35, -14, 14)
-    const wantAx = clamp((wantVx - s.vx) * 0.9, -4.5, 4.5)
+    // Close on the arms no faster than the 3 centre engines can stop sideways.
+    const off = Math.abs(s.x - targetX)
+    const closing = Math.min(flight.downselected ? 25 : 80, Math.sqrt(4 * off), off * 0.5)
+    const wantVx = -Math.sign(s.x - targetX) * closing
     if (!flight.downselected) {
+      // 13 engines: full thrust, leaned to kill the sideways speed the booster arrives with.
+      const full = (t.landingAccel13 * flight.scenario.landingLit) / ENGINES.centre
+      const side = clamp(((wantVx - s.vx) * 0.9) / full, -1, 1)
       cue.throttle = 1
-      cue.tiltDeg = clamp((Math.atan2(wantAx, 30) * 180) / Math.PI, -8, 8)
+      cue.tiltDeg = clamp((Math.asin(side) * 180) / Math.PI, -t.tiltMaxDeg, t.tiltMaxDeg)
     } else {
-      const sink = clamp(height / 6, 1.2, 60)
-      const wantAy = (-sink - s.vy) * 1.4 + gravityAt(s.y)
-      const tilt = Math.atan2(wantAx, Math.max(1, wantAy))
+      // 3 engines: follow a steady braking line down to a slow final sink into the arms.
+      const wantAx = clamp((wantVx - s.vx) * 2, -4.5, 4.5)
+      // Hold just above the arms until the booster is lined up, then sink in.
+      const aligned = off < 1.5 && Math.abs(s.vx) < 1
+      const room = height - (aligned ? 0 : 10)
+      const braking = room > 6
+      const sink = braking ? Math.max(1.5, Math.sqrt(2 * t.finalDecel * (room - 5))) : room > 0 ? 1.5 : 0
+      const wantAy = (-sink - s.vy) * 1.4 + gravityAt(s.y) + (braking && sink > 1.5 ? t.finalDecel : 0)
+      const up = Math.max(t.landingMinThrottle * t.landingAccel3, wantAy)
       const settle = height < 12 ? 0.35 : 1
-      cue.tiltDeg = clamp(((tilt * 180) / Math.PI) * settle, -15, 15)
-      cue.throttle = clamp(Math.hypot(wantAx, wantAy) / t.landingAccel3, t.landingMinThrottle, 1)
+      cue.tiltDeg = clamp(((Math.atan2(wantAx, up) * 180) / Math.PI) * settle, -15, 15)
+      cue.throttle = clamp(wantAy / Math.cos((cue.tiltDeg * Math.PI) / 180) / t.landingAccel3, t.landingMinThrottle, 1)
     }
   }
   return cue
