@@ -1,7 +1,7 @@
 // Flight rules on top of the physics: phases, the guidance cue, the attitude hold used
 // during the braking burn, and the touchdown assessment. Pure functions, no rendering.
 
-import { MAX_THRUST_ACCEL, MOON_RADIUS, gravityAt, type Control, type State } from './physics'
+import { MAX_THRUST_ACCEL, MOON_RADIUS, gravityAt, step, type Control, type State } from './physics'
 import { APOLLO_11, LIMITS } from '../data/facts'
 
 export type Phase = 'braking' | 'approach' | 'ended'
@@ -16,10 +16,15 @@ export const HIGH_GATE = {
   groundSpeed: 150,
   climbRate: -APOLLO_11.highGateDescentRate.value,
 }
-/** Game tuning: braking runs at this multiple of real time. Shown on the HUD. */
-export const BRAKING_TIME_SCALE = 4
+/** Game tuning: the computer-flown braking burn plays at this multiple of real time. Shown on the HUD. */
+export const BRAKING_TIME_SCALE = 32
 /** Game tuning: velocity change available at the start of the burn, m/s. */
-export const START_DELTA_V = 2_150
+export const START_DELTA_V = 2_000
+/**
+ * Game element, not terrain data: boulders lie within this distance of the target along
+ * the track. The computer steers for the target and cannot see them.
+ */
+export const BOULDER_HALF_WIDTH = 30
 const NOMINAL_BRAKING_DECEL = 3.1
 
 export function startState(): State {
@@ -98,6 +103,51 @@ export function overflew(state: State): boolean {
   return state.range < -OVERFLY_LIMIT
 }
 
+export interface Prediction {
+  /** Range from the target at touchdown, m. Negative is past it. */
+  range: number
+  seconds: number
+  /** Downward speed at touchdown, m/s. */
+  verticalSpeed: number
+  horizontalSpeed: number
+  /** True when the lander stops in the air above this point instead of reaching the ground. */
+  hover: boolean
+}
+
+const PREDICT_DT = 0.1
+const PREDICT_HORIZON = 120
+
+/**
+ * Where the lander ends up if the controls stay exactly as they are: where and how hard
+ * it meets the ground, or the point it stops above when the braking wins first (`hover`).
+ * Null when neither happens within the horizon (climbing away, or flying on level).
+ */
+export function predictTouchdown(state: State, control: Control, heightAt: (range: number) => number): Prediction | null {
+  let s = state
+  for (let t = 0; t < PREDICT_HORIZON; t += PREDICT_DT) {
+    const next = step(s, control, PREDICT_DT)
+    const ground = heightAt(next.range)
+    if (next.altitude <= ground) {
+      // Interpolate inside the last step so the figures do not jump by a whole step.
+      const before = s.altitude - heightAt(s.range)
+      const f = before / Math.max(1e-6, before - (next.altitude - ground))
+      return {
+        range: s.range + (next.range - s.range) * f,
+        seconds: t + PREDICT_DT * f,
+        verticalSpeed: -(s.climbRate + (next.climbRate - s.climbRate) * f),
+        horizontalSpeed: Math.abs(s.groundSpeed + (next.groundSpeed - s.groundSpeed) * f),
+        hover: false,
+      }
+    }
+    // Judged after the step, so a lander at rest that is about to fall is not called a hover.
+    if (next.groundSpeed <= 0.5 && next.climbRate >= 0) {
+      return { range: next.range, seconds: t + PREDICT_DT, verticalSpeed: 0, horizontalSpeed: Math.abs(next.groundSpeed), hover: true }
+    }
+    s = next
+  }
+  return null
+}
+
 export interface Touchdown {
   verticalSpeed: number
   horizontalSpeed: number
@@ -105,7 +155,7 @@ export interface Touchdown {
   tiltDeg: number
   missDistance: number
   deltaVLeft: number
-  outcome: 'landed' | 'tilted' | 'hard'
+  outcome: 'landed' | 'tilted' | 'hard' | 'boulders'
 }
 
 export function assessTouchdown(state: State, pitchDeg: number, slopeDeg: number): Touchdown {
@@ -119,6 +169,6 @@ export function assessTouchdown(state: State, pitchDeg: number, slopeDeg: number
     tiltDeg,
     missDistance: Math.abs(state.range),
     deltaVLeft: state.deltaV,
-    outcome: hard ? 'hard' : tiltDeg > LIMITS.tilt.value ? 'tilted' : 'landed',
+    outcome: hard ? 'hard' : Math.abs(state.range) < BOULDER_HALF_WIDTH ? 'boulders' : tiltDeg > LIMITS.tilt.value ? 'tilted' : 'landed',
   }
 }

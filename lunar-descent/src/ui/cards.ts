@@ -37,8 +37,8 @@ export function createStartCard(onBegin: () => void): StartCard {
         'p',
         {},
         `Fly the powered descent to the rim of Shackleton, a crater ${SHACKLETON.diameter.value} km across at the Moon's south pole. `,
-        `The burn starts ${fmt.whole(APOLLO_11.startAltitude.value / 1000)} km up, as Apollo 11's did. The computer holds attitude while you brake. `,
-        `At ${fmt.whole(APOLLO_11.highGateAltitude.value)} m it hands you the stick.`,
+        `The computer flies the braking burn from ${fmt.whole(APOLLO_11.startAltitude.value / 1000)} km up, as Apollo 11's did. `,
+        `At ${fmt.whole(APOLLO_11.highGateAltitude.value)} m it hands you the stick. It is steering for a patch of boulders it cannot see, and propellant is short.`,
       ),
       el(
         'ul',
@@ -48,7 +48,11 @@ export function createStartCard(onBegin: () => void): StartCard {
         key('P', 'pause'),
         key('R', 'retry'),
       ),
-      el('p', { class: 'muted' }, 'Arrow keys work too. On a touch screen, use the slider and the pitch buttons. Gold marks show what the computer would do.'),
+      el(
+        'p',
+        { class: 'muted' },
+        'Arrow keys work too. On a touch screen, use the slider and the pitch buttons. The marker on the ground shows where you will come down or stop, and Impact shows how hard. Gold marks show what the computer would do.',
+      ),
       el(
         'ul',
         { class: 'notes' },
@@ -67,6 +71,7 @@ export function createStartCard(onBegin: () => void): StartCard {
           {},
           `No descent figures are published for Starship HLS, so thrust, propellant and the ${BRAKING_TIME_SCALE}x speed of the braking burn are game settings. Propellant is shown as delta-v: the change in speed you have left.`,
         ),
+        el('li', {}, 'The boulders are placed by the game. The terrain data is 5 m per pixel and shows no rocks.'),
       ),
       el('div', { class: 'actions' }, button),
       error,
@@ -90,7 +95,7 @@ export function createStartCard(onBegin: () => void): StartCard {
 
 // ---------- Tip cards ----------
 
-export type TipId = 'sideways' | 'sun' | 'takeover' | 'ring' | 'dust'
+export type TipId = 'sideways' | 'sun' | 'takeover' | 'ring' | 'boulders' | 'dust'
 
 interface TipCopy {
   title: string
@@ -121,6 +126,11 @@ const TIPS: Record<TipId, TipCopy> = {
     title: 'The gold ring',
     body: `It marks ${LIMITS.accuracy.value} m from the target: the landing accuracy NASA requires of the uncrewed lander demonstrations.`,
     sources: [[LIMITS.accuracy.source, LIMITS.accuracy.url]],
+  },
+  boulders: {
+    title: 'The computer cannot see rocks',
+    body: "The gold marks lead to the middle of the ring, which is strewn with boulders. Apollo 11's automatic descent was heading for a rocky crater ringed by boulders; Armstrong took manual control and flew beyond it (flown). Put the marker on clear ground inside the ring.",
+    sources: [['Apollo Lunar Surface Journal', APOLLO_11.descentSeconds.url]],
   },
   dust: {
     title: 'Fly the instruments',
@@ -183,6 +193,11 @@ const OUTCOME: Record<Touchdown['outcome'], { title: string; line: (t: Touchdown
     title: 'Down, but leaning',
     line: (t) => `The lander settled ${fmt.one(t.tiltDeg)}° off vertical. NASA's limit is ${LIMITS.tilt.value}°.`,
   },
+  boulders: {
+    title: 'Down in the boulders',
+    line: (t) =>
+      `A soft touchdown ${fmt.whole(t.missDistance)} m from the target, among the rocks the computer was steering for. Fly the marker on to clear ground, short of the boulders or beyond them.`,
+  },
   hard: {
     title: 'Hard landing',
     line: (t) =>
@@ -228,9 +243,9 @@ export function createOverflyCard(altitude: number, groundSpeed: number, options
       el(
         'p',
         {},
-        `You passed the target ${altitude >= 1000 ? `${fmt.one(altitude / 1000)} km` : `${fmt.whole(altitude)} m`} up, still doing ${fmt.whole(groundSpeed)} m/s over the ground. Keep the throttle on the gold mark from the start of the burn.`,
+        `You passed the target ${altitude >= 1000 ? `${fmt.one(altitude / 1000)} km` : `${fmt.whole(altitude)} m`} up, still doing ${fmt.whole(groundSpeed)} m/s over the ground. Brake sooner: pitch towards level and add throttle.`,
       ),
-      el('div', { class: 'actions' }, retry, el('button', { class: 'secondary', type: 'button', onclick: options.onRestart }, 'From the start of the burn')),
+      el('div', { class: 'actions' }, retry, el('button', { class: 'secondary', type: 'button', onclick: options.onRestart }, 'Watch the braking burn again')),
       credits(),
     ),
   )
@@ -289,7 +304,7 @@ export function createEndCard(t: Touchdown, options: EndOptions): HTMLElement {
       { class: `panel card end ${t.outcome}`, role: 'dialog', 'aria-labelledby': 'end-title' },
       el('h1', { id: 'end-title' }, outcome.title),
       el('p', {}, outcome.line(t)),
-      el('div', { class: 'actions' }, retry, el('button', { class: 'secondary', type: 'button', onclick: options.onRestart }, 'From the start of the burn')),
+      el('div', { class: 'actions' }, retry, el('button', { class: 'secondary', type: 'button', onclick: options.onRestart }, 'Watch the braking burn again')),
       el('div', { class: 'table-wrap' }, table),
       el(
         'p',

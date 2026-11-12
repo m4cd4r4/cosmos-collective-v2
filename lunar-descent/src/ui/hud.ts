@@ -2,8 +2,8 @@
 // the touch controls and the instruments at once; gold marks show the guidance cue.
 
 import type { Control } from '../sim/physics'
-import type { Phase } from '../sim/flight'
-import { BRAKING_TIME_SCALE } from '../sim/flight'
+import type { Phase, Prediction } from '../sim/flight'
+import { BOULDER_HALF_WIDTH, BRAKING_TIME_SCALE } from '../sim/flight'
 import { LIMITS } from '../data/facts'
 import { el, fmt } from './dom'
 
@@ -17,6 +17,8 @@ export interface HudView {
   throttle: number
   pitchDeg: number
   cue: Control
+  /** Where the lander comes down if the controls stay as they are. Null when it would not. */
+  prediction: Prediction | null
   paused: boolean
 }
 
@@ -26,6 +28,7 @@ export interface Hud {
   pitchLeft: HTMLButtonElement
   pitchRight: HTMLButtonElement
   pauseButton: HTMLButtonElement
+  skipButton: HTMLButtonElement
   update(view: HudView): void
 }
 
@@ -75,12 +78,20 @@ export function createHud(): Hud {
   const horizontal = readout('Horizontal', 'Speed over the ground')
   const deltaV = readout('Delta-v', 'Propellant left, as the change in speed it can still deliver')
   const range = readout('Range', 'Distance to the target')
+  const impact = readout('Impact', 'Vertical speed at touchdown if you hold the controls as they are. The marker on the ground shows where you come down, or where you stop above it')
 
   const phaseName = el('strong', { class: 'phase-name' })
   const phaseNote = el('span', { class: 'phase-note' })
   const chip = el('span', { class: 'chip', title: 'A game setting, not a mission figure' })
   const pauseButton = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'false' }, 'Pause')
-  const status = el('div', { class: 'panel status' }, el('div', { class: 'phase' }, phaseName, chip), phaseNote, pauseButton)
+  const skipButton = el('button', { class: 'ghost', type: 'button' }, 'Skip to takeover')
+  const status = el(
+    'div',
+    { class: 'panel status' },
+    el('div', { class: 'phase' }, phaseName, chip),
+    phaseNote,
+    el('div', { class: 'status-actions' }, skipButton, pauseButton),
+  )
 
   const throttleInput = el('input', { id: 'throttle', type: 'range', min: 0, max: 100, step: 1, value: 0 })
   const throttleValue = el('output', { for: 'throttle', class: 'value' })
@@ -123,7 +134,7 @@ export function createHud(): Hud {
     'div',
     { class: 'hud', hidden: true },
     status,
-    el('div', { class: 'panel readouts', role: 'group', 'aria-label': 'Instruments' }, altitude.cell, vertical.cell, horizontal.cell, deltaV.cell, range.cell),
+    el('div', { class: 'panel readouts', role: 'group', 'aria-label': 'Instruments' }, altitude.cell, vertical.cell, horizontal.cell, deltaV.cell, range.cell, impact.cell),
     throttle,
     pitch,
   )
@@ -143,14 +154,26 @@ export function createHud(): Hud {
     deltaV.set(fmt.whole(view.deltaV), 'm/s', view.deltaV < 60)
     const [rangeText, rangeUnit] = distance(Math.abs(view.range))
     range.set(rangeText, view.range < 0 ? `${rangeUnit} past` : rangeUnit)
+    const hit = view.prediction
+    if (!hit) impact.set('--', view.phase === 'braking' ? '' : 'no touchdown')
+    else if (hit.hover) {
+      const rocks = Math.abs(hit.range) < BOULDER_HALF_WIDTH
+      impact.set('--', rocks ? 'stops over rocks' : 'stops in the air', rocks)
+    } else {
+      const rocks = Math.abs(hit.range) < BOULDER_HALF_WIDTH
+      const hard = hit.verticalSpeed > LIMITS.verticalSpeed.value || hit.horizontalSpeed > LIMITS.horizontalSpeed.value
+      impact.set(fmt.one(hit.verticalSpeed), rocks ? 'm/s, rocks' : 'm/s', rocks || hard)
+    }
 
     const phaseKey = `${view.phase}|${view.paused}`
     if (phaseKey !== lastPhase) {
       lastPhase = phaseKey
       const braking = view.phase === 'braking'
       phaseName.textContent = view.paused ? 'Paused' : braking ? 'Braking burn' : 'Manual descent'
-      phaseNote.textContent = braking ? 'The computer holds attitude. You have the throttle.' : 'You have throttle and pitch.'
+      phaseNote.textContent = braking ? 'The computer is flying. You take over at high gate.' : 'You have throttle and pitch. Put the marker on clear ground.'
       chip.textContent = braking ? `${BRAKING_TIME_SCALE}x time` : 'Real time'
+      skipButton.hidden = !braking
+      throttleInput.disabled = braking
       pauseButton.textContent = view.paused ? 'Resume' : 'Pause'
       pauseButton.setAttribute('aria-pressed', String(view.paused))
       pitchLeft.disabled = braking
@@ -184,5 +207,5 @@ export function createHud(): Hud {
     pitchCueText.textContent = view.phase === 'braking' ? 'Held by computer' : `Cue ${cueDeg}°`
   }
 
-  return { root, throttleInput, pitchLeft, pitchRight, pauseButton, update }
+  return { root, throttleInput, pitchLeft, pitchRight, pauseButton, skipButton, update }
 }

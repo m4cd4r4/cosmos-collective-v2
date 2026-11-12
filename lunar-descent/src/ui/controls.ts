@@ -14,12 +14,13 @@ export interface Controls {
   throttle: number
   pitchDeg: number
   /** Apply held keys and buttons. `dt` is real seconds, not simulated ones. */
-  update(dt: number, manualPitch: boolean): void
+  update(dt: number): void
 }
 
 interface Handlers {
   onPause(): void
   onRetry(): void
+  onSkip(): void
 }
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
@@ -40,11 +41,11 @@ export function createControls(hud: Hud, handlers: Handlers): Controls {
   const controls: Controls = {
     throttle: 0,
     pitchDeg: 0,
-    update(dt, manualPitch) {
+    update(dt) {
       const throttleDir = Number(held.up) - Number(held.down)
       if (throttleDir) controls.throttle = clamp(controls.throttle + throttleDir * THROTTLE_RATE * dt, 0, 1)
       const pitchDir = Number(held.left) - Number(held.right)
-      if (manualPitch && pitchDir) controls.pitchDeg = clamp(controls.pitchDeg + pitchDir * PITCH_RATE * dt, PITCH_MIN, PITCH_MAX)
+      if (pitchDir) controls.pitchDeg = clamp(controls.pitchDeg + pitchDir * PITCH_RATE * dt, PITCH_MIN, PITCH_MAX)
     },
   }
 
@@ -88,6 +89,7 @@ export function createControls(hud: Hud, handlers: Handlers): Controls {
   holdButton(hud.pitchLeft, 'left')
   holdButton(hud.pitchRight, 'right')
   hud.pauseButton.addEventListener('click', handlers.onPause)
+  hud.skipButton.addEventListener('click', handlers.onSkip)
 
   return controls
 }

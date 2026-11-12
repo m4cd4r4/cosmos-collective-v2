@@ -4,6 +4,7 @@
 
 import * as THREE from 'three'
 import { MOON_RADIUS, type State } from '../sim/physics'
+import { BOULDER_HALF_WIDTH, type Prediction } from '../sim/flight'
 import { APOLLO_11, LIMITS } from '../data/facts'
 import { createLander } from './lander'
 import type { Terrain } from './terrain'
@@ -16,6 +17,10 @@ export interface View {
   radarAltitude: number
   /** Seconds since page load, for animation. */
   clock: number
+  /** Where the lander comes down if the controls stay as they are. */
+  prediction: Prediction | null
+  /** Draw the flying aids: the touchdown marker and the velocity arrow. */
+  aids: boolean
 }
 
 export interface World {
@@ -53,6 +58,52 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, reduced
     ringPoints.push(new THREE.Vector3(along, terrain.heightAt(along, across) + 1.5, across))
   }
   moon.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(ringPoints), new THREE.LineBasicMaterial({ color: 0xd4af37 })))
+
+  // Boulders at the target. A game element: the terrain data is 5 m per pixel and shows no rocks.
+  const BOULDERS = 70
+  const boulders = new THREE.InstancedMesh(
+    new THREE.DodecahedronGeometry(1, 0),
+    new THREE.MeshStandardMaterial({ color: 0x9a968e, roughness: 0.95, flatShading: true }),
+    BOULDERS,
+  )
+  let seed = 7
+  const random = () => (seed = (seed * 16807) % 2147483647) / 2147483647
+  const placement = new THREE.Object3D()
+  for (let i = 0; i < BOULDERS; i++) {
+    const along = (random() * 2 - 1) * (BOULDER_HALF_WIDTH - 3)
+    const across = (random() * 2 - 1) * 60
+    const size = 1.2 + random() ** 2 * 4.5
+    placement.position.set(along, terrain.heightAt(along, across) + size * 0.35, across)
+    placement.rotation.set(random() * 3, random() * 3, random() * 3)
+    placement.scale.set(size, size * (0.6 + random() * 0.4), size)
+    placement.updateMatrix()
+    boulders.setMatrixAt(i, placement.matrix)
+  }
+  moon.add(boulders)
+
+  // Touchdown marker: where the lander meets the ground, or stops above it, if the controls stay as they are.
+  const INK = 0xf4f1e8
+  const RED = 0xff6b6b
+  const markerMaterial = new THREE.MeshBasicMaterial({ color: INK, side: THREE.DoubleSide, depthTest: false, transparent: true, opacity: 0.95 })
+  const marker = new THREE.Group()
+  const markerRing = new THREE.Mesh(new THREE.RingGeometry(5, 6.5, 48), markerMaterial)
+  markerRing.rotation.x = -Math.PI / 2
+  const markerPost = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.35, 26, 6), markerMaterial)
+  markerPost.position.y = 13
+  marker.add(markerRing, markerPost)
+  marker.renderOrder = 10
+  marker.visible = false
+  moon.add(marker)
+
+  // Velocity arrow: which way the lander is moving, and how fast.
+  const arrow = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), new THREE.Vector3(), 1, INK)
+  ;(arrow.line.material as THREE.LineBasicMaterial).depthTest = false
+  ;(arrow.cone.material as THREE.MeshBasicMaterial).depthTest = false
+  arrow.renderOrder = 10
+  arrow.visible = false
+  scene.add(arrow)
+  const velocity = new THREE.Vector3()
+  const markerWorld = new THREE.Vector3()
 
   const lander = createLander()
   scene.add(lander.group)
@@ -127,9 +178,13 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, reduced
     const near = 1 - smooth(60, 900, view.radarAltitude)
     const back = mix(330, 150, near)
     const above = mix(120, 42, near)
-    const aside = mix(-90, -150, near)
+    // A tall screen sees a narrow slice sideways, so the camera sits more nearly behind the
+    // lander and looks part of the way to the target: the ground ahead runs up the screen.
+    const portrait = camera.aspect < 1
+    const aside = mix(-90, -150, near) * (portrait ? 0.4 : 1)
+    const ahead = mix(420, 0, near) + (portrait ? near * 0.5 * Math.min(240, Math.max(0, state.range)) : 0)
     eye.copy(forward).multiplyScalar(-back).addScaledVector(up, above).addScaledVector(side, aside)
-    lookAt.copy(forward).multiplyScalar(mix(420, 0, near)).addScaledVector(up, mix(-70, 24, near))
+    lookAt.copy(forward).multiplyScalar(ahead).addScaledVector(up, mix(-70, 24, near))
     if (!reducedMotion && view.throttle > 0.02) {
       const shake = view.throttle * 0.35
       eye.x += Math.sin(view.clock * 61) * shake
@@ -138,6 +193,36 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, reduced
     camera.position.copy(eye)
     camera.up.copy(up)
     camera.lookAt(lookAt)
+
+    const hit = view.aids ? view.prediction : null
+    marker.visible = hit !== null
+    if (hit) {
+      // Same wrap onto the sphere as the terrain mesh, so the marker sits on the ground far out too.
+      const along = -hit.range
+      const angle = along / MOON_RADIUS
+      const datum = MOON_RADIUS + terrain.meta.target.heightM
+      const r = datum + terrain.heightAt(along)
+      marker.position.set(r * Math.sin(angle), r * Math.cos(angle) - datum + 0.5, 0)
+      marker.rotation.z = -angle
+      // Hold its apparent size so it reads from high gate and from 50 m.
+      marker.getWorldPosition(markerWorld)
+      marker.scale.setScalar(Math.max(1, markerWorld.distanceTo(eye) / 330))
+      const bad =
+        Math.abs(hit.range) < BOULDER_HALF_WIDTH ||
+        hit.verticalSpeed > LIMITS.verticalSpeed.value ||
+        hit.horizontalSpeed > LIMITS.horizontalSpeed.value
+      markerMaterial.color.setHex(bad ? RED : INK)
+    }
+
+    velocity.copy(forward).multiplyScalar(state.groundSpeed).addScaledVector(up, state.climbRate)
+    const speed = velocity.length()
+    arrow.visible = view.aids && speed > 0.5
+    if (arrow.visible) {
+      const length = Math.min(110, 12 + speed * 1.6)
+      arrow.position.copy(up).multiplyScalar(26)
+      arrow.setDirection(velocity.divideScalar(speed))
+      arrow.setLength(length, Math.min(14, length * 0.3), Math.min(7, length * 0.15))
+    }
     renderer.render(scene, camera)
   }
 

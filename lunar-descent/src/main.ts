@@ -7,7 +7,19 @@ import '@fontsource-variable/jetbrains-mono'
 import './styles.css'
 
 import { DT, step, type State } from './sim/physics'
-import { BRAKING_TIME_SCALE, assessTouchdown, attitudeHold, guidance, overflew, reachedTakeover, startState, takeoverState, type Phase } from './sim/flight'
+import {
+  BRAKING_TIME_SCALE,
+  assessTouchdown,
+  attitudeHold,
+  guidance,
+  overflew,
+  predictTouchdown,
+  reachedTakeover,
+  startState,
+  takeoverState,
+  type Phase,
+  type Prediction,
+} from './sim/flight'
 import { createControls } from './ui/controls'
 import { createEndCard, createOverflyCard, createStartCard, createTips, type TipId } from './ui/cards'
 import { createHud } from './ui/hud'
@@ -22,7 +34,7 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 const hud = createHud()
 const tips = createTips()
 hud.root.append(tips.root)
-const controls = createControls(hud, { onPause: togglePause, onRetry: () => begin('takeover') })
+const controls = createControls(hud, { onPause: togglePause, onRetry: () => begin('takeover'), onSkip: skipIntro })
 const startCard = createStartCard(load)
 app.append(hud.root, startCard.root)
 
@@ -57,19 +69,29 @@ async function load() {
 
 function begin(mode: 'start' | 'takeover') {
   if (!world || !terrain) return
-  // A retry before the takeover has been reached restarts the burn.
-  fromStart = mode === 'start' || (phase === 'braking' && fromStart)
+  // The braking burn is a fast-forwarded intro flown by the computer. Reduced motion skips it.
+  fromStart = mode === 'start' && !reducedMotion
   state = fromStart ? startState() : takeoverState()
   phase = fromStart ? 'braking' : 'approach'
   const cue = guidance(state, phase, groundBelow())
-  controls.throttle = fromStart ? 0 : cue.throttle
+  controls.throttle = cue.throttle
   controls.pitchDeg = cue.pitchDeg
   paused = false
   accumulator = 0
   endCard?.remove()
   endCard = null
   tips.clear()
-  hud.throttleInput.focus()
+  if (fromStart) {
+    showTip('sideways')
+    hud.skipButton.focus()
+  } else {
+    showTip('takeover')
+    hud.throttleInput.focus()
+  }
+}
+
+function skipIntro() {
+  if (phase === 'braking') begin('takeover')
 }
 
 function togglePause() {
@@ -87,17 +109,21 @@ function showTip(id: TipId) {
 }
 
 function advance(realSeconds: number) {
-  controls.update(realSeconds, phase === 'approach')
+  if (phase === 'approach') controls.update(realSeconds)
   accumulator += realSeconds * (phase === 'braking' ? BRAKING_TIME_SCALE : 1)
   while (accumulator >= DT && phase !== 'ended') {
     accumulator -= DT
-    if (phase === 'braking') controls.pitchDeg = attitudeHold(state, controls.throttle)
+    if (phase === 'braking') {
+      controls.throttle = guidance(state, phase, groundBelow()).throttle
+      controls.pitchDeg = attitudeHold(state, controls.throttle)
+    }
     state = step(state, { throttle: controls.throttle, pitchDeg: controls.pitchDeg }, DT)
 
     if (phase === 'braking' && reachedTakeover(state)) {
       phase = 'approach'
       accumulator = 0
       showTip('takeover')
+      hud.throttleInput.focus()
     }
     if (state.altitude - groundBelow() <= 0) touchDown()
     else if (overflew(state)) {
@@ -106,12 +132,17 @@ function advance(realSeconds: number) {
     }
   }
 
-  if (phase === 'braking') {
-    if (controls.throttle > 0.3) showTip('sideways')
-    if (state.time > 170) showTip('sun')
-  } else if (phase === 'approach' && state.range < 2_500 && state.time > 0) {
-    showTip('ring')
+  if (phase === 'approach') {
+    if (state.range < 1_200) showTip('boulders')
+    else if (state.range < 3_000) showTip('ring')
+    else if (state.range < 5_200) showTip('sun')
   }
+}
+
+function predict(): Prediction | null {
+  if (phase !== 'approach' || !terrain) return null
+  const ground = terrain.heightAt
+  return predictTouchdown(state, { throttle: controls.throttle, pitchDeg: controls.pitchDeg }, (range) => ground(-range))
 }
 
 function touchDown() {
@@ -145,7 +176,8 @@ function frame(now: number) {
 
   const radarAltitude = state.altitude - groundBelow()
   const throttle = state.deltaV > 0 ? controls.throttle : 0
-  const view = { state, pitchDeg: controls.pitchDeg, throttle, radarAltitude, clock: now / 1000 }
+  const prediction = predict()
+  const view = { state, pitchDeg: controls.pitchDeg, throttle, radarAltitude, clock: now / 1000, prediction, aids: phase === 'approach' }
   world.render(view)
 
   const dust = world.dustAmount(view)
@@ -162,6 +194,7 @@ function frame(now: number) {
     throttle: controls.throttle,
     pitchDeg: controls.pitchDeg,
     cue: guidance(state, phase === 'ended' ? 'approach' : phase, groundBelow()),
+    prediction,
     paused,
   })
 }

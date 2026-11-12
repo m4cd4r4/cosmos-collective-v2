@@ -180,9 +180,14 @@ button:disabled {
   color: var(--soft);
 }
 
-.status .ghost {
+.status-actions {
+  display: flex;
+  gap: 6px;
   justify-self: start;
   margin-top: 4px;
+}
+
+.status .ghost {
   min-height: 28px;
 }
 
@@ -198,7 +203,7 @@ button:disabled {
   grid-area: readouts;
   align-self: start;
   display: grid;
-  grid-template-columns: repeat(5, minmax(104px, auto));
+  grid-template-columns: repeat(6, minmax(104px, auto));
   padding: 8px 4px;
 }
 
@@ -333,7 +338,8 @@ button:disabled {
 
 .tips {
   grid-area: tips;
-  align-self: end;
+  /* At the top, over the sky: the ground ahead is where the player is choosing a spot. */
+  align-self: start;
   justify-self: center;
   width: min(440px, 100%);
   pointer-events: none;
@@ -447,7 +453,8 @@ kbd {
   display: none;
 }
 
-.end.hard h1 {
+.end.hard h1,
+.end.boulders h1 {
   color: var(--red);
 }
 
@@ -521,7 +528,12 @@ tbody th {
 
   .readouts {
     justify-self: center;
-    grid-template-columns: repeat(5, minmax(88px, auto));
+    grid-template-columns: repeat(3, minmax(104px, auto));
+    row-gap: 8px;
+  }
+
+  .readout:nth-child(3n + 1) {
+    border-left: 0;
   }
 
   .readout {
@@ -544,8 +556,17 @@ tbody th {
   }
 
   .readouts {
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 6px;
     padding: 6px 0;
+  }
+
+  .readout:nth-child(3n + 1) {
+    border-left: 0;
+  }
+
+  .status-actions {
+    margin-top: 0;
   }
 
   .readout {
