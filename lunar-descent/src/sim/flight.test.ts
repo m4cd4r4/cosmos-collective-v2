@@ -21,7 +21,6 @@ describe('flight guidance', () => {
 
     const result = assessTouchdown(state, pitchDeg, 0)
     log.push(`touchdown t=${state.time.toFixed(0)} ${JSON.stringify(result)}`)
-    console.log(log.join('\n'))
     expect(result.outcome, log.join('\n')).toBe('landed')
     expect(result.missDistance, log.join('\n')).toBeLessThan(100)
     expect(result.deltaVLeft, log.join('\n')).toBeGreaterThan(100)

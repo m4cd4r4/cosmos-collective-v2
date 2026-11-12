@@ -157,12 +157,14 @@ for (const layer of layers) {
   await writeFile(path.join(OUT, `${layer.name}-height.bin`), Buffer.from(grid.buffer))
 
   const n = layer.shadePx
+  // Measure slope over at least one output pixel, or the source grid beats against it.
+  const slopeBaseline = Math.max(layer.grad, layer.size / n)
   const buf = Buffer.alloc(n * n)
   for (let j = 0; j < n; j++) {
     for (let i = 0; i < n; i++) {
       const x = layer.x0 + ((i + 0.5) / n) * layer.size
       const y = layer.y1 - ((j + 0.5) / n) * layer.size
-      buf[j * n + i] = Math.round(Math.sqrt(Math.min(1, shade(x, y, layer.grad, sun))) * 255)
+      buf[j * n + i] = Math.round(Math.sqrt(Math.min(1, shade(x, y, slopeBaseline, sun))) * 255)
     }
   }
   await sharp(buf, { raw: { width: n, height: n, channels: 1 } }).webp({ quality: 80 }).toFile(path.join(OUT, `${layer.name}-shade.webp`))

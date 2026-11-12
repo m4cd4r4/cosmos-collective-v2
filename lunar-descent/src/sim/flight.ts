@@ -19,7 +19,7 @@ export const HIGH_GATE = {
 /** Game tuning: braking runs at this multiple of real time. Shown on the HUD. */
 export const BRAKING_TIME_SCALE = 4
 /** Game tuning: velocity change available at the start of the burn, m/s. */
-export const START_DELTA_V = 2_300
+export const START_DELTA_V = 2_150
 const NOMINAL_BRAKING_DECEL = 3.1
 
 export function startState(): State {
@@ -32,7 +32,7 @@ export function startState(): State {
 
 /** State at the moment of takeover on a nominal burn. Used by "retry from takeover". */
 export function takeoverState(): State {
-  return { ...HIGH_GATE, deltaV: START_DELTA_V - 1_760, time: 0 }
+  return { ...HIGH_GATE, deltaV: START_DELTA_V - 1_616, time: 0 }
 }
 
 interface Aim {

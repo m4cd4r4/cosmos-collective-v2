@@ -41,6 +41,10 @@ export const STARSHIP_HLS = {
   height: { value: 50, unit: 'm', status: 'Planned', source: 'NASA, Human Landing Systems', url: 'https://www.nasa.gov/reference/human-landing-systems/' },
 } satisfies Record<string, Fact>
 
+export const SHACKLETON = {
+  diameter: { value: 21, unit: 'km', status: 'Measured', source: 'NASA, Faces of Shackleton', url: 'https://science.nasa.gov/image-detail/faces-of-shackleton/' },
+} satisfies Record<string, Fact>
+
 export const TERRAIN_CREDIT = {
   text: 'Terrain: NASA Lunar Orbiter Laser Altimeter (LOLA), 5 m and 240 m per pixel',
   url: 'https://pgda.gsfc.nasa.gov/products/78',

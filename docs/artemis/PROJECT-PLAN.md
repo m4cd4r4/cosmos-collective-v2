@@ -43,7 +43,7 @@ Gate for every slice: sources re-fetched on the day of the build, because the mi
 
 **What the computer does.** During braking it holds attitude so the descent stays on profile for whatever thrust the player gives it. Throughout, it draws cue marks on the throttle and pitch instruments. Flying the cue exactly lands inside every limit (covered by a unit test).
 
-**Tip cards.** Short, shown after the player has done the thing: why you fly sideways first, the takeover, the low Sun, the dust.
+**Tip cards.** Short, shown after the player has done the thing: why you fly sideways first, the low Sun, the takeover, the 100 m accuracy ring, the dust.
 
 **End card.** The player's touchdown numbers beside the real ones in section 5, each with its source and its status (flown, requirement, design limit).
 
@@ -92,7 +92,7 @@ Statements on screen without a number:
 - Plume effects for large landers are still being tested: IAC-26 paper (as 10) and https://www.nasa.gov/directorates/esdmd/artemis-campaign-development-division/human-landing-system-program/nasa-marshall-fires-up-hybrid-rocket-motor-to-prep-for-moon-landings/
 - NASA has not said which lander flies Artemis IV: "NASA will announce the lander provider for each of those missions at a later date." IAC-26 paper (as 10).
 
-**Game tuning, labelled as such on screen, not mission figures:** full-throttle thrust acceleration (4 m/s2), velocity change available (2,300 m/s), the takeover range and ground speed (7.5 km, 150 m/s), the 4x time compression, the Sun's direction and its 1.5 degree height, the target point, and the start speed, which is the circular orbital speed at 15 km worked out from sources 1 and 2.
+**Game tuning, labelled as such on screen, not mission figures:** full-throttle thrust acceleration (4 m/s2), velocity change available (2,150 m/s), the takeover range and ground speed (7.5 km, 150 m/s), the 4x time compression, the Sun's direction and its 1.5 degree height, the target point, and the start speed, which is the circular orbital speed at 15 km worked out from sources 1 and 2.
 
 ## 6. Not published as of 2026-11-12
 
@@ -112,4 +112,6 @@ Not covered by the search (a usage limit cut it short): GAO 2026 assessments, NT
 - A middle terrain layer (LOLA 20 m/pixel, 87.5 S to the pole) to sharpen the last 80 km of the approach.
 - Cross-range steering. Slice 1 flies in the vertical plane of the approach track.
 - Sound.
+- Earth in the sky, at its real position for the chosen Sun direction.
+- A header navigation entry. Slice 1 is linked from the footer only, because the header and the mobile bar are full.
 - Add the game to the sitemap and landing page once it has been played by someone other than its author.

@@ -21,10 +21,12 @@ const withPWA = require('next-pwa')({
     '!embeds/gravitational-lens/index.html',
     '!solar-system/index.html',
     '!kepler-viewer.html',
+    // Lunar descent game: page network-first, hashed bundles and terrain cached on first play
+    '!lunar-descent/**/*',
   ],
   runtimeCaching: [
     {
-      urlPattern: /\/(solar-system\/index|kepler-viewer)\.html(\?.*)?$/i,
+      urlPattern: /\/(solar-system\/index|lunar-descent\/index|kepler-viewer)\.html(\?.*)?$/i,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'viewer-pages',
@@ -120,6 +122,15 @@ const withPWA = require('next-pwa')({
         cacheName: 'iss-tracking',
         networkTimeoutSeconds: 3,
         expiration: { maxEntries: 10, maxAgeSeconds: 60 * 5 }
+      }
+    },
+    // Lunar descent bundles (hashed names) and baked LOLA terrain
+    {
+      urlPattern: /\/lunar-descent\/(assets|terrain)\/.*/i,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'lunar-descent',
+        expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 * 30 }
       }
     },
     // Local planetary textures - CacheFirst (immutable assets)
