@@ -71,7 +71,8 @@ describe('the decisions matter', () => {
   })
 
   it('go with a tower fault is overridden by the health checks: the booster still diverts', () => {
-    const { flight, log } = flyOnCue(2, true)
+    const flight = flyWith(2, (_cue, f) => ({ go: true, shutdown: f.impactX <= 0 }))
+    const log = JSON.stringify(flight.state)
     expect(flight.goSent, log).toBe(true)
     expect(flight.committed, log).toBe(false)
     expect(flight.outcome, log).toBe('splashdown')

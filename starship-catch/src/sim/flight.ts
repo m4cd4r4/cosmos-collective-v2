@@ -42,7 +42,7 @@ export const TUNING = {
   /** Boostback thrust acceleration with all 13 engines, m/s2. */
   boostbackAccel: 28,
   /** Grid fins: the most sideways acceleration they give, and the dynamic pressure that gives it. */
-  finAccel: 3.2,
+  finAccel: 5,
   finFullQ: 9_000,
   /** With no "go for catch" the booster flies itself to this point offshore, m east of the tower. */
   splashX: 1_500,
@@ -243,7 +243,9 @@ export function advance(flight: Flight, input: Input, dt: number): Flight {
     }
   } else if (flight.phase === 'boostback') {
     flight.impactX = predictImpact(next)
-    if (input.shutdown || next.deltaV <= 0) {
+    // A go sent against a failed tower check is overridden: the computer cuts the burn on the sea track itself.
+    const overridden = flight.goSent && flight.scenario.towerFault !== null && flight.impactX <= t.splashX
+    if (input.shutdown || overridden || next.deltaV <= 0) {
       flight.events.boostbackEnd = next.time
       flight.committed = flight.goSent && !flight.scenario.towerFault
       setPhase(flight, 'coast')
