@@ -674,6 +674,17 @@ tbody th {
     min-height: 44px;
   }
 
+  /* The tip covers the booster on a phone, so its Close button stays small and its touch area grows instead. */
+  .tip .ghost {
+    position: relative;
+  }
+
+  .tip .ghost::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+  }
+
   .slider input {
     height: 44px;
   }

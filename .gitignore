@@ -140,3 +140,6 @@ public/lunar-descent/
 
 # Starship catch game: built from starship-catch/ by npm run build:starship
 public/starship-catch/
+
+# Design review captures
+.design-review/

@@ -12,7 +12,7 @@ export interface Source {
 export const SPACEX_F5: Source = { name: 'SpaceX, Starship Flight 5', url: 'https://www.spacex.com/launches/starship-flight-5' }
 /** SpaceX's page text before Flight 5 flew, as archived page data: the archived page itself renders blank, and the live page now carries only the post-flight account. */
 export const SPACEX_F5_PREFLIGHT: Source = {
-  name: "SpaceX, Starship's fifth flight test, page text before the flight (Internet Archive, 7 October 2024)",
+  name: 'SpaceX, before Flight 5 (archived)',
   url: 'https://web.archive.org/web/20241007234125/https://content.spacex.com/api/spacex-website/missions/starship-flight-5',
 }
 export const SPACEX_F6: Source = { name: 'SpaceX, Starship Flight 6', url: 'https://www.spacex.com/launches/starship-flight-6' }
