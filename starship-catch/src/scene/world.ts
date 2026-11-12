@@ -143,10 +143,11 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
     const tanV = Math.tan((camera.fov * DEG) / 2)
     const landing = flight.phase === 'landing' || (flight.phase === 'ended' && s.y < 2_500)
     if (flight.phase === 'ascent' || flight.phase === 'staging') {
-      // Low and looking up the stack at the pad, pulling back as it climbs.
-      const distance = (camera.aspect < 1 ? 430 : 300) + Math.min(500, sceneY * 0.3)
-      wantLook.set(0, 62, 0)
-      wantEye.set(-0.22 * distance, Math.max(8 - sceneY, 62 - 0.14 * distance), distance)
+      // Low and looking up the stack at the pad. The camera is left behind as the stack climbs,
+      // so the tower, the steam and the flame stay in the picture, then it follows from below.
+      const distance = (camera.aspect < 1 ? 430 : 300) + Math.min(1_500, sceneY * 0.6)
+      wantLook.set(0, 50, 0)
+      wantEye.set(-0.22 * distance, Math.max(8 - sceneY, 24 - Math.min(0.8 * sceneY, 600)), distance)
     } else if (!landing) {
       wantLook.set(0, 35, 0)
       wantEye.set(120, 70, 430)
@@ -157,7 +158,7 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
       const right = Math.max(s.x, 34) + 30
       const bottom = Math.min(sceneY, 0) - 6
       const top = Math.max(sceneY + BOOSTER_HEIGHT, TUNING.towerHeight + 16) + 12
-      const fit = Math.max((top - bottom) / (2 * tanV), (right - left) / (2 * tanV * camera.aspect)) * 1.04
+      const fit = Math.max((top - bottom) / (2 * tanV), (right - left) / (2 * tanV * camera.aspect)) * 1.25
       const cx = (left + right) / 2 - s.x
       const cy = (top + bottom) / 2 - sceneY
       const chase = 430
@@ -213,14 +214,16 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
       const ground = scratch.set(s.x - Math.sin(lean * DEG) * sceneY, 1, 0)
       for (; emitDebt >= 1; emitDebt--) effects.emit(kind, ground, 22 + 30 * level)
     }
-    effects.update(view.simDt > 0 ? Math.min(view.simDt, 0.25) : 0)
+    // Smoke drifts in real time, whatever the time compression, so it lingers on screen.
+    effects.update(view.simDt > 0 ? view.realDt : 0)
 
     frameCamera(flight, sceneY)
     if (snap) {
       offsetEye.copy(wantEye)
       offsetLook.copy(wantLook)
     } else {
-      const k = 1 - Math.exp(-view.realDt * 2.2)
+      // Faster in the landing: the booster arrives at tens of metres a second and must stay in the frame.
+      const k = 1 - Math.exp(-view.realDt * (flight.phase === 'landing' ? 6 : 2.2))
       offsetEye.lerp(wantEye, k)
       offsetLook.lerp(wantLook, k)
     }

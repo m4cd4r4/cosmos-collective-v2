@@ -15,7 +15,7 @@ export interface Plume {
   set(level: number, engines: number, thin: number, clock: number): void
 }
 
-/** Exhaust: a pink-magenta sheath round a white core. The only glow in the app. */
+/** Exhaust: a warm sheath round a white core. Drawn solid, not additive: the sky behind it is bright. */
 function createPlume(): Plume {
   const cone = (colour: THREE.Color, power: number) =>
     new THREE.Mesh(
@@ -23,17 +23,18 @@ function createPlume(): Plume {
       new THREE.ShaderMaterial({
         transparent: true,
         depthWrite: false,
-        blending: THREE.AdditiveBlending,
         side: THREE.DoubleSide,
         uniforms: { strength: { value: 0 }, colour: { value: colour } },
         vertexShader: 'varying float vAlong; void main() { vAlong = uv.y; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-        fragmentShader: `uniform float strength; uniform vec3 colour; varying float vAlong; void main() { float a = pow(vAlong, ${power.toFixed(1)}) * strength; gl_FragColor = vec4(colour * a, a); }`,
+        fragmentShader: `uniform float strength; uniform vec3 colour; varying float vAlong; void main() { float a = pow(1.0 - vAlong, ${power.toFixed(1)}) * strength; gl_FragColor = vec4(colour, min(1.0, a)); }`,
       }),
     )
-  const sheath = cone(new THREE.Color(1.0, 0.42, 0.72), 1.6)
+  const sheath = cone(new THREE.Color(1.0, 0.62, 0.42), 1.6)
   const core = cone(new THREE.Color(1.0, 0.95, 0.9), 2.4)
   const group = new THREE.Group()
   group.add(sheath, core)
+  // Wide and bright at the engines, tapering to a point below.
+  sheath.rotation.x = core.rotation.x = Math.PI
   return {
     group,
     set(level, engines, thin, clock) {

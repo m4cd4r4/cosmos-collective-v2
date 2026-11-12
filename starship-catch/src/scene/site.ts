@@ -79,10 +79,20 @@ export async function loadSite(): Promise<Site> {
       const map = await loader.loadAsync(base + layer.file)
       map.colorSpace = THREE.SRGBColorSpace
       map.anisotropy = 8
-      const plane = new THREE.Mesh(new THREE.PlaneGeometry(layer.metres, layer.metres), new THREE.MeshBasicMaterial({ map, color: 0xfff1de }))
+      const material = new THREE.MeshBasicMaterial({ map, color: 0xfff1de, transparent: true, depthWrite: false })
+      // The survey stops offshore and at the border, and the photograph is black beyond it. Let the flat sea and land show there.
+      material.onBeforeCompile = (shader) => {
+        shader.fragmentShader = shader.fragmentShader.replace(
+          '#include <map_fragment>',
+          `#include <map_fragment>
+          diffuseColor.a *= smoothstep(0.002, 0.02, max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b)));`,
+        )
+      }
+      const plane = new THREE.Mesh(new THREE.PlaneGeometry(layer.metres, layer.metres), material)
       plane.rotation.x = -Math.PI / 2
       plane.position.set(TOWER_X, -0.5 + i * 0.25, 0)
-      plane.renderOrder = i
+      // Before the smoke and the rings, which are also transparent.
+      plane.renderOrder = i - 10
       group.add(plane)
     }),
   )

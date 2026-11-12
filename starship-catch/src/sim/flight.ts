@@ -3,7 +3,7 @@
 // SpaceX publishes times and engine counts, but no speeds, altitudes or limits.
 
 import { ENGINES, type EventId } from '../data/facts'
-import { G0, dynamicPressure, gravityAt, step, type State } from './physics'
+import { dynamicPressure, gravityAt, step, type State } from './physics'
 import type { Scenario } from './scenario'
 
 export type Phase = 'ascent' | 'staging' | 'boostback' | 'coast' | 'landing' | 'ended'
@@ -166,10 +166,11 @@ function setPhase(flight: Flight, phase: Phase) {
   flight.phaseTime = 0
 }
 
-function end(flight: Flight, outcome: Outcome) {
+function end(flight: Flight, outcome: Outcome): Flight {
   flight.outcome = outcome
   flight.thrustAccel = 0
   setPhase(flight, 'ended')
+  return flight
 }
 
 /** Advance the flight one fixed timestep. Mutates and returns `flight`. */
@@ -274,7 +275,7 @@ export function advance(flight: Flight, input: Input, dt: number): Flight {
       if (next.x < t.towerFace && next.x > t.towerFace - 14 && next.y < t.towerHeight) return end(flight, 'tower-strike')
     }
   }
-  if (flight.phase !== 'ended' && flight.phase !== 'ascent' && next.y <= 0) {
+  if (flight.phase !== 'ascent' && next.y <= 0) {
     flight.state = { ...next, y: 0 }
     if (flight.committed) return end(flight, 'missed')
     // The shoreline is about 400 m east of the tower.

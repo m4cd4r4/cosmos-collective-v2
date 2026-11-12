@@ -162,7 +162,7 @@ button:disabled {
   grid-template:
     'status readouts .' auto
     'tips tips tips' 1fr
-    'throttle . pitch' auto
+    'throttle . action' auto
     / 1fr auto 1fr;
   gap: 12px;
   padding: 16px;
@@ -268,8 +268,8 @@ button:disabled {
   width: 260px;
 }
 
-.pitch {
-  grid-area: pitch;
+.action {
+  grid-area: action;
   justify-self: end;
 }
 
@@ -313,13 +313,13 @@ button:disabled {
   background: var(--gold);
 }
 
-.pitch-row {
+.tilt-row {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
-.pitch-button {
+.tilt-button {
   width: 44px;
   height: 44px;
   display: grid;
@@ -567,7 +567,8 @@ tbody th {
       'readouts readouts' auto
       'status status' auto
       'tips tips' 1fr
-      'throttle pitch' auto
+      'action action' auto
+      'throttle throttle' auto
       / 1fr auto;
     gap: 8px;
     padding: 8px;
@@ -682,5 +683,138 @@ tbody th {
   * {
     animation: none !important;
     transition: none !important;
+  }
+}
+
+/* ---------- The action panel: one block per phase ---------- */
+
+.action {
+  width: 280px;
+}
+
+.block {
+  display: grid;
+  gap: 8px;
+}
+
+.time {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--soft);
+}
+
+.checks {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  align-items: baseline;
+  margin: 0;
+}
+
+.checks dd {
+  margin: 0;
+  text-align: right;
+  font-size: 12px;
+}
+
+.bad {
+  color: var(--red);
+}
+
+.call-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.call {
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+/* Gold marks the selection, nothing else. */
+.call[aria-pressed='true'] {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+button kbd {
+  margin-left: 4px;
+  font: 11px var(--mono);
+  opacity: 0.6;
+}
+
+.meter,
+.strip {
+  position: relative;
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.meter {
+  overflow: hidden;
+}
+
+.meter-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ink);
+}
+
+.meter-fill.over {
+  background: var(--red);
+}
+
+.meter-limit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--soft);
+}
+
+.strip-aim {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--gold);
+}
+
+.strip-marker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 6px;
+  margin-left: -3px;
+  border-radius: 3px;
+  background: var(--ink);
+}
+
+.tilt-row {
+  justify-content: space-between;
+}
+
+@media (max-width: 760px) {
+  .action {
+    width: auto;
+    justify-self: stretch;
+  }
+}
+
+@media (pointer: coarse) {
+  button kbd {
+    display: none;
+  }
+}
+
+/* Tips sit under the status panel on a wide screen: the booster comes down through the middle of the sky. */
+@media (min-width: 761px) {
+  .tips {
+    justify-self: start;
+    width: min(300px, 100%);
   }
 }
