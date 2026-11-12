@@ -510,6 +510,25 @@ tbody th {
   white-space: nowrap;
 }
 
+/* ---------- Tablet ---------- */
+
+/* Three equal-sided columns need about 1,110 px. Below that the sides shrink to their content
+   so the pitch panel stays on screen. */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .hud {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .readouts {
+    justify-self: center;
+    grid-template-columns: repeat(5, minmax(88px, auto));
+  }
+
+  .readout {
+    padding: 0 8px;
+  }
+}
+
 /* ---------- Phone ---------- */
 
 @media (max-width: 760px) {
@@ -606,6 +625,17 @@ tbody th {
 
   .you {
     text-align: right;
+  }
+}
+
+/* Touch: Pause and the throttle slider get a 44 px target. */
+@media (pointer: coarse), (max-width: 760px) {
+  .status .ghost {
+    min-height: 44px;
+  }
+
+  .slider input {
+    height: 44px;
   }
 }
 
