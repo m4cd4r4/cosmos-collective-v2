@@ -137,3 +137,6 @@ public/fallback-*.js
 
 # Lunar descent game: built from lunar-descent/ by npm run build:lunar
 public/lunar-descent/
+
+# Starship catch game: built from starship-catch/ by npm run build:starship
+public/starship-catch/

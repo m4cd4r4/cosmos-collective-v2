@@ -23,10 +23,12 @@ const withPWA = require('next-pwa')({
     '!kepler-viewer.html',
     // Lunar descent game: page network-first, hashed bundles and terrain cached on first play
     '!lunar-descent/**/*',
+    // Starship catch game: page network-first, hashed bundles and ground imagery cached on first play
+    '!starship-catch/**/*',
   ],
   runtimeCaching: [
     {
-      urlPattern: /\/(solar-system\/index|lunar-descent\/index|kepler-viewer)\.html(\?.*)?$/i,
+      urlPattern: /\/(solar-system\/index|lunar-descent\/index|starship-catch\/index|kepler-viewer)\.html(\?.*)?$/i,
       handler: 'NetworkFirst',
       options: {
         cacheName: 'viewer-pages',
@@ -130,6 +132,15 @@ const withPWA = require('next-pwa')({
       handler: 'StaleWhileRevalidate',
       options: {
         cacheName: 'lunar-descent',
+        expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 * 30 }
+      }
+    },
+    // Starship catch bundles (hashed names) and baked ground imagery
+    {
+      urlPattern: /\/starship-catch\/(assets|ground)\/.*/i,
+      handler: 'StaleWhileRevalidate',
+      options: {
+        cacheName: 'starship-catch',
         expiration: { maxEntries: 40, maxAgeSeconds: 60 * 60 * 24 * 30 }
       }
     },
