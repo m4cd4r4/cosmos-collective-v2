@@ -91,6 +91,13 @@ export function reachedTakeover(state: State): boolean {
   return state.range <= HIGH_GATE.range || state.groundSpeed <= HIGH_GATE.groundSpeed
 }
 
+/** Game rule: this far past the target, in metres, the run is over. */
+const OVERFLY_LIMIT = 3_000
+
+export function overflew(state: State): boolean {
+  return state.range < -OVERFLY_LIMIT
+}
+
 export interface Touchdown {
   verticalSpeed: number
   horizontalSpeed: number

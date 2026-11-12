@@ -7,9 +7,9 @@ import '@fontsource-variable/jetbrains-mono'
 import './styles.css'
 
 import { DT, step, type State } from './sim/physics'
-import { BRAKING_TIME_SCALE, assessTouchdown, attitudeHold, guidance, reachedTakeover, startState, takeoverState, type Phase } from './sim/flight'
+import { BRAKING_TIME_SCALE, assessTouchdown, attitudeHold, guidance, overflew, reachedTakeover, startState, takeoverState, type Phase } from './sim/flight'
 import { createControls } from './ui/controls'
-import { createEndCard, createStartCard, createTips, type TipId } from './ui/cards'
+import { createEndCard, createOverflyCard, createStartCard, createTips, type TipId } from './ui/cards'
 import { createHud } from './ui/hud'
 import type { Terrain } from './scene/terrain'
 import type { World } from './scene/world'
@@ -100,6 +100,10 @@ function advance(realSeconds: number) {
       showTip('takeover')
     }
     if (state.altitude - groundBelow() <= 0) touchDown()
+    else if (overflew(state)) {
+      const retry = { onRetry: () => begin('takeover'), onRestart: () => begin('start') }
+      endRun(createOverflyCard(state.altitude - groundBelow(), state.groundSpeed, retry))
+    }
   }
 
   if (phase === 'braking') {
@@ -115,15 +119,21 @@ function touchDown() {
   const ground = groundBelow()
   state = { ...state, altitude: ground }
   const result = assessTouchdown(state, controls.pitchDeg, terrain.slopeAt(-state.range))
+  endRun(
+    createEndCard(result, {
+      burnSeconds: fromStart ? state.time : null,
+      onRetry: () => begin('takeover'),
+      onRestart: () => begin('start'),
+    }),
+  )
+}
+
+function endRun(card: HTMLElement) {
   phase = 'ended'
   controls.throttle = 0
   tips.clear()
-  endCard = createEndCard(result, {
-    burnSeconds: fromStart ? state.time : null,
-    onRetry: () => begin('takeover'),
-    onRestart: () => begin('start'),
-  })
-  app.append(endCard)
+  endCard = card
+  app.append(card)
 }
 
 function frame(now: number) {

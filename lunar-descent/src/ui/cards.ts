@@ -205,11 +205,37 @@ function minutes(seconds: number): string {
   return `${Math.floor(seconds / 60)} min ${Math.round(seconds % 60)} s`
 }
 
-interface EndOptions {
-  /** Simulated seconds from the start of the burn, or null when the run began at the takeover. */
-  burnSeconds: number | null
+interface RetryOptions {
   onRetry(): void
   onRestart(): void
+}
+
+interface EndOptions extends RetryOptions {
+  /** Simulated seconds from the start of the burn, or null when the run began at the takeover. */
+  burnSeconds: number | null
+}
+
+/** Shown when the lander sails past the target without landing. */
+export function createOverflyCard(altitude: number, groundSpeed: number, options: RetryOptions): HTMLElement {
+  const retry = el('button', { class: 'primary', type: 'button', onclick: options.onRetry }, 'Fly again from the takeover')
+  const card = el(
+    'div',
+    { class: 'overlay' },
+    el(
+      'section',
+      { class: 'panel card end hard', role: 'dialog', 'aria-labelledby': 'end-title' },
+      el('h1', { id: 'end-title' }, 'Overflew the target'),
+      el(
+        'p',
+        {},
+        `You passed the target ${altitude >= 1000 ? `${fmt.one(altitude / 1000)} km` : `${fmt.whole(altitude)} m`} up, still doing ${fmt.whole(groundSpeed)} m/s over the ground. Keep the throttle on the gold mark from the start of the burn.`,
+      ),
+      el('div', { class: 'actions' }, retry, el('button', { class: 'secondary', type: 'button', onclick: options.onRestart }, 'From the start of the burn')),
+      credits(),
+    ),
+  )
+  queueMicrotask(() => retry.focus({ preventScroll: true }))
+  return card
 }
 
 export function createEndCard(t: Touchdown, options: EndOptions): HTMLElement {
