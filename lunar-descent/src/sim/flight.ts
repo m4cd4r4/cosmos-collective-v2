@@ -116,6 +116,8 @@ export interface Prediction {
 
 const PREDICT_DT = 0.1
 const PREDICT_HORIZON = 120
+/** Game rule: slower than this over the ground, m/s, a lander that stops sinking has "stopped in the air". */
+const HOVER_DRIFT = 5
 
 /**
  * Where the lander ends up if the controls stay exactly as they are: where and how hard
@@ -140,7 +142,9 @@ export function predictTouchdown(state: State, control: Control, heightAt: (rang
       }
     }
     // Judged after the step, so a lander at rest that is about to fall is not called a hover.
-    if (next.groundSpeed <= 0.5 && next.climbRate >= 0) {
+    // A few m/s of drift still counts: without it, a lander braking upright with a little
+    // drift was predicted to burn out its propellant and fall, and Impact read the fall.
+    if (next.groundSpeed <= HOVER_DRIFT && next.climbRate >= 0) {
       return { range: next.range, seconds: t + PREDICT_DT, verticalSpeed: 0, horizontalSpeed: Math.abs(next.groundSpeed), hover: true }
     }
     s = next

@@ -53,6 +53,9 @@ export function createStartCard(onBegin: () => void): StartCard {
         { class: 'muted' },
         'Arrow keys work too. On a touch screen, use the slider and the pitch buttons. The marker on the ground shows where you will come down or stop, and Impact shows how hard. Gold marks show what the computer would do.',
       ),
+      // Above the notes, so the button is on the first screen of a phone.
+      el('div', { class: 'actions' }, button),
+      error,
       el(
         'ul',
         { class: 'notes' },
@@ -73,8 +76,6 @@ export function createStartCard(onBegin: () => void): StartCard {
         ),
         el('li', {}, 'The boulders are placed by the game. The terrain data is 5 m per pixel and shows no rocks.'),
       ),
-      el('div', { class: 'actions' }, button),
-      error,
       credits(),
     ),
   )

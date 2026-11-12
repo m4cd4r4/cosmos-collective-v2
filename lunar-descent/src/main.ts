@@ -88,11 +88,16 @@ function begin(mode: 'start' | 'takeover') {
   tips.clear()
   if (fromStart) {
     showTip('sideways')
-    hud.skipButton.focus()
+    focusSoon(hud.skipButton)
   } else {
     showTip('takeover')
-    hud.throttleInput.focus()
+    focusSoon(hud.throttleInput)
   }
+}
+
+/** The HUD shows and enables its controls on the next frame; a hidden or disabled one cannot take focus before that. */
+function focusSoon(element: HTMLElement) {
+  requestAnimationFrame(() => requestAnimationFrame(() => element.focus()))
 }
 
 function skipIntro() {
@@ -127,8 +132,13 @@ function advance(realSeconds: number) {
     if (phase === 'braking' && reachedTakeover(state)) {
       phase = 'approach'
       accumulator = 0
+      // Hand over on the computer's own line. The braking law saturates in its last
+      // seconds, and left the player at full throttle and 70 degrees.
+      const cue = guidance(state, phase, groundBelow())
+      controls.throttle = cue.throttle
+      controls.pitchDeg = cue.pitchDeg
       showTip('takeover')
-      hud.throttleInput.focus()
+      focusSoon(hud.throttleInput)
     }
     if (state.altitude - groundBelow() <= 0) touchDown()
     else if (overflew(state)) {

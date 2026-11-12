@@ -178,15 +178,19 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
 
     // Chase camera: far behind and above while braking, low and to the sunlit side near the ground.
     const near = 1 - smooth(60, 900, view.radarAltitude)
-    const back = mix(330, 150, near)
-    const above = mix(120, 42, near)
-    // A tall screen sees a narrow slice sideways, so the camera sits more nearly behind the
-    // lander and looks part of the way to the target: the ground ahead runs up the screen.
+    // Near the ground the player is choosing a spot, so the view has to hold the lander, the
+    // ground under it and the target ring together: look half way to each and back off to fit.
+    const reach = near * Math.min(500, Math.max(-250, state.range))
+    const drop = near * Math.min(500, view.radarAltitude)
+    const zoom = 1 + (Math.abs(reach) + drop) / 260
+    const back = mix(330, 150, near) * zoom
+    const above = mix(120, 42, near) * zoom
+    // A tall screen sees a narrow slice sideways, so the camera sits more nearly behind the lander.
     const portrait = camera.aspect < 1
-    const aside = mix(-90, -150, near) * (portrait ? 0.4 : 1)
-    const ahead = mix(420, 0, near) + (portrait ? near * 0.5 * Math.min(240, Math.max(0, state.range)) : 0)
+    const aside = mix(-90, -150, near) * (portrait ? 0.4 : 1) * zoom
+    const ahead = mix(420, 0, near) + 0.5 * reach
     eye.copy(forward).multiplyScalar(-back).addScaledVector(up, above).addScaledVector(side, aside)
-    lookAt.copy(forward).multiplyScalar(ahead).addScaledVector(up, mix(-70, 24, near))
+    lookAt.copy(forward).multiplyScalar(ahead).addScaledVector(up, mix(-70, 24, near) - 0.7 * drop)
     if (!reducedMotion && view.throttle > 0.02) {
       const shake = view.throttle * 0.35
       eye.x += Math.sin(view.clock * 61) * shake

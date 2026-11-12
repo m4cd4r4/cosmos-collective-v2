@@ -49,4 +49,13 @@ describe('touchdown prediction', () => {
     expect(hit?.range).toBeGreaterThan(20)
     expect(hit?.range).toBeLessThan(90)
   })
+
+  // Found by hand: upright at full thrust with 2 m/s of drift, Impact read 81.6 m/s, the
+  // fall after the propellant ran out. Braking that arrests the descent is a stop in the air.
+  it('full thrust that arrests the descent is a stop in the air, even with a little drift', () => {
+    const state: State = { range: -88, altitude: 161, groundSpeed: 2.1, climbRate: -13.8, deltaV: 126, time: 0 }
+    const hit = predictTouchdown(state, { throttle: 1, pitchDeg: 90 }, () => 0)
+    expect(hit?.hover).toBe(true)
+    expect(hit?.horizontalSpeed).toBeCloseTo(2.1, 1)
+  })
 })
