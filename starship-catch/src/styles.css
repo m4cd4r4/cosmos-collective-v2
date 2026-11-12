@@ -798,10 +798,42 @@ button kbd {
   justify-content: space-between;
 }
 
+/* A phone has little sky to spare. The throttle sits beside the action panel while it is live,
+   and leaves the screen while the computer holds it. */
 @media (max-width: 760px) {
+  .hud {
+    grid-template:
+      'readouts readouts' auto
+      'status status' auto
+      'tips tips' 1fr
+      'throttle action' auto
+      / 1fr 1fr;
+  }
+
   .action {
     width: auto;
     justify-self: stretch;
+  }
+
+  .throttle.idle {
+    display: none;
+  }
+
+  .throttle.idle ~ .action {
+    grid-column: 1 / -1;
+  }
+
+  .control {
+    padding: 8px 10px;
+  }
+
+  .dial {
+    width: 56px;
+    height: 36px;
+  }
+
+  .action .fine {
+    display: none;
   }
 }
 

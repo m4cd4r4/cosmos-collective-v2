@@ -175,6 +175,7 @@ export function createHud(): Hud {
     if (throttleKey !== lastThrottle) {
       lastThrottle = throttleKey
       throttleInput.disabled = !live
+      throttle.classList.toggle('idle', !live)
       if (Number(throttleInput.value) !== pct) throttleInput.value = String(pct)
       throttleValue.textContent = live ? `${pct}%` : '--'
       throttleCue.style.setProperty('--at', String(view.cue.throttle))

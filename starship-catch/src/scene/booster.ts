@@ -25,12 +25,37 @@ function createPlume(): Plume {
         depthWrite: false,
         side: THREE.DoubleSide,
         uniforms: { strength: { value: 0 }, colour: { value: colour } },
-        vertexShader: 'varying float vAlong; void main() { vAlong = uv.y; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-        fragmentShader: `uniform float strength; uniform vec3 colour; varying float vAlong; void main() { float a = pow(1.0 - vAlong, ${power.toFixed(1)}) * strength; gl_FragColor = vec4(colour, min(1.0, a)); }`,
+        // `vFace` is 1 where the surface faces the camera and 0 at the silhouette, so the edges are soft.
+        // The log depth chunks match the renderer's depth buffer: without them the ground, far behind, hides the plume.
+        vertexShader: `
+#include <common>
+#include <logdepthbuf_pars_vertex>
+varying float vAlong;
+varying float vFace;
+void main() {
+  vAlong = uv.y;
+  vec4 mv = modelViewMatrix * vec4(position, 1.0);
+  vFace = abs(dot(normalize(normalMatrix * normal), normalize(-mv.xyz)));
+  gl_Position = projectionMatrix * mv;
+#include <logdepthbuf_vertex>
+}`,
+        fragmentShader: `
+#include <logdepthbuf_pars_fragment>
+uniform float strength;
+uniform vec3 colour;
+varying float vAlong;
+varying float vFace;
+void main() {
+#include <logdepthbuf_fragment>
+  float a = pow(1.0 - vAlong, ${power.toFixed(1)}) * strength * (0.25 + 0.75 * vFace * vFace);
+  gl_FragColor = vec4(colour, min(1.0, a));
+}`,
       }),
     )
   const sheath = cone(new THREE.Color(1.0, 0.62, 0.42), 1.6)
   const core = cone(new THREE.Color(1.0, 0.95, 0.9), 2.4)
+  // The core sits inside the sheath, so it has to be drawn after it or the sheath paints over it.
+  core.renderOrder = 1
   const group = new THREE.Group()
   group.add(sheath, core)
   // Wide and bright at the engines, tapering to a point below.
@@ -51,7 +76,7 @@ function createPlume(): Plume {
       core.position.y = (-length * 0.55) / 2
       const strength = (0.55 + 0.6 * level) * (1 - thin * 0.55)
       ;(sheath.material as THREE.ShaderMaterial).uniforms.strength.value = strength
-      ;(core.material as THREE.ShaderMaterial).uniforms.strength.value = strength * 1.3
+      ;(core.material as THREE.ShaderMaterial).uniforms.strength.value = strength * 2.2
     },
   }
 }

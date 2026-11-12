@@ -28,6 +28,8 @@ export interface World {
   resize(): void
   /** A new run or a retry: clear the smoke and snap the camera. */
   reset(): void
+  /** CSS pixels the HUD covers at the top and the bottom. The view is framed in what is left. */
+  setInsets(top: number, bottom: number): void
 }
 
 const smooth = (edge0: number, edge1: number, x: number) => {
@@ -57,6 +59,34 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   const sky = new THREE.Color()
   const fog = new THREE.Fog(0xb4cbe0, 4_000, 90_000)
   scene.fog = fog
+  // The sky: pale haze at the horizon deepening overhead. High up it thins to a band on the horizon.
+  const dome = new THREE.Mesh(
+    new THREE.SphereGeometry(3_000_000, 32, 16),
+    new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      depthWrite: false,
+      depthTest: false,
+      fog: false,
+      uniforms: { space: { value: 0 }, horizon: { value: new THREE.Color(0xb4cbe0) }, zenith: { value: new THREE.Color(0x3f7fc4) }, dark: { value: skyHigh } },
+      vertexShader: 'varying vec3 vDir; void main() { vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
+      fragmentShader: `
+uniform float space;
+uniform vec3 horizon;
+uniform vec3 zenith;
+uniform vec3 dark;
+varying vec3 vDir;
+void main() {
+  float h = max(0.0, normalize(vDir).y);
+  vec3 day = mix(horizon, zenith, pow(h, 0.6));
+  vec3 high = mix(dark, horizon, exp(-h * 14.0));
+  gl_FragColor = vec4(mix(day, high, space), 1.0);
+#include <colorspace_fragment>
+}`,
+    }),
+  )
+  dome.renderOrder = -1
+  dome.frustumCulled = false
+  scene.add(dome)
   const sun = new THREE.DirectionalLight(0xffe0b8, 2.6)
   sun.position.set(-0.75, 0.38, 0.55)
   scene.add(sun, new THREE.HemisphereLight(0xbcd4ee, 0x8a7f6a, 0.9))
@@ -68,7 +98,8 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   scene.add(booster.group, ship.group, effects.group)
 
   const ring = (colour: number) => {
-    const mesh = new THREE.Mesh(new THREE.TorusGeometry(6.4, 0.3, 8, 48), new THREE.MeshBasicMaterial({ color: colour, depthTest: false, transparent: true, fog: false }))
+    // A fat tube: the camera is low, so the ring is seen nearly edge-on.
+    const mesh = new THREE.Mesh(new THREE.TorusGeometry(6.4, 0.7, 8, 48),new THREE.MeshBasicMaterial({ color: colour, depthTest: false, transparent: true, fog: false }))
     mesh.rotation.x = Math.PI / 2
     mesh.renderOrder = 10
     scene.add(mesh)
@@ -86,6 +117,12 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   let seen: Outcome | null = null
   let wrecked = false
   let emitDebt = 0
+  let wantTop = 0
+  let wantBottom = 0
+  let insetTop = 0
+  let insetBottom = 0
+  /** The share of the screen height the HUD leaves clear. */
+  let free = 1
   let separation: { at: THREE.Vector3; velocity: THREE.Vector3; axis: THREE.Vector3; time: number } | null = null
   const offsetEye = new THREE.Vector3()
   const offsetLook = new THREE.Vector3()
@@ -167,6 +204,9 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
       // Camera low, so the tower and the booster stand tall against the sky.
       wantEye.set(wantLook.x - 0.12 * distance * near + 120 * (1 - near), Math.max(6 - sceneY, wantLook.y - 0.16 * distance * near + 70 * (1 - near)), distance)
     }
+    // Stand further back when the HUD leaves less of the screen, so the same scene fits in it.
+    wantEye.sub(wantLook).multiplyScalar(1 / free).add(wantLook)
+    wantEye.y = Math.max(wantEye.y, 6 - sceneY)
   }
 
   function render(view: View) {
@@ -217,6 +257,14 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
     // Smoke drifts in real time, whatever the time compression, so it lingers on screen.
     effects.update(view.simDt > 0 ? view.realDt : 0)
 
+    // Slide the picture into the part of the screen the HUD leaves clear.
+    const ease = snap ? 1 : 1 - Math.exp(-view.realDt * 4)
+    insetTop += (wantTop - insetTop) * ease
+    insetBottom += (wantBottom - insetBottom) * ease
+    const { clientWidth, clientHeight } = canvas
+    free = Math.max(0.3, 1 - (insetTop + insetBottom) / clientHeight)
+    camera.setViewOffset(clientWidth, clientHeight, 0, (insetBottom - insetTop) / 2, clientWidth, clientHeight)
+
     frameCamera(flight, sceneY)
     if (snap) {
       offsetEye.copy(wantEye)
@@ -239,8 +287,11 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
 
     // The sky darkens with height; the haze stays below.
     const height = camera.position.y
-    sky.copy(skyLow).lerp(skyHigh, smooth(4_000, 42_000, height))
+    const space = smooth(4_000, 42_000, height)
+    sky.copy(skyLow).lerp(skyHigh, space)
     renderer.setClearColor(sky)
+    dome.position.copy(camera.position)
+    ;(dome.material as THREE.ShaderMaterial).uniforms.space.value = space
     fog.near = 4_000 + height
     fog.far = 90_000 + height * 5
 
@@ -265,6 +316,10 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   return {
     render,
     resize,
+    setInsets(top, bottom) {
+      wantTop = top
+      wantBottom = bottom
+    },
     reset() {
       snap = true
       seen = null

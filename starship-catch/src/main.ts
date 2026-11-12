@@ -194,6 +194,22 @@ function showEndCard() {
   app.append(endCard)
 }
 
+const narrow = window.matchMedia('(max-width: 760px)')
+
+/** On a phone the panels stack across the top and the bottom: how many pixels each stack covers. */
+function hudInsets(): [number, number] {
+  if (!narrow.matches || hud.root.hidden) return [0, 0]
+  let top = 0
+  let bottom = 0
+  for (const panel of hud.root.querySelectorAll('.panel')) {
+    const box = panel.getBoundingClientRect()
+    if (!box.height) continue
+    if (box.top < window.innerHeight / 2) top = Math.max(top, box.bottom)
+    else bottom = Math.max(bottom, window.innerHeight - box.top)
+  }
+  return [top, bottom]
+}
+
 function frame(now: number) {
   requestAnimationFrame(frame)
   const realDt = Math.min(0.1, (now - lastFrame) / 1000)
@@ -210,7 +226,8 @@ function frame(now: number) {
     }
   }
 
-  const held: Input = { throttle: controls.throttle, tiltDeg: controls.tiltDeg, shutdown: false, go: false, ignite: false }
+  world.setInsets(...hudInsets())
+  const held: Input ={ throttle: controls.throttle, tiltDeg: controls.tiltDeg, shutdown: false, go: false, ignite: false }
   const arrival = predictArrival(flight, held)
   world.render({ flight, throttle: controls.throttle, arrival, clock: now / 1000, simDt, realDt, aids: flight.phase !== 'ended' })
   // The catch, or the fireball, has the screen to itself.
