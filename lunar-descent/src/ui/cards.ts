@@ -3,7 +3,7 @@
 
 import type { Touchdown } from '../sim/flight'
 import { BRAKING_TIME_SCALE, RETRY_RANGE, hoverSeconds } from '../sim/flight'
-import { APOLLO_11, ARTEMIS_URL, IAC, LIMITS, OIG, PLUME_URL, SHACKLETON, STARS_CREDIT, STARSHIP_HLS, SUN_URL, TERRAIN_CREDIT, type Fact } from '../data/facts'
+import { APOLLO_11, ARTEMIS_URL, IAC, LIMITS, OIG, PLUME_URL, STARS_CREDIT, STARSHIP_HLS, SUN_URL, TERRAIN_CREDIT, type Fact } from '../data/facts'
 import { el, fmt, sourceLink } from './dom'
 
 const RETRY_LABEL = `Fly again from ${RETRY_RANGE / 1000} km out`
@@ -36,10 +36,17 @@ export function createStartCard(onBegin: () => void): StartCard {
       el('h1', { id: 'start-title' }, 'Descent to Shackleton'),
       el(
         'p',
+        { class: 'lede' },
+        "In July 1969, Apollo 11's computer was steering for a field of boulders. ",
+        `Neil Armstrong took manual control and flew past them with about ${APOLLO_11.propellantSecondsLeft.value} seconds of propellant left. `,
+        el('span', { class: 'fine' }, sourceLink(APOLLO_11.propellantSecondsLeft.source, APOLLO_11.propellantSecondsLeft.url)),
+      ),
+      el(
+        'p',
         {},
-        `Land on the rim of Shackleton, a crater ${SHACKLETON.diameter.value} km across at the Moon's south pole. `,
-        `The computer flies the braking burn and hands you the stick at ${fmt.whole(APOLLO_11.highGateAltitude.value)} m, the height of Apollo 11's high gate. `,
-        'It is steering for boulders it cannot see, and propellant is short.',
+        'Your computer is making the same mistake. ',
+        `It flies the braking burn, hands you the stick at ${fmt.whole(APOLLO_11.highGateAltitude.value)} m and heads for rocks it cannot see. `,
+        'Find clear ground inside the ring.',
       ),
       el(
         'ul',
@@ -49,32 +56,33 @@ export function createStartCard(onBegin: () => void): StartCard {
         key('P', 'pause'),
         key('R', 'retry'),
       ),
-      el(
-        'p',
-        { class: 'muted' },
-        'Arrow keys and the on-screen controls work too. The marker on the ground shows where you will come down. Gold marks show what the computer would do.',
-      ),
       // Above the notes, so the button is on the first screen of a phone.
       el('div', { class: 'actions' }, button),
       error,
       el(
-        'ul',
-        { class: 'notes' },
+        'details',
+        { class: 'fold' },
+        el('summary', {}, "What's real and what's game"),
         el(
-          'li',
-          {},
-          "The lander is modelled on SpaceX's Starship HLS. NASA plans the first crewed Artemis landing for 2028 and has not said which lander will fly it (",
-          sourceLink('NASA Artemis page', ARTEMIS_URL),
-          '; ',
-          sourceLink('NASA paper to IAC 2026', IAC),
-          ').',
+          'ul',
+          { class: 'notes' },
+          el(
+            'li',
+            {},
+            "The lander is modelled on SpaceX's Starship HLS. NASA plans the first crewed Artemis landing for 2028 and has not said which lander will fly it (",
+            sourceLink('NASA Artemis page', ARTEMIS_URL),
+            '; ',
+            sourceLink('NASA paper to IAC 2026', IAC),
+            ').',
+          ),
+          el(
+            'li',
+            {},
+            `Game settings, not mission figures: the target, the boulders, thrust, propellant and the ${BRAKING_TIME_SCALE}x braking burn. NASA has not chosen a landing site and no descent figures are published for Starship HLS.`,
+          ),
+          el('li', {}, 'Propellant is shown as delta-v: the change in speed you have left.'),
+          el('li', {}, 'Arrow keys and the on-screen controls work too.'),
         ),
-        el(
-          'li',
-          {},
-          `Game settings, not mission figures: the target, the boulders, thrust, propellant and the ${BRAKING_TIME_SCALE}x braking burn. NASA has not chosen a landing site and no descent figures are published for Starship HLS.`,
-        ),
-        el('li', {}, 'Propellant is shown as delta-v: the change in speed you have left.'),
       ),
       credits(),
     ),
