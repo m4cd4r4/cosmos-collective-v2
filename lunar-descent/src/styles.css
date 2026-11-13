@@ -550,6 +550,20 @@ tbody th {
   white-space: nowrap;
 }
 
+/* ---------- Desktop ---------- */
+
+/* On a wide monitor the screen corners are far from the readouts, so the controls close in
+   under the readout strip's edges and the eye stays in one central column. */
+@media (min-width: 1181px) {
+  .throttle {
+    justify-self: end;
+  }
+
+  .pitch {
+    justify-self: start;
+  }
+}
+
 /* ---------- Tablet ---------- */
 
 /* Three equal-sided columns need about 1,110 px. Below that the sides shrink to their content
