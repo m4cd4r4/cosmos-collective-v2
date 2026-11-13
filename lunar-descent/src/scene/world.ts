@@ -24,6 +24,8 @@ export interface View {
   aids: boolean
   /** Set once the lander is down: seconds since it touched, and whether it came down too hard. */
   settle: { hard: boolean; seconds: number } | null
+  /** How far the player has swung the camera round the lander, radians. 0 is the chase view. */
+  viewYaw: number
 }
 
 export interface World {
@@ -186,6 +188,7 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
   const side = new THREE.Vector3(0, 0, 1)
   const eye = new THREE.Vector3()
   const lookAt = new THREE.Vector3()
+  const orbit = new THREE.Quaternion()
 
   function resize() {
     const { clientWidth, clientHeight } = canvas
@@ -250,6 +253,12 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
     const ahead = mix(420, 0, near) + 0.5 * reach
     eye.copy(forward).multiplyScalar(-back).addScaledVector(up, above).addScaledVector(side, aside)
     lookAt.copy(forward).multiplyScalar(ahead).addScaledVector(up, mix(-70, 24, near) - 0.7 * drop)
+    // The player can swing the whole view round the local vertical through the lander.
+    if (view.viewYaw) {
+      orbit.setFromAxisAngle(up, view.viewYaw)
+      eye.applyQuaternion(orbit)
+      lookAt.applyQuaternion(orbit)
+    }
     if (!reducedMotion && view.throttle > 0.02) {
       const shake = view.throttle * 0.35
       eye.x += Math.sin(view.clock * 61) * shake
