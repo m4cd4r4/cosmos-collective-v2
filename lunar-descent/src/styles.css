@@ -53,9 +53,10 @@ body {
   font: 500 12px var(--mono);
   color: var(--ink);
   white-space: nowrap;
-  text-shadow:
-    0 0 3px #000,
-    0 0 6px #000;
+  /* A void backing: the label sits on sunlit regolith, where red alone does not read. */
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: rgba(10, 14, 26, 0.78);
 }
 
 .marker-label.over {
@@ -510,7 +511,21 @@ tbody th {
 .you .value {
   display: block;
   font-size: 14px;
-  white-space: nowrap;
+}
+
+/* Fixed columns, so the sourced figures get the room and a long value wraps in its own column. */
+@media (min-width: 761px) {
+  table {
+    table-layout: fixed;
+  }
+
+  thead th:nth-child(1) {
+    width: 22%;
+  }
+
+  thead th:nth-child(2) {
+    width: 27%;
+  }
 }
 
 .verdict {
