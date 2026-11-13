@@ -40,7 +40,7 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 const hud = createHud()
 const tips = createTips()
 hud.root.append(tips.root)
-const controls = createControls(hud, { onPause: togglePause, onRetry: () => begin('retry'), onSkip: skipIntro })
+const controls = createControls(hud, { onPause: togglePause, onRetry: () => begin('retry'), onSkip: skipIntro }, canvas)
 const startCard = createStartCard(load)
 // Rides beside the touchdown marker: how far short of the target, or long, the lander is heading.
 const markerLabel = el('div', { class: 'marker-label', hidden: true, 'aria-hidden': 'true' })
@@ -229,6 +229,7 @@ function frame(now: number) {
   const realSeconds = Math.min(0.1, (now - lastFrame) / 1000)
   lastFrame = now
   if (!world) return
+  controls.look(realSeconds)
   if (!paused && phase !== 'ended' && !document.hidden) advance(realSeconds)
   if (settle && !document.hidden) {
     settle.seconds += realSeconds
@@ -247,6 +248,7 @@ function frame(now: number) {
     prediction,
     aids: phase === 'approach',
     settle: settle && { hard: settle.hard, seconds: reducedMotion ? SETTLE_SECONDS : settle.seconds },
+    viewYaw: controls.viewYaw,
   }
   world.render(view)
 

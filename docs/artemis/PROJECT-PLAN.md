@@ -29,6 +29,7 @@ The failure this project is prone to is the one named in `docs/pilot-mode/PROJEC
 | 13 | Slice 2 is the Super Heavy booster, liftoff to tower catch, as one run. A sea landing is a separate Falcon 9 drone ship gate. Vehicles named factually (SpaceX Starship, Super Heavy, Falcon 9), no logos or livery. (2026-11-12) | Starship has never landed on a drone ship. |
 | 14 | Slice 2 is built on Flight 8 as flown: the 71 m booster and the Pad 1 tower. The second tower is left out. (2026-11-13) | Flight 8 has a full published timeline and a catch; nothing published places the second tower. |
 | 15 | The launch site tour moves to a follow-up. (2026-11-13) | The slice 2 PR was already about 3,800 lines, and the brief named the tour as the first thing to cut. |
+| 16 | The lander keeps NASA's white finish and gains Starship's shape cues: a tangent-ogive nose, a seam per 1.83 m steel ring, crew windows and an airlock, landing-thruster pods high on the body, and six engines. Bare steel and a steel/white split were offered and declined (2026-11-13). | The white is what NASA's HLS renders show; the details make it read as Starship. Pods, windows and engines are representative, as the legs already were. |
 
 ## 3. Slices
 
@@ -50,7 +51,7 @@ Gate for every slice: sources re-fetched on the day of the build, because the mi
 
 **The decision.** The computer's aim point, the centre of the 100 m ring, is strewn with boulders it cannot see (a game element, 30 m either side of the target along the track). The player has to put the lander down on clear ground inside the ring, short of the rocks or beyond them, with about 100 m/s of delta-v to spare. Four endings: landed, in the boulders, hard landing, overflew.
 
-**Controls.** Throttle and pitch, live only in the manual descent; during the intro the slider is disabled and focus sits on the skip button. Keyboard: W/S or up/down for throttle, A/D or left/right for pitch, R to retry, P to pause. Touch: a throttle slider and two pitch buttons. Every control is a focusable button or slider.
+**Controls.** Throttle and pitch, live only in the manual descent; during the intro the slider is disabled and focus sits on the skip button. Keyboard: W/S or up/down for throttle, A/D or left/right for pitch, R to retry, P to pause. Touch: a throttle slider and two pitch buttons. Every control is a focusable button or slider. The view swings a full 360 degrees round the lander: drag the scene or hold Q/E, and C or a double-click puts it back behind. It works at any time, paused included (Macdara, 2026-11-13).
 
 **What the player sees their inputs do.** A marker on the ground shows where the lander ends up if the controls are held: the touchdown point, or the point it stops above when the braking wins first. It is off-white on clear ground and red on the boulders or over the speed limits. The Impact readout gives the predicted touchdown speed, or "stops in the air" or "stops over rocks". A label beside the marker gives the distance from the target ("47 m short", "20 m long", "11 m, in the rocks"). Below about 900 m a faint line runs from the lander straight down and along the ground to the marker. A velocity arrow rides on the lander and the plume length follows the throttle. The speed readouts turn red only below 30 m, where they are over the touchdown limits.
 

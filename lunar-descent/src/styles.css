@@ -38,6 +38,12 @@ body {
   display: block;
 }
 
+/* Dragging the scene swings the view, so the browser must not take the gesture for a scroll. */
+#scene {
+  touch-action: none;
+  cursor: grab;
+}
+
 #dust {
   pointer-events: none;
   opacity: 0;
