@@ -162,6 +162,7 @@ export default function CreditsPage() {
                   { title: 'Australian Telescopes', url: 'https://www.csiro.au/en/about/facilities-collections/atnf', body: 'CSIRO ASKAP, Parkes (Murriyang), and ATCA. Credit: CSIRO.' },
                   { title: 'NASA APOD', url: 'https://apod.nasa.gov/', body: 'Credit to individual astronomers, observatories, and agencies as noted per image.' },
                   { title: 'Solar System Scope Textures', url: 'https://www.solarsystemscope.com/textures/', body: 'Planetary and lunar surface textures used in the 3D Solar System viewer. Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).' },
+                  { title: 'Lunar South Pole Terrain (LOLA)', url: 'https://pgda.gsfc.nasa.gov/products/78', body: 'Elevation models from the Lunar Orbiter Laser Altimeter, at 5 m and 240 m per pixel, used in Descent to Shackleton. NASA Goddard Planetary Geodesy Data Archive; Barker et al. 2021.' },
                 ].map(({ title, url, body }) => (
                   <div key={title} className="border-b border-white/[0.06] last:border-0 pb-2.5 last:pb-0">
                     <a

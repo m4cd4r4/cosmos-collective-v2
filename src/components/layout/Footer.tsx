@@ -22,6 +22,7 @@ const footerLinks = {
   interactive: [
     { label: 'Solar System', href: '/solar-system' },
     { label: 'Kepler Exoplanets', href: '/kepler' },
+    { label: 'Descent to Shackleton', href: '/lunar-descent' },
     { label: 'Spacecraft', href: '/satellites#spacecraft' },
   ],
   learn: [

@@ -134,3 +134,6 @@ DOMAIN_SETUP.md
 # Design reference images (local only, not app assets)
 design/references/*.jpg
 public/fallback-*.js
+
+# Lunar descent game: built from lunar-descent/ by npm run build:lunar
+public/lunar-descent/
