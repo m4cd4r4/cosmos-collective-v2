@@ -452,10 +452,35 @@ kbd {
 .notes {
   display: grid;
   gap: 6px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
+  padding-top: 8px;
   font-size: 12.5px;
   color: var(--soft);
+}
+
+/* The story is the hook, so it is set a step larger than the instructions. */
+.lede {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.lede .fine {
+  white-space: nowrap;
+}
+
+.fold {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.fold summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--soft);
+}
+
+.fold summary:hover {
+  color: var(--ink);
 }
 
 .actions {
@@ -548,6 +573,20 @@ tbody th {
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   white-space: nowrap;
+}
+
+/* ---------- Desktop ---------- */
+
+/* On a wide monitor the screen corners are far from the readouts, so the controls close in
+   under the readout strip's edges and the eye stays in one central column. */
+@media (min-width: 1181px) {
+  .throttle {
+    justify-self: end;
+  }
+
+  .pitch {
+    justify-self: start;
+  }
 }
 
 /* ---------- Tablet ---------- */
