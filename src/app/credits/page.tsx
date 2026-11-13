@@ -163,6 +163,7 @@ export default function CreditsPage() {
                   { title: 'NASA APOD', url: 'https://apod.nasa.gov/', body: 'Credit to individual astronomers, observatories, and agencies as noted per image.' },
                   { title: 'Solar System Scope Textures', url: 'https://www.solarsystemscope.com/textures/', body: 'Planetary and lunar surface textures used in the 3D Solar System viewer. Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0).' },
                   { title: 'Lunar South Pole Terrain (LOLA)', url: 'https://pgda.gsfc.nasa.gov/products/78', body: 'Elevation models from the Lunar Orbiter Laser Altimeter, at 5 m and 240 m per pixel, used in Descent to Shackleton. NASA Goddard Planetary Geodesy Data Archive; Barker et al. 2021.' },
+                  { title: 'Starbase Aerial Imagery (NAIP)', url: 'https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-national-agriculture-imagery-program-naip', body: 'USDA National Agriculture Imagery Program aerial photography, flown June 2022, via the USGS National Map. Public domain. Used as the ground in Return to the Tower, an independent game not affiliated with NASA or SpaceX.' },
                 ].map(({ title, url, body }) => (
                   <div key={title} className="border-b border-white/[0.06] last:border-0 pb-2.5 last:pb-0">
                     <a

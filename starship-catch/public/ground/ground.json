@@ -1,0 +1,19 @@
+{
+  "tower": {
+    "lat": 25.99623,
+    "lon": -97.15464
+  },
+  "flown": "2022-06-10",
+  "layers": [
+    {
+      "name": "near",
+      "metres": 1600,
+      "file": "near.jpg"
+    },
+    {
+      "name": "wide",
+      "metres": 16000,
+      "file": "wide.jpg"
+    }
+  ]
+}

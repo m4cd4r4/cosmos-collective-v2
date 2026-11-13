@@ -1,0 +1,863 @@
+/* Tokens copied from the site: tailwind.config.ts and src/styles/globals.css. */
+:root {
+  --void: #0a0e1a;
+  --ink: #f4f1e8;
+  --muted: #7c88a8;
+  --soft: #b8c0d4;
+  --gold: #d4af37;
+  --red: #ff6b6b;
+  --line: rgba(255, 255, 255, 0.1);
+  --display: 'Outfit Variable', system-ui, sans-serif;
+  --body: 'Inter Variable', system-ui, sans-serif;
+  --mono: 'JetBrains Mono Variable', Menlo, monospace;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: var(--void);
+  color: var(--ink);
+  font: 14px/1.5 var(--body);
+  -webkit-font-smoothing: antialiased;
+  touch-action: manipulation;
+}
+
+#scene,
+#dust {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+#dust {
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(circle at 50% 62%, rgb(178, 172, 160), rgb(112, 108, 100));
+}
+
+/* Rides beside the touchdown marker in the scene. No panel: it is part of the view, not the HUD. */
+.marker-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  font: 500 12px var(--mono);
+  color: var(--ink);
+  white-space: nowrap;
+  text-shadow:
+    0 0 3px #000,
+    0 0 6px #000;
+}
+
+.marker-label.over {
+  color: var(--red);
+}
+
+[hidden] {
+  display: none !important;
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+  text-underline-offset: 2px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+/* Quiet glass: navy, blurred, one hairline. No glow. */
+.panel {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03)),
+    rgba(10, 14, 26, 0.78);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.label {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.value {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.muted {
+  color: var(--soft);
+}
+
+.fine {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* ---------- Buttons ---------- */
+
+button {
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.primary,
+.secondary {
+  min-height: 44px;
+  padding: 0 18px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.primary {
+  background: var(--ink);
+  color: var(--void);
+  border: 1px solid var(--ink);
+}
+
+.secondary {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+}
+
+.ghost {
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 12px;
+  color: var(--soft);
+}
+
+/* ---------- HUD ---------- */
+
+.hud {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  grid-template:
+    'status readouts .' auto
+    'tips tips tips' 1fr
+    'throttle . action' auto
+    / 1fr auto 1fr;
+  gap: 12px;
+  padding: 16px;
+  pointer-events: none;
+}
+
+.hud > * {
+  pointer-events: auto;
+}
+
+.status {
+  grid-area: status;
+  justify-self: start;
+  align-self: start;
+  display: grid;
+  gap: 4px;
+  padding: 10px 12px;
+  max-width: 250px;
+}
+
+.phase {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.phase-name {
+  font: 600 15px var(--display);
+}
+
+.phase-note {
+  font-size: 12px;
+  color: var(--soft);
+}
+
+.status-actions {
+  display: flex;
+  gap: 6px;
+  justify-self: start;
+  margin-top: 4px;
+}
+
+.status .ghost {
+  min-height: 28px;
+}
+
+.chip {
+  font: 11px var(--mono);
+  padding: 1px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 4px;
+  color: var(--soft);
+}
+
+.readouts {
+  grid-area: readouts;
+  align-self: start;
+  display: grid;
+  grid-template-columns: repeat(6, minmax(104px, auto));
+  padding: 8px 4px;
+}
+
+.readout {
+  display: grid;
+  gap: 2px;
+  padding: 0 12px;
+  border-left: 1px solid var(--line);
+}
+
+.readout:first-child {
+  border-left: 0;
+}
+
+.readout .figure {
+  white-space: nowrap;
+}
+
+.readout .value {
+  font-size: 20px;
+  line-height: 1.2;
+}
+
+.readout .unit {
+  margin-left: 4px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.readout.over .value {
+  color: var(--red);
+}
+
+.control {
+  display: grid;
+  gap: 6px;
+  padding: 10px 12px;
+  align-self: end;
+}
+
+.throttle {
+  grid-area: throttle;
+  justify-self: start;
+  width: 260px;
+}
+
+.action {
+  grid-area: action;
+  justify-self: end;
+}
+
+.control-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.control-head .value {
+  font-size: 16px;
+}
+
+.cue-text {
+  font: 11px var(--mono);
+  color: var(--gold);
+}
+
+.slider {
+  position: relative;
+  padding-top: 8px;
+}
+
+.slider input {
+  display: block;
+  width: 100%;
+  height: 28px;
+  margin: 0;
+  accent-color: var(--ink);
+}
+
+/* The guidance cue: a gold tick above the track. The thumb is about 16 px wide. */
+.cue-mark {
+  position: absolute;
+  top: 0;
+  left: calc(8px + (100% - 16px) * var(--at, 0));
+  width: 2px;
+  height: 12px;
+  margin-left: -1px;
+  background: var(--gold);
+}
+
+.tilt-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tilt-button {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  touch-action: none;
+}
+
+.dial {
+  width: 96px;
+  height: 61px;
+}
+
+.dial-arc {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.28);
+  stroke-width: 1.5;
+}
+
+.dial-needle {
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+
+.dial-cue {
+  stroke: var(--gold);
+  stroke-width: 2.5;
+}
+
+/* ---------- Tip cards ---------- */
+
+.tips {
+  grid-area: tips;
+  /* At the top, over the sky: the ground ahead is where the player is choosing a spot. */
+  align-self: start;
+  justify-self: center;
+  width: min(440px, 100%);
+  pointer-events: none;
+}
+
+.tip {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  pointer-events: auto;
+  animation: rise 0.3s ease-out;
+}
+
+.tip-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.tip-head strong {
+  font: 600 15px var(--display);
+}
+
+.tip p {
+  color: var(--soft);
+  font-size: 13px;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+/* ---------- Start and end cards ---------- */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  padding: 16px;
+  overflow: auto;
+  background: rgba(10, 14, 26, 0.55);
+}
+
+.card {
+  display: grid;
+  gap: 12px;
+  margin: auto; /* centres, and still scrolls from the top when taller than the screen */
+  width: min(600px, 100%);
+  padding: 24px;
+}
+
+.card h1 {
+  margin: 0;
+  font: 600 30px/1.15 var(--display);
+  letter-spacing: -0.01em;
+}
+
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.keys,
+.notes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.keys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  color: var(--soft);
+}
+
+kbd {
+  font: 12px var(--mono);
+  padding: 2px 6px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 4px;
+  color: var(--ink);
+}
+
+.notes {
+  display: grid;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
+  color: var(--soft);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.error {
+  color: var(--red);
+}
+
+.error:empty {
+  display: none;
+}
+
+.end.hard h1,
+.end.boulders h1 {
+  color: var(--red);
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+}
+
+th,
+td {
+  padding: 7px 10px 7px 0;
+  text-align: left;
+  vertical-align: top;
+  border-top: 1px solid var(--line);
+}
+
+thead th {
+  border-top: 0;
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+tbody th {
+  font-weight: 500;
+}
+
+.you .value {
+  display: block;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.verdict {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.verdict.over {
+  color: var(--red);
+}
+
+.ref {
+  display: block;
+  color: var(--soft);
+}
+
+.tag {
+  font-size: 10.5px;
+  padding: 0 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ---------- Tablet ---------- */
+
+/* Three equal-sided columns need about 1,110 px. Below that the sides shrink to their content
+   so the pitch panel stays on screen. */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .hud {
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .readouts {
+    justify-self: center;
+    grid-template-columns: repeat(3, minmax(104px, auto));
+    row-gap: 8px;
+  }
+
+  .readout:nth-child(3n + 1) {
+    border-left: 0;
+  }
+
+  .readout {
+    padding: 0 8px;
+  }
+}
+
+/* ---------- Phone ---------- */
+
+@media (max-width: 760px) {
+  .hud {
+    grid-template:
+      'readouts readouts' auto
+      'status status' auto
+      'tips tips' 1fr
+      'action action' auto
+      'throttle throttle' auto
+      / 1fr auto;
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .readouts {
+    grid-template-columns: repeat(3, 1fr);
+    row-gap: 6px;
+    padding: 6px 0;
+  }
+
+  .readout:nth-child(3n + 1) {
+    border-left: 0;
+  }
+
+  .status-actions {
+    margin-top: 0;
+  }
+
+  .readout {
+    padding: 0 6px;
+  }
+
+  .readout .label {
+    font-size: 9.5px;
+    letter-spacing: 0.04em;
+  }
+
+  .readout .value {
+    font-size: 14px;
+  }
+
+  .readout .unit {
+    margin-left: 2px;
+    font-size: 9.5px;
+  }
+
+  .status {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    max-width: none;
+    justify-self: stretch;
+    padding: 6px 10px;
+  }
+
+  .phase-note {
+    display: none;
+  }
+
+  .status .ghost {
+    margin-top: 0;
+  }
+
+  .throttle {
+    width: auto;
+    justify-self: stretch;
+  }
+
+  .dial {
+    width: 64px;
+    height: 41px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .card h1 {
+    font-size: 25px;
+  }
+
+  /* End card table: each row becomes label and your figure, with the real figures beneath. */
+  thead {
+    display: none;
+  }
+
+  tbody tr {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2px 12px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+  }
+
+  tbody th,
+  tbody td {
+    padding: 0;
+    border: 0;
+  }
+
+  tbody td:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .you {
+    text-align: right;
+  }
+}
+
+/* Touch: Pause and the throttle slider get a 44 px target. */
+@media (pointer: coarse), (max-width: 760px) {
+  .status .ghost {
+    min-height: 44px;
+  }
+
+  /* The tip covers the booster on a phone, so its Close button stays small and its touch area grows instead. */
+  .tip .ghost {
+    position: relative;
+  }
+
+  .tip .ghost::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+  }
+
+  .slider input {
+    height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* ---------- The action panel: one block per phase ---------- */
+
+.action {
+  width: 280px;
+}
+
+.block {
+  display: grid;
+  gap: 8px;
+}
+
+.time {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--soft);
+}
+
+.checks {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 2px 12px;
+  align-items: baseline;
+  margin: 0;
+}
+
+.checks dd {
+  margin: 0;
+  text-align: right;
+  font-size: 12px;
+}
+
+.bad {
+  color: var(--red);
+}
+
+.call-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.call {
+  padding: 0 8px;
+  font-size: 13px;
+}
+
+/* Gold marks the selection, nothing else. */
+.call[aria-pressed='true'] {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px var(--gold);
+}
+
+button kbd {
+  margin-left: 4px;
+  font: 11px var(--mono);
+  opacity: 0.6;
+}
+
+.meter,
+.strip {
+  position: relative;
+  height: 10px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.meter {
+  overflow: hidden;
+}
+
+.meter-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  background: var(--ink);
+}
+
+.meter-fill.over {
+  background: var(--red);
+}
+
+.meter-limit {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--soft);
+}
+
+.strip-aim {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  left: 50%;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--gold);
+}
+
+.strip-marker {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 6px;
+  margin-left: -3px;
+  border-radius: 3px;
+  background: var(--ink);
+}
+
+.tilt-row {
+  justify-content: space-between;
+}
+
+/* A phone has little sky to spare. The throttle sits beside the action panel while it is live,
+   and leaves the screen while the computer holds it. */
+@media (max-width: 760px) {
+  .hud {
+    grid-template:
+      'readouts readouts' auto
+      'status status' auto
+      'tips tips' 1fr
+      'throttle action' auto
+      / 1fr 1fr;
+  }
+
+  .action {
+    width: auto;
+    justify-self: stretch;
+  }
+
+  .throttle.idle {
+    display: none;
+  }
+
+  .throttle.idle ~ .action {
+    grid-column: 1 / -1;
+  }
+
+  .control {
+    padding: 8px 10px;
+  }
+
+  .dial {
+    width: 56px;
+    height: 36px;
+  }
+
+  .action .fine {
+    display: none;
+  }
+}
+
+@media (pointer: coarse) {
+  button kbd {
+    display: none;
+  }
+}
+
+/* Tips sit under the status panel on a wide screen: the booster comes down through the middle of the sky. */
+@media (min-width: 761px) {
+  .tips {
+    justify-self: start;
+    width: min(300px, 100%);
+  }
+}

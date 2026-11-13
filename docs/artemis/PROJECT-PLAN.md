@@ -1,6 +1,6 @@
 # Artemis mini-apps: project plan
 
-Status: slice 1 (powered descent gate) in build on `feat/lunar-descent`. Written 2026-11-12.
+Status: slice 1 (Descent to Shackleton) merged in PR 82 on 2026-11-13. Slice 2 (Return to the Tower) in review on `feat/starship-catch`. Written 2026-11-12.
 
 Two mini-apps for Cosmos Collective: a Starship game made of four short "gates", and an Artemis explorer. Each slice is one PR and ends playable. Nothing in a later slice starts before the slice above it has merged.
 
@@ -26,16 +26,21 @@ The failure this project is prone to is the one named in `docs/pilot-mode/PROJEC
 | 10 | The lander casts a real shadow: its true geometry from the game's 1.5 degree Sun on to the LOLA terrain. The lander goes dark when the terrain hides the Sun from it. | It is worked out, not invented. With the Sun that low the shadow is about 1.9 km long and only reaches the lander's feet at touchdown. |
 | 11 | Shadowed ground shows faint relief from scattered light. Its strength and direction are game settings. | Sunlit slopes do light the shadows on the Moon, but how much is not a figure the game can source, so it is labelled as tuning. |
 | 12 | A hard landing topples the lander, and dust lingers after any touchdown. Both are game effects. | Nothing published describes either for Starship HLS. They are there so the ending can be read on screen before the card covers it. |
+| 13 | Slice 2 is the Super Heavy booster, liftoff to tower catch, as one run. A sea landing is a separate Falcon 9 drone ship gate. Vehicles named factually (SpaceX Starship, Super Heavy, Falcon 9), no logos or livery. (2026-11-12) | Starship has never landed on a drone ship. |
+| 14 | Slice 2 is built on Flight 8 as flown: the 71 m booster and the Pad 1 tower. The second tower is left out. (2026-11-13) | Flight 8 has a full published timeline and a catch; nothing published places the second tower. |
+| 15 | The launch site tour moves to a follow-up. (2026-11-13) | The slice 2 PR was already about 3,800 lines, and the brief named the tour as the first thing to cut. |
 
 ## 3. Slices
 
 | # | Slice | What the player does | State |
 |---|-------|----------------------|-------|
-| 1 | **Descent to Shackleton** (this PR) | Takes over at high gate, steers the touchdown marker off the boulders, finishes on instruments in the dust, scored against real limits | In build |
-| 2 | Ascent and max-Q gate | Throttle a launch through maximum dynamic pressure | Planned |
-| 3 | Refuel docking gate | Close on a depot in low Earth orbit and dock; reuses the 550 AU docking assembly animation | Planned |
-| 4 | Orion entry corridor gate | Hold the skip-entry corridor on return from the Moon | Planned |
-| 5 | Artemis explorer | South pole light table, base phases on a time slider, flown versus planned trajectories, tanker ledger | Planned |
+| 1 | **Descent to Shackleton** | Takes over at high gate, steers the touchdown marker off the boulders, finishes on instruments in the dust, scored against real limits | Merged (PR 82) |
+| 2 | **Return to the Tower** (section 9) | Flies one Super Heavy booster from liftoff through max Q, hot staging and boostback, makes the catch call, and flies the landing burn into the tower arms. Takes in the ascent and max-Q gate first planned here | In review |
+| 3 | Falcon 9 drone ship gate | Land a Falcon 9 first stage on a drone ship. Starship has never landed on one, so it is not shown doing so (ruling 13) | Planned |
+| 4 | Ship re-entry and catch | Belly-first re-entry, the flip and the ship catch, once one has flown | Planned |
+| 5 | Refuel docking gate | Close on a depot in low Earth orbit and dock; reuses the 550 AU docking assembly animation | Planned |
+| 6 | Orion entry corridor gate | Hold the skip-entry corridor on return from the Moon | Planned |
+| 7 | Artemis explorer | South pole light table, base phases on a time slider, flown versus planned trajectories, tanker ledger | Planned |
 
 Gate for every slice: sources re-fetched on the day of the build, because the mission architecture changed during 2026 and may change again.
 
@@ -132,3 +137,73 @@ Not covered by the search (a usage limit cut it short): GAO 2026 assessments, NT
 - Earth in the sky, at its real position for the chosen Sun direction.
 - A header navigation entry. Slice 1 is linked from the footer only, because the header and the mobile bar are full.
 - Add the game to the sitemap and landing page once it has been played by someone other than its author.
+
+## 9. Slice 2 design: Return to the Tower
+
+**Flow.** Start card, ascent (4x), hot staging and the flip (4x), boostback (3x, easing to 1x within 40 km of the aim), coast (16x), landing burn (1x), end card. Each compressed phase carries its rate on the HUD as a "4x time" chip, labelled a game setting. Skip buttons cover the ascent and the coast. Once a run has reached the landing phase, retry (R, or "Fly the landing again") restarts it there with the same scenario and catch call; a run lost before that retries from liftoff. "Fly again from liftoff" is always offered.
+
+**What the player decides in each phase.**
+
+| Phase | Decision | What goes wrong |
+|-------|----------|-----------------|
+| Ascent | Throttle down through max Q and back up after it. The gold cue sits on the throttle; the pressure meter shows the limit line | Over the limit for more than 2.5 s: the stack breaks up |
+| Hot staging and flip | None. Flown by the computer, compressed | |
+| Boostback | When to cut the engines, so the impact point lands on the tower. A gold line on the range bar marks the cut | Cut early: short, into the sea. Cut late: over land |
+| Catch call | Go or no go (G or N, or the buttons), before boostback ends, from the tower and booster health readouts | No call: the booster takes its default path to the sea, as SpaceX describes. Go on a tower fault: the health checks override it, as on Flight 6 |
+| Coast | Fin steering only. Compressed | |
+| Landing burn | When to light (Space at the cue height), then throttle and tilt to hold the white ring on the gold one at the arms, on 13 engines then the 3 centre engines | Never lit, too hard, off the arms, into the tower |
+
+A no-go on a healthy tower ends in a soft splashdown, shown as a safe call, not a failure. A no-go on the Flight 6 tower fault is the right call and the end card says so.
+
+**Scenarios, all flown.** The first run is Flight 8 as flown. Later runs draw from four: Flight 8 (11 of 13 engines relit for boostback, 12 of 13 for landing), Flight 7 (12 of 13, then 13), Flight 6 (tower health checks fail during boostback) and Flight 14 (11 of 13 relit for landing, then a controlled splashdown). The engine-outs are the flown counts, and the player flies through them with less thrust. A unit test flies every healthy scenario into the arms on the cue.
+
+**Controls.** W/S or up/down: throttle. A/D or left/right: tilt in the landing burn. Space: the one-shot command of the moment (cut boostback, light the landing burn). G and N: the catch call. P: pause. R: retry. Touch: a throttle slider, tilt buttons, an action button and the call buttons, all focusable and at least 44 px.
+
+**HUD.** A readout strip across the top (altitude, speed, downrange, propellant as velocity change, engines lit, pressure as a percentage of the limit), the phase card top left with its time-rate chip and skip and pause, the throttle bottom left, and a phase instrument bottom right (pressure meter, range bar, or the landing ring). Tip cards sit under the phase card on wide screens and close after 10 seconds. On phones the strip wraps to two rows and the instruments shrink to leave the booster in view.
+
+**End card.** The player's time for each event beside Flight 8's published time and its flown outcome, each row with its source and status, then the scenario the run was modelled on, the catch record, and Flight 15's planned status.
+
+**Physics.** Fixed 60 Hz timestep, acceleration model (ruling 4), real gravity and an exponential atmosphere for dynamic pressure and the grid fins. Everything in `TUNING` is game tuning (section 11).
+
+**Scene.** The booster and the ship are drawn at their published sizes (71 m and 52 m, 9 m across); the tower stands taller than the booster, and its height is not shown as a number because none is sourced. The ground is USDA NAIP aerial imagery of Starbase, baked at build time. Fire, smoke, steam and dust belong in the scene; nothing on the HUD glows. Under `prefers-reduced-motion` the camera does not shake. The ascent camera rides close enough that the stack stays readable while the ground drops away below it.
+
+**Palette (repo tokens).** As slice 1: void `#0a0e1a`, quiet glass panels, off-white `#f4f1e8` for the primary action, muted `#7c88a8` labels, gold `#d4af37` for the cue and the selection only, hydrogen red `#ff6b6b` for limits exceeded. Outfit, Inter, JetBrains Mono.
+
+**Architecture.** A standalone Vite + TypeScript + three.js app in `starship-catch/` with the same split as slice 1 (`sim/`, `scene/`, `ui/`, `data/`). It builds to `public/starship-catch/` (not committed) alongside `lunar-descent/`, and the `/starship-catch` route wraps it in an iframe. The page is network-first through `viewer-pages`; bundles and the ground imagery are cached on first play and excluded from the precache. No code is shared with `lunar-descent/` yet: the overlap is the HUD helpers and the fixed-step loop, small enough that lifting them is a follow-up.
+
+**Weight.** Before the start button: 13.1 kB JS and 5.8 kB CSS gzip, plus about 121 kB of latin fonts. After it: about 138 kB JS gzip and 1.4 MB of ground imagery.
+
+**Google Photorealistic 3D Tiles spike (2026-11-12): failed check 1.** Starbase has flat imagery only: no 3D mesh of the tower or the launch mount. The other three checks (caching terms, spend cap, frame rate) were not needed. No key was created and nothing was spent. The ground is baked from public-domain NAIP imagery instead, and the tower is modelled.
+
+**Prior art.** SpaceX publishes its own browser game (starshipthegame.spacex.com). The build went ahead: this slice is a decision game on flown data with sources on screen.
+
+## 10. Slice 2 sources: every real-world number on screen
+
+Fetched and checked on 2026-11-12. Mirrored in `starship-catch/src/data/facts.ts` and `starship-catch/src/sim/scenario.ts`.
+
+| # | Number or claim on screen | Value | Status | Source |
+|---|---------------------------|-------|--------|--------|
+| 1 | Flight 8 timeline: max Q, most engines cut off, hot staging, boostback start, boostback shutdown, landing burn start, catch | T+1:02, 2:32, 2:40, 2:45, 4:06, 6:34, 7:02 | Published timeline ("all times approximate") | Wikipedia, Starship flight test 8, https://en.wikipedia.org/wiki/Starship_flight_test_8 |
+| 2 | Flight 8 outcomes: throttled through max Q; all but 3 engines shut down; ship lit 6 and separated; 11 of 13 relit for boostback; 12 of 13 for landing; caught | as listed | Flown | SpaceX, https://www.spacex.com/launches/starship-flight-8 |
+| 3 | Engines: 33 at liftoff, 13 in the centre, 3 that fly into the arms | 33, 13, 3 | Design figure | SpaceX, https://www.spacex.com/vehicles/starship |
+| 4 | Booster height | 71 m | Design figure (the booster flown on Flights 5 to 11) | Wikipedia, SpaceX Super Heavy, https://en.wikipedia.org/wiki/SpaceX_Super_Heavy |
+| 5 | Diameter | 9 m | Design figure | SpaceX (as 3) |
+| 6 | Ship height | 52 m | Design figure (current page) | SpaceX (as 3) |
+| 7 | Flight 7: 12 of 13 relit for boostback, 13 for landing, caught | as listed | Flown | Wikipedia, Starship flight test 7, https://en.wikipedia.org/wiki/Starship_flight_test_7 |
+| 8 | Flight 6: tower health checks aborted the catch; splashdown in the Gulf | as listed | Flown | SpaceX, https://www.spacex.com/launches/starship-flight-6 |
+| 9 | Flight 14: 11 of 13 relit for landing, controlled splashdown | as listed | Flown | SpaceX, https://www.spacex.com/launches/starship-flight-14 |
+| 10 | Boosters caught | Flights 5, 7 and 8 | Flown | SpaceX, https://www.spacex.com/launches/starship-flight-15 |
+| 11 | Flight 15: first planned return of both booster and ship to the tower | planned 13 Nov 2026 (US time) | Planned | SpaceX (as 10) |
+| 12 | Thousands of vehicle and pad criteria before a catch | quote | Flown, Flight 5 | SpaceX, https://www.spacex.com/launches/starship-flight-5 |
+| 13 | With no go before boostback ends, the booster defaults to a splashdown path | quote | Published procedure | SpaceX before Flight 5, archived page data, https://web.archive.org/web/20241007234125/https://content.spacex.com/api/spacex-website/missions/starship-flight-5 |
+| 14 | Ground imagery | NAIP, flown June 2022 | Measured | USGS EROS, https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-national-agriculture-imagery-program-naip |
+
+Sources disagree on the count of later catches; SpaceX's Flight 15 page (10) is the one the game cites. Flight 15's outcome is not in the game yet (follow-up in `docs/CLAUDE-TODO.md`).
+
+## 11. Slice 2 game tuning, labelled as such on screen
+
+Not mission figures: thrust accelerations (liftoff, boostback, landing on 13 and on 3 engines), the pitch-over profile, the engine cutoff speed, the max-Q limit and its 2.5 s tolerance, terminal speeds, staging and flip timings, grid fin authority, the offshore splashdown point, the landing gate height, the catch window (height, gap, sink and side speed, tilt), the tower position and height used for collisions, the starting propellant, the time compression of each phase, and the retry point. SpaceX publishes times and engine counts, not these. The end card says so.
+
+## 12. Slice 2 follow-ups
+
+In `docs/CLAUDE-TODO.md`, section "From feat/starship-catch (2026-11-13)": the launch site tour, Flight 15's result, a regional ground layer above 4 km, a real-pointer touch test on a phone, the second tower, and sound.

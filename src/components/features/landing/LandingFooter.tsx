@@ -8,6 +8,8 @@ const EXPLORE_LINKS = [
   { label: 'Webb Explorer', href: '/explore?view=webb' },
   { label: '550-AU', href: '/gravitational-lens' },
   { label: 'Kepler Exoplanets', href: '/kepler' },
+  { label: 'Descent to Shackleton', href: '/lunar-descent' },
+  { label: 'Return to the Tower', href: '/starship-catch' },
   { label: 'Sky Map', href: '/sky-map' },
   { label: 'Satellites', href: '/satellites' },
   { label: 'Spacecraft', href: '/satellites#spacecraft' },
