@@ -180,11 +180,12 @@ void main() {
     const tanV = Math.tan((camera.fov * DEG) / 2)
     const landing = flight.phase === 'landing' || (flight.phase === 'ended' && s.y < 2_500)
     if (flight.phase === 'ascent' || flight.phase === 'staging') {
-      // Low and looking up the stack at the pad. The camera is left behind as the stack climbs,
-      // so the tower, the steam and the flame stay in the picture, then it follows from below.
-      const distance = (camera.aspect < 1 ? 430 : 300) + Math.min(1_500, sceneY * 0.6)
+      // Low and looking up the stack at the pad. The camera lags a little as the stack climbs,
+      // then rides with it close enough to read the booster while the ground drops away below.
+      // On a phone the pad shot starts wide for the tower, then closes in: the HUD leaves a narrow band.
+      const distance = camera.aspect < 1 ? 430 - Math.min(200, sceneY * 0.5) : 300 + Math.min(160, sceneY * 0.4)
       wantLook.set(0, 50, 0)
-      wantEye.set(-0.22 * distance, Math.max(8 - sceneY, 24 - Math.min(0.8 * sceneY, 600)), distance)
+      wantEye.set(-0.22 * distance, Math.max(8 - sceneY, 24 - Math.min(0.5 * sceneY, 140)), distance)
     } else if (!landing) {
       wantLook.set(0, 35, 0)
       wantEye.set(120, 70, 430)
