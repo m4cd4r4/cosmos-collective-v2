@@ -44,3 +44,4 @@ Out of scope for that PR, captured so they are not lost.
 - **Touch controls have not been driven with real pointer events** - checked by layout and by click only. Play one run on a phone.
 - **The second tower is left out** - nothing published places it.
 - **Sound.**
+- **Neither game is linked from any page** - `src/components/layout/Footer.tsx` carries both links but nothing renders it (checked in the browser 2026-11-13: no `/lunar-descent` or `/starship-catch` link on `/credits`). The live footer is `LandingFooter.tsx`, on the home page only. Plan doc section 8 holds landing-page links until someone other than the author has played; decide where the games are linked.
