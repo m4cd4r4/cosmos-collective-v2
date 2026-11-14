@@ -79,12 +79,16 @@ function requiredThrust(state: State, aim: Aim): { brake: number; up: number } {
 
 const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
 
-/** What the flight computer would command now. Drawn on the HUD as the cue marks. */
-export function guidance(state: State, phase: Phase, groundHeight: number): Control {
+/**
+ * What the flight computer would command now. Drawn on the HUD as the cue marks.
+ * `aimRange` moves the touchdown point along the track, m from the target (negative is beyond).
+ */
+export function guidance(state: State, phase: Phase, groundHeight: number, aimRange = 0): Control {
   let need: { brake: number; up: number }
   if (phase === 'braking') {
     need = requiredThrust(state, HIGH_GATE)
   } else {
+    state = { ...state, range: state.range - aimRange }
     const height = state.altitude - groundHeight
     const close = Math.abs(state.range) < 60 && Math.abs(state.groundSpeed) < 6
     if (close || height < 40) {
@@ -114,6 +118,25 @@ export function attitudeHold(state: State, throttle: number): number {
 
 export function reachedTakeover(state: State): boolean {
   return state.range <= HIGH_GATE.range || state.groundSpeed <= HIGH_GATE.groundSpeed
+}
+
+/** Range, m, from which the player can see the boulders and choose their own spot. */
+export const CHOOSE_SPOT_RANGE = 1_800
+
+/**
+ * Where the cue aims, m from the target. It starts on the target. Once the boulders are in
+ * view, a marker clear of the boulders moves the aim to that side: to the marker if it is
+ * inside the ring, otherwise to the ring's edge, and never closer than MIN_CLEAR. The marker
+ * swings hundreds of metres with small control changes, so the side is the player's choice
+ * and the computer picks the spot. The choice is made once: after that the aim stays put.
+ */
+const MIN_CLEAR = 40
+
+export function nextAim(aim: number, predictedRange: number | null, range: number): number {
+  if (aim !== 0 || range >= CHOOSE_SPOT_RANGE || predictedRange === null) return aim
+  const off = Math.abs(predictedRange)
+  if (off <= BOULDER_HALF_WIDTH) return aim
+  return Math.sign(predictedRange) * clamp(off, MIN_CLEAR, LIMITS.accuracy.value)
 }
 
 /** Game rule: this far past the target, in metres, the run is over. */

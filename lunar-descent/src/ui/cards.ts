@@ -139,7 +139,7 @@ const TIPS: Record<TipId, TipCopy> = {
   },
   boulders: {
     title: 'The computer cannot see rocks',
-    body: "The gold marks lead to the middle of the ring, which is strewn with boulders. Apollo 11's automatic descent was heading for a rocky crater ringed by boulders; Armstrong took manual control and flew beyond it (flown). Put the marker on clear ground inside the ring.",
+    body: "The gold marks lead to the middle of the ring, which is strewn with boulders. Apollo 11's automatic descent was heading for a rocky crater ringed by boulders; Armstrong took manual control and flew beyond it (flown). Push the marker clear of the boulders, short of them or beyond, and the gold marks lead to clear ground on that side.",
     sources: [['Apollo Lunar Surface Journal', APOLLO_11.descentSeconds.url]],
   },
   dust: {
