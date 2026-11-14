@@ -8,8 +8,10 @@ import { SCALE_HEIGHT, G0 } from '../sim/physics'
 import { TUNING, type Flight, type Outcome } from '../sim/flight'
 import type { Arrival } from '../sim/predict'
 import { BOOSTER_HEIGHT, createBooster, createShip } from './booster'
+import { frameShot, pickShot, type Framing, type Shot } from './camera'
 import { createEffects } from './effects'
 import { MOUNT_HEIGHT, type Site } from './site'
+import { createSky } from './sky'
 
 export interface View {
   flight: Flight
@@ -21,6 +23,8 @@ export interface View {
   realDt: number
   /** Draw the flying aids: the impact ring, the gold target and the arrival ring. */
   aids: boolean
+  /** A recorded landing played back: shot from the beach. */
+  replay: boolean
 }
 
 export interface World {
@@ -53,40 +57,14 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
   scene.environmentIntensity = 0.55
 
-  // Late afternoon: a low warm Sun in the west, clear sky.
+  // Late afternoon: a low warm Sun in the west, fair-weather cloud.
   const skyLow = new THREE.Color(0x7fb2de)
   const skyHigh = new THREE.Color(0x04060c)
   const sky = new THREE.Color()
   const fog = new THREE.Fog(0xb4cbe0, 4_000, 90_000)
   scene.fog = fog
-  // The sky: pale haze at the horizon deepening overhead. High up it thins to a band on the horizon.
-  const dome = new THREE.Mesh(
-    new THREE.SphereGeometry(3_000_000, 32, 16),
-    new THREE.ShaderMaterial({
-      side: THREE.BackSide,
-      depthWrite: false,
-      depthTest: false,
-      fog: false,
-      uniforms: { space: { value: 0 }, horizon: { value: new THREE.Color(0xb4cbe0) }, zenith: { value: new THREE.Color(0x3f7fc4) }, dark: { value: skyHigh } },
-      vertexShader: 'varying vec3 vDir; void main() { vDir = position; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
-      fragmentShader: `
-uniform float space;
-uniform vec3 horizon;
-uniform vec3 zenith;
-uniform vec3 dark;
-varying vec3 vDir;
-void main() {
-  float h = max(0.0, normalize(vDir).y);
-  vec3 day = mix(horizon, zenith, pow(h, 0.6));
-  vec3 high = mix(dark, horizon, exp(-h * 14.0));
-  gl_FragColor = vec4(mix(day, high, space), 1.0);
-#include <colorspace_fragment>
-}`,
-    }),
-  )
-  dome.renderOrder = -1
-  dome.frustumCulled = false
-  scene.add(dome)
+  const heavens = createSky()
+  scene.add(heavens.group)
   const sun = new THREE.DirectionalLight(0xffe0b8, 2.6)
   sun.position.set(-0.75, 0.38, 0.55)
   scene.add(sun, new THREE.HemisphereLight(0xbcd4ee, 0x8a7f6a, 0.9))
@@ -124,10 +102,13 @@ void main() {
   /** The share of the screen height the HUD leaves clear. */
   let free = 1
   let separation: { at: THREE.Vector3; velocity: THREE.Vector3; axis: THREE.Vector3; time: number } | null = null
+  let caughtAt: number | null = null
+  let ventDebt = 0
+  let lastShot: Shot | null = null
+  let baseFov = 46
+  const framing: Framing = { shot: 'pad', fixed: true, eye: new THREE.Vector3(), look: new THREE.Vector3(), fov: 0 }
   const offsetEye = new THREE.Vector3()
   const offsetLook = new THREE.Vector3()
-  const wantEye = new THREE.Vector3()
-  const wantLook = new THREE.Vector3()
   const at = new THREE.Vector3()
   const scratch = new THREE.Vector3()
 
@@ -135,7 +116,7 @@ void main() {
     const { clientWidth, clientHeight } = canvas
     renderer.setSize(clientWidth, clientHeight, false)
     camera.aspect = clientWidth / clientHeight
-    camera.fov = camera.aspect < 1 ? 62 : 46
+    baseFov = camera.fov = camera.aspect < 1 ? 62 : 46
     camera.updateProjectionMatrix()
   }
   resize()
@@ -175,39 +156,18 @@ void main() {
     ship.plume.set(1, 6, 1, clock)
   }
 
-  function frameCamera(flight: Flight, sceneY: number) {
-    const s = flight.state
-    const tanV = Math.tan((camera.fov * DEG) / 2)
-    const landing = flight.phase === 'landing' || (flight.phase === 'ended' && s.y < 2_500)
-    if (flight.phase === 'ascent' || flight.phase === 'staging') {
-      // Low and looking up the stack at the pad. The camera lags a little as the stack climbs,
-      // then rides with it close enough to read the booster while the ground drops away below.
-      // On a phone the pad shot starts wide for the tower, then closes in: the HUD leaves a narrow band.
-      const distance = camera.aspect < 1 ? 430 - Math.min(200, sceneY * 0.5) : 300 + Math.min(160, sceneY * 0.4)
-      wantLook.set(0, 50, 0)
-      wantEye.set(-0.22 * distance, Math.max(8 - sceneY, 24 - Math.min(0.5 * sceneY, 140)), distance)
-    } else if (!landing) {
-      wantLook.set(0, 35, 0)
-      wantEye.set(120, 70, 430)
-    } else {
-      // Hold the booster and the tower in one frame, closing in as it comes down.
-      const near = smooth(2_600, 900, s.y)
-      const left = Math.min(s.x, TUNING.towerFace - 14) - 30
-      const right = Math.max(s.x, 34) + 30
-      const bottom = Math.min(sceneY, 0) - 6
-      const top = Math.max(sceneY + BOOSTER_HEIGHT, TUNING.towerHeight + 16) + 12
-      const fit = Math.max((top - bottom) / (2 * tanV), (right - left) / (2 * tanV * camera.aspect)) * 1.25
-      const cx = (left + right) / 2 - s.x
-      const cy = (top + bottom) / 2 - sceneY
-      const chase = 430
-      const distance = chase + (fit - chase) * near
-      wantLook.set(cx * near, 35 + (cy - 35) * near, 0)
-      // Camera low, so the tower and the booster stand tall against the sky.
-      wantEye.set(wantLook.x - 0.12 * distance * near + 120 * (1 - near), Math.max(6 - sceneY, wantLook.y - 0.16 * distance * near + 70 * (1 - near)), distance)
+  /** After a catch: the booster settles into the arms, swaying, and vents. */
+  function settleCatch(view: View, top: THREE.Vector3): number {
+    if (caughtAt === null) return 0
+    const t = view.clock - caughtAt
+    if (t < 3.2 && view.realDt > 0) {
+      ventDebt += view.realDt * 14
+      for (; ventDebt >= 1; ventDebt--) effects.emit('steam', top, 6)
     }
-    // Stand further back when the HUD leaves less of the screen, so the same scene fits in it.
-    wantEye.sub(wantLook).multiplyScalar(1 / free).add(wantLook)
-    wantEye.y = Math.max(wantEye.y, 6 - sceneY)
+    if (reducedMotion) return 0
+    booster.group.rotation.z += 1.3 * DEG * Math.exp(-t / 1.6) * Math.sin(t * 4.2)
+    booster.group.position.y -= 0.8 * (1 - Math.exp(-t * 3))
+    return 1.4 * Math.exp(-t * 4)
   }
 
   function render(view: View) {
@@ -242,6 +202,7 @@ void main() {
         effects.burst('smoke', mid, 36, 38)
         if (seen === 'hard-splashdown') effects.burst('spray', at, 40, 45)
       } else if (seen === 'splashdown') effects.burst('spray', at, 50, 30)
+      else if (seen === 'caught') caughtAt = view.clock
     }
     booster.group.visible = !wrecked
     if (wrecked) ship.group.visible = false
@@ -267,21 +228,43 @@ void main() {
     free = Math.max(0.3, 1 - (insetTop + insetBottom) / clientHeight)
     camera.setViewOffset(clientWidth, clientHeight, 0, (insetBottom - insetTop) / 2, clientWidth, clientHeight)
 
-    frameCamera(flight, sceneY)
-    if (snap) {
-      offsetEye.copy(wantEye)
-      offsetLook.copy(wantLook)
+    const jolt = settleCatch(view, scratch.set(s.x, sceneY + BOOSTER_HEIGHT - 6, 0).clone())
+
+    const shot = pickShot(flight, sceneY, view.replay)
+    frameShot(shot, flight, sceneY, { aspect: camera.aspect, fov: baseFov, free, clock: view.clock, reducedMotion }, framing)
+    const cut = snap || shot !== lastShot
+    lastShot = shot
+    if (framing.fixed) {
+      // A camera on the site: it stands still and turns to follow.
+      camera.position.copy(framing.eye)
+      offsetLook.copy(framing.look).sub(at)
+      offsetEye.copy(framing.eye).sub(at)
     } else {
-      // Faster in the landing: the booster arrives at tens of metres a second and must stay in the frame.
-      const k = 1 - Math.exp(-view.realDt * (flight.phase === 'landing' ? 6 : 2.2))
-      offsetEye.lerp(wantEye, k)
-      offsetLook.lerp(wantLook, k)
+      // Stand further back when the HUD leaves less of the screen, so the same scene fits in it.
+      framing.eye.sub(framing.look).multiplyScalar(1 / free).add(framing.look)
+      framing.eye.y = Math.max(framing.eye.y, 6 - sceneY)
+      if (cut) {
+        offsetEye.copy(framing.eye)
+        offsetLook.copy(framing.look)
+      } else {
+        // Faster in the landing: the booster arrives at tens of metres a second and must stay in the frame.
+        const k = 1 - Math.exp(-view.realDt * (flight.phase === 'landing' ? 6 : 2.2))
+        offsetEye.lerp(framing.eye, k)
+        offsetLook.lerp(framing.look, k)
+      }
+      camera.position.copy(at).add(offsetEye)
     }
     snap = false
-    camera.position.copy(at).add(offsetEye)
-    const distance = offsetEye.length()
-    if (!reducedMotion && level > 0 && !wrecked) {
-      const shake = Math.min(1.6, (level * Math.sqrt(flight.engines / 33) * 380) / distance) * (1 - thin * 0.7)
+    const fov = framing.fov || baseFov
+    if (Math.abs(camera.fov - fov) > 0.01) {
+      camera.fov = fov
+      camera.updateProjectionMatrix()
+    }
+    const distance = camera.position.distanceTo(at)
+    if (!reducedMotion && ((level > 0 && !wrecked) || jolt > 0)) {
+      // A long lens magnifies the shake as much as it magnifies the booster.
+      const zoom = baseFov / camera.fov
+      const shake = (Math.min(1.6, (level * Math.sqrt(flight.engines / 33) * 380) / distance) * (1 - thin * 0.7) + jolt) * (framing.fixed ? Math.min(1, 1 / zoom) : 1)
       camera.position.x += Math.sin(view.clock * 61) * shake
       camera.position.y += Math.sin(view.clock * 47) * shake
     }
@@ -292,8 +275,7 @@ void main() {
     const space = smooth(4_000, 42_000, height)
     sky.copy(skyLow).lerp(skyHigh, space)
     renderer.setClearColor(sky)
-    dome.position.copy(camera.position)
-    ;(dome.material as THREE.ShaderMaterial).uniforms.space.value = space
+    heavens.update(camera, space)
     fog.near = 4_000 + height
     fog.far = 90_000 + height * 5
 
@@ -327,6 +309,9 @@ void main() {
       seen = null
       wrecked = false
       emitDebt = 0
+      ventDebt = 0
+      caughtAt = null
+      lastShot = null
       separation = null
       effects.clear()
     },

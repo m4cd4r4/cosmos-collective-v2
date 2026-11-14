@@ -2,6 +2,7 @@
 // its number and its source from data/facts.ts.
 
 import type { Flight, Outcome } from '../sim/flight'
+import type { Score } from '../sim/score'
 import {
   CATCH_RECORD,
   ENGINES,
@@ -219,15 +220,53 @@ export interface EndOptions {
   call: Call
   /** ISO date the ground photograph was flown, or null. */
   groundFlown: string | null
+  /** Null unless the booster was caught. */
+  score: Score | null
   /** Null when the run ended before the landing began. */
   onRetry: (() => void) | null
   onRestart(): void
+  /** Null when there is no landing to play back. */
+  onReplay: (() => void) | null
+}
+
+/** The best score for this scenario on this device, after counting `total`. Storage may be blocked. */
+function best(scenario: string, total: number): { best: number; isNew: boolean } {
+  const key = `starship-catch:best:${scenario}`
+  try {
+    const before = Number(localStorage.getItem(key) ?? 0)
+    if (total > before) localStorage.setItem(key, String(total))
+    return { best: Math.max(before, total), isNew: total > before && before > 0 }
+  } catch {
+    return { best: total, isNew: false }
+  }
+}
+
+function scoreBlock(score: Score, scenario: string): HTMLElement {
+  const record = best(scenario, score.total)
+  const note = record.isNew ? 'A new best' : record.best > score.total ? `Best ${record.best}` : 'Out of 100'
+  return el(
+    'div',
+    { class: 'score', role: 'group', 'aria-label': `Catch score ${score.total} out of 100` },
+    el('div', { class: 'score-total' }, String(score.total), el('small', {}, note)),
+    ...score.parts.map((part) => {
+      const bar = el('span', {})
+      bar.style.width = `${Math.round(part.share * 100)}%`
+      return el(
+        'div',
+        { class: 'score-part' },
+        el('span', {}, part.label),
+        el('span', { class: 'score-bar', 'aria-hidden': 'true' }, bar),
+        el('span', { class: 'value' }, part.value),
+      )
+    }),
+  )
 }
 
 export function createEndCard(flight: Flight, options: EndOptions): HTMLElement {
   const outcome = OUTCOME[flight.outcome ?? 'missed']
   const restart = el('button', { class: options.onRetry ? 'secondary' : 'primary', type: 'button', onclick: options.onRestart }, 'Fly again from liftoff')
   const retry = options.onRetry ? el('button', { class: 'primary', type: 'button', onclick: options.onRetry }, 'Fly the landing again') : null
+  const replay = options.onReplay ? el('button', { class: 'secondary', type: 'button', onclick: options.onReplay }, 'Watch the replay') : null
   const call = verdict(flight, options.call)
 
   const table = el(
@@ -258,9 +297,11 @@ export function createEndCard(flight: Flight, options: EndOptions): HTMLElement 
       { class: 'panel card end', role: 'dialog', 'aria-labelledby': 'end-title' },
       el('h1', { id: 'end-title' }, outcome.title),
       el('p', {}, outcome.line),
+      options.score ? scoreBlock(options.score, flight.scenario.id) : null,
       call ? el('p', { class: 'muted' }, call, ' The rule: ', link(QUOTES.defaultPath.source), '.') : null,
-      el('div', { class: 'actions' }, retry, restart),
-      el('div', { class: 'table-wrap' }, table),
+      el('div', { class: 'actions' }, retry, restart, replay),
+      el('details', { class: 'compare' }, el('summary', {}, 'Your times beside Starship Flight 8'), el('div', { class: 'table-wrap' }, table)),
+      options.score ? el('p', { class: 'fine' }, 'The score is a game measure: how far inside the catch limits you arrived, and the propellant you saved. SpaceX publishes no such figure.') : null,
       call ? el('p', { class: 'fine' }, `This run was modelled on ${flight.scenario.modelledOn} `, link(flight.scenario.source), '.') : null,
       el('p', { class: 'fine' }, `Your times come from a simplified flight model. ${TUNING_NOTE}`),
       el('p', { class: 'fine' }, `${CATCH_RECORD.text} ${FLIGHT_15.text} `, link(FLIGHT_15.source), '.'),
