@@ -39,7 +39,7 @@ Out of scope for that PR, captured so they are not lost.
 Out of scope for that PR, captured so they are not lost.
 
 - **Launch site tour** - the free-look mode around the tower, arms, launch mount and tank farm with short labels. Wanted (Macdara, 2026-11-12) and moved out of the slice 2 PR because that PR was already about 3,800 lines. The models are in `starship-catch/src/scene/site.ts`.
-- **Flight 15 result** - launches 14 November 2026 (06:45 to 08:00 AWST). Re-fetch `https://www.spacex.com/launches/starship-flight-15` afterwards and update `FLIGHT_15` and `CATCH_RECORD` in `starship-catch/src/data/facts.ts`.
+- **Flight 15 ship result** - the booster result is in (diverted from the catch, Gulf splashdown; CBS News). The ship's catch attempt is planned for 14 November 2026 21:17 UTC (05:17 AWST 15 November). Afterwards re-fetch `https://www.spacex.com/launches/starship-flight-15`, add the ship's outcome to `FLIGHT_15` in `starship-catch/src/data/facts.ts` and row 11 of `docs/artemis/PROJECT-PLAN.md` section 10, and switch the source to SpaceX once its page carries the post-flight account.
 - **Ground above about 4 km is flat fogged colour** - the baked NAIP tile covers the site only. A coarser regional layer would give the boostback and coast something to look at.
 - **Touch controls have not been driven with real pointer events** - checked by layout and by click only. Play one run on a phone.
 - **The second tower is left out** - nothing published places it.
