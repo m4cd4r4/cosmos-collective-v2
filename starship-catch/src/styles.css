@@ -861,3 +861,97 @@ button kbd {
     width: min(300px, 100%);
   }
 }
+
+/* ---------- Replay and score ---------- */
+
+.replay-tag {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px 8px 14px;
+  white-space: nowrap;
+}
+
+.replay-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--red);
+}
+
+.score {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 20px;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.score-total {
+  grid-row: span 4;
+  font: 600 52px/1 var(--display);
+  font-variant-numeric: tabular-nums;
+}
+
+.score-total small {
+  display: block;
+  margin-top: 6px;
+  font: 12px var(--body);
+  color: var(--muted);
+}
+
+.score-part {
+  display: grid;
+  grid-template-columns: 88px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12.5px;
+}
+
+.score-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.score-bar span {
+  display: block;
+  height: 100%;
+  background: var(--ink);
+}
+
+.score-part .value {
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.compare summary {
+  cursor: pointer;
+  color: var(--soft);
+  padding: 4px 0;
+}
+
+.compare[open] summary {
+  margin-bottom: 8px;
+}
+
+@media (max-width: 760px) {
+  .score {
+    grid-template-columns: 1fr;
+  }
+
+  .score-total {
+    grid-row: auto;
+  }
+
+  .score-part {
+    grid-template-columns: 76px 1fr auto;
+  }
+}
