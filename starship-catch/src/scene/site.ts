@@ -4,6 +4,7 @@
 
 import * as THREE from 'three'
 import { TUNING } from '../sim/flight'
+import { createGround } from './ground'
 
 export interface Site {
   group: THREE.Group
@@ -19,11 +20,11 @@ interface GroundMeta {
 }
 
 const TOWER_WIDTH = 12
-const TOWER_X = TUNING.towerFace - TOWER_WIDTH / 2
+export const TOWER_X = TUNING.towerFace - TOWER_WIDTH / 2
 /** Height of the top of the launch mount, m. The booster stands on it before liftoff. */
 export const MOUNT_HEIGHT = 18
 /** The arms meet the booster just below its grid fins. */
-const ARM_HEIGHT = TUNING.catchHeight + 62
+export const ARM_HEIGHT = TUNING.catchHeight + 62
 const ARM_LENGTH = 40
 const BOOSTER_RADIUS = 4.5
 
@@ -62,15 +63,8 @@ export async function loadSite(): Promise<Site> {
   const loader = new THREE.TextureLoader()
   const group = new THREE.Group()
 
-  // Beyond the photographs: flat land to the west and the Gulf to the east. Colours sampled from the wide photograph.
-  const far = 3_000_000
-  const land = new THREE.Mesh(new THREE.PlaneGeometry(far, far), new THREE.MeshBasicMaterial({ color: 0x8f8a74 }))
-  land.rotation.x = -Math.PI / 2
-  land.position.set(-far / 2 + 400, -1, 0)
-  const sea = new THREE.Mesh(new THREE.PlaneGeometry(far, far), new THREE.MeshBasicMaterial({ color: 0x6f9c96 }))
-  sea.rotation.x = -Math.PI / 2
-  sea.position.set(far / 2 + 400, -1, 0)
-  group.add(land, sea)
+  // Beyond the photographs: land to the west and the Gulf to the east.
+  group.add(createGround())
 
   // Photographs, widest first. Each is centred on the tower base and has north at the top.
   const layers = [...meta.layers].sort((a, b) => b.metres - a.metres)
@@ -85,7 +79,10 @@ export async function loadSite(): Promise<Site> {
         shader.fragmentShader = shader.fragmentShader.replace(
           '#include <map_fragment>',
           `#include <map_fragment>
-          diffuseColor.a *= smoothstep(0.002, 0.02, max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b)));`,
+          diffuseColor.a *= smoothstep(0.025, 0.09, max(diffuseColor.r, max(diffuseColor.g, diffuseColor.b)));
+          // Feather the square edge into the layer below, so no straight seam shows.
+          vec2 edge = min(vMapUv, 1.0 - vMapUv);
+          diffuseColor.a *= smoothstep(0.0, 0.12, min(edge.x, edge.y));`,
         )
       }
       const plane = new THREE.Mesh(new THREE.PlaneGeometry(layer.metres, layer.metres), material)
