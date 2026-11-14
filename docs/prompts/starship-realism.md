@@ -32,7 +32,9 @@ No open dataset has photoreal 3D scans of Starbase.
 - **Google Photorealistic 3D Tiles:** real scans of the site. Macdara chose to test it before committing: load Starbase in a throwaway page within the free quota, with zero paid usage, screenshot it beside the open route, and let him pick. Coverage quality at Starbase is unverified.
 - **Open route:** NAIP aerial imagery (public domain; check for a 2024 Texas flight, since 2022 predates much of the pad) on USGS 3DEP lidar, with towers, tanks and pads hand-built or taken from CC-BY models (licence checked, credited on screen).
 
-Blocked: there is no Google Maps key for this project yet. Borrowing another project's key was refused. It needs its own key on GCP `donnacha-482506`, restricted to the Map Tiles API with a daily quota cap at the free tier, created with Macdara's approval.
+Set up on 2026-11-14 (approved): a Map Tiles key with free-tier quota caps and a budget alert. Account details, the key location and the spike page live in Claude's private project memory, not in this public repo.
+
+Blocked: the key gets 403 "Permission denied on the service" with the API enabled. The likely cause is that the Maps Platform terms have not been accepted for the Cloud project. Macdara accepts them once in the console, then the screenshots are rerun.
 
 ## Do not
 
