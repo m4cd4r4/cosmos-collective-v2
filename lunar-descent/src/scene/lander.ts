@@ -110,8 +110,9 @@ export function createLander(): Lander {
     const angle = (i / 6) * Math.PI * 2
     const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.45, 7.5, 8), steel)
     leg.position.set(Math.cos(angle) * (RADIUS + 1.2), 3.4, Math.sin(angle) * (RADIUS + 1.2))
-    leg.rotation.z = -Math.cos(angle) * 0.38
-    leg.rotation.x = Math.sin(angle) * 0.38
+    // Splay the foot outward, on to its pad.
+    leg.rotation.z = Math.cos(angle) * 0.38
+    leg.rotation.x = -Math.sin(angle) * 0.38
     group.add(leg)
     const pad = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 0.3, 12), steel)
     pad.position.set(Math.cos(angle) * (RADIUS + 2.6), 0.15, Math.sin(angle) * (RADIUS + 2.6))

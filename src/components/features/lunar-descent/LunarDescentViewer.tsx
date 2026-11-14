@@ -12,9 +12,15 @@ export function LunarDescentViewer() {
   const [isLoaded, setIsLoaded] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
-  // The iframe can finish loading before hydration attaches onLoad
+  // The iframe can finish loading before hydration attaches onLoad, or between the
+  // readyState check and React's listener, so check and listen natively as well.
   useEffect(() => {
-    if (iframeRef.current?.contentDocument?.readyState === 'complete') setIsLoaded(true)
+    const iframe = iframeRef.current
+    if (!iframe) return
+    const done = () => setIsLoaded(true)
+    iframe.addEventListener('load', done)
+    if (iframe.contentDocument?.readyState === 'complete' && iframe.contentDocument.URL !== 'about:blank') done()
+    return () => iframe.removeEventListener('load', done)
   }, [])
 
   return (
