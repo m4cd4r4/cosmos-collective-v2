@@ -654,6 +654,11 @@ tbody th {
     margin-top: 0;
   }
 
+  /* No room for both: once a side is chosen, its label takes the time chip's place. */
+  .phase:has(.aim-note:not([hidden])) .chip {
+    display: none;
+  }
+
   /* A shrunk tip keeps its title line only, clear of the lander. */
   .tip.brief {
     padding: 6px 12px;
