@@ -33,6 +33,19 @@ Google Photorealistic 3D Tiles were tested on 2026-11-14 and 15 and dropped. Ove
 - **Towers, chopsticks, launch mounts, tank farm, piping:** modelled from reference photos, or CC-BY models with the licence checked and a credit on screen. Both pads and both towers.
 - **Sky:** physical atmosphere (decided 2026-11-14), see requirement 3.
 
+## Phases (Macdara, 2026-11-15)
+
+Each phase is its own PR and ends in a build Macdara plays before the next starts. Gameplay goes first: no realism work until phase 1 is fun.
+
+| # | Phase | Answers his complaints |
+|---|---|---|
+| 1 | **Final approach is the game.** Start about 10 km above Starbase with the booster falling. The player flies it into the arms (throttle, gimbal, grid fins) against wind, with limited propellant. A miss is easy and the crash is shown up close. Plain models are fine. | "nothing but an engine cutoff option"; blank landscape; a fuzzy puff in the distance |
+| 2 | **Site:** NAIP and lidar ground, both towers with working chopsticks, launch mounts, tank farm, beach, Highway 4, build site | no landmarks, not realistic |
+| 3 | **Sky and vehicles:** physical atmosphere (black at altitude, Earth's curve), stainless booster and ship, engines and plume | not realistic |
+| 4 | **Opening:** short, skippable liftoff and hot staging. The ship flies on to orbit and stays visible; the booster flips back. Shake on the camera, never the ground. | ground shaking side to side; ship descending while the booster climbs |
+
+Macdara on the current build (2026-11-15): "the game sucks". The ground shakes side to side at liftoff, there are no landmarks, the only choice is an engine cutoff, the ship descends while the booster ascends (`src/scene/world.ts` draws the ship for 16 s with gravity only partly offset by thrust), then a blank landscape and a fuzzy puff in the distance.
+
 ## Do not
 
 - Keep the score labelled as a game measure, keep `TUNING.towerHeight` off screen, and use no em or en dashes. Use British English.
