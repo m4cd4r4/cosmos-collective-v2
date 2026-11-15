@@ -1,14 +1,21 @@
 import { describe, expect, it } from 'vitest'
-import { flyOnCue } from './fly-on-cue'
+import { DT } from './physics'
+import { advance, startFlight } from './flight'
+import { makeScenario } from './scenario'
+import { pilot } from './pilot'
 import { scoreCatch } from './score'
 
 describe('the catch score', () => {
-  it('scores a catch flown on the cue highly, and scores nothing that was not caught', () => {
-    const { flight, log } = flyOnCue(0)
-    const score = scoreCatch(flight, 1_100)
-    expect(score, log).not.toBeNull()
-    expect(score!.total, JSON.stringify(score)).toBeGreaterThan(70)
+  it('scores a clean catch out of 100, and scores nothing that was not caught', () => {
+    const caught = startFlight(makeScenario(2))
+    while (!caught.outcome) advance(caught, pilot(caught), DT)
+    const score = scoreCatch(caught)
+    expect(score).not.toBeNull()
+    expect(score!.total).toBeGreaterThan(50)
     expect(score!.total).toBeLessThanOrEqual(100)
-    expect(scoreCatch(flyOnCue(2).flight, 1_100)).toBeNull()
+
+    const crashed = startFlight(makeScenario(2))
+    while (!crashed.outcome) advance(crashed, { throttle: 0, steer: 0, ignite: false }, DT)
+    expect(scoreCatch(crashed)).toBeNull()
   })
 })

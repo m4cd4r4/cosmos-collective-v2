@@ -1,5 +1,5 @@
 // The catch score: how close to perfect the arrival in the arms was. A game measure, not a
-// SpaceX figure. Each part is a share of the catch limit the player stayed inside.
+// SpaceX figure. Each part is a share of the game's catch limit the player stayed inside.
 
 import { TUNING, type Flight } from './flight'
 
@@ -21,8 +21,8 @@ export interface Score {
 
 const clamp01 = (x: number) => Math.min(1, Math.max(0, x))
 
-/** Null unless the booster was caught. `landingDeltaV` is the propellant left when the landing began, m/s. */
-export function scoreCatch(flight: Flight, landingDeltaV: number): Score | null {
+/** Null unless the booster was caught. */
+export function scoreCatch(flight: Flight): Score | null {
   if (flight.outcome !== 'caught') return null
   const s = flight.state
   const part = (label: string, value: string, share: number, weight: number): ScorePart => {
@@ -32,8 +32,8 @@ export function scoreCatch(flight: Flight, landingDeltaV: number): Score | null 
   const parts = [
     part('Centred', `${Math.abs(s.x).toFixed(1)} m off`, 1 - Math.abs(s.x) / TUNING.catchHalfGap, 40),
     part('Soft', `${(-s.vy).toFixed(1)} m/s sink`, 1 - -s.vy / TUNING.catchSinkSpeed, 30),
-    part('Upright', `${Math.abs(flight.thrustAngleDeg).toFixed(1)}° lean`, 1 - Math.abs(flight.thrustAngleDeg) / TUNING.catchTiltDeg, 15),
-    part('Propellant', `${Math.round(s.deltaV)} m/s left`, landingDeltaV > 0 ? s.deltaV / landingDeltaV / 0.5 : 0, 15),
+    part('Upright', `${Math.abs(flight.tiltDeg).toFixed(1)}° lean`, 1 - Math.abs(flight.tiltDeg) / TUNING.catchTiltDeg, 15),
+    part('Propellant', `${Math.round((s.deltaV / TUNING.propellant) * 100)}% left`, s.deltaV / TUNING.propellant / 0.3, 15),
   ]
   return { total: parts.reduce((sum, p) => sum + p.points, 0), parts }
 }

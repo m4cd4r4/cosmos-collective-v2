@@ -1,35 +1,25 @@
-// The instrument strip, the throttle, and the panel on the right that changes with the
-// phase: the pressure meter, the catch call, the landing burn. Gold marks show the cue.
+// The instrument strip along the top and the flying controls along the bottom.
+// Readouts only: nothing here tells the player when or how much to press.
 
 import { ENGINES } from '../data/facts'
-import { dynamicPressure } from '../sim/physics'
-import { TUNING, type Flight, type Input } from '../sim/flight'
+import { TUNING, aboveArms, type Flight } from '../sim/flight'
 import type { Arrival } from '../sim/predict'
-import type { Call } from './controls'
+import type { ControlButtons } from './controls'
 import { el, fmt } from './dom'
-import { createPanels, type Panels } from './panels'
 
 export interface HudView {
   flight: Flight
-  cue: Input
+  /** Commanded throttle and steering, 0 to 1 and -1 to 1. */
   throttle: number
-  tiltDeg: number
-  call: Call
-  /** How many times faster than real time the simulation is running. */
-  timeScale: number
+  steer: number
   paused: boolean
+  assist: boolean
+  muted: boolean
   arrival: Arrival | null
-  /** Height at which the cue lights the landing burn, m. */
-  igniteHeight: number
-  /** What the Skip button would skip, or null to hide it. */
-  skip: string | null
 }
 
-export interface Hud extends Pick<Panels, 'goButton' | 'noGoButton' | 'cutButton' | 'igniteButton' | 'tiltLeft' | 'tiltRight'> {
+export interface Hud extends ControlButtons {
   root: HTMLElement
-  throttleInput: HTMLInputElement
-  pauseButton: HTMLButtonElement
-  skipButton: HTMLButtonElement
   update(view: HudView): void
 }
 
@@ -53,138 +43,147 @@ function readout(title: string) {
   }
 }
 
-function distance(metres: number): [string, string] {
+function height(metres: number): [string, string] {
   const abs = Math.abs(metres)
-  if (abs >= 10_000) return [fmt.one(metres / 1000), 'km']
+  if (abs >= 1_000) return [fmt.one(metres / 1000), 'km']
   if (abs >= 100) return [fmt.whole(metres), 'm']
   return [fmt.one(metres), 'm']
 }
 
-export function clock(seconds: number): string {
-  const whole = Math.floor(seconds)
-  return `T+${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`
+const SVG = 'http://www.w3.org/2000/svg'
+function icon(d: string): SVGElement {
+  const svg = document.createElementNS(SVG, 'svg')
+  svg.setAttribute('viewBox', '0 0 16 16')
+  svg.setAttribute('width', '18')
+  svg.setAttribute('height', '18')
+  svg.setAttribute('aria-hidden', 'true')
+  const path = document.createElementNS(SVG, 'path')
+  path.setAttribute('d', d)
+  path.setAttribute('fill', 'none')
+  path.setAttribute('stroke', 'currentColor')
+  path.setAttribute('stroke-width', '2')
+  path.setAttribute('stroke-linecap', 'round')
+  path.setAttribute('stroke-linejoin', 'round')
+  svg.append(path)
+  return svg
 }
-
-const PHASES: Record<string, [string, string]> = {
-  ascent: ['Ascent', 'You have the throttle. Ease it back through max-Q or the stack breaks up.'],
-  staging: ['Hot staging', 'The ship lights its engines and flies on. The booster flips to come home.'],
-  boostback: ['Boostback', 'Read the checks and make the catch call. Cut the engines when the impact point reaches the mark.'],
-  coast: ['Coast', 'The grid fins steer. Nothing to fly until the landing burn.'],
-  falling: ['Falling', 'Light the landing burn at the cue. Too late and nothing can stop it.'],
-  burn: ['Landing burn', 'Throttle and tilt. Bring the white ring down on to the gold one, slowly.'],
-  sea: ['Landing burn', 'Throttle down to a soft splashdown.'],
-  ended: ['', ''],
-}
+const UP = 'M3 10l5-5 5 5'
+const DOWN = 'M3 6l5 5 5-5'
+const LEFT = 'M10 3 5 8l5 5'
+const RIGHT = 'M6 3l5 5-5 5'
 
 export function createHud(): Hud {
   const cells = [
-    readout('Height of the base of the booster above the ground, or above the catch arms during the landing burn'),
-    readout('Speed, or the sink rate during the landing burn'),
-    readout('Distance east of the tower'),
-    readout('Propellant left, as the change in speed it can still deliver. A game setting'),
+    readout('Height of the base of the booster above the catch arms'),
+    readout('Sink rate: how fast the booster is coming down'),
+    readout('Distance east or west of the centre of the arms'),
+    readout('Propellant left. A game setting'),
     readout('Engines lit'),
-    readout('Dynamic pressure, the predicted impact point, or how the burn ends if the controls are held'),
+    readout('Wind at the booster. A game setting'),
   ]
-  const [altitude, speed, range, deltaV, engines, context] = cells
+  const [above, sink, offset, propellant, engines, wind] = cells
 
-  const phaseName = el('strong', { class: 'phase-name' })
-  const phaseNote = el('span', { class: 'phase-note' })
-  const time = el('span', { class: 'value time' })
-  const chip = el('span', { class: 'chip', title: 'A game setting, not a mission figure' })
-  const pauseButton = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'false' }, 'Pause')
-  const skipButton = el('button', { class: 'ghost', type: 'button' })
-  const status = el('div', { class: 'panel status' }, el('div', { class: 'phase' }, phaseName, chip, time), phaseNote, el('div', { class: 'status-actions' }, skipButton, pauseButton))
-
-  const throttleInput = el('input', { id: 'throttle', type: 'range', min: 0, max: 100, step: 1, value: 100 })
-  const throttleValue = el('output', { for: 'throttle', class: 'value' })
-  const throttleCue = el('span', { class: 'cue-mark', 'aria-hidden': 'true' })
-  const throttleCueText = el('span', { class: 'cue-text' })
-  const throttle = el(
+  const assist = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'false', title: 'Show where the booster reaches the arms if you hold the controls as they are' }, 'Assist ', el('kbd', {}, 'H'))
+  const sound = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'true' }, 'Sound ', el('kbd', {}, 'M'))
+  const pause = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'false' }, 'Pause ', el('kbd', {}, 'P'))
+  const status = el(
     'div',
-    { class: 'panel control throttle' },
-    el('div', { class: 'control-head' }, el('label', { for: 'throttle', class: 'label' }, 'Throttle'), throttleValue),
-    el('div', { class: 'slider' }, throttleInput, throttleCue),
-    throttleCueText,
+    { class: 'panel status' },
+    el('strong', { class: 'phase-name' }, 'Final approach'),
+    el('div', { class: 'status-actions' }, assist, sound, pause),
   )
 
-  const panels = createPanels()
+  // Throttle: hold to move it. It can be set before the burn is lit.
+  const throttleDown = el('button', { class: 'pad-button', type: 'button', 'aria-label': 'Throttle down' }, icon(DOWN))
+  const throttleUp = el('button', { class: 'pad-button', type: 'button', 'aria-label': 'Throttle up' }, icon(UP))
+  const throttleFill = el('span', { class: 'gauge-fill' })
+  const throttleFloor = el('span', { class: 'gauge-floor', style: `left:${TUNING.minThrottle * 100}%` })
+  const throttleValue = el('span', { class: 'value' })
+  const throttleNote = el('span', { class: 'gauge-note' })
+  const throttle = el(
+    'div',
+    { class: 'group', role: 'group', 'aria-label': 'Throttle' },
+    throttleDown,
+    el('div', { class: 'gauge' }, el('div', { class: 'gauge-head' }, el('span', { class: 'label' }, 'Throttle'), throttleValue), el('span', { class: 'gauge-track', 'aria-hidden': 'true' }, throttleFill, throttleFloor), throttleNote),
+    throttleUp,
+  )
+
+  const ignite = el('button', { class: 'primary ignite', type: 'button' }, el('span', {}, 'Light burn'), el('kbd', {}, 'Space'))
+
+  // Steering: hold to lean. The needle shows the booster's lean now.
+  const steerLeft = el('button', { class: 'pad-button', type: 'button', 'aria-label': 'Steer west, towards the tower' }, icon(LEFT))
+  const steerRight = el('button', { class: 'pad-button', type: 'button', 'aria-label': 'Steer east, towards the sea' }, icon(RIGHT))
+  const needle = el('span', { class: 'lean-needle' })
+  const leanValue = el('span', { class: 'value' })
+  const leanNote = el('span', { class: 'gauge-note' })
+  const steer = el(
+    'div',
+    { class: 'group', role: 'group', 'aria-label': 'Steering' },
+    steerLeft,
+    el('div', { class: 'gauge' }, el('div', { class: 'gauge-head' }, el('span', { class: 'label' }, 'Lean'), leanValue), el('span', { class: 'lean-track', 'aria-hidden': 'true' }, needle), leanNote),
+    steerRight,
+  )
+
+  const keys = el('p', { class: 'keys-hint' }, el('kbd', {}, 'W S'), ' throttle  ', el('kbd', {}, 'A D'), ' steer  ', el('kbd', {}, 'R'), ' new drop')
+  const pad = el('div', { class: 'panel pad' }, throttle, ignite, steer)
+
   const root = el(
     'div',
     { class: 'hud', hidden: true },
     status,
     el('div', { class: 'panel readouts', role: 'group', 'aria-label': 'Instruments' }, ...cells.map((c) => c.cell)),
-    throttle,
-    panels.root,
+    el('div', { class: 'bottom' }, pad, keys),
   )
 
-  let lastStatus = ''
-  let lastThrottle = ''
+  let last = ''
 
   function update(view: HudView) {
     const { flight } = view
     const s = flight.state
-    const landing = flight.phase === 'landing'
-    const key = flight.phase === 'landing' ? (!flight.lit ? 'falling' : flight.committed ? 'burn' : 'sea') : flight.phase
+    const h = aboveArms(flight)
+    const close = h < 80
 
-    const target = flight.committed ? TUNING.catchHeight : 0
-    if (landing) altitude.set(flight.committed ? 'Above arms' : 'Altitude', ...distance(Math.max(0, s.y - target)))
-    else altitude.set('Altitude', ...(s.y >= 10_000 ? ([fmt.one(s.y / 1000), 'km'] as [string, string]) : distance(Math.max(0, s.y))))
-    if (landing && flight.lit) speed.set('Sink', fmt.one(-s.vy), 'm/s', s.y - target < 60 && -s.vy > TUNING.catchSinkSpeed * 2)
-    else speed.set('Speed', fmt.whole(Math.hypot(s.vx, s.vy)), 'm/s')
-    if (landing) range.set('Offset', fmt.one(Math.abs(s.x)), s.x >= 0 ? 'm east' : 'm west', flight.committed && s.y - target < 40 && Math.abs(s.x) > TUNING.catchHalfGap)
-    else range.set('Downrange', ...distance(s.x))
-    deltaV.set('Propellant', fmt.whole(s.deltaV), 'm/s', s.deltaV < 100)
-    engines.set('Engines', String(flight.thrustAccel > 0 || flight.phase === 'staging' ? flight.engines : 0), `of ${flight.phase === 'ascent' ? ENGINES.liftoff : ENGINES.centre}`)
+    above.set(h > -0.05 ? 'Above arms' : 'Below arms', ...height(Math.abs(h)))
+    const fall = -s.vy
+    sink.set(fall >= 0 ? 'Sink' : 'Climb', fmt.one(Math.abs(fall)), 'm/s', close && fall > TUNING.catchSinkSpeed)
+    const off = Math.abs(s.x)
+    const [offText, offUnit] = off >= 1_000 ? [fmt.one(off / 1000), 'km'] : [off >= 100 ? fmt.whole(off) : fmt.one(off), 'm']
+    offset.set('Offset', offText, off < 0.05 ? offUnit : s.x > 0 ? `${offUnit} east →` : `${offUnit} ← west`, close && off > TUNING.catchHalfGap)
+    const left = s.deltaV / TUNING.propellant
+    propellant.set('Propellant', fmt.whole(left * 100), '%', left < 0.15)
+    engines.set('Engines', flight.engines ? String(flight.engines) : 'Off', flight.engines ? `of ${ENGINES.centre}` : flight.lit ? 'dry' : 'grid fins')
+    const w = flight.windX
+    wind.set('Wind', fmt.whole(Math.abs(w)), Math.abs(w) < 0.5 ? 'm/s' : w > 0 ? 'm/s to east →' : 'm/s ← to west')
 
-    if (flight.phase === 'ascent') {
-      const used = dynamicPressure(s) / TUNING.qLimit
-      context.set('Pressure', fmt.whole(used * 100), '% of limit', used > 1)
-    } else if (landing && flight.lit) {
-      const a = view.arrival
-      if (!a) context.set('Arrival', '--', '')
-      else if (a.hover) context.set('Arrival', '--', 'stops in the air', true)
-      else context.set('Arrival', fmt.one(a.sink), 'm/s sink', a.outcome !== 'caught' && a.outcome !== 'splashdown')
-    } else if (flight.phase === 'staging') context.set('Impact', '--', '')
-    else {
-      const [text, unit] = distance(Math.abs(flight.impactX))
-      context.set('Impact', text, `${unit} ${flight.impactX >= 0 ? 'east' : 'west'}`)
-    }
-    time.textContent = clock(s.time)
-
-    const scale = Math.round(view.timeScale)
-    const statusKey = `${key}|${view.paused}|${scale}|${view.skip}`
-    if (statusKey !== lastStatus) {
-      lastStatus = statusKey
-      const [name, note] = PHASES[key]
-      phaseName.textContent = view.paused ? 'Paused' : name
-      phaseNote.textContent = note
-      chip.textContent = scale === 1 ? 'Real time' : `${scale}x time`
-      skipButton.hidden = view.skip === null
-      skipButton.textContent = view.skip ?? ''
-      pauseButton.textContent = view.paused ? 'Resume' : 'Pause'
-      pauseButton.setAttribute('aria-pressed', String(view.paused))
-    }
-
-    // The throttle is live in the ascent and in the landing burn. Its floor differs between them.
-    const live = flight.phase === 'ascent' || (landing && flight.lit)
-    const floor = flight.phase === 'ascent' ? TUNING.ascentMinThrottle : TUNING.landingMinThrottle
-    const shown = live ? Math.max(floor, view.throttle) : view.throttle
-    const pct = Math.round(shown * 100)
-    const cuePct = Math.round(view.cue.throttle * 100)
-    const throttleKey = `${pct}|${cuePct}|${live}`
-    if (throttleKey !== lastThrottle) {
-      lastThrottle = throttleKey
-      throttleInput.disabled = !live
-      throttle.classList.toggle('idle', !live)
-      if (Number(throttleInput.value) !== pct) throttleInput.value = String(pct)
-      throttleValue.textContent = live ? `${pct}%` : '--'
-      throttleCue.style.setProperty('--at', String(view.cue.throttle))
-      throttleCue.style.visibility = live ? 'visible' : 'hidden'
-      throttleCueText.textContent = live ? `Cue ${cuePct}%` : 'Held by computer'
-    }
-
-    panels.update(view, key)
+    const lit = flight.lit && !flight.ranDry
+    const shown = lit ? Math.max(TUNING.minThrottle, view.throttle) : view.throttle
+    const lean = Math.round(flight.tiltDeg)
+    const arrival = view.assist && view.arrival && !view.arrival.hover ? view.arrival : null
+    const key = `${Math.round(shown * 100)}|${lit}|${flight.lit}|${lean}|${view.paused}|${view.assist}|${arrival ? Math.round(arrival.x) : 'x'}|${flight.downselected}|${view.muted}`
+    if (key === last) return
+    last = key
+    throttleValue.textContent = `${Math.round(shown * 100)}%`
+    throttleFill.style.width = `${(shown * 100).toFixed(1)}%`
+    throttle.classList.toggle('idle', !lit)
+    throttleNote.textContent = lit ? (flight.downselected ? `${ENGINES.inner} centre engines` : 'All lit engines') : flight.lit ? 'Tanks dry' : 'Set for the burn'
+    ignite.disabled = flight.lit
+    ignite.firstElementChild!.textContent = flight.lit ? 'Burn lit' : 'Light burn'
+    needle.style.left = `${(50 + (flight.tiltDeg / TUNING.tiltMaxDeg) * 50).toFixed(1)}%`
+    leanValue.textContent = lean === 0 ? '0°' : `${Math.abs(lean)}° ${lean > 0 ? 'E' : 'W'}`
+    leanNote.textContent = arrival ? `Assist: ${arrivalText(arrival.x)}` : lit ? 'Engines and fins' : 'Grid fins'
+    pause.firstChild!.textContent = view.paused ? 'Resume ' : 'Pause '
+    pause.setAttribute('aria-pressed', String(view.paused))
+    assist.setAttribute('aria-pressed', String(view.assist))
+    sound.setAttribute('aria-pressed', String(!view.muted))
+    sound.firstChild!.textContent = view.muted ? 'Sound off ' : 'Sound '
   }
 
-  return { ...panels, root, throttleInput, pauseButton, skipButton, update }
+  return { root, update, throttleUp, throttleDown, steerLeft, steerRight, ignite, assist, sound, pause }
+}
+
+function arrivalText(x: number): string {
+  const off = Math.abs(x)
+  if (off < 1) return 'on centre'
+  const text = off >= 1_000 ? `${fmt.one(off / 1000)} km` : `${Math.round(off)} m`
+  return `${text} ${x > 0 ? 'east' : 'west'}`
 }

@@ -1,27 +1,13 @@
-// Start card, tip cards and the end card. All copy that states a real-world fact takes
-// its number and its source from data/facts.ts.
+// Start card and end card. All copy that states a real-world fact takes its number and its
+// source from data/facts.ts. Everything else the player sees is game tuning, and says so.
 
-import type { Flight, Outcome } from '../sim/flight'
+import { TUNING, type Flight, type Outcome } from '../sim/flight'
 import type { Score } from '../sim/score'
-import {
-  CATCH_RECORD,
-  ENGINES,
-  FLIGHT_15,
-  FLIGHT_8,
-  GROUND_CREDIT,
-  NOT_AFFILIATED,
-  QUOTES,
-  SPACEX_F8,
-  VEHICLE,
-  WIKI_F8,
-  type Source,
-} from '../data/facts'
-import type { Call } from './controls'
+import { CATCH_RECORD, ENGINES, FLIGHT_15, FLIGHT_8, GROUND_CREDIT, NOT_AFFILIATED, QUOTES, VEHICLE, WIKI_F8, type Source } from '../data/facts'
 import { el, sourceLink } from './dom'
-import { clock } from './hud'
 
 const TUNING_NOTE =
-  'Game settings, not mission figures: thrust, speeds, heights, propellant, the pressure limit, the catch limits and the time compression. SpaceX publishes times and engine counts, not these.'
+  'Game settings, not mission figures: the starting height, speeds, thrust, wind, propellant and the catch limits. SpaceX publishes engine counts and times, not these.'
 
 function groundCredit(flown: string | null): string {
   if (!flown) return GROUND_CREDIT.text
@@ -31,6 +17,11 @@ function groundCredit(flown: string | null): string {
 
 const link = (source: Source) => sourceLink(source.name, source.url)
 
+function clock(seconds: number): string {
+  const whole = Math.floor(seconds)
+  return `T+${Math.floor(whole / 60)}:${String(whole % 60).padStart(2, '0')}`
+}
+
 // ---------- Start card ----------
 
 export interface StartCard {
@@ -39,10 +30,11 @@ export interface StartCard {
   setError(text: string): void
 }
 
+const key = (keys: string, action: string) => el('li', {}, el('kbd', {}, keys), ' ', action)
+
 export function createStartCard(onBegin: () => void): StartCard {
-  const button = el('button', { class: 'primary', type: 'button', onclick: onBegin }, 'Go for launch')
+  const button = el('button', { class: 'primary', type: 'button', onclick: onBegin }, 'Take control')
   const error = el('p', { class: 'error', role: 'alert' })
-  const key = (keys: string, action: string) => el('li', {}, el('kbd', {}, keys), ' ', action)
 
   const root = el(
     'div',
@@ -55,29 +47,31 @@ export function createStartCard(onBegin: () => void): StartCard {
       el(
         'p',
         {},
-        `Fly a ${VEHICLE.boosterHeight.value} m Super Heavy booster off the pad on ${ENGINES.liftoff} engines, send the ship on its way, then bring the booster back and set it down in the arms of the launch tower. `,
-        'The run follows the timeline SpaceX published for Starship Flight 8.',
+        `A ${VEHICLE.boosterHeight.value} m Super Heavy booster is falling engines first, high above the launch site, with its engines off. `,
+        'Fly it down into the arms of the tower. Nobody will tell you when to press.',
       ),
       el(
         'ul',
         { class: 'keys' },
+        key('A D', 'steer west or east'),
         key('W S', 'throttle'),
-        key('A D', 'tilt'),
-        key('G N', 'go or no go'),
-        key('Space', 'cut or light engines'),
+        key('Space', 'light the landing burn'),
+        key('H', 'Assist'),
+        key('M', 'sound'),
         key('P', 'pause'),
-        key('R', 'retry'),
+        key('R', 'new drop'),
       ),
-      el('p', { class: 'muted' }, 'Arrow keys and the on-screen controls work too. Gold marks show what the flight computer would do.'),
-      el('div', { class: 'actions' }, button),
-      error,
       el(
         'ul',
         { class: 'notes' },
-        el('li', {}, 'You throttle through max Q, make the catch call, cut the boostback burn, light the landing burn and fly the last seconds into the arms. The quiet stretches run faster than real time, and the HUD says by how much.'),
+        el('li', {}, 'Steer with the grid fins on the way down. The wind pushes you about, and it is stronger high up.'),
+        el('li', {}, `Light the landing burn once, low enough to save propellant and high enough to stop. It lights the ${ENGINES.centre} centre engines, then drops to ${ENGINES.inner} as you slow.`),
+        el('li', {}, 'Arrive centred between the arms, slow and upright. Assist, off at the start, shows where you will reach the arms if you hold the controls.'),
         el('li', {}, TUNING_NOTE),
-        el('li', {}, 'The tower, arms and launch mount are representative models. The ground is an aerial photograph from June 2022, so the site in it is older than the flight.'),
+        el('li', {}, 'The tower, arms and launch mount are representative models.'),
       ),
+      el('div', { class: 'actions' }, button),
+      error,
       el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(GROUND_CREDIT.text, GROUND_CREDIT.url), '.'),
     ),
   )
@@ -96,154 +90,52 @@ export function createStartCard(onBegin: () => void): StartCard {
   }
 }
 
-// ---------- Tip cards ----------
-
-export type TipId = 'maxq' | 'staging' | 'call' | 'fins' | 'burn' | 'three'
-
-interface TipCopy {
-  title: string
-  body: string
-  sources: Source[]
-}
-
-const published = (id: string) => clock(FLIGHT_8.find((row) => row.id === id)!.seconds)
-
-const TIPS: Record<TipId, TipCopy> = {
-  maxq: {
-    title: 'Max Q',
-    body: `The moment the air presses hardest on the stack. Ease the throttle back as the pressure meter nears the line, then open it again. Flight 8's published timeline puts it at ${published('maxQ')}.`,
-    sources: [WIKI_F8],
-  },
-  staging: {
-    title: 'Hot staging',
-    body: `All but ${ENGINES.inner} of the booster's engines shut down, and the ship lights its own while still attached. Then the booster flips to fly home.`,
-    sources: [SPACEX_F8],
-  },
-  call: {
-    title: 'The catch call',
-    body: `"${QUOTES.criteria.text}" Read the checks, then call go or no go. With no go, the booster flies itself to the sea.`,
-    sources: [QUOTES.criteria.source],
-  },
-  fins: {
-    title: 'Grid fins',
-    body: 'The grid fins steer the booster on the way down. They need air to push against, so they do little until it is low.',
-    sources: [],
-  },
-  burn: {
-    title: 'The landing burn',
-    body: `The ${ENGINES.centre} centre engines relight to brake, then all but ${ENGINES.inner} shut down. Light it at the cue: too late and nothing can stop the booster.`,
-    sources: [ENGINES.source],
-  },
-  three: {
-    title: 'Three engines',
-    body: `"${QUOTES.flight8.text}" Bring the white ring on to the gold one, slowly.`,
-    sources: [QUOTES.flight8.source],
-  },
-}
-
-// Short, because on a phone a tip card covers the booster while it is up.
-const TIP_SECONDS = 10
-
-export interface Tips {
-  root: HTMLElement
-  show(id: TipId): void
-  clear(): void
-}
-
-export function createTips(): Tips {
-  const root = el('div', { class: 'tips', 'aria-live': 'polite' })
-  let timer = 0
-  const clear = () => {
-    window.clearTimeout(timer)
-    root.replaceChildren()
-  }
-  return {
-    root,
-    clear,
-    show(id) {
-      const tip = TIPS[id]
-      clear()
-      const sources = el('p', { class: 'fine' })
-      tip.sources.forEach((source, i) => sources.append(i ? ', ' : 'Source: ', link(source)))
-      root.append(
-        el(
-          'aside',
-          { class: 'panel tip' },
-          el('div', { class: 'tip-head' }, el('strong', {}, tip.title), el('button', { class: 'ghost', type: 'button', 'aria-label': 'Dismiss tip', onclick: clear }, 'Close')),
-          el('p', {}, tip.body),
-          tip.sources.length ? sources : null,
-        ),
-      )
-      timer = window.setTimeout(clear, TIP_SECONDS * 1000)
-    },
-  }
-}
-
 // ---------- End card ----------
 
-const OUTCOME: Record<Outcome, { title: string; line: string }> = {
-  caught: { title: 'Caught', line: 'The arms closed on the booster. It is hanging on the tower.' },
-  'hard-catch': {
-    title: 'Too hard into the arms',
-    line: 'The booster was between the arms, but too fast or too far off vertical, and it was lost. Arrive slower and upright.',
-  },
-  missed: { title: 'Missed the arms', line: 'The booster came down outside the arms and was lost. Keep the white ring on the gold one all the way in.' },
-  'no-burn': {
-    title: 'No landing burn',
-    line: 'The engines were never relit, and the booster reached the tower at full speed. Light the burn when the cue says to.',
-  },
-  'tower-strike': { title: 'Struck the tower', line: 'The booster drifted west into the tower and was lost. Tilt east sooner.' },
-  splashdown: { title: 'Splashdown', line: 'A soft, controlled splashdown in the Gulf.' },
-  'hard-splashdown': { title: 'Hit the sea hard', line: 'The booster reached the water too fast. Light the burn at the cue and throttle down to a slow sink.' },
-  'on-land': {
-    title: 'Came down on land',
-    line: 'With no catch, the booster belongs offshore. Cut the boostback engines when the impact point reaches the gold line.',
-  },
-  breakup: {
-    title: 'Broke up at max Q',
-    line: 'Dynamic pressure stayed over the limit for too long. Ease the throttle back as the meter nears the line.',
-  },
+const TITLE: Record<Outcome, string> = {
+  caught: 'Caught',
+  'hard-catch': 'Too hard into the arms',
+  'tower-strike': 'Hit the tower',
+  ground: 'Crashed below the arms',
+  sea: 'Overshot into the Gulf',
+  'no-propellant': 'Out of propellant',
+  'no-burn': 'No landing burn',
 }
 
-function verdict(flight: Flight, call: Call): string | null {
-  if (flight.events.boostbackEnd === undefined) return null
-  const fault = flight.scenario.towerFault !== null
-  if (fault && call === 'go') return 'Your call: go, against a failed tower check. The wrong call, and it was overridden: the catch was called off and the booster sent to the sea, as on Flight 6.'
-  if (fault) return `Your call: ${call === 'no-go' ? 'no go' : 'none'}. The tower check had failed, so the sea was the right place for this booster.`
-  if (call === 'go') return 'Your call: go for catch, with the tower and the booster healthy. The right call.'
-  return `Your call: ${call === 'no-go' ? 'no go' : 'none'}. With no go the booster takes its default path to the sea. The tower was healthy, so this one could have been caught.`
+/** What happened on the way down, noted by the game loop for the tips. */
+export interface RunNotes {
+  /** Offset from the arms when the booster passed 2 km above them, m east. Null if it never did. */
+  xAt2km: number | null
+  /** Wind at that moment, m/s towards the east. */
+  windAt2km: number
+  assistUsed: boolean
 }
-
-const tagged = (text: string, status: string, source: Source) => el('span', { class: 'ref' }, `${text} `, el('span', { class: 'tag' }, status), ' ', link(source))
 
 export interface EndOptions {
-  call: Call
   /** ISO date the ground photograph was flown, or null. */
   groundFlown: string | null
   /** Null unless the booster was caught. */
   score: Score | null
-  /** Null when the run ended before the landing began. */
-  onRetry: (() => void) | null
-  onRestart(): void
-  /** Null when there is no landing to play back. */
-  onReplay: (() => void) | null
+  notes: RunNotes
+  onRetry(): void
+  onSame(): void
 }
 
-/** The best score for this scenario on this device, after counting `total`. Storage may be blocked. */
-function best(scenario: string, total: number): { best: number; isNew: boolean } {
-  const key = `starship-catch:best:${scenario}`
+/** The best score on this device, after counting `total`. Storage may be blocked. */
+function best(total: number): { best: number; isNew: boolean } {
+  const storeKey = 'starship-catch:best:approach'
   try {
-    const before = Number(localStorage.getItem(key) ?? 0)
-    if (total > before) localStorage.setItem(key, String(total))
+    const before = Number(localStorage.getItem(storeKey) ?? 0)
+    if (total > before) localStorage.setItem(storeKey, String(total))
     return { best: Math.max(before, total), isNew: total > before && before > 0 }
   } catch {
     return { best: total, isNew: false }
   }
 }
 
-function scoreBlock(score: Score, scenario: string): HTMLElement {
-  const record = best(scenario, score.total)
-  const note = record.isNew ? 'A new best' : record.best > score.total ? `Best ${record.best}` : 'Out of 100'
+function scoreBlock(score: Score): HTMLElement {
+  const record = best(score.total)
+  const note = record.isNew ? 'A new best' : record.best > score.total ? `Best ${record.best}` : 'Catch score, out of 100'
   return el(
     'div',
     { class: 'score', role: 'group', 'aria-label': `Catch score ${score.total} out of 100` },
@@ -251,65 +143,118 @@ function scoreBlock(score: Score, scenario: string): HTMLElement {
     ...score.parts.map((part) => {
       const bar = el('span', {})
       bar.style.width = `${Math.round(part.share * 100)}%`
-      return el(
-        'div',
-        { class: 'score-part' },
-        el('span', {}, part.label),
-        el('span', { class: 'score-bar', 'aria-hidden': 'true' }, bar),
-        el('span', { class: 'value' }, part.value),
-      )
+      return el('div', { class: 'score-part' }, el('span', {}, part.label), el('span', { class: 'score-bar', 'aria-hidden': 'true' }, bar), el('span', { class: 'value' }, part.value))
     }),
   )
 }
 
-export function createEndCard(flight: Flight, options: EndOptions): HTMLElement {
-  const outcome = OUTCOME[flight.outcome ?? 'missed']
-  const restart = el('button', { class: options.onRetry ? 'secondary' : 'primary', type: 'button', onclick: options.onRestart }, 'Fly again from liftoff')
-  const retry = options.onRetry ? el('button', { class: 'primary', type: 'button', onclick: options.onRetry }, 'Fly the landing again') : null
-  const replay = options.onReplay ? el('button', { class: 'secondary', type: 'button', onclick: options.onReplay }, 'Watch the replay') : null
-  const call = verdict(flight, options.call)
+const metres = (m: number) => (Math.abs(m) >= 1_000 ? `${(Math.abs(m) / 1_000).toFixed(1)} km` : `${Math.round(Math.abs(m))} m`)
 
-  const table = el(
-    'table',
-    {},
-    el('thead', {}, el('tr', {}, el('th', { scope: 'col' }, 'Event'), el('th', { scope: 'col' }, 'You'), el('th', { scope: 'col' }, 'Starship Flight 8'))),
+/** Two or three if-then tips, picked from what happened on this run. */
+export function coaching(flight: Flight, notes: RunNotes): string[] {
+  const t = TUNING
+  const s = flight.state
+  const tips: string[] = []
+  const add = (tip: string) => {
+    if (tips.length < 3 && !tips.includes(tip)) tips.push(tip)
+  }
+  const outcome = flight.outcome
+  const litHeight = flight.litAt === null ? null : flight.litAt - t.catchHeight
+
+  if (outcome === 'no-burn') add('If the burn never lights, nothing can stop the booster. Press Space while it is still falling fast, a kilometre or two above the arms.')
+  if (flight.ranDry && litHeight !== null && litHeight > 2_500)
+    add(`You lit the burn ${metres(litHeight)} above the arms. If you run dry, light it later and lower: until then the air brakes the booster for free.`)
+  else if (flight.ranDry) add('If you run dry, do not hover. Keep sinking on the 3 engines and line up on the way down.')
+
+  if (notes.xAt2km !== null && Math.abs(notes.xAt2km) > 150 && outcome !== 'caught') {
+    const side = notes.xAt2km > 0 ? 'east' : 'west'
+    const other = notes.xAt2km > 0 ? 'west' : 'east'
+    const windy = Math.sign(notes.windAt2km) === Math.sign(notes.xAt2km) && Math.abs(notes.windAt2km) > 4
+    add(`At 2 km you were still ${metres(notes.xAt2km)} ${side} of the tower. If the ${windy ? 'wind pushes' : 'drift carries'} you ${side}, steer ${other} with the grid fins while you are high: they bite hardest in fast, thick air.`)
+  }
+  if (litHeight !== null && litHeight < 900 && (outcome === 'hard-catch' || outcome === 'ground' || outcome === 'tower-strike') && !flight.ranDry)
+    add(`You lit the burn ${metres(litHeight)} above the arms. If you arrive too fast, light it a few hundred metres higher and hold the throttle open until the sink rate falls.`)
+  if (outcome === 'tower-strike' && s.x < t.towerFace - t.towerWidth / 2) add('If you come in from the west of the tower, stay above its top until you are past it, then sink.')
+  else if (outcome === 'tower-strike' || outcome === 'ground')
+    add(`If you are off centre near the arms, stop sinking and hover just above them until the offset reads under ${t.catchHalfGap} m.`)
+  if (outcome === 'hard-catch') {
+    if (-s.vy > t.catchSinkSpeed) add('If you reach the arms fast, add throttle earlier on the 3 engines and let the sink rate fall to walking pace.')
+    if (Math.abs(s.vx) > t.catchSideSpeed) add('If you slide sideways into the arms, ease off the steering a few seconds before and let the booster settle.')
+    if (Math.abs(flight.tiltDeg) > t.catchTiltDeg) add('If you lean at the arms, let go of the steering in the last 20 m so the booster comes upright.')
+  }
+  if (outcome === 'caught') {
+    if (Math.abs(s.x) > 1) add('If you want a higher score, hover a moment just above the arms and centre it to under a metre before the last few metres.')
+    if (-s.vy > 3) add('If you want it softer, throttle up a touch in the last 10 m so it settles in at a walking pace.')
+    if (s.deltaV / t.propellant < 0.2) add('If you want to keep more propellant, light the burn lower and spend less time hovering.')
+    add('A new drop changes the start, the drift and the wind. See if you can do it again.')
+  }
+  if (!notes.assistUsed && outcome !== 'caught') add('If you want help reading the drift, Assist (H) marks where you will reach the arms if you hold the controls as they are.')
+  if (tips.length < 2) add('If it keeps getting away from you, make small, early corrections. Big late ones overshoot.')
+  return tips
+}
+
+function stat(label: string, value: string, unit: string, over: boolean): HTMLElement {
+  return el('div', { class: `stat${over ? ' over' : ''}` }, el('span', { class: 'label' }, label), el('span', { class: 'stat-figure' }, el('span', { class: 'value' }, value), el('span', { class: 'unit' }, unit)))
+}
+
+const row = (id: string) => FLIGHT_8.find((r) => r.id === id)!
+
+export function createEndCard(flight: Flight, options: EndOptions): HTMLElement {
+  const outcome = flight.outcome ?? 'ground'
+  const caught = outcome === 'caught'
+  const s = flight.state
+  const t = TUNING
+  const retry = el('button', { class: 'primary retry', type: 'button', onclick: options.onRetry }, 'Retry ', el('kbd', {}, 'R'))
+  const same = el('button', { class: 'secondary', type: 'button', onclick: options.onSame }, 'Same drop again')
+  const burn = row('landingStart')
+  const caughtRow = row('catch')
+  const engines = flight.scenario.engines
+  const sink = Math.max(0, -s.vy)
+  const left = Math.round((s.deltaV / t.propellant) * 100)
+  const off = Math.abs(s.x)
+
+  const stats = el(
+    'div',
+    { class: 'stats' },
+    stat(caught ? 'Sink into the arms' : 'Sink at the end', sink.toFixed(sink < 20 ? 1 : 0), 'm/s', sink > t.catchSinkSpeed),
+    stat('Offset', off >= 1_000 ? (off / 1_000).toFixed(1) : off.toFixed(off < 100 ? 1 : 0), `${off >= 1_000 ? 'km' : 'm'} ${s.x >= 0 ? 'east' : 'west'}`, off > t.catchHalfGap),
+    stat('Propellant left', String(left), '%', left <= 0),
+  )
+
+  const tips = coaching(flight, options.notes)
+  const sources = el(
+    'details',
+    { class: 'sources' },
+    el('summary', {}, 'Sources and notes'),
     el(
-      'tbody',
-      {},
-      ...FLIGHT_8.map((row) => {
-        const at = flight.events[row.id]
-        return el(
-          'tr',
-          {},
-          el('th', { scope: 'row' }, row.label),
-          el('td', { class: 'you' }, el('span', { class: 'value' }, at === undefined ? '--' : clock(at))),
-          el('td', {}, tagged(clock(row.seconds), 'Published timeline', WIKI_F8), tagged(row.flown, 'Flown', SPACEX_F8)),
-        )
-      }),
+      'div',
+      { class: 'facts' },
+      el('p', {}, `On Flight 8 the landing burn began at ${clock(burn.seconds)} and the booster was caught at ${clock(caughtRow.seconds)}, ${caughtRow.seconds - burn.seconds} seconds later. `, el('span', { class: 'tag' }, 'Published timeline'), ' ', link(WIKI_F8)),
+      el('p', {}, `"${QUOTES.flight8.text}" `, link(QUOTES.flight8.source)),
+      el('p', {}, `The engines on this drop were modelled on ${engines.modelledOn} `, link(engines.source)),
+      el('p', {}, `${CATCH_RECORD.text} ${FLIGHT_15.text} `, link(FLIGHT_15.source)),
+      options.score ? el('p', { class: 'fine' }, "The score is a game measure: how far inside the game's catch limits you arrived, and the propellant you kept. SpaceX publishes no such figure.") : null,
+      el('p', { class: 'fine' }, `This drop: seed ${flight.scenario.seed}. ${TUNING_NOTE}`),
+      el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(groundCredit(options.groundFlown), GROUND_CREDIT.url), '.'),
     ),
   )
 
   const card = el(
     'div',
-    { class: 'overlay' },
+    { class: 'overlay end-overlay' },
     el(
       'section',
-      { class: 'panel card end', role: 'dialog', 'aria-labelledby': 'end-title' },
-      el('h1', { id: 'end-title' }, outcome.title),
-      el('p', {}, outcome.line),
-      options.score ? scoreBlock(options.score, flight.scenario.id) : null,
-      call ? el('p', { class: 'muted' }, call, ' The rule: ', link(QUOTES.defaultPath.source), '.') : null,
-      el('div', { class: 'actions' }, retry, restart, replay),
-      el('details', { class: 'compare' }, el('summary', {}, 'Your times beside Starship Flight 8'), el('div', { class: 'table-wrap' }, table)),
-      options.score ? el('p', { class: 'fine' }, 'The score is a game measure: how far inside the catch limits you arrived, and the propellant you saved. SpaceX publishes no such figure.') : null,
-      call ? el('p', { class: 'fine' }, `This run was modelled on ${flight.scenario.modelledOn} `, link(flight.scenario.source), '.') : null,
-      el('p', { class: 'fine' }, `Your times come from a simplified flight model. ${TUNING_NOTE}`),
-      el('p', { class: 'fine' }, `${CATCH_RECORD.text} ${FLIGHT_15.text} `, link(FLIGHT_15.source), '.'),
-      el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(groundCredit(options.groundFlown), GROUND_CREDIT.url), '.'),
+      { class: `panel card end${caught ? ' won' : ' lost'}`, role: 'dialog', 'aria-labelledby': 'end-title' },
+      el('p', { class: 'eyebrow' }, caught ? 'Booster caught' : 'Booster lost'),
+      el('h1', { id: 'end-title' }, TITLE[outcome]),
+      el('p', { class: 'reason' }, flight.reason),
+      stats,
+      options.score ? scoreBlock(options.score) : null,
+      el('div', { class: 'tips' }, el('span', { class: 'label' }, 'Next time'), el('ul', {}, ...tips.map((tip) => el('li', {}, tip)))),
+      el('div', { class: 'actions' }, retry, same),
+      sources,
     ),
   )
-  queueMicrotask(() => (retry ?? restart).focus({ preventScroll: true }))
+  queueMicrotask(() => retry.focus({ preventScroll: true }))
   return card
 }
-
-
