@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { DT, step, type State } from './physics'
-import { assessTouchdown, guidance, nextAim, predictTouchdown, takeoverState } from './flight'
+import { AIM_HOLD_SECONDS, assessTouchdown, guidance, nextAim, predictTouchdown, takeoverState, type AimChoice } from './flight'
 
 // The rates the keys move the controls at, as in ui/controls.ts.
 const THROTTLE_PER_SECOND = 0.7
@@ -18,12 +18,14 @@ function flyByKeys(aimRange: number, steerOff = false, reaction = 0.3) {
   let tDir = 0
   let pDir = 0
   let markerClear = false
+  let choice: AimChoice = { aim: aimRange, side: 0, held: 0 }
   for (let i = 0; i < 60 * 600 && state.altitude > 0; i++) {
     seen.push(guidance(state, 'approach', 0, aimRange))
     if (steerOff && i % 15 === 0) {
       const marker = predictTouchdown(state, { throttle, pitchDeg: pitch }, () => 0)?.range ?? null
       // The game only re-aims once the player has touched the controls; here, from 1.5 km.
-      if (state.range < 1_500) aimRange = nextAim(aimRange, marker, state.range)
+      if (state.range < 1_500) choice = nextAim(choice, marker, state.range, 15 * DT)
+      aimRange = choice.aim
       if (marker !== null && state.range < 1_500 && Math.abs(marker) > 40) markerClear = true
     }
     const seen0 = seen[Math.max(0, seen.length - 1 - delay)]
@@ -52,14 +54,22 @@ describe('aim point', () => {
     expect(result.outcome, JSON.stringify(result)).toBe('landed')
   })
 
-  it('the cue keeps its aim until the player puts the marker clear of the boulders, then aims inside the ring on that side and keeps it', () => {
-    expect(nextAim(0, 50, 2_500), 'too early: before the boulders tip').toBe(0)
-    expect(nextAim(0, 12, 1_200), 'marker in the boulders').toBe(0)
-    expect(nextAim(0, -55, 1_200), 'marker clear, beyond the rocks').toBe(-55)
-    expect(nextAim(-55, 20, 600), 'drifted back into the rocks: keep the clear spot').toBe(-55)
-    expect(nextAim(0, 400, 1_200), 'far short: the near side of the ring').toBe(100)
-    expect(nextAim(-55, 400, 600), 'chosen once: the marker swinging to the other side does not move it').toBe(-55)
-    expect(nextAim(0, -2_000, 1_200), 'far long: the far side of the ring').toBe(-100)
-    expect(nextAim(0, 33, 1_200), 'just clear: at least 40 m out').toBe(40)
+  it('the cue keeps its aim until the player holds the marker clear of the boulders, then aims inside the ring on that side and keeps it', () => {
+    const fresh: AimChoice = { aim: 0, side: 0, held: 0 }
+    // The marker held at `marker` for a little over the hold time, from `from`.
+    const hold = (marker: number, range: number, from = fresh) =>
+      nextAim(nextAim(from, marker, range, AIM_HOLD_SECONDS / 2), marker, range, AIM_HOLD_SECONDS / 2 + 0.01).aim
+    const locked = (aim: number): AimChoice => ({ aim, side: Math.sign(aim), held: 0 })
+    expect(hold(50, 2_500), 'too early: before the boulders tip').toBe(0)
+    expect(hold(12, 1_200), 'marker in the boulders').toBe(0)
+    expect(hold(-55, 1_200), 'marker clear, beyond the rocks').toBe(-55)
+    expect(hold(20, 600, locked(-55)), 'drifted back into the rocks: keep the clear spot').toBe(-55)
+    expect(hold(400, 1_200), 'far short: the near side of the ring').toBe(100)
+    expect(hold(400, 600, locked(-55)), 'chosen once: the marker swinging to the other side does not move it').toBe(-55)
+    expect(hold(-2_000, 1_200), 'far long: the far side of the ring').toBe(-100)
+    expect(hold(33, 1_200), 'just clear: at least 40 m out').toBe(40)
+    expect(nextAim(fresh, 300, 1_200, AIM_HOLD_SECONDS * 0.9).aim, 'clear for under the hold time: not chosen yet').toBe(0)
+    const swung = nextAim(nextAim(fresh, 300, 1_200, AIM_HOLD_SECONDS * 0.6), -300, 1_200, AIM_HOLD_SECONDS * 0.6)
+    expect(swung.aim, 'swung from short to long inside the hold time: the clock starts again').toBe(0)
   })
 })

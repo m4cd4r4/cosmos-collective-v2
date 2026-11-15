@@ -143,15 +143,30 @@ export const CHOOSE_SPOT_RANGE = 1_800
  * view, a marker clear of the boulders moves the aim to that side: to the marker if it is
  * inside the ring, otherwise to the ring's edge, and never closer than MIN_CLEAR. The marker
  * swings hundreds of metres with small control changes, so the side is the player's choice
- * and the computer picks the spot. The choice is made once: after that the aim stays put.
+ * and the computer picks the spot. The side counts as chosen once the marker has stayed
+ * clear on it for AIM_HOLD_SECONDS, so passing through on the way somewhere else does not
+ * choose it. The choice is made once: after that the aim stays put.
  */
 const MIN_CLEAR = 40
+/** Game tuning: seconds the marker must stay clear on one side before that side is chosen. */
+export const AIM_HOLD_SECONDS = 1
 
-export function nextAim(aim: number, predictedRange: number | null, range: number): number {
-  if (aim !== 0 || range >= CHOOSE_SPOT_RANGE || predictedRange === null) return aim
-  const off = Math.abs(predictedRange)
-  if (off <= BOULDER_HALF_WIDTH) return aim
-  return Math.sign(predictedRange) * clamp(off, MIN_CLEAR, LIMITS.accuracy.value)
+export interface AimChoice {
+  /** Where the cue aims, m from the target. 0 until a side is chosen. */
+  aim: number
+  /** The side the marker sits clear on now: 1 short, -1 long, 0 in the rocks or unseen. */
+  side: number
+  /** Seconds it has sat clear on that side. */
+  held: number
+}
+
+export function nextAim(choice: AimChoice, predictedRange: number | null, range: number, seconds: number): AimChoice {
+  if (choice.aim !== 0 || range >= CHOOSE_SPOT_RANGE) return choice
+  if (predictedRange === null || Math.abs(predictedRange) <= BOULDER_HALF_WIDTH) return { aim: 0, side: 0, held: 0 }
+  const side = Math.sign(predictedRange)
+  const held = (side === choice.side ? choice.held : 0) + seconds
+  if (held < AIM_HOLD_SECONDS) return { aim: 0, side, held }
+  return { aim: side * clamp(Math.abs(predictedRange), MIN_CLEAR, LIMITS.accuracy.value), side, held }
 }
 
 /** Game rule: this far past the target, in metres, the run is over. */

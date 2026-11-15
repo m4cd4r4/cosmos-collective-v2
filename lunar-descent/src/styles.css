@@ -224,6 +224,13 @@ button:disabled {
   color: var(--soft);
 }
 
+/* The chosen side is a selection, so it is gold, like the cue marks. */
+.aim-note {
+  font: 11px var(--mono);
+  color: var(--gold);
+  white-space: nowrap;
+}
+
 .readouts {
   grid-area: readouts;
   align-self: start;

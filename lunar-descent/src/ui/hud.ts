@@ -24,6 +24,8 @@ export interface HudView {
   /** Where the lander comes down if the controls stay as they are. Null when it would not. */
   prediction: Prediction | null
   paused: boolean
+  /** The side of the target the cue aims for once the player has chosen one: 1 short, -1 long, 0 not chosen. */
+  aimSide: number
 }
 
 export interface Hud {
@@ -87,12 +89,13 @@ export function createHud(): Hud {
   const phaseName = el('strong', { class: 'phase-name' })
   const phaseNote = el('span', { class: 'phase-note' })
   const chip = el('span', { class: 'chip', title: 'A game setting, not a mission figure' })
+  const aimNote = el('span', { class: 'aim-note', hidden: true, title: 'The side of the boulders you chose. The cue now flies you to clear ground there' })
   const pauseButton = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'false' }, 'Pause')
   const skipButton = el('button', { class: 'ghost', type: 'button' }, 'Skip to takeover')
   const status = el(
     'div',
     { class: 'panel status' },
-    el('div', { class: 'phase' }, phaseName, chip),
+    el('div', { class: 'phase' }, phaseName, chip, aimNote),
     phaseNote,
     el('div', { class: 'status-actions' }, skipButton, pauseButton),
   )
@@ -174,13 +177,15 @@ export function createHud(): Hud {
     }
 
     const scale = Math.round(view.timeScale)
-    const phaseKey = `${view.phase}|${view.paused}|${scale}`
+    const phaseKey = `${view.phase}|${view.paused}|${scale}|${view.aimSide}`
     if (phaseKey !== lastPhase) {
       lastPhase = phaseKey
       const braking = view.phase === 'braking'
       phaseName.textContent = view.paused ? 'Paused' : braking ? 'Braking burn' : 'Manual descent'
       phaseNote.textContent = braking ? 'The computer is flying. You take over at high gate.' : 'You have throttle and pitch. Put the marker on clear ground.'
       chip.textContent = braking ? `${scale}x time` : 'Real time'
+      aimNote.hidden = view.aimSide === 0 || view.phase !== 'approach'
+      aimNote.textContent = `Aiming: ${view.aimSide > 0 ? 'short' : 'long'} side`
       skipButton.hidden = !braking
       throttleInput.disabled = braking
       pauseButton.textContent = view.paused ? 'Resume' : 'Pause'
