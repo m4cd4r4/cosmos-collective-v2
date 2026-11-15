@@ -154,23 +154,31 @@ const TIPS: Record<TipId, TipCopy> = {
 
 // Short, because on a phone a tip card covers the lander while it is up.
 const TIP_SECONDS = 10
+/** After this many seconds a tip shrinks to its title on a phone, where it covers the lander. */
+const TIP_FULL_SECONDS = 4
 
 export interface Tips {
   root: HTMLElement
   show(id: TipId): void
   clear(): void
+  /** Shrink the tip to its title line. Only phones show the change: there the tip covers the lander. */
+  shrink(): void
 }
 
 export function createTips(): Tips {
   const root = el('div', { class: 'tips', 'aria-live': 'polite' })
   let timer = 0
+  let shrinkTimer = 0
   const clear = () => {
     window.clearTimeout(timer)
+    window.clearTimeout(shrinkTimer)
     root.replaceChildren()
   }
+  const shrink = () => root.firstElementChild?.classList.add('brief')
   return {
     root,
     clear,
+    shrink,
     show(id) {
       const tip = TIPS[id]
       clear()
@@ -186,6 +194,7 @@ export function createTips(): Tips {
         ),
       )
       timer = window.setTimeout(clear, TIP_SECONDS * 1000)
+      shrinkTimer = window.setTimeout(shrink, TIP_FULL_SECONDS * 1000)
     },
   }
 }

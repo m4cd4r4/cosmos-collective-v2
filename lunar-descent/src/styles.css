@@ -654,6 +654,15 @@ tbody th {
     margin-top: 0;
   }
 
+  /* A shrunk tip keeps its title line only, clear of the lander. */
+  .tip.brief {
+    padding: 6px 12px;
+  }
+
+  .tip.brief p {
+    display: none;
+  }
+
   .readout {
     padding: 0 6px;
   }
