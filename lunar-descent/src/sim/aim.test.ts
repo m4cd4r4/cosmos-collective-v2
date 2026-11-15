@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest'
 import { DT, step, type State } from './physics'
 import { AIM_HOLD_SECONDS, assessTouchdown, guidance, nextAim, predictTouchdown, takeoverState, type AimChoice } from './flight'
 
-// The rates the keys move the controls at, as in ui/controls.ts.
+// The old key rates, held continuously. This player lets go the instant the needle arrives;
+// human.test.ts has a player who sees it late.
 const THROTTLE_PER_SECOND = 0.7
 const PITCH_DEG_PER_SECOND = 15
 

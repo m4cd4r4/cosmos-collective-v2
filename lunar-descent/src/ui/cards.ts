@@ -51,7 +51,7 @@ export function createStartCard(onBegin: () => void): StartCard {
       el(
         'ul',
         { class: 'keys' },
-        key('W S', 'throttle'),
+        key('W S', 'throttle, or the mouse wheel'),
         key('A D', 'pitch'),
         key('Q E', 'look round'),
         key('P', 'pause'),
