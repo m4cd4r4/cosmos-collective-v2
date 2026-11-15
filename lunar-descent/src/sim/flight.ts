@@ -140,14 +140,17 @@ export const CHOOSE_SPOT_RANGE = 1_800
 
 /**
  * Where the cue aims, m from the target. It starts on the target. Once the boulders are in
- * view, a marker clear of the boulders moves the aim to that side: to the marker if it is
- * inside the ring, otherwise to the ring's edge, and never closer than MIN_CLEAR. The marker
- * swings hundreds of metres with small control changes, so the side is the player's choice
- * and the computer picks the spot. The side counts as chosen once the marker has stayed
- * clear on it for AIM_HOLD_SECONDS, so passing through on the way somewhere else does not
- * choose it. The choice is made once: after that the aim stays put.
+ * view, a marker clear of the boulders moves the aim to that side: to the marker, but no
+ * further out than MAX_AIM and never closer than MIN_CLEAR. The marker swings hundreds of
+ * metres with small control changes, so the side is the player's choice and the computer
+ * picks the spot. A side counts as chosen once the marker has stayed clear on it for
+ * AIM_HOLD_SECONDS, so passing through on the way somewhere else does not choose it. The choice
+ * is made once: following the cue to the long side leaves the marker reading short for most of
+ * the approach, so a choice that could change would flip back to short.
  */
 const MIN_CLEAR = 40
+/** Game tuning: the cue aims no further out than this, m, so drift stays inside the 100 m ring. */
+const MAX_AIM = 80
 /** Game tuning: seconds the marker must stay clear on one side before that side is chosen. */
 export const AIM_HOLD_SECONDS = 1
 
@@ -166,7 +169,7 @@ export function nextAim(choice: AimChoice, predictedRange: number | null, range:
   const side = Math.sign(predictedRange)
   const held = (side === choice.side ? choice.held : 0) + seconds
   if (held < AIM_HOLD_SECONDS) return { aim: 0, side, held }
-  return { aim: side * clamp(Math.abs(predictedRange), MIN_CLEAR, LIMITS.accuracy.value), side, held }
+  return { aim: side * clamp(Math.abs(predictedRange), MIN_CLEAR, MAX_AIM), side, held }
 }
 
 /** Game rule: this far past the target, in metres, the run is over. */
