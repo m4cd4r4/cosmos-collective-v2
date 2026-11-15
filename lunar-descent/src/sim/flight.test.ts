@@ -29,6 +29,50 @@ describe('flight guidance', () => {
   })
 })
 
+describe('cue smoothness', () => {
+  // In play the pitch cue swung from 0 to 89 degrees in a few seconds where the computer
+  // switched to its terminal descent. A player keying at 15 deg/s cannot follow that.
+  it.each([0, 60, -60])('the pitch cue never moves faster than a player can follow, aim %i m', (aimRange) => {
+    let state: State = takeoverState()
+    const pitches: number[] = []
+    for (let i = 0; i < 60 * 600 && state.altitude > 0; i++) {
+      const cue = guidance(state, 'approach', 0, aimRange)
+      pitches.push(cue.pitchDeg)
+      state = step(state, cue, DT)
+    }
+    const window = Math.round(1 / DT)
+    let worst = 0
+    let at = 0
+    for (let i = window; i < pitches.length; i++) {
+      const change = Math.abs(pitches[i] - pitches[i - window])
+      if (change > worst) [worst, at] = [change, i]
+    }
+    expect(worst, `${worst.toFixed(1)} deg in 1 s at t=${(at * DT).toFixed(1)} s`).toBeLessThan(15)
+  })
+
+  // The case seen in play: the cue re-aims short late, so the lander is already high over
+  // the new spot, still moving. The cue read 0, then 81, then 0, then 64 degrees in 2 s.
+  it.each([250, 120, 100, 80])('the pitch cue stays smooth when the aim is re-set underfoot, %i m from the target', (range) => {
+    let state: State = { range, altitude: 150, groundSpeed: 22, climbRate: -6.5, deltaV: 300, time: 0 }
+    const pitches: number[] = []
+    for (let i = 0; i < 60 * 120 && state.altitude > 0; i++) {
+      const cue = guidance(state, 'approach', 0, 100)
+      pitches.push(cue.pitchDeg)
+      state = step(state, cue, DT)
+    }
+    const window = Math.round(1 / DT)
+    let worst = 0
+    let at = 0
+    for (let i = window; i < pitches.length; i++) {
+      const change = Math.abs(pitches[i] - pitches[i - window])
+      if (change > worst) [worst, at] = [change, i]
+    }
+    expect(worst, `${worst.toFixed(1)} deg in 1 s at t=${(at * DT).toFixed(1)} s`).toBeLessThan(15)
+    const landed = assessTouchdown(state, pitches[pitches.length - 1], 0)
+    expect(landed.outcome, JSON.stringify(landed)).toBe('landed')
+  })
+})
+
 describe('retry point', () => {
   // A retry skips the minute between the takeover and the decision: it starts on the
   // computer's own line, 2 km out, with the propellant that line has used.

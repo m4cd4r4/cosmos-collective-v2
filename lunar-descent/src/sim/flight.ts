@@ -67,12 +67,20 @@ interface Aim {
   climbRate: number
 }
 
+/** Game tuning: the approach loses height no faster than a steady sink at this net acceleration, m/s². */
+const DROP_ACCEL = 0.6
+
 /** Thrust acceleration (horizontal braking, vertical) that reaches `aim` on a smooth profile. */
-function requiredThrust(state: State, aim: Aim): { brake: number; up: number } {
+function requiredThrust(state: State, aim: Aim, ownDropTime = false): { brake: number; up: number } {
   const distance = Math.max(1, state.range - aim.range)
   const timeToGo = Math.max(4, (2 * distance) / Math.max(1, state.groundSpeed + aim.groundSpeed))
   const brake = (state.groundSpeed - aim.groundSpeed) / timeToGo
-  const vertical = (6 * (aim.altitude - state.altitude)) / timeToGo ** 2 - (4 * state.climbRate + 2 * aim.climbRate) / timeToGo
+  // With `ownDropTime`, height is lost no faster than DROP_ACCEL allows: with the spot
+  // underfoot and height to lose, the time to the spot alone asked for a free fall (pitch 0)
+  // that flipped to upright once the drift was gone. High up it changes nothing.
+  const drop = Math.max(0, state.altitude - aim.altitude)
+  const dropTime = ownDropTime ? Math.max(timeToGo, Math.sqrt((2 * drop) / DROP_ACCEL)) : timeToGo
+  const vertical = (6 * (aim.altitude - state.altitude)) / dropTime ** 2 - (4 * state.climbRate + 2 * aim.climbRate) / dropTime
   const up = vertical + gravityAt(state.altitude) - state.groundSpeed ** 2 / (MOON_RADIUS + state.altitude)
   return { brake, up }
 }
@@ -90,16 +98,23 @@ export function guidance(state: State, phase: Phase, groundHeight: number, aimRa
   } else {
     state = { ...state, range: state.range - aimRange }
     const height = state.altitude - groundHeight
-    const close = Math.abs(state.range) < 60 && Math.abs(state.groundSpeed) < 6
-    if (close || height < 40) {
-      // Terminal descent: null the drift, sink slowly, slower still near the ground.
-      const sink = -clamp(height / 12, 1, 6)
-      need = {
-        brake: clamp(state.groundSpeed * 0.5 - state.range * 0.02, -1, 1),
-        up: (sink - state.climbRate) * 0.8 + gravityAt(state.altitude),
-      }
+    // Terminal descent: null the drift, sink slowly, slower still near the ground. The pull
+    // back to the spot fades out over the last 30 m, so a lander that overshot does not
+    // touch down still drifting back toward it.
+    const sink = -clamp(height / 12, 1, 6)
+    const terminal = {
+      brake: clamp(state.groundSpeed * 0.5 - state.range * 0.02 * clamp((height - 5) / 25, 0, 1), -1, 1),
+      up: (sink - state.climbRate) * 0.8 + gravityAt(state.altitude),
+    }
+    // The computer hands over to the terminal descent across a band, not at a line: below
+    // 40 m, or within 60 m of the spot and slower than 4 m/s, it is all terminal descent.
+    const ramp = (v: number, from: number, to: number) => clamp((from - v) / (from - to), 0, 1)
+    const w = Math.max(ramp(height, 70, 40), ramp(Math.abs(state.range), 120, 60) * ramp(Math.abs(state.groundSpeed), 16, 4))
+    if (w >= 1) {
+      need = terminal
     } else {
-      need = requiredThrust(state, { range: 0, altitude: groundHeight + 45, groundSpeed: 0, climbRate: -3 })
+      const approach = requiredThrust(state, { range: 0, altitude: groundHeight + 45, groundSpeed: 0, climbRate: -3 }, true)
+      need = { brake: approach.brake + (terminal.brake - approach.brake) * w, up: approach.up + (terminal.up - approach.up) * w }
     }
   }
   const pitchDeg = clamp((Math.atan2(need.up, need.brake) * 180) / Math.PI, 0, 120)
