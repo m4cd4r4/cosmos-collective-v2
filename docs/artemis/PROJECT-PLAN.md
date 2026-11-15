@@ -169,7 +169,7 @@ A no-go on a healthy tower ends in a soft splashdown, shown as a safe call, not 
 
 **HUD.** A readout strip across the top (altitude, speed, downrange, propellant as velocity change, engines lit, pressure as a percentage of the limit), the phase card top left with its time-rate chip and skip and pause, the throttle bottom left, and a phase instrument bottom right (pressure meter, range bar, or the landing ring). Tip cards sit under the phase card on wide screens and close after 10 seconds. On phones the strip wraps to two rows and the instruments shrink to leave the booster in view.
 
-**End card.** The player's time for each event beside Flight 8's published time and its flown outcome, each row with its source and status, then the scenario the run was modelled on, the catch record, and Flight 15's planned status.
+**End card.** The player's time for each event beside Flight 8's published time and its flown outcome, each row with its source and status, then the scenario the run was modelled on, the catch record, and Flight 15's result.
 
 **Physics.** Fixed 60 Hz timestep, acceleration model (ruling 4), real gravity and an exponential atmosphere for dynamic pressure and the grid fins. Everything in `TUNING` is game tuning (section 11).
 
@@ -201,12 +201,12 @@ Fetched and checked on 2026-11-12. Mirrored in `starship-catch/src/data/facts.ts
 | 8 | Flight 6: tower health checks aborted the catch; splashdown in the Gulf | as listed | Flown | SpaceX, https://www.spacex.com/launches/starship-flight-6 |
 | 9 | Flight 14: 11 of 13 relit for landing, controlled splashdown | as listed | Flown | SpaceX, https://www.spacex.com/launches/starship-flight-14 |
 | 10 | Boosters caught | Flights 5, 7 and 8 | Flown | SpaceX, https://www.spacex.com/launches/starship-flight-15 |
-| 11 | Flight 15: first planned return of both booster and ship to the tower | planned 13 Nov 2026 (US time) | Planned | SpaceX (as 10) |
+| 11 | Flight 15: ship caught by the tower arms after 22.5 hours, the first ship catch; booster ended boostback early, aborted its catch and diverted offshore | 13 to 14 Nov 2026 (US time) | Flown | SpaceX (as 10) |
 | 12 | Thousands of vehicle and pad criteria before a catch | quote | Flown, Flight 5 | SpaceX, https://www.spacex.com/launches/starship-flight-5 |
 | 13 | With no go before boostback ends, the booster defaults to a splashdown path | quote | Published procedure | SpaceX before Flight 5, archived page data, https://web.archive.org/web/20241007234125/https://content.spacex.com/api/spacex-website/missions/starship-flight-5 |
 | 14 | Ground imagery | NAIP, flown June 2022 | Measured | USGS EROS, https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-national-agriculture-imagery-program-naip |
 
-Sources disagree on the count of later catches; SpaceX's Flight 15 page (10) is the one the game cites. Flight 15's outcome is not in the game yet (follow-up in `docs/CLAUDE-TODO.md`).
+Sources disagree on the count of later catches; SpaceX's Flight 15 page (10) is the one the game cites. Flight 15 added no booster catch, so the booster count stays at three (the Wikipedia list of Starship launches agrees); its ship was the first ship caught.
 
 ## 11. Slice 2 game tuning, labelled as such on screen
 
@@ -214,4 +214,4 @@ Not mission figures: thrust accelerations (liftoff, boostback, landing on 13 and
 
 ## 12. Slice 2 follow-ups
 
-In `docs/CLAUDE-TODO.md`, section "From feat/starship-catch (2026-11-13)": the launch site tour, Flight 15's result, a regional ground layer above 4 km, a real-pointer touch test on a phone, the second tower, and sound.
+In `docs/CLAUDE-TODO.md`, section "From feat/starship-catch (2026-11-13)": the launch site tour, a regional ground layer above 4 km, a real-pointer touch test on a phone, the second tower, and sound.

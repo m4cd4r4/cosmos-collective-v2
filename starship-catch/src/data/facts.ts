@@ -1,6 +1,6 @@
 // Every real-world number and claim the game shows, with its source.
 // Mirrored in docs/artemis/PROJECT-PLAN.md. Change both together.
-// Fetched and checked on 2026-11-12.
+// Fetched and checked on 2026-11-12; Flight 15 on 2026-11-15.
 
 export type Status = 'Flown' | 'Published timeline' | 'Planned' | 'Design figure' | 'Constant'
 
@@ -72,7 +72,7 @@ export const CATCH_RECORD = {
 }
 
 export const FLIGHT_15 = {
-  text: 'Flight 15 is planned to be the first to return both the booster and the ship to the tower. Planned, not flown, when this game was built.',
+  text: 'On Flight 15, 13 to 14 November 2026 (US time), the ship came back from orbit and the tower arms caught it, the first ship ever caught. Its booster ended boostback early, aborted its catch and was sent offshore.',
   source: SPACEX_F15,
 }
 
