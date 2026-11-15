@@ -25,16 +25,13 @@ Macdara: "really really boring, does not look good at all, and has no real playa
 5. **Realistic catcher:** the chopstick pair on its carriage, the tower as built.
 6. **Other ground infrastructure:** launch mount, tank farm and piping, the second pad and tower, beach, Highway 4, build site in the distance.
 
-## Ground route: test first, then decide
+## Ground route: open data (decided 2026-11-15)
 
-No open dataset has photoreal 3D scans of Starbase.
+Google Photorealistic 3D Tiles were tested on 2026-11-14 and 15 and dropped. Over Starbase they are aerial photos on terrain. From 2 km they look convincing, but from 40 m nothing stands up: no towers, chopsticks or tanks in 3D. They would also need on-screen Google attribution, and the API key route failed. Macdara chose the open route and the Google setup was removed.
 
-- **Google Photorealistic 3D Tiles:** real scans of the site. Macdara chose to test it before committing: load Starbase in a throwaway page within the free quota, with zero paid usage, screenshot it beside the open route, and let him pick. Coverage quality at Starbase is unverified.
-- **Open route:** NAIP aerial imagery (public domain; check for a 2024 Texas flight, since 2022 predates much of the pad) on USGS 3DEP lidar, with towers, tanks and pads hand-built or taken from CC-BY models (licence checked, credited on screen).
-
-Set up on 2026-11-14 (approved): a Map Tiles key with free-tier quota caps and a budget alert. Account details, the key location and the spike page live in Claude's private project memory, not in this public repo.
-
-Blocked: the key gets 403 "Permission denied on the service" with the API enabled. The likely cause is that the Maps Platform terms have not been accepted for the Cloud project. Macdara accepts them once in the console, then the screenshots are rerun.
+- **Ground:** NAIP aerial imagery (public domain; check for a 2024 Texas flight, since 2022 predates much of the pad) on USGS 3DEP lidar elevation, with coarser public imagery beyond the site for the boostback and coast views.
+- **Towers, chopsticks, launch mounts, tank farm, piping:** modelled from reference photos, or CC-BY models with the licence checked and a credit on screen. Both pads and both towers.
+- **Sky:** physical atmosphere (decided 2026-11-14), see requirement 3.
 
 ## Do not
 
