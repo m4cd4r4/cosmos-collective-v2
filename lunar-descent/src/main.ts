@@ -11,12 +11,15 @@ import { APOLLO_11 } from './data/facts'
 import { el, fmt } from './ui/dom'
 import {
   BOULDER_HALF_WIDTH,
+  CHOOSE_SPOT_RANGE,
   BRAKING_TIME_SCALE,
   RETRY_RANGE,
   assessTouchdown,
   attitudeHold,
   flyCueTo,
   guidance,
+  nextAim,
+  type AimChoice,
   timeToTakeover,
   overflew,
   predictTouchdown,
@@ -40,7 +43,7 @@ const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matc
 const hud = createHud()
 const tips = createTips()
 hud.root.append(tips.root)
-const controls = createControls(hud, { onPause: togglePause, onRetry: () => begin('retry'), onSkip: skipIntro })
+const controls = createControls(hud, { onPause: togglePause, onRetry: () => begin('retry'), onSkip: skipIntro }, canvas)
 const startCard = createStartCard(load)
 // Rides beside the touchdown marker: how far short of the target, or long, the lander is heading.
 const markerLabel = el('div', { class: 'marker-label', hidden: true, 'aria-hidden': 'true' })
@@ -56,6 +59,11 @@ let endCard: HTMLElement | null = null
 /** The pause between touching down and the end card. */
 let settle: { hard: boolean; seconds: number; card: HTMLElement } | null = null
 let accumulator = 0
+/** Where the cue aims. Follows the marker once the player holds it on clear ground. */
+let aim: AimChoice = { aim: 0, side: 0, held: 0 }
+/** The aim only moves once the player has touched the controls inside CHOOSE_SPOT_RANGE. */
+let steered = false
+let lastControls = { throttle: 0, pitchDeg: 0 }
 let lastFrame = 0
 const tipsShown = new Set<TipId>()
 
@@ -90,9 +98,13 @@ function begin(mode: 'start' | 'takeover' | 'retry') {
   // A retry starts on the computer's line just before the decision, not a minute's flying from it.
   state = fromStart ? startState() : mode === 'retry' ? flyCueTo(takeoverState(), RETRY_RANGE, (range) => ground(-range)) : takeoverState()
   phase = fromStart ? 'braking' : 'approach'
+  aim = { aim: 0, side: 0, held: 0 }
+  steered = false
   const cue = guidance(state, phase, groundBelow())
   controls.throttle = cue.throttle
   controls.pitchDeg = cue.pitchDeg
+  // So the controls set here do not count as the player touching them.
+  lastControls = { throttle: cue.throttle, pitchDeg: cue.pitchDeg }
   paused = false
   accumulator = 0
   settle = null
@@ -169,6 +181,7 @@ function advance(realSeconds: number) {
       const cue = guidance(state, phase, groundBelow())
       controls.throttle = cue.throttle
       controls.pitchDeg = cue.pitchDeg
+      lastControls = { throttle: cue.throttle, pitchDeg: cue.pitchDeg }
       showTip('takeover')
       focusSoon(hud.throttleInput)
     }
@@ -182,7 +195,7 @@ function advance(realSeconds: number) {
   if (phase === 'approach') {
     // The boulders tip comes early enough to be gone before the player is choosing a spot:
     // on a phone a tip card covers the lander while it is up.
-    if (state.range < 1_800) showTip('boulders')
+    if (state.range < CHOOSE_SPOT_RANGE) showTip('boulders')
     else if (state.range < 3_000) showTip('ring')
     else if (state.range < 5_200) showTip('sun')
     if (state.altitude - groundBelow() < APOLLO_11.dustAltitude.value) showTip('dust')
@@ -229,6 +242,7 @@ function frame(now: number) {
   const realSeconds = Math.min(0.1, (now - lastFrame) / 1000)
   lastFrame = now
   if (!world) return
+  controls.look(realSeconds)
   if (!paused && phase !== 'ended' && !document.hidden) advance(realSeconds)
   if (settle && !document.hidden) {
     settle.seconds += realSeconds
@@ -238,6 +252,14 @@ function frame(now: number) {
   const radarAltitude = state.altitude - groundBelow()
   const throttle = state.deltaV > 0 ? controls.throttle : 0
   const prediction = predict()
+  const touched = controls.throttle !== lastControls.throttle || controls.pitchDeg !== lastControls.pitchDeg
+  // On a phone the tip covers the lander: it gets out of the way once the player is flying.
+  if (phase === 'approach' && touched) tips.shrink()
+  if (phase === 'approach' && state.range < CHOOSE_SPOT_RANGE) {
+    if (touched) steered = true
+    if (steered) aim = nextAim(aim, prediction?.range ?? null, state.range, paused ? 0 : realSeconds)
+  }
+  lastControls = { throttle: controls.throttle, pitchDeg: controls.pitchDeg }
   const view = {
     state,
     pitchDeg: controls.pitchDeg,
@@ -247,6 +269,8 @@ function frame(now: number) {
     prediction,
     aids: phase === 'approach',
     settle: settle && { hard: settle.hard, seconds: reducedMotion ? SETTLE_SECONDS : settle.seconds },
+    viewYaw: controls.viewYaw,
+    aimRange: aim.aim,
   }
   world.render(view)
 
@@ -274,8 +298,9 @@ function frame(now: number) {
     range: state.range,
     throttle: controls.throttle,
     pitchDeg: controls.pitchDeg,
-    cue: guidance(state, phase === 'ended' ? 'approach' : phase, groundBelow()),
+    cue: guidance(state, phase === 'ended' ? 'approach' : phase, groundBelow(), aim.aim),
     prediction,
     paused,
+    aimSide: Math.sign(aim.aim),
   })
 }

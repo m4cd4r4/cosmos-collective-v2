@@ -24,6 +24,10 @@ export interface View {
   aids: boolean
   /** Set once the lander is down: seconds since it touched, and whether it came down too hard. */
   settle: { hard: boolean; seconds: number } | null
+  /** How far the player has swung the camera round the lander, radians. 0 is the chase view. */
+  viewYaw: number
+  /** Where the cue aims, m from the target along the track. 0 until the player chooses a side. */
+  aimRange: number
 }
 
 export interface World {
@@ -101,6 +105,17 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
   marker.renderOrder = 10
   marker.visible = false
   moon.add(marker)
+
+  // The spot the cue aims for once the player has chosen a side: gold, because it is a selection.
+  const aimSpot = new THREE.Mesh(
+    new THREE.RingGeometry(9, 10.5, 64),
+    new THREE.MeshBasicMaterial({ color: 0xd4af37, side: THREE.DoubleSide, depthTest: false, transparent: true, opacity: 0.9 }),
+  )
+  aimSpot.geometry.rotateX(-Math.PI / 2)
+  aimSpot.renderOrder = 9
+  aimSpot.visible = false
+  moon.add(aimSpot)
+  const aimWorld = new THREE.Vector3()
 
   // Track coordinates and height above the target's elevation, to the Moon frame. The same
   // wrap onto the sphere as the terrain mesh, so things sit on the ground far out too.
@@ -186,6 +201,7 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
   const side = new THREE.Vector3(0, 0, 1)
   const eye = new THREE.Vector3()
   const lookAt = new THREE.Vector3()
+  const orbit = new THREE.Quaternion()
 
   function resize() {
     const { clientWidth, clientHeight } = canvas
@@ -250,6 +266,12 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
     const ahead = mix(420, 0, near) + 0.5 * reach
     eye.copy(forward).multiplyScalar(-back).addScaledVector(up, above).addScaledVector(side, aside)
     lookAt.copy(forward).multiplyScalar(ahead).addScaledVector(up, mix(-70, 24, near) - 0.7 * drop)
+    // The player can swing the whole view round the local vertical through the lander.
+    if (view.viewYaw) {
+      orbit.setFromAxisAngle(up, view.viewYaw)
+      eye.applyQuaternion(orbit)
+      lookAt.applyQuaternion(orbit)
+    }
     if (!reducedMotion && view.throttle > 0.02) {
       const shake = view.throttle * 0.35
       eye.x += Math.sin(view.clock * 61) * shake
@@ -258,6 +280,15 @@ export function createWorld(canvas: HTMLCanvasElement, terrain: Terrain, stars: 
     camera.position.copy(eye)
     camera.up.copy(up)
     camera.lookAt(lookAt)
+
+    aimSpot.visible = view.aids && view.aimRange !== 0
+    if (aimSpot.visible) {
+      const along = -view.aimRange
+      place(along, 0, terrain.heightAt(along) + 0.6, aimSpot.position)
+      aimSpot.rotation.z = -along / MOON_RADIUS
+      aimSpot.getWorldPosition(aimWorld)
+      aimSpot.scale.setScalar(Math.max(1, aimWorld.distanceTo(eye) / 330))
+    }
 
     const hit = view.aids ? view.prediction : null
     marker.visible = hit !== null

@@ -38,6 +38,12 @@ body {
   display: block;
 }
 
+/* Dragging the scene swings the view, so the browser must not take the gesture for a scroll. */
+#scene {
+  touch-action: none;
+  cursor: grab;
+}
+
 #dust {
   pointer-events: none;
   opacity: 0;
@@ -216,6 +222,13 @@ button:disabled {
   border: 1px solid rgba(255, 255, 255, 0.24);
   border-radius: 4px;
   color: var(--soft);
+}
+
+/* The chosen side is a selection, so it is gold, like the cue marks. */
+.aim-note {
+  font: 11px var(--mono);
+  color: var(--gold);
+  white-space: nowrap;
 }
 
 .readouts {
@@ -452,10 +465,35 @@ kbd {
 .notes {
   display: grid;
   gap: 6px;
-  padding-top: 12px;
-  border-top: 1px solid var(--line);
+  padding-top: 8px;
   font-size: 12.5px;
   color: var(--soft);
+}
+
+/* The story is the hook, so it is set a step larger than the instructions. */
+.lede {
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+.lede .fine {
+  white-space: nowrap;
+}
+
+.fold {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.fold summary {
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--soft);
+}
+
+.fold summary:hover {
+  color: var(--ink);
 }
 
 .actions {
@@ -550,6 +588,20 @@ tbody th {
   white-space: nowrap;
 }
 
+/* ---------- Desktop ---------- */
+
+/* On a wide monitor the screen corners are far from the readouts, so the controls close in
+   under the readout strip's edges and the eye stays in one central column. */
+@media (min-width: 1181px) {
+  .throttle {
+    justify-self: end;
+  }
+
+  .pitch {
+    justify-self: start;
+  }
+}
+
 /* ---------- Tablet ---------- */
 
 /* Three equal-sided columns need about 1,110 px. Below that the sides shrink to their content
@@ -600,6 +652,20 @@ tbody th {
 
   .status-actions {
     margin-top: 0;
+  }
+
+  /* No room for both: once a side is chosen, its label takes the time chip's place. */
+  .phase:has(.aim-note:not([hidden])) .chip {
+    display: none;
+  }
+
+  /* A shrunk tip keeps its title line only, clear of the lander. */
+  .tip.brief {
+    padding: 6px 12px;
+  }
+
+  .tip.brief p {
+    display: none;
   }
 
   .readout {
