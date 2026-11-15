@@ -103,6 +103,8 @@ function begin(mode: 'start' | 'takeover' | 'retry') {
   const cue = guidance(state, phase, groundBelow())
   controls.throttle = cue.throttle
   controls.pitchDeg = cue.pitchDeg
+  // So the controls set here do not count as the player touching them.
+  lastControls = { throttle: cue.throttle, pitchDeg: cue.pitchDeg }
   paused = false
   accumulator = 0
   settle = null
@@ -179,6 +181,7 @@ function advance(realSeconds: number) {
       const cue = guidance(state, phase, groundBelow())
       controls.throttle = cue.throttle
       controls.pitchDeg = cue.pitchDeg
+      lastControls = { throttle: cue.throttle, pitchDeg: cue.pitchDeg }
       showTip('takeover')
       focusSoon(hud.throttleInput)
     }
@@ -249,8 +252,11 @@ function frame(now: number) {
   const radarAltitude = state.altitude - groundBelow()
   const throttle = state.deltaV > 0 ? controls.throttle : 0
   const prediction = predict()
+  const touched = controls.throttle !== lastControls.throttle || controls.pitchDeg !== lastControls.pitchDeg
+  // On a phone the tip covers the lander: it gets out of the way once the player is flying.
+  if (phase === 'approach' && touched) tips.shrink()
   if (phase === 'approach' && state.range < CHOOSE_SPOT_RANGE) {
-    if (controls.throttle !== lastControls.throttle || controls.pitchDeg !== lastControls.pitchDeg) steered = true
+    if (touched) steered = true
     if (steered) aim = nextAim(aim, prediction?.range ?? null, state.range, paused ? 0 : realSeconds)
   }
   lastControls = { throttle: controls.throttle, pitchDeg: controls.pitchDeg }
@@ -264,6 +270,7 @@ function frame(now: number) {
     aids: phase === 'approach',
     settle: settle && { hard: settle.hard, seconds: reducedMotion ? SETTLE_SECONDS : settle.seconds },
     viewYaw: controls.viewYaw,
+    aimRange: aim.aim,
   }
   world.render(view)
 
