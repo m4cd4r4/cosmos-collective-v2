@@ -66,7 +66,7 @@ export function createStartCard(onBegin: () => void): StartCard {
         { class: 'notes' },
         el('li', {}, 'Steer with the grid fins on the way down. The wind pushes you about, and it is stronger high up.'),
         el('li', {}, `Light the landing burn once, low enough to save propellant and high enough to stop. It lights the ${ENGINES.centre} centre engines, then drops to ${ENGINES.inner} as you slow.`),
-        el('li', {}, 'Arrive centred between the arms, slow and upright. Assist, off at the start, shows where you will reach the arms if you hold the controls.'),
+        el('li', {}, 'Arrive centred between the arms, slow and upright. The scope and the arrow at the edge show where the tower is. Assist, on at the start, shows where you will reach the arms if you hold the controls.'),
         el('li', {}, TUNING_NOTE),
         el('li', {}, 'The tower, arms and launch mount are representative models.'),
       ),
@@ -161,7 +161,7 @@ export function coaching(flight: Flight, notes: RunNotes): string[] {
   const outcome = flight.outcome
   const litHeight = flight.litAt === null ? null : flight.litAt - t.catchHeight
 
-  if (outcome === 'no-burn') add('If the burn never lights, nothing can stop the booster. Press Space while it is still falling fast, a kilometre or two above the arms.')
+  if (!flight.lit && outcome !== 'caught') add('If the burn never lights, nothing can stop the booster. Press Space while it is still falling fast, a kilometre or two above the arms.')
   if (flight.ranDry && litHeight !== null && litHeight > 2_500)
     add(`You lit the burn ${metres(litHeight)} above the arms. If you run dry, light it later and lower: until then the air brakes the booster for free.`)
   else if (flight.ranDry) add('If you run dry, do not hover. Keep sinking on the 3 engines and line up on the way down.')
@@ -256,5 +256,41 @@ export function createEndCard(flight: Flight, options: EndOptions): HTMLElement 
     ),
   )
   queueMicrotask(() => retry.focus({ preventScroll: true }))
+  return card
+}
+
+// ---------- How to catch ----------
+
+const step = (n: number, title: string, keys: string[], body: string) =>
+  el('li', {}, el('span', { class: 'step-n' }, String(n)), el('div', {}, el('strong', {}, title, ' ', ...keys.map((k) => el('kbd', {}, k))), el('p', {}, body)))
+
+/** Three steps before the first drop. Reopened from the ? button. */
+export function createHowTo(onClose: () => void): HTMLElement {
+  const go = el('button', { class: 'primary', type: 'button', onclick: onClose }, 'Got it')
+  const card = el(
+    'div',
+    { class: 'overlay' },
+    el(
+      'section',
+      { class: 'panel card howto', role: 'dialog', 'aria-labelledby': 'howto-title' },
+      el('p', { class: 'eyebrow' }, 'How to catch'),
+      el('h1', { id: 'howto-title' }, 'Three things to get right'),
+      el(
+        'ol',
+        { class: 'steps' },
+        step(1, 'Steer over the tower.', ['A', 'D'], 'Lean west or east. On the scope, bring your dot down on to the gold ring at its centre. When the tower is off screen, the arrow at the edge points to it.'),
+        step(2, 'Light the burn.', ['Space', 'W', 'S'], 'Low enough to save propellant, early enough to slow down. It lights once. Then set the throttle to control the sink.'),
+        step(
+          3,
+          'Arrive centred and slow.',
+          [],
+          `Within ${TUNING.catchHalfGap} m of the centre of the arms, sinking under ${TUNING.catchSinkSpeed} m/s, nearly upright. These limits are game settings.`,
+        ),
+      ),
+      el('p', { class: 'muted' }, 'Assist (H) draws a white ring in the scene and a dashed one on the scope where you will reach the arms if you hold the controls. It starts on.'),
+      el('div', { class: 'actions' }, go),
+    ),
+  )
+  queueMicrotask(() => go.focus({ preventScroll: true }))
   return card
 }

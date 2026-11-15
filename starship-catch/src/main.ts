@@ -13,7 +13,7 @@ import { predictArrival } from './sim/predict'
 import { pilot } from './sim/pilot'
 import { scoreCatch } from './sim/score'
 import { createControls } from './ui/controls'
-import { createEndCard, createStartCard, type RunNotes } from './ui/cards'
+import { createEndCard, createHowTo, createStartCard, type RunNotes } from './ui/cards'
 import { createSound } from './ui/sound'
 import { createHud } from './ui/hud'
 import type { World } from './scene/world'
@@ -44,6 +44,7 @@ let settle: number | null = null
 let endCard: HTMLElement | null = null
 let notes: RunNotes = { xAt2km: null, windAt2km: 0, assistUsed: assist }
 let heard: string | null = null
+let howTo: HTMLElement | null = null
 
 const hud = createHud()
 const sound = createSound()
@@ -53,17 +54,52 @@ const controls = createControls(hud, {
   onAssist: toggleAssist,
   onMute: () => sound.toggle(),
   onGesture: () => sound.unlock(),
-  live: () => !flight.outcome && world !== null,
+  live: () => !flight.outcome && world !== null && !paused && !howTo,
 })
 const startCard = createStartCard(load)
 app.append(hud.root, startCard.root)
+hud.help.addEventListener('click', () => openHowTo())
+window.addEventListener('keydown', (event) => {
+  if (event.code === 'Slash' && world) openHowTo()
+  else if (howTo && event.code === 'Escape') closeHowTo()
+})
 
+/** Assist is on until the player turns it off. */
 function readAssist(): boolean {
   try {
-    return localStorage.getItem('starship-catch:assist') === 'on'
+    return localStorage.getItem('starship-catch:assist') !== 'off'
+  } catch {
+    return true
+  }
+}
+
+function howToSeen(): boolean {
+  try {
+    return localStorage.getItem('starship-catch:howto') === 'seen'
   } catch {
     return false
   }
+}
+
+/** The three-step card. Shown before the first drop, and from the ? button. The run waits while it is open. */
+function openHowTo() {
+  if (howTo || !world || flight.outcome) return
+  paused = true
+  howTo = createHowTo(closeHowTo)
+  app.append(howTo)
+}
+
+function closeHowTo() {
+  if (!howTo) return
+  howTo.remove()
+  howTo = null
+  paused = false
+  try {
+    localStorage.setItem('starship-catch:howto', 'seen')
+  } catch {
+    // Storage blocked: the card shows again next visit.
+  }
+  ;(document.activeElement as HTMLElement | null)?.blur?.()
 }
 
 function toggleAssist() {
@@ -88,6 +124,7 @@ async function load() {
     startCard.root.remove()
     hud.root.hidden = false
     begin(seed)
+    if (!howToSeen()) openHowTo()
     requestAnimationFrame(frame)
   } catch (error) {
     console.error(error)
@@ -113,7 +150,7 @@ function begin(nextSeed: number) {
 }
 
 function togglePause() {
-  if (world && !flight.outcome) paused = !paused
+  if (world && !flight.outcome && !howTo) paused = !paused
 }
 
 function simulate(realSeconds: number) {
@@ -159,7 +196,7 @@ function hudInsets(): [number, number] {
   if (hud.root.hidden) return [0, 0]
   let top = 0
   let bottom = 0
-  for (const panel of hud.root.querySelectorAll('.panel')) {
+  for (const panel of hud.root.querySelectorAll('.panel:not(.scope)')) {
     const box = panel.getBoundingClientRect()
     if (!box.height) continue
     if (box.top < window.innerHeight / 2) top = Math.max(top, box.bottom)

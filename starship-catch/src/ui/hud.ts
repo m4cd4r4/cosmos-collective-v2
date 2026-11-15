@@ -6,6 +6,8 @@ import { TUNING, aboveArms, type Flight } from '../sim/flight'
 import type { Arrival } from '../sim/predict'
 import type { ControlButtons } from './controls'
 import { el, fmt } from './dom'
+import { sinkBand } from '../sim/guide'
+import { createScope } from './scope'
 
 export interface HudView {
   flight: Flight
@@ -20,6 +22,7 @@ export interface HudView {
 
 export interface Hud extends ControlButtons {
   root: HTMLElement
+  help: HTMLButtonElement
   update(view: HudView): void
 }
 
@@ -82,15 +85,21 @@ export function createHud(): Hud {
     readout('Wind at the booster. A game setting'),
   ]
   const [above, sink, offset, propellant, engines, wind] = cells
+  // The sink rate against the game's catch limit: green inside it, amber up to twice it, red beyond.
+  const band = el('span', { class: 'band', title: `Game tuning: the catch limit is ${TUNING.catchSinkSpeed} m/s` }, el('i', {}))
+  const bandNote = el('span', { class: 'band-note' }, `limit ${TUNING.catchSinkSpeed} (game)`)
+  sink.cell.append(band, bandNote)
+  const scope = createScope()
 
   const assist = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'false', title: 'Show where the booster reaches the arms if you hold the controls as they are' }, 'Assist ', el('kbd', {}, 'H'))
+  const help = el('button', { class: 'ghost', type: 'button', 'aria-label': 'How to catch' }, '?')
   const sound = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'true' }, 'Sound ', el('kbd', {}, 'M'))
   const pause = el('button', { class: 'ghost', type: 'button', 'aria-pressed': 'false' }, 'Pause ', el('kbd', {}, 'P'))
   const status = el(
     'div',
     { class: 'panel status' },
     el('strong', { class: 'phase-name' }, 'Final approach'),
-    el('div', { class: 'status-actions' }, assist, sound, pause),
+    el('div', { class: 'status-actions' }, assist, sound, pause, help),
   )
 
   // Throttle: hold to move it. It can be set before the burn is lit.
@@ -132,6 +141,7 @@ export function createHud(): Hud {
     { class: 'hud', hidden: true },
     status,
     el('div', { class: 'panel readouts', role: 'group', 'aria-label': 'Instruments' }, ...cells.map((c) => c.cell)),
+    scope.root,
     el('div', { class: 'bottom' }, pad, keys),
   )
 
@@ -146,6 +156,9 @@ export function createHud(): Hud {
     above.set(h > -0.05 ? 'Above arms' : 'Below arms', ...height(Math.abs(h)))
     const fall = -s.vy
     sink.set(fall >= 0 ? 'Sink' : 'Climb', fmt.one(Math.abs(fall)), 'm/s', close && fall > TUNING.catchSinkSpeed)
+    // Only meaningful once the burn is lit or the arms are near.
+    sink.cell.dataset.band = flight.lit || h < 1_000 ? sinkBand(Math.max(0, fall)) : 'off'
+    scope.draw(flight, view.assist ? view.arrival : null)
     const off = Math.abs(s.x)
     const [offText, offUnit] = off >= 1_000 ? [fmt.one(off / 1000), 'km'] : [off >= 100 ? fmt.whole(off) : fmt.one(off), 'm']
     offset.set('Offset', offText, off < 0.05 ? offUnit : s.x > 0 ? `${offUnit} east →` : `${offUnit} ← west`, close && off > TUNING.catchHalfGap)
@@ -178,7 +191,7 @@ export function createHud(): Hud {
     sound.firstChild!.textContent = view.muted ? 'Sound off ' : 'Sound '
   }
 
-  return { root, update, throttleUp, throttleDown, steerLeft, steerRight, ignite, assist, sound, pause }
+  return { root, help, update, throttleUp, throttleDown, steerLeft, steerRight, ignite, assist, sound, pause }
 }
 
 function arrivalText(x: number): string {

@@ -32,8 +32,8 @@ const smooth = (edge0: number, edge1: number, x: number) => {
 }
 
 /** Above this height over the arms the camera rides with the booster; below `NEAR` it holds the tower too. */
-const FAR = 2_700
-const NEAR = 2_000
+const FAR = 3_600
+const NEAR = 3_000
 
 const follow = new THREE.Vector3()
 const followLook = new THREE.Vector3()
@@ -54,8 +54,7 @@ export function frameShot(flight: Flight, sceneY: number, lens: Lens, out: Frami
   followLook.set(s.x, centre - ride * 0.12, 0)
 
   const h = s.y - TUNING.catchHeight
-  // Far off to one side the tower would only shrink the booster to a speck: keep riding with it.
-  const near = smooth(FAR, NEAR, h) * smooth(1_600, 1_000, Math.abs(s.x))
+  const near = smooth(FAR, NEAR, h)
   if (near <= 0) {
     out.eye.copy(follow)
     out.look.copy(followLook)

@@ -9,6 +9,7 @@ import { TUNING, type Flight, type Outcome } from '../sim/flight'
 import type { Arrival } from '../sim/predict'
 import { BOOSTER_HEIGHT, createBooster } from './booster'
 import { frameShot, type Framing } from './camera'
+import { ARM_HEIGHT } from './site'
 import { createEffects } from './effects'
 import type { Site } from './site'
 import { createSky } from './sky'
@@ -89,6 +90,13 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   document.body.append(tag)
   const top = new THREE.Vector3()
   const base = new THREE.Vector3()
+  const marker = document.createElement('div')
+  marker.className = 'tower-marker'
+  const markerText = document.createElement('span')
+  const markerArrow = document.createElement('b')
+  marker.append(markerText, markerArrow)
+  marker.hidden = true
+  document.body.append(marker)
 
   let snap = true
   let seen: Outcome | null = null
@@ -238,6 +246,48 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
       tag.style.transform = `translate(${(x - 12).toFixed(1)}px, ${(y - h / 2).toFixed(1)}px)`
       tag.style.height = `${h.toFixed(0)}px`
     }
+    placeMarker(flight, clientWidth, clientHeight)
+  }
+
+  /** A label on the arms when they are in view; an arrow on the edge of the view pointing to them when not. */
+  function placeMarker(flight: Flight, width: number, height: number) {
+    marker.hidden = !!flight.outcome
+    if (marker.hidden) return
+    const p = top.set(0, ARM_HEIGHT, 0).project(camera)
+    let x = ((p.x + 1) / 2) * width
+    let y = ((1 - p.y) / 2) * height
+    const behind = p.z > 1
+    const pad = 28
+    const minY = insetTop + pad
+    const maxY = height - insetBottom - pad
+    const onScreen = !behind && x > pad && x < width - pad && y > minY && y < maxY
+    if (onScreen) {
+      markerText.textContent = 'Catch arms'
+      markerArrow.hidden = true
+      marker.style.transform = `translate(${(x + 14).toFixed(1)}px, ${(y - 11).toFixed(1)}px)`
+      return
+    }
+    // Off screen: from the middle of the clear view towards the arms, stopped at its edge.
+    const cx = width / 2
+    const cy = (minY + maxY) / 2
+    let dx = x - cx
+    let dy = y - cy
+    if (behind) {
+      dx = -dx
+      dy = -dy
+    }
+    const scale = Math.min((width / 2 - pad) / Math.max(1e-6, Math.abs(dx)), ((maxY - minY) / 2) / Math.max(1e-6, Math.abs(dy)))
+    x = cx + dx * scale
+    y = cy + dy * scale
+    const off = Math.abs(flight.state.x)
+    markerText.textContent = off < 30 ? 'Tower below' : `Tower ${off >= 1_000 ? `${(off / 1_000).toFixed(1)} km` : `${Math.round(off)} m`}`
+    markerArrow.hidden = false
+    markerArrow.style.transform = `rotate(${Math.atan2(dy, dx).toFixed(3)}rad)`
+    // Keep the label inside the view: to the left of the arrow on the right edge, and so on.
+    const labelWidth = 110
+    const left = x > width / 2 ? x - labelWidth - 10 : x - 6
+    marker.style.transform = `translate(${Math.max(4, left).toFixed(1)}px, ${(y - 11).toFixed(1)}px)`
+    marker.style.flexDirection = x > width / 2 ? 'row' : 'row-reverse'
   }
 
   function onOutcome(flight: Flight) {
