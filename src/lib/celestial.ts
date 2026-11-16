@@ -152,3 +152,9 @@ export function getSubsolarPoint(date: Date): { lat: number; lon: number } {
   if (lon > 180) lon -= 360
   return { lat: dec, lon }
 }
+
+/** Greenwich mean sidereal time at `date`, degrees (0-360). */
+export function getGmstDeg(date: Date): number {
+  const jd = date.getTime() / 86_400_000 + 2440587.5
+  return rev(280.46061837 + 360.98564736629 * (jd - 2451545.0))
+}

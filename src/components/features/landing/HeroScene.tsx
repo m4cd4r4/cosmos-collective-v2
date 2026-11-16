@@ -19,7 +19,7 @@
 
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import { getMoonIllumination, getSubsolarPoint } from '@/lib/celestial'
+import { getGmstDeg, getMoonIllumination, getSubsolarPoint } from '@/lib/celestial'
 
 const EARTH_DAY = '/solar-system/textures/4k_earth_daymap.jpg'
 const EARTH_NIGHT = '/solar-system/textures/4k_earth_nightmap.jpg'
@@ -54,7 +54,10 @@ const EARTH_FRAG = /* glsl */ `
     float d = dot(n, normalize(sunDir));
     float day = smoothstep(-0.12, 0.30, d);
     vec3 dayC = toLinear(texture2D(dayTex, vUv).rgb);
-    vec3 nightC = toLinear(texture2D(nightTex, vUv).rgb) * 1.6;
+    // Night side: city lights, plus a faint cool wash so the continents
+    // still read when the visitor's side of the world is dark.
+    vec3 nightC = toLinear(texture2D(nightTex, vUv).rgb) * 2.6
+      + dayC * vec3(0.075, 0.095, 0.150);
     vec3 base = mix(nightC, dayC, day);
     float fres = pow(1.0 - max(dot(normalize(vViewDir), n), 0.0), 3.0);
     vec3 atm = atmColor * fres * (0.35 + 0.65 * day);
@@ -62,7 +65,51 @@ const EARTH_FRAG = /* glsl */ `
   }
 `
 
-export function HeroScene({ onReady }: { onReady?: () => void }) {
+// The star map is laid out in galactic coordinates: the Milky Way runs along
+// the middle, the galactic centre is in the centre, longitude grows to the
+// left and galactic south is at the top. Checked against the catalogue
+// positions of the 17 brightest stars, which all land on bright pixels.
+const STAR_VERT = /* glsl */ `
+  varying vec3 vDir;
+  void main() {
+    vDir = position;
+    vec4 mv = viewMatrix * vec4(cameraPosition + position, 1.0);
+    gl_Position = projectionMatrix * mv;
+  }
+`
+const STAR_FRAG = /* glsl */ `
+  uniform sampler2D map;
+  uniform mat3 toGalactic;
+  varying vec3 vDir;
+  void main() {
+    vec3 g = toGalactic * normalize(vDir);
+    float l = atan(g.y, g.x);
+    float b = asin(clamp(g.z, -1.0, 1.0));
+    vec2 uv = vec2(fract(0.5 - l / 6.283185307), 0.5 - b / 3.141592654);
+    gl_FragColor = vec4(texture2D(map, uv).rgb, 1.0);
+  }
+`
+// Equatorial (J2000) to galactic, row-major.
+const EQ_TO_GAL = new THREE.Matrix4().set(
+  -0.0548755604, -0.8734370902, -0.4838350155, 0,
+  0.4941094279, -0.44482963, 0.7469822445, 0,
+  -0.867666149, -0.1980763734, 0.4559837762, 0,
+  0, 0, 0, 1,
+)
+// Globe mesh axes (x: lon 0, y: north, -z: lon 90 E) to x: lon 0, y: lon 90 E, z: north.
+const MESH_TO_EARTH = new THREE.Matrix4().set(1, 0, 0, 0, 0, 0, -1, 0, 0, 1, 0, 0, 0, 0, 0, 1)
+
+export interface HeroSceneProps {
+  onReady?: () => void
+  /** Live ISS ground position, degrees. Drawn as a dot above the globe. */
+  iss?: { lat: number; lon: number } | null
+}
+
+export function HeroScene({ onReady, iss }: HeroSceneProps) {
+  // Read inside the render loop, so a new position never rebuilds the scene.
+  const issRef = useRef(iss)
+  issRef.current = iss
+
   const mountRef = useRef<HTMLDivElement>(null)
   // Keep the latest onReady without making it an effect dependency, so a
   // parent re-render (the live UTC clock ticks every second) never tears the
@@ -107,9 +154,27 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     // everything. Static, so it never shimmers, and far denser than the old
     // procedural points.
     const starTex = loader.load(STAR_TEX)
-    starTex.colorSpace = THREE.SRGBColorSpace
-    starTex.mapping = THREE.EquirectangularReflectionMapping
-    scene.background = starTex
+    // Drawn by our own shader on a sky sphere so it can be turned to the
+    // real sky. No mipmaps: they would draw a seam where longitude wraps.
+    starTex.colorSpace = THREE.NoColorSpace
+    starTex.generateMipmaps = false
+    starTex.minFilter = THREE.LinearFilter
+    starTex.wrapS = THREE.RepeatWrapping
+    const toGalactic = new THREE.Matrix3()
+    const sky = new THREE.Mesh(
+      new THREE.SphereGeometry(40, 32, 16),
+      new THREE.ShaderMaterial({
+        uniforms: { map: { value: starTex }, toGalactic: { value: toGalactic } },
+        vertexShader: STAR_VERT,
+        fragmentShader: STAR_FRAG,
+        side: THREE.BackSide,
+        depthWrite: false,
+        depthTest: false,
+      }),
+    )
+    sky.frustumCulled = false
+    sky.renderOrder = -1
+    scene.add(sky)
 
     // Anisotropic filtering keeps the Earth and star map crisp at grazing
     // angles (the limb) instead of smearing - the main "not sharp" culprit.
@@ -173,8 +238,39 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
       frame(north, toCamera).multiply(frame(LOCAL_NORTH, onGlobe(0, viewerLon)).transpose()),
     )
 
+    // Stars: scene direction -> globe mesh -> Earth-fixed -> equatorial
+    // (turn by sidereal time) -> galactic, which is how the map is laid out.
+    const sceneToMesh = new THREE.Matrix4().makeRotationFromQuaternion(earth.quaternion.clone().invert())
+    const aimStars = (date: Date) => {
+      const m = EQ_TO_GAL.clone()
+        .multiply(new THREE.Matrix4().makeRotationZ(getGmstDeg(date) * DEG))
+        .multiply(MESH_TO_EARTH)
+        .multiply(sceneToMesh)
+      toGalactic.setFromMatrix4(m)
+    }
+
+    // ISS: a small dot about 420 km above the ground, riding with the globe.
+    const issDot = new THREE.Mesh(
+      new THREE.SphereGeometry(0.011, 12, 12),
+      new THREE.MeshBasicMaterial({ color: 0xfff3d6 }),
+    )
+    const issGlow = new THREE.Mesh(
+      new THREE.SphereGeometry(0.03, 16, 16),
+      new THREE.MeshBasicMaterial({ color: 0xffd98a, transparent: true, opacity: 0.22, depthWrite: false }),
+    )
+    issDot.add(issGlow)
+    issDot.visible = false
+    earth.add(issDot)
+    const placeIss = () => {
+      const p = issRef.current
+      issDot.visible = !!p
+      if (p) issDot.position.copy(onGlobe(p.lat, p.lon)).multiplyScalar(1 + 420 / 6371)
+    }
+
     /** Put the Sun where it is at `date`, and light the Earth and Moon from it. */
     const aim = (date: Date) => {
+      aimStars(date)
+      placeIss()
       // The Sun stands over the sub-solar point, so the lit half of the
       // globe is the half that is in daylight at `date`.
       const sub = getSubsolarPoint(date)
