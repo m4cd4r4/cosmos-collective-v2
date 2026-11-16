@@ -80,7 +80,7 @@ export function LandingHero() {
           className={`object-cover object-[70%_center] transition-opacity duration-700 ${sceneReady ? 'opacity-0' : 'opacity-100'}`}
           sizes="100vw"
         />
-        {showScene && <HeroScene onReady={() => setSceneReady(true)} />}
+        {showScene && <HeroScene onReady={() => setSceneReady(true)} iss={issPosition} />}
         {/* Scrim: readable text on the left, scene untouched on the right */}
         <div className="absolute inset-0 bg-gradient-to-r from-[rgba(10,14,26,0.88)] via-[rgba(10,14,26,0.45)] to-transparent" />
         <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0a0e1a] to-transparent" />
