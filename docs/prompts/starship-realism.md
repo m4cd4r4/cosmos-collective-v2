@@ -72,3 +72,19 @@ Known departures and gaps:
 
 - Keep the score labelled as a game measure, keep `TUNING.towerHeight` off screen, and use no em or en dashes. Use British English.
 - No production deploy without fresh approval.
+
+## Phase 3 as built (2026-11-16)
+
+Sky, Sun, vehicles and plume. `flight.ts` and `TUNING` are unchanged.
+
+- **Sky** (`starship-catch/src/scene/sky.ts`, `air.ts`): single scattering (Rayleigh, Mie, ozone; constants from Hillaire, EGSR 2020) computed each frame for the camera's height, so the sky darkens with altitude. The same table lights the haze over the ground. Photo layers and far ground drop with the Earth's curve. Volumetric cumulus between 1.3 and 1.9 km, rendered at half size and blurred. A low tier runs on phones (`?quality=low` or `high` forces one).
+- **Sun** (`starship-catch/src/sim/sun.ts`): NOAA solar position, checked against the NREL SPA worked example. Liftoff 23:30:31 UTC on 6 March 2025 (Jonathan McDowell's launch log, via Wikipedia "Starship flight test 8"); catch at T+7:02. At the catch the Sun is at azimuth 258.3 degrees, 11.6 degrees up. Two modes: `flight8` (default, real) and `photo` (`?sun=photo`, matches the shadows baked into the 2024 photograph). Macdara picks at playtest.
+- **Booster and ship** (`starship-catch/src/scene/booster.ts`): stainless PBR reflecting the sky, weld rings, four grid fins, hot-stage ring, chines, 33 bells (13 centre, 20 outer). Ship: tiles on the windward side only, 3 sea-level and 3 vacuum bells; shown only through a dev hook until phase 4.
+- **Plume**: drawn from the engines the sim says are lit; widens and lengthens as the air thins.
+
+Known gaps:
+- In `flight8` mode the Sun is behind the booster from the play camera, so the steel reads dark until the catch view.
+- The play camera looks down at altitude, so the black sky and curved horizon are rarely in frame before phase 4.
+- Clouds are soft; nothing published gives Flight 8's weather, so they are scenery.
+- Haze is a calibrated approximation, not a full 3D table. Chines, fin spacing, frost band and flaps are representative shapes.
+- Beyond about 22 km the ground is procedural, with a straight coast when the camera looks out level.

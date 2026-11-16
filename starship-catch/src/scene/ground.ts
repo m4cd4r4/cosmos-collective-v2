@@ -5,6 +5,7 @@
 // from the edges of that layer.
 
 import * as THREE from 'three'
+import { BEND_GLSL } from './sky'
 
 /** The shoreline beside the tower, m east of the catch point, and how far it moves east per metre south (z), north and south of it. */
 const SHORE_X = 420
@@ -29,6 +30,7 @@ void main() {
   vXZ = world.xz;
   vec4 mvPosition = viewMatrix * world;
   gl_Position = projectionMatrix * mvPosition;
+  ${BEND_GLSL}
 #include <logdepthbuf_vertex>
 #include <fog_vertex>
 }`,
@@ -69,7 +71,8 @@ void main() {
 #include <fog_fragment>
 }`,
   })
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(SIZE, SIZE), material)
+  // Rings out from the tower, so the ground can follow the Earth's curve down to the horizon.
+  const mesh = new THREE.Mesh(new THREE.RingGeometry(1, SIZE / 2, 96, 72), material)
   mesh.rotation.x = -Math.PI / 2
   mesh.position.y = -1
   // After the sky dome (-2), which draws without a depth test and would paint over it, before the stars (-1).
