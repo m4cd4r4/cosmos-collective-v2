@@ -3,8 +3,10 @@
 /**
  * Live hero scene: Earth and Moon rendered for the current instant.
  *
- * - Earth is lit from the real sub-solar direction, so the day/night
- *   terminator tracks the actual time (city lights on the night side).
+ * - Earth is seen from above the visitor's own meridian, and the Sun is
+ *   placed over the real sub-solar point, so the lit half is the half in
+ *   daylight right now (city lights on the rest). The day/night line
+ *   crosses the globe at the real rate, once a day.
  * - The Moon is lit to the real current phase (illuminated fraction and
  *   bright-limb orientation from the true Sun-Moon geometry).
  *
@@ -17,12 +19,13 @@
 
 import { useEffect, useRef } from 'react'
 import * as THREE from 'three'
-import { getSunDirection, getMoonIllumination } from '@/lib/celestial'
+import { getMoonIllumination, getSubsolarPoint } from '@/lib/celestial'
 
 const EARTH_DAY = '/solar-system/textures/4k_earth_daymap.jpg'
 const EARTH_NIGHT = '/solar-system/textures/4k_earth_nightmap.jpg'
 const MOON_TEX = '/images/hero-moon.jpg'
 const STAR_TEX = '/solar-system/textures/8k_stars_milky_way.jpg'
+const DEG = Math.PI / 180
 
 const EARTH_VERT = /* glsl */ `
   varying vec2 vUv;
@@ -90,10 +93,8 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     camera.lookAt(0.7, 0.05, 0)
     camera.layers.enable(1)
 
-    const now = new Date()
-    const sun = getSunDirection(now)
-    const sunVec = new THREE.Vector3(sun[0], sun[1], sun[2]).normalize()
-    const illum = getMoonIllumination(now)
+    // Updated in place by aim(); the Earth shader holds this same object.
+    const sunVec = new THREE.Vector3(1, 0, 0)
 
     const loader = new THREE.TextureLoader()
     const dayTex = loader.load(EARTH_DAY)
@@ -132,8 +133,6 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     // Right-anchored so the headline on the left sits over clear starry
     // space, not over the globe. Holds from ~16:9 through ultrawide.
     earth.position.set(1.95, -0.1, 0)
-    earth.rotation.z = 23.4 * (Math.PI / 180)
-    earth.rotation.y = Math.PI // frame a populated hemisphere
     scene.add(earth)
 
     // Moon (layer 1), lit to the real current phase
@@ -149,22 +148,55 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
     // Phase-accurate light for the Moon only (layer 1)
     const moonLight = new THREE.DirectionalLight(0xfff6ea, 2.4)
     moonLight.layers.set(1)
-    const i = Math.acos(THREE.MathUtils.clamp(2 * illum.fraction - 1, -1, 1)) // phase angle
     const a = new THREE.Vector3().subVectors(camera.position, moon.position).normalize() // moon -> camera
     const camRight = new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion)
     const camUp = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion)
-    const sScreen = new THREE.Vector2(sunVec.dot(camRight), sunVec.dot(camUp))
-    if (sScreen.lengthSq() < 1e-6) sScreen.set(-1, 0)
-    sScreen.normalize()
-    const sWorld = new THREE.Vector3()
-      .addScaledVector(camRight, sScreen.x)
-      .addScaledVector(camUp, sScreen.y)
-      .normalize()
-    const subSolar = new THREE.Vector3()
-      .addScaledVector(a, Math.cos(i))
-      .addScaledVector(sWorld, Math.sin(i))
-      .normalize()
-    moonLight.position.copy(moon.position).addScaledVector(subSolar, 50)
+    const LOCAL_NORTH = new THREE.Vector3(0, 1, 0)
+    // SphereGeometry puts longitude 0 on +X and east towards -Z.
+    const onGlobe = (latDeg: number, lonDeg: number) =>
+      new THREE.Vector3(
+        Math.cos(latDeg * DEG) * Math.cos(lonDeg * DEG),
+        Math.sin(latDeg * DEG),
+        -Math.cos(latDeg * DEG) * Math.sin(lonDeg * DEG),
+      )
+    const frame = (north: THREE.Vector3, towards: THREE.Vector3) => {
+      const x = towards.clone().addScaledVector(north, -towards.dot(north)).normalize()
+      return new THREE.Matrix4().makeBasis(x, north, new THREE.Vector3().crossVectors(x, north))
+    }
+    // The view: from above the equator at the visitor's own meridian, north
+    // up, so their part of the world sits in the middle of the disc. The
+    // meridian comes from the clock's UTC offset (15 degrees an hour).
+    const viewerLon = (-new Date().getTimezoneOffset() / 60) * 15
+    const toCamera = new THREE.Vector3().subVectors(camera.position, earth.position).normalize()
+    const north = camUp.clone().addScaledVector(toCamera, -camUp.dot(toCamera)).normalize()
+    earth.quaternion.setFromRotationMatrix(
+      frame(north, toCamera).multiply(frame(LOCAL_NORTH, onGlobe(0, viewerLon)).transpose()),
+    )
+
+    /** Put the Sun where it is at `date`, and light the Earth and Moon from it. */
+    const aim = (date: Date) => {
+      // The Sun stands over the sub-solar point, so the lit half of the
+      // globe is the half that is in daylight at `date`.
+      const sub = getSubsolarPoint(date)
+      sunVec.copy(onGlobe(sub.lat, sub.lon)).applyQuaternion(earth.quaternion).normalize()
+
+      // Moon: light it to the real phase, bright limb towards the Sun.
+      const illum = getMoonIllumination(date)
+      const i = Math.acos(THREE.MathUtils.clamp(2 * illum.fraction - 1, -1, 1)) // phase angle
+      const sScreen = new THREE.Vector2(sunVec.dot(camRight), sunVec.dot(camUp))
+      if (sScreen.lengthSq() < 1e-6) sScreen.set(-1, 0)
+      sScreen.normalize()
+      const sWorld = new THREE.Vector3()
+        .addScaledVector(camRight, sScreen.x)
+        .addScaledVector(camUp, sScreen.y)
+        .normalize()
+      const subSolar = new THREE.Vector3()
+        .addScaledVector(a, Math.cos(i))
+        .addScaledVector(sWorld, Math.sin(i))
+        .normalize()
+      moonLight.position.copy(moon.position).addScaledVector(subSolar, 50)
+    }
+    aim(new Date())
     moonLight.target = moon
     scene.add(moonLight)
 
@@ -235,8 +267,13 @@ export function HeroScene({ onReady }: { onReady?: () => void }) {
 
     let raf = 0
     const render = () => renderer.render(scene, camera)
+    let lastAim = performance.now()
     const animate = () => {
-      earth.rotation.y += 0.0006 // gentle; terminator is sun-locked in the shader
+      // Real time, so Earth turns once a day. Re-aim once a second.
+      if (performance.now() - lastAim > 1000) {
+        lastAim = performance.now()
+        aim(new Date())
+      }
       twUniforms.uTime.value = performance.now() / 1000
       render()
       raf = requestAnimationFrame(animate)

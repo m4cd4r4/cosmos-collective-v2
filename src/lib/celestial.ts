@@ -133,3 +133,22 @@ export function getMoonIllumination(date: Date): MoonIllumination {
 
   return { fraction, waxing, phaseName, elongationDeg: elong }
 }
+
+/**
+ * Sub-solar point: where on Earth the Sun is directly overhead at `date`.
+ * Latitude is the Sun's declination; longitude is the Sun's right ascension
+ * minus Greenwich mean sidereal time (east positive, -180 to 180).
+ * Accurate to well under a degree, which is far finer than the hero can show.
+ */
+export function getSubsolarPoint(date: Date): { lat: number; lon: number } {
+  const d = schlyterDay(date)
+  const lambda = sunLongitude(d)
+  const eps = 23.4393 - 3.563e-7 * d
+  const dec = Math.asin(sind(eps) * sind(lambda)) / DEG
+  const ra = rev(Math.atan2(cosd(eps) * sind(lambda), cosd(lambda)) / DEG)
+  const jd = date.getTime() / 86_400_000 + 2440587.5
+  const gmst = rev(280.46061837 + 360.98564736629 * (jd - 2451545.0))
+  let lon = rev(ra - gmst)
+  if (lon > 180) lon -= 360
+  return { lat: dec, lon }
+}
