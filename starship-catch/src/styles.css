@@ -925,6 +925,11 @@ kbd {
   border-left: 12px solid var(--gold);
 }
 
+/* The marker sits on the body, above the app, so it would paint over an open how-to card. */
+body:has(.howto) .tower-marker {
+  display: none;
+}
+
 .howto {
   width: min(520px, 100%);
 }
