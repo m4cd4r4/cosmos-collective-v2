@@ -72,6 +72,27 @@ Real physics throughout (test-verified against published anchors), dramatised vi
 
 ---
 
+## Descent to Shackleton: land at the lunar south pole
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/readme/lunar-descent-braking.jpg" alt="Descent to Shackleton: the braking burn at 12 km over the south pole, flown by the computer"/></td>
+    <td width="50%"><img src="./docs/readme/lunar-descent.jpg" alt="Descent to Shackleton: manual descent at 800 m, with the boulder field in the target ring"/></td>
+  </tr>
+</table>
+
+A game at `/lunar-descent`. In July 1969 Apollo 11's computer was steering for a field of boulders, and Neil Armstrong took manual control and flew past them with about 45 seconds of propellant left. Here the computer makes the same mistake near Shackleton crater:
+
+- **The computer flies the braking burn** at labelled time compression, with short tip cards on why the lander flies on its side. Skip to the takeover if you like.
+- **You take the stick at 2,173 m** with throttle (W S or the mouse wheel) and pitch (A D), in real time at lunar gravity (1.62 m/s2). Q E look round.
+- **Find clear ground inside the ring.** The computer's aim point is strewn with boulders it cannot see; put the touchdown marker on clear ground and land softly.
+
+The end card sets your touchdown speeds, descent time and propellant left beside Apollo 11's flown figures from the mission report. The terrain is NASA Lunar Orbiter Laser Altimeter (LOLA) elevation at 5 m and 240 m per pixel, lit by a low polar Sun, under the Yale Bright Star Catalogue sky as seen from the south pole. The lander follows NASA's renders of SpaceX's Starship HLS, with no logos. NASA has published no descent figures for Starship, so none are invented; game tuning is labelled as such. An independent educational project, not affiliated with NASA or SpaceX.
+
+It is a separate Vite + Three.js app in [`lunar-descent/`](lunar-descent/), built into `public/lunar-descent/` with `npm run build:lunar`.
+
+---
+
 ## Return to the Tower: catch a Super Heavy booster
 
 <table>
@@ -138,6 +159,8 @@ Every readout is real and attributed. Nothing is invented or decorative.
 | [Launch Library 2](https://thespacedevs.com/llapi) | Upcoming launches | Public |
 | [Aladin Lite / CDS](https://aladin.cds.unistra.fr/) | Multi-wavelength sky surveys | Public |
 | [CSIRO CASDA](https://casda.csiro.au/) | ASKAP radio data | Public TAP |
+| [NASA LOLA](https://pgda.gsfc.nasa.gov/products/78) | Lunar south pole elevation (Descent to Shackleton) | Public domain, baked offline |
+| [Yale Bright Star Catalogue](https://vizier.cfa.harvard.edu/ftp/cats/V/50/ReadMe) | Star sky from the lunar south pole | Public, baked offline |
 | [USDA NAIP](https://naip-usdaonline.hub.arcgis.com/) via [Planetary Computer](https://planetarycomputer.microsoft.com/dataset/naip) | Starbase aerial imagery (Return to the Tower) | Public domain, baked offline |
 | [USGS 3DEP](https://www.usgs.gov/3d-elevation-program) | Starbase lidar elevation | Public domain, baked offline |
 | [Copernicus Sentinel-2](https://dataspace.copernicus.eu/) | Coast and Gulf imagery around Starbase | Copernicus licence, baked offline |
@@ -186,6 +209,8 @@ The Gravitational Lens embed is a vendored build. To refresh it after an upstrea
 | `npm test` | Vitest unit tests (watch mode); `npx vitest run` for a single pass |
 | `npm run type-check` | `tsc --noEmit` |
 | `npm run lint` | ESLint via `next lint` |
+| `npm run dev:lunar` | Descent to Shackleton dev server (port 5183) |
+| `npm run build:lunar` | Build Descent to Shackleton into `public/lunar-descent/` |
 | `npm run dev:starship` | Return to the Tower dev server (port 5184) |
 | `npm run build:starship` | Build Return to the Tower into `public/starship-catch/` |
 
@@ -207,6 +232,7 @@ Hosted on Vercel. Production deploys are manual (`vercel --prod`) - pushing to `
 - **CSIRO** - Australian radio telescope data
 - **CDS Strasbourg** - Aladin Lite sky viewer
 - **[550-AU](https://github.com/m4cd4r4/550-AU)** - the embedded Solar Gravitational Lens simulation (MIT)
+- **NASA LOLA** - lunar south pole terrain; **Apollo Lunar Surface Journal** and the Apollo 11 Mission Report - the Apollo 11 figures
 - **USDA NAIP, USGS 3DEP** - Starbase imagery and elevation; contains modified Copernicus Sentinel data 2024
 - The open-source community, for the tools that made this possible
 
