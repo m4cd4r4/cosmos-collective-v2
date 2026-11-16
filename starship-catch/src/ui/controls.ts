@@ -139,9 +139,14 @@ export function createControls(buttons: ControlButtons, handlers: Handlers): Con
   hold(buttons.throttleDown, 'down')
   hold(buttons.steerLeft, 'left')
   hold(buttons.steerRight, 'right')
-  buttons.ignite.addEventListener('click', () => {
+  // The press itself, not the click: a browser sends no click for a second finger while the
+  // first still holds a steering button, and that is how a phone player lights the burn.
+  // The click stays for Enter on a focused button. Lighting twice is harmless: it lights once.
+  const light = () => {
     if (handlers.live()) ignite = true
-  })
+  }
+  buttons.ignite.addEventListener('pointerdown', light)
+  buttons.ignite.addEventListener('click', light)
   buttons.assist.addEventListener('click', handlers.onAssist)
   buttons.pause.addEventListener('click', handlers.onPause)
   buttons.sound.addEventListener('click', handlers.onMute)
