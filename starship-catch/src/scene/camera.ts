@@ -1,6 +1,6 @@
 // The camera: one continuous shot from the south, so east is always to the right and the
-// offset reads directly. High up it rides beside the booster, looking down past it at the
-// ground. On the final approach it pulls back to hold the booster and the tower in one frame.
+// offset reads directly. High up it rides above the booster, looking down past it at the
+// ground beneath it. On the final approach it pulls back to hold the booster and the tower in one frame.
 // When the run ends it moves in close on what happened.
 
 import * as THREE from 'three'
@@ -48,13 +48,23 @@ export function frameShot(flight: Flight, sceneY: number, lens: Lens, out: Frami
 
   if (flight.outcome) return outcomeShot(flight, sceneY, lens, out)
 
-  // Riding beside the booster, above it, looking down past it at the ground it is falling to.
-  const ride = phone ? 300 : 220
-  follow.set(s.x + ride * 0.25, centre + ride * 0.3, ride)
-  followLook.set(s.x, centre - ride * 0.12, 0)
+  // Riding above the booster and a little south of it, looking down past it at the ground it is
+  // falling to, so the ground beneath it, the track to the tower and its drift over the ground
+  // are all in the frame. The lens widens just enough to hold the top of the booster and the
+  // ground directly under it.
+  const up = phone ? 190 : 160
+  const back = phone ? 120 : 100
+  follow.set(s.x + back * 0.2, centre + up, back)
+  const aTop = Math.atan2(follow.y - (sceneY + H), back)
+  const aGround = Math.atan2(follow.y, back)
+  const half = (aGround - aTop) / 2 + 6 * DEG
+  const pitch = (aGround + aTop) / 2
+  const highFov = Math.min(80, Math.max(lens.fov, (2 * Math.atan(Math.tan(half) / lens.free)) / DEG))
+  followLook.set(follow.x, follow.y - Math.sin(pitch) * 100, follow.z - Math.cos(pitch) * 100)
 
   const h = s.y - TUNING.catchHeight
   const near = smooth(FAR, NEAR, h)
+  out.fov = highFov + (lens.fov - highFov) * near
   if (near <= 0) {
     out.eye.copy(follow)
     out.look.copy(followLook)
