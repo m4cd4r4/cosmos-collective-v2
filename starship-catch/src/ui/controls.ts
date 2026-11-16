@@ -1,23 +1,30 @@
-// Keyboard and touch input. Owns the commanded throttle and tilt, the catch call and the
-// two one-shot commands: cut the boostback engines, and light the landing burn.
-// On screen east is to the right, so "right" leans the thrust to push the booster east.
+// Keyboard and touch input. Owns the commanded throttle and steering and the one-shot
+// "light the landing burn". On screen east is to the right, so "right" pushes the booster east.
+// Steering is spring-centred: hold to lean, let go and the booster comes back upright.
 
-import { TUNING, type Input } from '../sim/flight'
-import type { Hud } from './hud'
+import type { Input } from '../sim/flight'
 
-const THROTTLE_RATE = 0.8 // full range per second
-const TILT_RATE = 22 // degrees per second
-const TILT_NUDGE = 2 // degrees per keyboard activation of a tilt button
+const THROTTLE_RATE = 0.7 // full range per second
+const STEER_RATE = 3.5 // full lean per second, either way
+const START_THROTTLE = 0.7
 
-export type Call = 'none' | 'go' | 'no-go'
+export interface ControlButtons {
+  throttleUp: HTMLButtonElement
+  throttleDown: HTMLButtonElement
+  steerLeft: HTMLButtonElement
+  steerRight: HTMLButtonElement
+  ignite: HTMLButtonElement
+  assist: HTMLButtonElement
+  sound: HTMLButtonElement
+  pause: HTMLButtonElement
+}
 
 export interface Controls {
   throttle: number
-  tiltDeg: number
-  call: Call
-  /** Apply held keys and buttons. `dt` is real seconds, not simulated ones. */
+  steer: number
+  /** Apply held keys and buttons. `dt` is real seconds. */
   update(dt: number): void
-  /** The input for the next physics step. One-shot commands are cleared once taken. */
+  /** The input for the next physics step. The ignite command is cleared once taken. */
   take(): Input
   reset(): void
 }
@@ -25,16 +32,17 @@ export interface Controls {
 interface Handlers {
   onPause(): void
   onRetry(): void
-  onSkip(): void
-  /** Which one-shot command Space and the action button mean right now. */
-  action(): 'cut' | 'ignite' | null
-  /** Whether the catch call can still be made. */
-  canCall(): boolean
+  onAssist(): void
+  onMute(): void
+  /** Any click or key: the browser now allows audio. */
+  onGesture(): void
+  /** False once the run has ended: keys then belong to the end card. */
+  live(): boolean
 }
 
-const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
+type Held = 'up' | 'down' | 'left' | 'right'
 
-const KEYS: Record<string, 'up' | 'down' | 'left' | 'right'> = {
+const KEYS: Record<string, Held> = {
   KeyW: 'up',
   ArrowUp: 'up',
   KeyS: 'down',
@@ -45,97 +53,98 @@ const KEYS: Record<string, 'up' | 'down' | 'left' | 'right'> = {
   ArrowRight: 'right',
 }
 
-export function createControls(hud: Hud, handlers: Handlers): Controls {
-  const held = { up: false, down: false, left: false, right: false }
-  let cut = false
+const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v))
+
+export function createControls(buttons: ControlButtons, handlers: Handlers): Controls {
+  const held: Record<Held, boolean> = { up: false, down: false, left: false, right: false }
   let ignite = false
 
   const controls: Controls = {
-    throttle: 1,
-    tiltDeg: 0,
-    call: 'none',
+    throttle: START_THROTTLE,
+    steer: 0,
     update(dt) {
       const throttleDir = Number(held.up) - Number(held.down)
       if (throttleDir) controls.throttle = clamp(controls.throttle + throttleDir * THROTTLE_RATE * dt, 0, 1)
-      const tiltDir = Number(held.right) - Number(held.left)
-      if (tiltDir) controls.tiltDeg = clamp(controls.tiltDeg + tiltDir * TILT_RATE * dt, -TUNING.tiltMaxDeg, TUNING.tiltMaxDeg)
+      const want = Number(held.right) - Number(held.left)
+      const step = STEER_RATE * dt
+      controls.steer = clamp(controls.steer + clamp(want - controls.steer, -step, step), -1, 1)
     },
     take() {
-      const input: Input = { throttle: controls.throttle, tiltDeg: controls.tiltDeg, go: controls.call === 'go', shutdown: cut, ignite }
-      cut = ignite = false
+      const input: Input = { throttle: controls.throttle, steer: controls.steer, ignite }
+      ignite = false
       return input
     },
     reset() {
-      controls.throttle = 1
-      controls.tiltDeg = 0
-      controls.call = 'none'
-      cut = ignite = false
+      controls.throttle = START_THROTTLE
+      controls.steer = 0
+      ignite = false
+      held.up = held.down = held.left = held.right = false
     },
-  }
-
-  const act = () => {
-    const action = handlers.action()
-    if (action === 'cut') cut = true
-    else if (action === 'ignite') ignite = true
-  }
-  const makeCall = (call: Call) => {
-    if (handlers.canCall()) controls.call = call
   }
 
   window.addEventListener('keydown', (event) => {
     if (event.ctrlKey || event.metaKey || event.altKey) return
     const key = KEYS[event.code]
     if (key) {
+      if (!handlers.live()) return
       held[key] = true
-      event.preventDefault() // keep arrow keys from also moving the slider or the page
-    } else if (event.repeat) return
-    else if (event.code === 'Space') {
+      event.preventDefault() // keep arrow keys from scrolling the page
+      return
+    }
+    if (event.repeat) return
+    if (event.code === 'Space' && handlers.live()) {
       // Space on a focused button would also click it.
       event.preventDefault()
-      act()
-    } else if (event.code === 'KeyG') makeCall('go')
-    else if (event.code === 'KeyN') makeCall('no-go')
-    else if (event.code === 'KeyP') handlers.onPause()
+      ignite = true
+    } else if (event.code === 'KeyP') handlers.onPause()
     else if (event.code === 'KeyR') handlers.onRetry()
+    else if (event.code === 'KeyH') handlers.onAssist()
+    else if (event.code === 'KeyM') handlers.onMute()
   })
+  window.addEventListener('keydown', handlers.onGesture, { capture: true })
+  window.addEventListener('pointerdown', handlers.onGesture, { capture: true })
   window.addEventListener('keyup', (event) => {
     const key = KEYS[event.code]
     if (key) held[key] = false
-    // Space is handled on keydown; stop the browser clicking the focused button on keyup as well.
-    if (event.code === 'Space') event.preventDefault()
+    if (event.code === 'Space' && handlers.live()) event.preventDefault()
   })
   window.addEventListener('blur', () => {
     held.up = held.down = held.left = held.right = false
   })
 
-  hud.throttleInput.addEventListener('input', () => {
-    controls.throttle = Number(hud.throttleInput.value) / 100
-  })
-
-  const holdButton = (button: HTMLButtonElement, key: 'left' | 'right') => {
-    const release = () => (held[key] = false)
+  // Touch and mouse: hold a button as you would hold a key.
+  const hold = (button: HTMLButtonElement, key: Held) => {
+    const release = () => {
+      held[key] = false
+      button.classList.remove('down')
+    }
     button.addEventListener('pointerdown', (event) => {
+      event.preventDefault()
       held[key] = true
+      button.classList.add('down')
       button.setPointerCapture(event.pointerId)
     })
     button.addEventListener('pointerup', release)
     button.addEventListener('pointercancel', release)
     button.addEventListener('lostpointercapture', release)
     button.addEventListener('contextmenu', (event) => event.preventDefault())
-    // Enter on a focused button arrives as a click with no pointer: nudge.
+    // Enter on a focused button arrives as a click with no pointer: a short nudge.
     button.addEventListener('click', (event) => {
       if (event.detail !== 0) return
-      controls.tiltDeg = clamp(controls.tiltDeg + (key === 'right' ? TILT_NUDGE : -TILT_NUDGE), -TUNING.tiltMaxDeg, TUNING.tiltMaxDeg)
+      if (key === 'up' || key === 'down') controls.throttle = clamp(controls.throttle + (key === 'up' ? 0.1 : -0.1), 0, 1)
+      else controls.steer = key === 'right' ? 1 : -1
     })
   }
-  holdButton(hud.tiltLeft, 'left')
-  holdButton(hud.tiltRight, 'right')
-  hud.goButton.addEventListener('click', () => makeCall('go'))
-  hud.noGoButton.addEventListener('click', () => makeCall('no-go'))
-  hud.cutButton.addEventListener('click', act)
-  hud.igniteButton.addEventListener('click', act)
-  hud.pauseButton.addEventListener('click', handlers.onPause)
-  hud.skipButton.addEventListener('click', handlers.onSkip)
+  hold(buttons.throttleUp, 'up')
+  hold(buttons.throttleDown, 'down')
+  hold(buttons.steerLeft, 'left')
+  hold(buttons.steerRight, 'right')
+  buttons.ignite.addEventListener('click', () => {
+    if (handlers.live()) ignite = true
+  })
+  buttons.assist.addEventListener('click', handlers.onAssist)
+  buttons.pause.addEventListener('click', handlers.onPause)
+  buttons.sound.addEventListener('click', handlers.onMute)
 
   return controls
 }

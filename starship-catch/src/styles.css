@@ -6,6 +6,8 @@
   --soft: #b8c0d4;
   --gold: #d4af37;
   --red: #ff6b6b;
+  --amber: #ff9a3c;
+  --ok: #7bd389;
   --line: rgba(255, 255, 255, 0.1);
   --display: 'Outfit Variable', system-ui, sans-serif;
   --body: 'Inter Variable', system-ui, sans-serif;
@@ -29,8 +31,7 @@ body {
   touch-action: manipulation;
 }
 
-#scene,
-#dust {
+#scene {
   position: fixed;
   inset: 0;
   width: 100%;
@@ -38,28 +39,17 @@ body {
   display: block;
 }
 
-#dust {
-  pointer-events: none;
-  opacity: 0;
-  background: radial-gradient(circle at 50% 62%, rgb(178, 172, 160), rgb(112, 108, 100));
-}
 
-/* Rides beside the touchdown marker in the scene. No panel: it is part of the view, not the HUD. */
-.marker-label {
+
+/* Brackets round the booster when it is small on screen. Part of the view, not the HUD. */
+.booster-tag {
   position: fixed;
   top: 0;
   left: 0;
+  width: 24px;
   pointer-events: none;
-  font: 500 12px var(--mono);
-  color: var(--ink);
-  white-space: nowrap;
-  text-shadow:
-    0 0 3px #000,
-    0 0 6px #000;
-}
-
-.marker-label.over {
-  color: var(--red);
+  border: 1.5px solid rgba(244, 241, 232, 0.85);
+  border-radius: 3px;
 }
 
 [hidden] {
@@ -161,8 +151,8 @@ button:disabled {
   display: grid;
   grid-template:
     'status readouts .' auto
-    'tips tips tips' 1fr
-    'throttle . action' auto
+    '. . scope' 1fr
+    'bottom bottom bottom' auto
     / 1fr auto 1fr;
   gap: 12px;
   padding: 16px;
@@ -178,50 +168,33 @@ button:disabled {
   justify-self: start;
   align-self: start;
   display: grid;
-  gap: 4px;
+  gap: 6px;
   padding: 10px 12px;
-  max-width: 250px;
-}
-
-.phase {
-  display: flex;
-  align-items: center;
-  gap: 8px;
 }
 
 .phase-name {
   font: 600 15px var(--display);
 }
 
-.phase-note {
-  font-size: 12px;
-  color: var(--soft);
-}
-
 .status-actions {
   display: flex;
   gap: 6px;
-  justify-self: start;
-  margin-top: 4px;
 }
 
 .status .ghost {
-  min-height: 28px;
+  min-height: 30px;
 }
 
-.chip {
-  font: 11px var(--mono);
-  padding: 1px 6px;
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  border-radius: 4px;
-  color: var(--soft);
+.ghost[aria-pressed='true'] {
+  color: var(--ink);
+  border-color: var(--gold);
 }
 
 .readouts {
   grid-area: readouts;
   align-self: start;
   display: grid;
-  grid-template-columns: repeat(6, minmax(104px, auto));
+  grid-template-columns: repeat(6, minmax(96px, auto));
   padding: 8px 4px;
 }
 
@@ -255,146 +228,163 @@ button:disabled {
   color: var(--red);
 }
 
-.control {
-  display: grid;
-  gap: 6px;
-  padding: 10px 12px;
-  align-self: end;
-}
-
-.throttle {
-  grid-area: throttle;
-  justify-self: start;
-  width: 260px;
-}
-
-.action {
-  grid-area: action;
-  justify-self: end;
-}
-
-.control-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-}
-
-.control-head .value {
-  font-size: 16px;
-}
-
-.cue-text {
-  font: 11px var(--mono);
-  color: var(--gold);
-}
-
-.slider {
-  position: relative;
-  padding-top: 8px;
-}
-
-.slider input {
-  display: block;
-  width: 100%;
-  height: 28px;
-  margin: 0;
-  accent-color: var(--ink);
-}
-
-/* The guidance cue: a gold tick above the track. The thumb is about 16 px wide. */
-.cue-mark {
-  position: absolute;
-  top: 0;
-  left: calc(8px + (100% - 16px) * var(--at, 0));
-  width: 2px;
-  height: 12px;
-  margin-left: -1px;
-  background: var(--gold);
-}
-
-.tilt-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.tilt-button {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  touch-action: none;
-}
-
-.dial {
-  width: 96px;
-  height: 61px;
-}
-
-.dial-arc {
-  fill: none;
-  stroke: rgba(255, 255, 255, 0.28);
-  stroke-width: 1.5;
-}
-
-.dial-needle {
-  stroke: var(--ink);
-  stroke-width: 2.5;
-  stroke-linecap: round;
-}
-
-.dial-cue {
-  stroke: var(--gold);
-  stroke-width: 2.5;
-}
-
-/* ---------- Tip cards ---------- */
-
-.tips {
-  grid-area: tips;
-  /* At the top, over the sky: the ground ahead is where the player is choosing a spot. */
-  align-self: start;
+/* The flying controls: throttle, the burn, steering. */
+.bottom {
+  grid-area: bottom;
   justify-self: center;
-  width: min(440px, 100%);
+  display: grid;
+  justify-items: center;
+  gap: 6px;
   pointer-events: none;
 }
 
-.tip {
-  display: grid;
-  gap: 6px;
-  padding: 12px 14px;
+.bottom > * {
   pointer-events: auto;
-  animation: rise 0.3s ease-out;
 }
 
-.tip-head {
+.pad {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+}
+
+.group {
+  display: grid;
+  grid-template-columns: auto 132px auto;
+  align-items: center;
+  gap: 8px;
+}
+
+.pad-button {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.pad-button.down {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--ink);
+}
+
+.gauge {
+  display: grid;
+  gap: 4px;
+}
+
+.gauge-head {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 12px;
+  align-items: baseline;
 }
 
-.tip-head strong {
-  font: 600 15px var(--display);
-}
-
-.tip p {
-  color: var(--soft);
+.gauge-head .value {
   font-size: 13px;
 }
 
-@keyframes rise {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
+.gauge-track,
+.lean-track {
+  position: relative;
+  display: block;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* ---------- Start and end cards ---------- */
+.gauge-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 3px;
+  background: var(--ink);
+}
+
+.idle .gauge-fill {
+  background: var(--muted);
+}
+
+.gauge-floor {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.lean-track::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -3px;
+  bottom: -3px;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.lean-needle {
+  position: absolute;
+  top: -3px;
+  width: 4px;
+  height: 12px;
+  margin-left: -2px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+
+.gauge-note {
+  font-size: 11px;
+  color: var(--muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ignite {
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  min-height: 56px;
+  min-width: 118px;
+  padding: 6px 14px;
+  line-height: 1.2;
+}
+
+.ignite kbd {
+  color: var(--void);
+  border-color: rgba(10, 14, 26, 0.3);
+  font-size: 10.5px;
+}
+
+.ignite:disabled {
+  opacity: 1;
+  background: transparent;
+  color: var(--soft);
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+.ignite:disabled kbd {
+  display: none;
+}
+
+.keys-hint {
+  font-size: 11.5px;
+  color: var(--soft);
+  padding: 2px 10px;
+  border-radius: 6px;
+  background: rgba(10, 14, 26, 0.6);
+}
+
+.keys-hint kbd {
+  font-size: 10.5px;
+}
 
 .overlay {
   position: fixed;
@@ -471,59 +461,130 @@ kbd {
   display: none;
 }
 
-.end.hard h1,
-.end.boulders h1 {
+
+/* ---------- End card: the outcome big, the run's numbers, what to try next, Retry. ---------- */
+
+.end {
+  width: min(560px, 100%);
+  gap: 16px;
+}
+
+.end h1 {
+  font-size: 44px;
+  line-height: 1.05;
+}
+
+.end.lost h1 {
   color: var(--red);
 }
 
-.table-wrap {
-  overflow-x: auto;
+.end .eyebrow {
+  margin-bottom: -10px;
 }
 
-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 12.5px;
+.reason {
+  font-size: 15px;
+  color: var(--soft);
 }
 
-th,
-td {
-  padding: 7px 10px 7px 0;
-  text-align: left;
-  vertical-align: top;
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 14px 0;
 }
 
-thead th {
-  border-top: 0;
-  font-size: 11px;
-  font-weight: 400;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
+.stat {
+  display: grid;
+  gap: 4px;
+  padding: 0 14px;
+  border-left: 1px solid var(--line);
 }
 
-tbody th {
-  font-weight: 500;
+.stat:first-child {
+  border-left: 0;
+  padding-left: 0;
 }
 
-.you .value {
-  display: block;
-  font-size: 14px;
+.stat-figure {
   white-space: nowrap;
 }
 
-.verdict {
-  font-size: 11px;
+.stat .value {
+  font-size: 32px;
+  line-height: 1.1;
+}
+
+.stat .unit {
+  margin-left: 5px;
+  font-size: 12px;
   color: var(--muted);
 }
 
-.verdict.over {
+.stat.over .value {
   color: var(--red);
 }
 
-.ref {
-  display: block;
+.tips {
+  display: grid;
+  gap: 8px;
+}
+
+.tips ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 8px;
+}
+
+.tips li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 14.5px;
+  line-height: 1.45;
+}
+
+.tips li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--soft);
+}
+
+.retry {
+  min-height: 52px;
+  min-width: 160px;
+  font-size: 16px;
+}
+
+.retry kbd {
+  margin-left: 6px;
+  color: var(--void);
+  border-color: rgba(10, 14, 26, 0.3);
+}
+
+.sources summary {
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 12.5px;
+}
+
+.sources[open] summary {
+  margin-bottom: 10px;
+}
+
+.facts {
+  display: grid;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  font-size: 12.5px;
   color: var(--soft);
 }
 
@@ -535,10 +596,13 @@ tbody th {
   white-space: nowrap;
 }
 
+/* The end card sits low, so the catch or the wreck stays in view above it. */
+.end-overlay {
+  background: rgba(10, 14, 26, 0.35);
+}
+
 /* ---------- Tablet ---------- */
 
-/* Three equal-sided columns need about 1,110 px. Below that the sides shrink to their content
-   so the pitch panel stays on screen. */
 @media (min-width: 761px) and (max-width: 1180px) {
   .hud {
     grid-template-columns: auto 1fr auto;
@@ -546,16 +610,12 @@ tbody th {
 
   .readouts {
     justify-self: center;
-    grid-template-columns: repeat(3, minmax(104px, auto));
+    grid-template-columns: repeat(3, minmax(96px, auto));
     row-gap: 8px;
   }
 
   .readout:nth-child(3n + 1) {
     border-left: 0;
-  }
-
-  .readout {
-    padding: 0 8px;
   }
 }
 
@@ -564,14 +624,14 @@ tbody th {
 @media (max-width: 760px) {
   .hud {
     grid-template:
-      'readouts readouts' auto
-      'status status' auto
-      'tips tips' 1fr
-      'action action' auto
-      'throttle throttle' auto
-      / 1fr auto;
+      'readouts' auto
+      'status' auto
+      'scope' 1fr
+      'bottom' auto
+      / 1fr;
     gap: 8px;
     padding: 8px;
+    padding-bottom: max(8px, env(safe-area-inset-bottom));
   }
 
   .readouts {
@@ -584,10 +644,6 @@ tbody th {
     border-left: 0;
   }
 
-  .status-actions {
-    margin-top: 0;
-  }
-
   .readout {
     padding: 0 6px;
   }
@@ -598,7 +654,7 @@ tbody th {
   }
 
   .readout .value {
-    font-size: 14px;
+    font-size: 15px;
   }
 
   .readout .unit {
@@ -609,27 +665,53 @@ tbody th {
   .status {
     grid-template-columns: 1fr auto;
     align-items: center;
-    max-width: none;
     justify-self: stretch;
-    padding: 6px 10px;
-  }
-
-  .phase-note {
-    display: none;
+    padding: 4px 4px 4px 10px;
   }
 
   .status .ghost {
-    margin-top: 0;
+    min-height: 40px;
   }
 
-  .throttle {
-    width: auto;
+  .bottom {
     justify-self: stretch;
   }
 
-  .dial {
-    width: 64px;
-    height: 41px;
+  .keys-hint {
+    display: none;
+  }
+
+  .pad {
+    width: 100%;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .group > .gauge {
+    grid-row: 1;
+    grid-column: 1 / -1;
+  }
+
+  .group {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .pad-button {
+    width: 100%;
+    height: 52px;
+  }
+
+  .ignite {
+    min-width: 92px;
+    min-height: 52px;
+    align-self: end;
+    padding: 6px 8px;
+  }
+
+  .ignite kbd {
+    display: none;
   }
 
   .card {
@@ -640,53 +722,33 @@ tbody th {
     font-size: 25px;
   }
 
-  /* End card table: each row becomes label and your figure, with the real figures beneath. */
-  thead {
-    display: none;
+  .end-overlay {
+    align-items: flex-end;
   }
 
-  tbody tr {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: 2px 12px;
-    padding: 8px 0;
-    border-top: 1px solid var(--line);
+  .end-overlay .card {
+    margin-bottom: 0;
   }
 
-  tbody th,
-  tbody td {
-    padding: 0;
-    border: 0;
+  .end h1 {
+    font-size: 34px;
   }
 
-  tbody td:last-child {
-    grid-column: 1 / -1;
+  .stat {
+    padding: 0 8px;
   }
 
-  .you {
-    text-align: right;
-  }
-}
-
-/* Touch: Pause and the throttle slider get a 44 px target. */
-@media (pointer: coarse), (max-width: 760px) {
-  .status .ghost {
-    min-height: 44px;
+  .stat .value {
+    font-size: 24px;
   }
 
-  /* The tip covers the booster on a phone, so its Close button stays small and its touch area grows instead. */
-  .tip .ghost {
-    position: relative;
+  .stat .unit {
+    display: block;
+    margin-left: 0;
   }
 
-  .tip .ghost::after {
-    content: '';
-    position: absolute;
-    inset: -10px;
-  }
-
-  .slider input {
-    height: 44px;
+  .retry {
+    flex: 1;
   }
 }
 
@@ -697,167 +759,222 @@ tbody th {
   }
 }
 
-/* ---------- The action panel: one block per phase ---------- */
-
-.action {
-  width: 280px;
-}
-
-.block {
-  display: grid;
-  gap: 8px;
-}
-
-.time {
-  margin-left: auto;
-  font-size: 12px;
-  color: var(--soft);
-}
-
-.checks {
+.score {
   display: grid;
   grid-template-columns: auto 1fr;
-  gap: 2px 12px;
-  align-items: baseline;
-  margin: 0;
+  gap: 4px 20px;
+  align-items: center;
+  padding: 14px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
 }
 
-.checks dd {
-  margin: 0;
-  text-align: right;
-  font-size: 12px;
+.score-total {
+  grid-row: span 4;
+  font: 600 52px/1 var(--display);
+  font-variant-numeric: tabular-nums;
 }
 
-.bad {
-  color: var(--red);
+.score-total small {
+  display: block;
+  margin-top: 6px;
+  font: 12px var(--body);
+  color: var(--muted);
 }
 
-.call-row {
+.score-part {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  grid-template-columns: 88px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  font-size: 12.5px;
 }
 
-.call {
-  padding: 0 8px;
-  font-size: 13px;
-}
-
-/* Gold marks the selection, nothing else. */
-.call[aria-pressed='true'] {
-  border-color: var(--gold);
-  box-shadow: inset 0 0 0 1px var(--gold);
-}
-
-button kbd {
-  margin-left: 4px;
-  font: 11px var(--mono);
-  opacity: 0.6;
-}
-
-.meter,
-.strip {
-  position: relative;
-  height: 10px;
-  border-radius: 5px;
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.meter {
+.score-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
   overflow: hidden;
 }
 
-.meter-fill {
-  position: absolute;
-  inset: 0 auto 0 0;
+.score-bar span {
+  display: block;
+  height: 100%;
   background: var(--ink);
 }
 
-.meter-fill.over {
+.score-part .value {
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+@media (max-width: 760px) {
+  .score {
+    grid-template-columns: 1fr;
+  }
+
+  .score-total {
+    grid-row: auto;
+  }
+
+  .score-part {
+    grid-template-columns: 76px 1fr auto;
+  }
+}
+
+/* ---------- Guidance: scope, sink band, tower marker, how-to card ---------- */
+
+.scope {
+  grid-area: scope;
+  justify-self: end;
+  align-self: end;
+  display: grid;
+  gap: 2px;
+  padding: 6px 8px 8px;
+}
+
+.scope-canvas {
+  width: 132px;
+  height: 132px;
+  display: block;
+}
+
+.band {
+  display: block;
+  height: 3px;
+  margin-top: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.band i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  border-radius: 2px;
+  background: transparent;
+}
+
+[data-band='ok'] .band i {
+  background: var(--ok);
+}
+
+[data-band='warn'] .band i {
+  background: var(--amber);
+}
+
+[data-band='bad'] .band i {
   background: var(--red);
 }
 
-.meter-limit {
-  position: absolute;
+.band-note {
+  font-size: 9.5px;
+  color: var(--muted);
+}
+
+/* Rides on the scene: the arms when they are in view, an edge arrow when they are not. */
+.tower-marker {
+  position: fixed;
   top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--soft);
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  font: 600 12px var(--body);
+  color: var(--ink);
+  white-space: nowrap;
 }
 
-.strip-aim {
-  position: absolute;
-  top: -3px;
-  bottom: -3px;
-  left: 50%;
-  width: 2px;
-  margin-left: -1px;
-  background: var(--gold);
+.tower-marker span {
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(10, 14, 26, 0.72);
+  border: 1px solid rgba(212, 175, 55, 0.7);
 }
 
-.strip-marker {
-  position: absolute;
-  top: -2px;
-  bottom: -2px;
-  width: 6px;
-  margin-left: -3px;
-  border-radius: 3px;
-  background: var(--ink);
+.tower-marker b {
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+  border-left: 12px solid var(--gold);
 }
 
-.tilt-row {
-  justify-content: space-between;
+.howto {
+  width: min(520px, 100%);
 }
 
-/* A phone has little sky to spare. The throttle sits beside the action panel while it is live,
-   and leaves the screen while the computer holds it. */
+.steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 14px;
+}
+
+.steps li {
+  display: grid;
+  grid-template-columns: 28px 1fr;
+  gap: 10px;
+}
+
+.step-n {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font: 600 14px var(--display);
+}
+
+.steps strong {
+  font: 600 16px var(--display);
+}
+
+.steps kbd {
+  margin-left: 4px;
+}
+
+.steps p {
+  margin-top: 2px;
+  color: var(--soft);
+}
+
 @media (max-width: 760px) {
-  .hud {
-    grid-template:
-      'readouts readouts' auto
-      'status status' auto
-      'tips tips' 1fr
-      'throttle action' auto
-      / 1fr 1fr;
+  .scope {
+    padding: 4px 6px 6px;
   }
 
-  .action {
-    width: auto;
-    justify-self: stretch;
+  .scope-canvas {
+    width: 104px;
+    height: 104px;
   }
 
-  .throttle.idle {
+  /* Up in the sky, clear of the tower and the controls. */
+  .scope {
+    align-self: start;
+  }
+
+  .phase-name {
     display: none;
   }
 
-  .throttle.idle ~ .action {
-    grid-column: 1 / -1;
+  .status {
+    grid-template-columns: 1fr;
+    padding: 4px;
   }
 
-  .control {
-    padding: 8px 10px;
+  .status-actions {
+    justify-content: space-between;
   }
 
-  .dial {
-    width: 56px;
-    height: 36px;
-  }
-
-  .action .fine {
+  .status kbd {
     display: none;
   }
-}
 
-@media (pointer: coarse) {
-  button kbd {
+  .band-note {
     display: none;
-  }
-}
-
-/* Tips sit under the status panel on a wide screen: the booster comes down through the middle of the sky. */
-@media (min-width: 761px) {
-  .tips {
-    justify-self: start;
-    width: min(300px, 100%);
   }
 }

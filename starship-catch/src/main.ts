@@ -7,11 +7,14 @@ import '@fontsource-variable/jetbrains-mono'
 import './styles.css'
 
 import { DT } from './sim/physics'
-import { TUNING, advance, guidance, igniteHeight, startFlight, type Flight, type Input, type Phase } from './sim/flight'
+import { aboveArms, advance, startFlight, type Flight, type Input } from './sim/flight'
+import { makeScenario, newSeed } from './sim/scenario'
 import { predictArrival } from './sim/predict'
-import { pickScenario } from './sim/scenario'
-import { createControls, type Call } from './ui/controls'
-import { createEndCard, createStartCard, createTips, type TipId } from './ui/cards'
+import { pilot } from './sim/pilot'
+import { scoreCatch } from './sim/score'
+import { createControls } from './ui/controls'
+import { createEndCard, createHowTo, createStartCard, type RunNotes } from './ui/cards'
+import { createSound } from './ui/sound'
 import { createHud } from './ui/hud'
 import type { World } from './scene/world'
 
@@ -19,46 +22,98 @@ const app = document.getElementById('app') as HTMLElement
 const canvas = document.getElementById('scene') as HTMLCanvasElement
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** How many times faster than real time each phase runs. Game settings, shown on the HUD. */
-const ASCENT_SCALE = 4
-const BOOSTBACK_SCALE = 3
-const COAST_SCALE = 16
-/** Boostback drops to real time once the impact point is this close to the aim, m. */
-const DECISION_RANGE = 40_000
-/** Real seconds the scene is left in view after the run ends, before the end card. */
-const SETTLE_SECONDS = 2.6
+/** Real seconds the outcome is held on screen before the end card. A catch is held longer. */
+const CRASH_HOLD = 3
+const CATCH_HOLD = 4
 
-/** Development only: with ?autopilot the flight computer flies the landing burn, for screenshots. */
-const AUTOPILOT = import.meta.env.DEV && new URLSearchParams(location.search).has('autopilot')
+const params = new URLSearchParams(location.search)
+/** ?seed=N replays one drop. Development only: ?autopilot flies the test pilot, ?speed=N runs faster, for screenshots. */
+const FIXED_SEED = Number(params.get('seed')) || null
+const AUTOPILOT = import.meta.env.DEV && params.has('autopilot')
+const SPEED = import.meta.env.DEV ? Number(params.get('speed')) || 1 : 1
 
 let world: World | null = null
 let groundFlown: string | null = null
-let run = 0
-let flight: Flight = startFlight(pickScenario(0))
-/** The flight as it was when the landing began, for an instant retry. */
-let gate: { flight: Flight; call: Call } | null = null
+let seed = FIXED_SEED ?? newSeed()
+let flight: Flight = startFlight(makeScenario(seed))
 let paused = false
+let assist = readAssist()
 let accumulator = 0
 let lastFrame = 0
 let settle: number | null = null
 let endCard: HTMLElement | null = null
-const tipsShown = new Set<TipId>()
+let notes: RunNotes = { xAt2km: null, windAt2km: 0, assistUsed: assist }
+let heard: string | null = null
+let howTo: HTMLElement | null = null
 
 const hud = createHud()
-const tips = createTips()
-hud.root.append(tips.root)
+const sound = createSound()
 const controls = createControls(hud, {
   onPause: togglePause,
-  onRetry: () => begin(gate ? 'landing' : 'liftoff'),
-  onSkip: skip,
-  action: () => (flight.phase === 'boostback' ? 'cut' : flight.phase === 'landing' && !flight.lit ? 'ignite' : null),
-  canCall: () => flight.phase === 'boostback',
+  onRetry: () => begin(newSeed()),
+  onAssist: toggleAssist,
+  onMute: () => sound.toggle(),
+  onGesture: () => sound.unlock(),
+  live: () => !flight.outcome && world !== null && !paused && !howTo,
 })
 const startCard = createStartCard(load)
 app.append(hud.root, startCard.root)
+hud.help.addEventListener('click', () => openHowTo())
+window.addEventListener('keydown', (event) => {
+  if (event.code === 'Slash' && world) openHowTo()
+  else if (howTo && event.code === 'Escape') closeHowTo()
+})
+
+/** Assist is on until the player turns it off. */
+function readAssist(): boolean {
+  try {
+    return localStorage.getItem('starship-catch:assist') !== 'off'
+  } catch {
+    return true
+  }
+}
+
+function howToSeen(): boolean {
+  try {
+    return localStorage.getItem('starship-catch:howto') === 'seen'
+  } catch {
+    return false
+  }
+}
+
+/** The three-step card. Shown before the first drop, and from the ? button. The run waits while it is open. */
+function openHowTo() {
+  if (howTo || !world || flight.outcome) return
+  paused = true
+  howTo = createHowTo(closeHowTo)
+  app.append(howTo)
+}
+
+function closeHowTo() {
+  if (!howTo) return
+  howTo.remove()
+  howTo = null
+  paused = false
+  try {
+    localStorage.setItem('starship-catch:howto', 'seen')
+  } catch {
+    // Storage blocked: the card shows again next visit.
+  }
+  ;(document.activeElement as HTMLElement | null)?.blur?.()
+}
+
+function toggleAssist() {
+  assist = !assist
+  if (assist) notes.assistUsed = true
+  try {
+    localStorage.setItem('starship-catch:assist', assist ? 'on' : 'off')
+  } catch {
+    // Storage blocked: Assist still works for this visit.
+  }
+}
 
 async function load() {
-  if (world) return begin('liftoff')
+  if (world) return begin(newSeed())
   startCard.setBusy('Loading the launch site')
   try {
     const [{ loadSite }, { createWorld }] = await Promise.all([import('./scene/site'), import('./scene/world')])
@@ -68,7 +123,8 @@ async function load() {
     window.addEventListener('resize', () => world?.resize())
     startCard.root.remove()
     hud.root.hidden = false
-    begin('liftoff')
+    begin(seed)
+    if (!howToSeen()) openHowTo()
     requestAnimationFrame(frame)
   } catch (error) {
     console.error(error)
@@ -76,132 +132,71 @@ async function load() {
   }
 }
 
-function begin(mode: 'liftoff' | 'landing') {
+function begin(nextSeed: number) {
   if (!world) return
+  seed = nextSeed
+  flight = startFlight(makeScenario(seed))
+  notes = { xAt2km: null, windAt2km: 0, assistUsed: assist }
+  heard = null
   controls.reset()
-  if (mode === 'landing' && gate) {
-    flight = structuredClone(gate.flight)
-    controls.call = gate.call
-    focusSoon(hud.igniteButton)
-  } else {
-    flight = startFlight(pickScenario(run++))
-    gate = null
-    showTip('maxq')
-    focusSoon(hud.throttleInput)
-  }
   paused = false
   accumulator = 0
   settle = null
   endCard?.remove()
   endCard = null
-  if (mode === 'landing') tips.clear()
+  hud.root.hidden = false
   world.reset()
-}
-
-/** The HUD shows and enables its controls on the next frame; a hidden or disabled one cannot take focus before that. */
-function focusSoon(element: HTMLElement) {
-  requestAnimationFrame(() => requestAnimationFrame(() => element.focus()))
-}
-
-function showTip(id: TipId) {
-  if (tipsShown.has(id)) return
-  tipsShown.add(id)
-  tips.show(id)
+  ;(document.activeElement as HTMLElement | null)?.blur?.()
 }
 
 function togglePause() {
-  if (world && flight.phase !== 'ended') paused = !paused
+  if (world && !flight.outcome && !howTo) paused = !paused
 }
 
-function skippable(): string | null {
-  if (flight.phase === 'ascent' || flight.phase === 'staging') return 'Skip ascent'
-  return flight.phase === 'coast' ? 'Skip coast' : null
-}
-
-/** Hand the rest of the ascent, or of the coast, to the flight computer and jump to its end. */
-function skip() {
-  const label = skippable()
-  if (!label || paused) return
-  const done: Phase = label === 'Skip ascent' ? 'boostback' : 'landing'
-  while (flight.phase !== done && flight.phase !== 'ended') stepOnce(guidance(flight))
-  world?.reset()
-}
-
-function boostbackAim(): number {
-  return controls.call === 'go' ? 0 : TUNING.splashX
-}
-
-function timeScale(): number {
-  if (flight.phase === 'ascent' || flight.phase === 'staging') return ASCENT_SCALE
-  if (flight.phase === 'boostback') return Math.abs(flight.impactX - boostbackAim()) < DECISION_RANGE ? 1 : BOOSTBACK_SCALE
-  return flight.phase === 'coast' ? COAST_SCALE : 1
-}
-
-function stepOnce(input: Input) {
-  const before = flight.phase
-  const three = flight.downselected
-  advance(flight, input, DT)
-  if (flight.downselected && !three) showTip('three')
-  if (flight.phase !== before) entered(flight.phase)
-}
-
-function entered(phase: Phase) {
-  accumulator = 0
-  if (phase === 'staging') showTip('staging')
-  else if (phase === 'boostback') {
-    showTip('call')
-    focusSoon(hud.goButton)
-  } else if (phase === 'coast') showTip('fins')
-  else if (phase === 'landing') {
-    controls.throttle = 1
-    controls.tiltDeg = 0
-    gate = { flight: structuredClone(flight), call: controls.call }
-    showTip('burn')
-    focusSoon(hud.igniteButton)
-  } else if (phase === 'ended') {
-    settle = 0
-    tips.clear()
-  }
-}
-
-/** Advance the flight by a frame's worth of fixed steps. Returns the simulated seconds advanced. */
-function simulate(realSeconds: number): number {
+function simulate(realSeconds: number) {
   controls.update(realSeconds)
-  accumulator += realSeconds * timeScale()
+  accumulator += realSeconds * SPEED
   let steps = 0
-  while (accumulator >= DT && flight.phase !== 'ended') {
+  while (accumulator >= DT && !flight.outcome) {
     accumulator -= DT
-    const input = controls.take()
-    if (AUTOPILOT && flight.lit) {
-      const cue = guidance(flight)
-      controls.throttle = input.throttle = cue.throttle
-      controls.tiltDeg = input.tiltDeg = cue.tiltDeg
+    let input: Input = controls.take()
+    if (AUTOPILOT) {
+      input = pilot(flight)
+      controls.throttle = input.throttle
+      controls.steer = input.steer
     }
-    stepOnce(input)
+    const above = aboveArms(flight)
+    advance(flight, input, DT)
+    if (notes.xAt2km === null && above > 2_000 && aboveArms(flight) <= 2_000) {
+      notes.xAt2km = flight.state.x
+      notes.windAt2km = flight.windX
+    }
     steps++
   }
+  if (flight.outcome && settle === null) settle = 0
   return steps * DT
 }
 
 function showEndCard() {
   settle = null
+  hud.root.hidden = true
   endCard = createEndCard(flight, {
-    call: controls.call,
     groundFlown,
-    onRetry: gate ? () => begin('landing') : null,
-    onRestart: () => begin('liftoff'),
+    score: scoreCatch(flight),
+    notes,
+    onRetry: () => begin(newSeed()),
+    onSame: () => begin(seed),
   })
   app.append(endCard)
 }
 
-const narrow = window.matchMedia('(max-width: 760px)')
 
-/** On a phone the panels stack across the top and the bottom: how many pixels each stack covers. */
+/** How many pixels the HUD covers at the top and at the bottom of the screen. */
 function hudInsets(): [number, number] {
-  if (!narrow.matches || hud.root.hidden) return [0, 0]
+  if (hud.root.hidden) return [0, 0]
   let top = 0
   let bottom = 0
-  for (const panel of hud.root.querySelectorAll('.panel')) {
+  for (const panel of hud.root.querySelectorAll('.panel:not(.scope)')) {
     const box = panel.getBoundingClientRect()
     if (!box.height) continue
     if (box.top < window.innerHeight / 2) top = Math.max(top, box.bottom)
@@ -215,33 +210,28 @@ function frame(now: number) {
   const realDt = Math.min(0.1, (now - lastFrame) / 1000)
   lastFrame = now
   if (!world) return
+  // Development only: lets the screenshot script read the run.
+  if (import.meta.env.DEV) (window as unknown as { __flight: Flight }).__flight = flight
 
   let simDt = 0
   if (!paused && !document.hidden) {
-    if (flight.phase !== 'ended') simDt = simulate(realDt)
-    else {
-      // Let the catch, or the fireball, be seen before the card covers it.
-      simDt = realDt
-      if (settle !== null && (settle += realDt) >= (reducedMotion ? 0.8 : SETTLE_SECONDS)) showEndCard()
+    if (!flight.outcome) simDt = simulate(realDt)
+    else if (settle !== null && !endCard) {
+      // Let the catch, or the crash, be seen up close before the card.
+      const hold = reducedMotion ? 1.5 : flight.outcome === 'caught' ? CATCH_HOLD : CRASH_HOLD
+      if ((settle += realDt) >= hold) showEndCard()
     }
   }
 
   world.setInsets(...hudInsets())
-  const held: Input ={ throttle: controls.throttle, tiltDeg: controls.tiltDeg, shutdown: false, go: false, ignite: false }
-  const arrival = predictArrival(flight, held)
-  world.render({ flight, throttle: controls.throttle, arrival, clock: now / 1000, simDt, realDt, aids: flight.phase !== 'ended' })
-  // The catch, or the fireball, has the screen to itself.
-  hud.root.hidden = flight.phase === 'ended'
-  hud.update({
-    flight,
-    cue: guidance(flight),
-    throttle: controls.throttle,
-    tiltDeg: controls.tiltDeg,
-    call: controls.call,
-    timeScale: timeScale(),
-    paused,
-    arrival,
-    igniteHeight: flight.phase === 'landing' && !flight.lit ? igniteHeight(flight) : 0,
-    skip: skippable(),
-  })
+  const held: Input = { throttle: controls.throttle, steer: controls.steer, ignite: false }
+  const arrival = assist && !flight.outcome ? predictArrival(flight, held) : null
+  world.render({ flight, arrival, clock: now / 1000, simDt, realDt: paused ? 0 : realDt })
+  hud.update({ flight, throttle: controls.throttle, steer: controls.steer, paused, assist, arrival, muted: sound.muted })
+  sound.update(flight, controls.steer, !paused && !flight.outcome && !document.hidden)
+  if (flight.outcome && heard !== flight.outcome) {
+    heard = flight.outcome
+    if (flight.outcome === 'caught') sound.catchClang()
+    else sound.crash(flight.outcome === 'sea')
+  }
 }
