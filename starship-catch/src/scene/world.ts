@@ -3,16 +3,16 @@
 // camera stands to the south looking north, so the Gulf is on the right.
 
 import * as THREE from 'three'
-import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { SCALE_HEIGHT } from '../sim/physics'
 import { TUNING, type Flight, type Outcome } from '../sim/flight'
 import type { Arrival } from '../sim/predict'
-import { BOOSTER_HEIGHT, createBooster } from './booster'
+import { BOOSTER_HEIGHT, createBooster, createShip } from './booster'
 import { frameShot, type Framing } from './camera'
 import { ARM_HEIGHT } from './site'
 import { createEffects } from './effects'
 import type { Site } from './site'
-import { createSky } from './sky'
+import { createSky, type Quality } from './sky'
+import { sunFor, sunModeFrom, type SunMode } from '../sim/sun'
 
 export interface View {
   flight: Flight
@@ -31,6 +31,23 @@ export interface World {
   reset(): void
   /** CSS pixels the HUD covers at the top and the bottom. The view is framed in what is left. */
   setInsets(top: number, bottom: number): void
+  /** Where the Sun stands: at Flight 8's catch, or where the ground photograph's shadows put it. */
+  setSunMode(mode: SunMode): void
+  quality: Quality
+}
+
+/**
+ * The cheaper sky for phones and small or weak GPUs: a coarser sky table, fewer cloud slices,
+ * a smaller shadow map. `?quality=low` or `?quality=high` forces one.
+ */
+function pickQuality(renderer: THREE.WebGLRenderer): Quality {
+  const forced = new URLSearchParams(location.search).get('quality')
+  if (forced === 'low' || forced === 'high') return forced
+  const small = Math.min(window.innerWidth, window.innerHeight) < 600
+  const touch = window.matchMedia('(pointer: coarse)').matches
+  const cores = navigator.hardwareConcurrency || 4
+  const halfFloat = renderer.extensions.has('EXT_color_buffer_half_float') || renderer.extensions.has('EXT_color_buffer_float')
+  return small || (touch && cores <= 6) || !halfFloat ? 'low' : 'high'
 }
 
 const smooth = (edge0: number, edge1: number, x: number) => {
@@ -41,44 +58,64 @@ const DEG = Math.PI / 180
 const INK = 0xf4f1e8
 const RED = 0xff6b6b
 const GOLD = 0xd4af37
+/** Tone mapping exposure for the sky's units (air.ts SUN_INTENSITY). */
+const EXPOSURE = 0.3
+const WHITE = new THREE.Color(1, 1, 1)
 const CRASHES: Outcome[] = ['hard-catch', 'tower-strike', 'ground', 'no-propellant', 'no-burn']
 
 export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion: boolean): World {
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', logarithmicDepthBuffer: true })
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+  const quality = pickQuality(renderer)
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, quality === 'high' ? 2 : 1.5))
   renderer.toneMapping = THREE.ACESFilmicToneMapping
 
   const scene = new THREE.Scene()
   const camera = new THREE.PerspectiveCamera(50, 1, 2, 4_000_000)
-  const pmrem = new THREE.PMREMGenerator(renderer)
-  scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
-  scene.environmentIntensity = 0.55
 
-  // The Sun stands where it stood when the ground photograph was flown (NAIP, 14 October 2024,
-  // mid-morning): in the east-south-east, about 33 degrees up, measured from the Pad 1 tower's
-  // 228 m shadow and its bearing. So the shadows in the photograph agree with the models.
-  const skyLow = new THREE.Color(0x7fb2de)
-  const skyHigh = new THREE.Color(0x04060c)
-  const sky = new THREE.Color()
-  const fog = new THREE.Fog(0xb4cbe0, 4_000, 90_000)
-  scene.fog = fog
-  const heavens = createSky()
+  // The sky, the haze and the reflections come from one model of the air (sky.ts). three's own
+  // fog is replaced by that haze in every material that takes it; this fog only switches it on.
+  scene.fog = new THREE.Fog(0xffffff, 1e12, 2e12)
+  const heavens = createSky(renderer, quality)
+  heavens.exposure = EXPOSURE
+  renderer.toneMappingExposure = EXPOSURE
   scene.add(heavens.group)
-  const sun = new THREE.DirectionalLight(0xfff1dc, 2.8)
-  const sunBearing = 119 * DEG
-  const sunElevation = 33 * DEG
-  const toSun = new THREE.Vector3(Math.sin(sunBearing) * Math.cos(sunElevation), Math.sin(sunElevation), -Math.cos(sunBearing) * Math.cos(sunElevation))
-  sun.position.copy(toSun).multiplyScalar(600)
-  scene.add(sun, sun.target, new THREE.HemisphereLight(0xbcd4ee, 0x8a7f6a, 0.9))
+  scene.environmentIntensity = 1
+
+  // The Sun, in one of two places (sim/sun.ts): where it stood at Flight 8's catch (the default),
+  // or where it stood when the ground photograph was flown, so the photograph's baked shadows
+  // agree with the models. Its colour and strength are the sunlight left after the air.
+  const sun = new THREE.DirectionalLight(0xffffff, 1)
+  const toSun = new THREE.Vector3()
+  let sunMode: SunMode = sunModeFrom(location.search)
+  const sunColour = new THREE.Color()
+  const groundTint = new THREE.Color()
+  const photoMaterials: THREE.MeshBasicMaterial[] = []
+  function setSunMode(mode: SunMode) {
+    sunMode = mode
+    const { azimuth, elevation } = sunFor(mode)
+    const a = azimuth * DEG
+    const e = elevation * DEG
+    toSun.set(Math.sin(a) * Math.cos(e), Math.sin(e), -Math.cos(a) * Math.cos(e))
+    heavens.setSun(toSun)
+    // The photograph was taken in mid-morning light. Under the real evening Sun it is warmed and
+    // dimmed a little towards that light, so the ground and the models share one Sun's colour.
+    heavens.sunlight(0, groundTint)
+    const peak = Math.max(groundTint.r, groundTint.g, groundTint.b)
+    groundTint.multiplyScalar(1 / peak)
+    if (sunMode === 'photo') groundTint.setRGB(1, 1, 1)
+    else groundTint.lerp(WHITE, 0.55).multiplyScalar(0.92)
+    for (const m of photoMaterials) m.color.copy(groundTint)
+  }
+  scene.add(sun, sun.target)
   // Only the booster casts a shadow in real time; the ground photograph already holds the site's own.
-  const phone = Math.min(window.innerWidth, window.innerHeight) < 600
+  const phone = quality === 'low'
   renderer.shadowMap.enabled = true
   renderer.shadowMap.type = THREE.PCFShadowMap
   sun.castShadow = true
   sun.shadow.mapSize.setScalar(phone ? 1024 : 2048)
   const shadowBox = sun.shadow.camera
-  shadowBox.left = shadowBox.bottom = -120
-  shadowBox.right = shadowBox.top = 120
+  shadowBox.left = shadowBox.bottom = -160
+  shadowBox.right = shadowBox.top = 160
   shadowBox.near = 1
   shadowBox.far = 1_400
   sun.shadow.bias = -0.0005
@@ -91,6 +128,28 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   booster.group.traverse((o) => {
     if ((o as THREE.Mesh).isMesh && !((o as THREE.Mesh).material as THREE.Material).transparent) o.castShadow = true
   })
+  // Development only: the ship, standing beside the tower for a look at it, placed from the console as window.__ship = [x, y, z].
+  const ship = import.meta.env.DEV ? createShip() : null
+  if (ship) {
+    ship.group.visible = false
+    scene.add(ship.group)
+  }
+
+  // The haze over everything solid. The photographs and the far ground also bend down with the Earth's curve.
+  const inSite = new Set<THREE.Object3D>()
+  site.group.traverse((o) => inSite.add(o))
+  scene.traverse((o) => {
+    const mesh = o as THREE.Mesh
+    if (!mesh.isMesh || mesh.parent === heavens.group) return
+    for (const material of ([] as THREE.Material[]).concat(mesh.material)) {
+      if (material.blending === THREE.AdditiveBlending || material instanceof THREE.ShadowMaterial) continue
+      if (material instanceof THREE.ShaderMaterial && !material.fog) continue
+      const photo = material instanceof THREE.MeshBasicMaterial && material.map !== null && inSite.has(o)
+      if (photo) photoMaterials.push(material as THREE.MeshBasicMaterial)
+      heavens.haze(material, { bend: photo })
+    }
+  })
+  setSunMode(sunMode)
 
   const ring = (colour: number) => {
     // A fat tube: the camera is low, so the ring is seen nearly edge-on.
@@ -209,6 +268,7 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
     // The shadow box follows the booster down: no shadow while it is high, one on the pad once it is low.
     sun.target.position.set(s.x, 0, 0)
     sun.position.copy(toSun).multiplyScalar(600).add(sun.target.position)
+    sun.color.copy(heavens.sunlight(s.y + BOOSTER_HEIGHT / 2, sunColour))
 
     const thin = 1 - Math.exp(-s.y / SCALE_HEIGHT)
     const firing = flight.thrustAccel > 0 && !flight.outcome
@@ -270,6 +330,12 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
     if (import.meta.env.DEV) {
       ;(window as unknown as { __renderer: THREE.WebGLRenderer }).__renderer = renderer
       ;(window as unknown as { __camera: THREE.PerspectiveCamera }).__camera = camera
+      const w = window as unknown as { __sun?: (mode: SunMode) => void; __ship?: [number, number, number] | null }
+      w.__sun ??= setSunMode
+      if (ship) {
+        ship.group.visible = !!w.__ship
+        if (w.__ship) ship.group.position.set(...w.__ship)
+      }
       const debug = (window as unknown as { __cam?: { eye: [number, number, number]; look: [number, number, number]; fov?: number } }).__cam
       if (debug) {
         camera.position.set(...debug.eye)
@@ -282,13 +348,8 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
     // The sky darkens with height; the haze stays below.
     const height = camera.position.y
     const space = smooth(4_000, 42_000, height)
-    sky.copy(skyLow).lerp(skyHigh, space)
-    renderer.setClearColor(sky)
     heavens.update(camera, space)
-    // Push the haze back when the camera stands far off, so the booster and the tower never fade out.
-    const reach = camera.position.distanceTo(at)
-    fog.near = 4_000 + height + reach
-    fog.far = 90_000 + height * 5 + reach * 2
+    scene.environment = heavens.environment
 
     // Rings keep a readable size on screen however far away they are.
     const grow = (mesh: THREE.Mesh) => mesh.scale.setScalar(Math.max(1, camera.position.distanceTo(mesh.position) / 260))
@@ -414,6 +475,8 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   return {
     render,
     resize,
+    quality,
+    setSunMode,
     setInsets(top, bottom) {
       wantTop = top
       wantBottom = bottom

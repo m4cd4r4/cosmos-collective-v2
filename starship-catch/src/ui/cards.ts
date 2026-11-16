@@ -4,7 +4,7 @@
 import { TUNING, type Flight, type Outcome } from '../sim/flight'
 import type { Score } from '../sim/score'
 import { CATCH_RECORD, ELEVATION_CREDIT, SATELLITE_CREDIT, ENGINES, FLIGHT_15, FLIGHT_8, GROUND_CREDIT, MODELS_NOTE, NOT_AFFILIATED, QUOTES, VEHICLE, WIKI_F8, type Source } from '../data/facts'
-import { el, sourceLink } from './dom'
+import { TOUCH, el, sourceLink } from './dom'
 
 const TUNING_NOTE =
   'Game settings, not mission figures: the starting height, speeds, thrust, wind, propellant and the catch limits. SpaceX publishes engine counts and times, not these.'
@@ -50,17 +50,25 @@ export function createStartCard(onBegin: () => void): StartCard {
         `A ${VEHICLE.boosterHeight.value} m Super Heavy booster is falling engines first, high above the launch site, with its engines off. `,
         'Fly it down into the arms of the tower. Nobody will tell you when to press.',
       ),
-      el(
-        'ul',
-        { class: 'keys' },
-        key('A D', 'steer west or east'),
-        key('W S', 'throttle'),
-        key('Space', 'light the landing burn'),
-        key('H', 'Assist'),
-        key('M', 'sound'),
-        key('P', 'pause'),
-        key('R', 'new drop'),
-      ),
+      TOUCH
+        ? el(
+            'ul',
+            { class: 'keys' },
+            key('← →', 'hold to steer west or east'),
+            key('↓ ↑', 'hold to move the throttle'),
+            key('Light burn', 'tap once for the landing burn'),
+          )
+        : el(
+            'ul',
+            { class: 'keys' },
+            key('A D', 'steer west or east'),
+            key('W S', 'throttle'),
+            key('Space', 'light the landing burn'),
+            key('H', 'Assist'),
+            key('M', 'sound'),
+            key('P', 'pause'),
+            key('R', 'new drop'),
+          ),
       el(
         'ul',
         { class: 'notes' },
@@ -161,7 +169,7 @@ export function coaching(flight: Flight, notes: RunNotes): string[] {
   const outcome = flight.outcome
   const litHeight = flight.litAt === null ? null : flight.litAt - t.catchHeight
 
-  if (!flight.lit && outcome !== 'caught') add('If the burn never lights, nothing can stop the booster. Press Space while it is still falling fast, a kilometre or two above the arms.')
+  if (!flight.lit && outcome !== 'caught') add(`If the burn never lights, nothing can stop the booster. ${TOUCH ? 'Tap Light burn' : 'Press Space'} while it is still falling fast, a kilometre or two above the arms.`)
   if (flight.ranDry && litHeight !== null && litHeight > 2_500)
     add(`You lit the burn ${metres(litHeight)} above the arms. If you run dry, light it later and lower: until then the air brakes the booster for free.`)
   else if (flight.ranDry) add('If you run dry, do not hover. Keep sinking on the 3 engines and line up on the way down.')
@@ -188,7 +196,7 @@ export function coaching(flight: Flight, notes: RunNotes): string[] {
     if (s.deltaV / t.propellant < 0.2) add('If you want to keep more propellant, light the burn lower and spend less time hovering.')
     add('A new drop changes the start, the drift and the wind. See if you can do it again.')
   }
-  if (!notes.assistUsed && outcome !== 'caught') add('If you want help reading the drift, Assist (H) marks where you will reach the arms if you hold the controls as they are.')
+  if (!notes.assistUsed && outcome !== 'caught') add(`If you want help reading the drift, ${TOUCH ? 'the Assist button' : 'Assist (H)'} marks where you will reach the arms if you hold the controls as they are.`)
   if (tips.length < 2) add('If it keeps getting away from you, make small, early corrections. Big late ones overshoot.')
   return tips
 }
@@ -204,7 +212,7 @@ export function createEndCard(flight: Flight, options: EndOptions): HTMLElement 
   const caught = outcome === 'caught'
   const s = flight.state
   const t = TUNING
-  const retry = el('button', { class: 'primary retry', type: 'button', onclick: options.onRetry }, 'Retry ', el('kbd', {}, 'R'))
+  const retry = el('button', { class: 'primary retry', type: 'button', onclick: options.onRetry }, 'Retry ', TOUCH ? null : el('kbd', {}, 'R'))
   const same = el('button', { class: 'secondary', type: 'button', onclick: options.onSame }, 'Same drop again')
   const burn = row('landingStart')
   const caughtRow = row('catch')
@@ -278,8 +286,18 @@ export function createHowTo(onClose: () => void): HTMLElement {
       el(
         'ol',
         { class: 'steps' },
-        step(1, 'Steer over the tower.', ['A', 'D'], 'Lean west or east. On the scope, bring your dot down on to the gold ring at its centre. When the tower is off screen, the arrow at the edge points to it.'),
-        step(2, 'Light the burn.', ['Space', 'W', 'S'], 'Low enough to save propellant, early enough to slow down. It lights once. Then set the throttle to control the sink.'),
+        step(
+          1,
+          'Steer over the tower.',
+          TOUCH ? ['←', '→'] : ['A', 'D'],
+          `${TOUCH ? 'Hold an arrow to lean west or east; let go and the booster comes upright.' : 'Lean west or east.'} On the scope, bring your dot down on to the gold ring at its centre. When the tower is off screen, the arrow at the edge points to it.`,
+        ),
+        step(
+          2,
+          'Light the burn.',
+          TOUCH ? ['Light burn'] : ['Space', 'W', 'S'],
+          `Low enough to save propellant, early enough to slow down. It lights once. Then ${TOUCH ? 'hold ↓ or ↑ to set the throttle and' : 'set the throttle to'} control the sink.`,
+        ),
         step(
           3,
           'Arrive centred and slow.',
@@ -287,7 +305,7 @@ export function createHowTo(onClose: () => void): HTMLElement {
           `Within ${TUNING.catchHalfGap} m of the centre of the arms, sinking under ${TUNING.catchSinkSpeed} m/s, nearly upright. These limits are game settings.`,
         ),
       ),
-      el('p', { class: 'muted' }, 'Assist (H) draws a white ring in the scene and a dashed one on the scope where you will reach the arms if you hold the controls. It starts on.'),
+      el('p', { class: 'muted' }, `${TOUCH ? 'Assist' : 'Assist (H)'} draws a white ring in the scene and a dashed one on the scope where you will reach the arms if you hold the controls. It starts on.${TOUCH ? ' You can use two thumbs at once: steer with one and work the throttle with the other.' : ''}`),
       el('div', { class: 'actions' }, go),
       el('p', { class: 'fine' }, sourceLink(GROUND_CREDIT.text, GROUND_CREDIT.url), '. ', sourceLink(ELEVATION_CREDIT.text, ELEVATION_CREDIT.url), '. ', sourceLink(SATELLITE_CREDIT.text, SATELLITE_CREDIT.url), '. ', MODELS_NOTE),
     ),

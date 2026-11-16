@@ -649,7 +649,7 @@ kbd {
   }
 
   .readout .label {
-    font-size: 9.5px;
+    font-size: 10.5px;
     letter-spacing: 0.04em;
   }
 
@@ -659,7 +659,7 @@ kbd {
 
   .readout .unit {
     margin-left: 2px;
-    font-size: 9.5px;
+    font-size: 10.5px;
   }
 
   .status {
@@ -925,6 +925,12 @@ kbd {
   border-left: 12px solid var(--gold);
 }
 
+/* Both sit on the body, above the app, so they would paint over an open how-to card. */
+body:has(.howto) .tower-marker,
+body:has(.howto) .booster-tag {
+  display: none;
+}
+
 .howto {
   width: min(520px, 100%);
 }
@@ -1014,5 +1020,150 @@ kbd {
   .cell-note .short,
   .gauge-note .short {
     display: inline;
+  }
+}
+
+/* ---------- Touch screens, any size or way up ---------- */
+
+@media (hover: none) and (pointer: coarse) {
+  /* Thumb-sized targets: the top row was 40 px tall, and the ? only 28 px wide. */
+  .status .ghost {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .status kbd,
+  .ignite kbd,
+  .keys-hint {
+    display: none;
+  }
+
+  /* A held or repeated press must not select the label, zoom the page or open the callout. */
+  .ignite,
+  .status .ghost {
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+  }
+
+  .sources summary {
+    padding: 13px 0;
+  }
+
+  /* The chips name on-screen buttons here, and the arrows are small in the key face. */
+  .keys kbd,
+  .steps kbd {
+    font-size: 14px;
+  }
+}
+
+/* ---------- A phone on its side ---------- */
+
+/* Too short for the wide layout: its three rows need about 430 px, and the flying controls fell
+   off the bottom. Everything goes compact along the top, and the controls span the full width
+   so the throttle sits under the left thumb and the steering under the right. */
+@media (orientation: landscape) and (max-height: 520px) {
+  .hud {
+    grid-template:
+      'status readouts scope' auto
+      '. . scope' 1fr
+      'bottom bottom bottom' auto
+      / auto 1fr auto;
+    gap: 8px;
+    padding: 8px max(8px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+  }
+
+  .status {
+    padding: 4px;
+  }
+
+  .phase-name {
+    display: none;
+  }
+
+  .status-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px;
+  }
+
+  .readouts {
+    justify-self: center;
+    grid-template-columns: repeat(3, auto);
+    row-gap: 4px;
+    padding: 6px 0;
+  }
+
+  .readout {
+    padding: 0 10px;
+  }
+
+  .readout:nth-child(3n + 1) {
+    border-left: 0;
+  }
+
+  .readout .label,
+  .readout .unit,
+  .cell-note {
+    font-size: 10.5px;
+  }
+
+  .readout .value {
+    font-size: 15px;
+  }
+
+  .band-note {
+    display: none;
+  }
+
+  .scope {
+    align-self: start;
+    padding: 4px 6px 6px;
+  }
+
+  .scope-canvas {
+    width: 104px;
+    height: 104px;
+  }
+
+  .bottom {
+    justify-self: stretch;
+  }
+
+  .pad {
+    width: 100%;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 8px;
+    padding: 6px 8px;
+  }
+
+  .group {
+    grid-template-columns: auto minmax(84px, 130px) auto;
+    justify-self: start;
+    gap: 8px;
+  }
+
+  /* One row: button, gauge, button. The narrow-phone rule stacks the gauge above. */
+  .group > .gauge {
+    grid-row: auto;
+    grid-column: auto;
+  }
+
+  .group:last-child {
+    justify-self: end;
+  }
+
+  .pad-button {
+    width: 56px;
+    height: 52px;
+  }
+
+  .ignite {
+    min-height: 52px;
+  }
+
+  .keys-hint {
+    display: none;
   }
 }

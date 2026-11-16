@@ -22,6 +22,9 @@ export function sourceLink(label: string, url: string): HTMLAnchorElement {
   return el('a', { href: url, target: '_blank', rel: 'noopener noreferrer' }, label)
 }
 
+/** A phone or tablet: no keyboard to name, so the copy names the on-screen buttons instead. */
+export const TOUCH = typeof matchMedia === 'function' && matchMedia('(hover: none) and (pointer: coarse)').matches
+
 const whole = new Intl.NumberFormat('en-GB', { maximumFractionDigits: 0 })
 const oneDecimal = new Intl.NumberFormat('en-GB', { minimumFractionDigits: 1, maximumFractionDigits: 1 })
 const twoDecimals = new Intl.NumberFormat('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 })

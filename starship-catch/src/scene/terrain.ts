@@ -23,8 +23,13 @@ export interface Terrain {
   shadows: THREE.Mesh
 }
 
-/** Grid cells across each displaced layer. The pad layer's DEM is 4.7 m a pixel, so 255 cells keeps every sample. */
-const CELLS: Record<string, number> = { pad: 255, site: 192, area: 128, region: 1 }
+/**
+ * Grid cells across each layer. The pad layer's DEM is 4.7 m a pixel, so 255 cells keeps every sample.
+ * The region layer has no elevation, but it still needs a grid: every layer is bent down with the
+ * Earth's curve in its vertex shader (sky.ts), and a single 44 km cell would drop as one flat sheet
+ * by its corners' 76 m and sink under the far ground of ground.ts.
+ */
+const CELLS: Record<string, number> = { pad: 255, site: 192, area: 128, region: 64 }
 
 function displace(geometry: THREE.PlaneGeometry, heights: Int16Array, pixels: number) {
   const position = geometry.attributes.position as THREE.BufferAttribute

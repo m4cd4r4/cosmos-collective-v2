@@ -22,6 +22,7 @@ export const SPACEX_F15: Source = { name: 'SpaceX, Starship Flight 15', url: 'ht
 export const SPACEX_VEHICLE: Source = { name: 'SpaceX, Starship', url: 'https://www.spacex.com/vehicles/starship' }
 export const WIKI_F7: Source = { name: 'Wikipedia, Starship flight test 7', url: 'https://en.wikipedia.org/wiki/Starship_flight_test_7' }
 export const WIKI_F8: Source = { name: 'Wikipedia, Starship flight test 8', url: 'https://en.wikipedia.org/wiki/Starship_flight_test_8' }
+export const WIKI_SHIP: Source = { name: 'Wikipedia, Starship (spacecraft)', url: 'https://en.wikipedia.org/wiki/Starship_(spacecraft)' }
 export const WIKI_VEHICLE: Source = { name: 'Wikipedia, SpaceX Super Heavy', url: 'https://en.wikipedia.org/wiki/SpaceX_Super_Heavy' }
 
 export type EventId = 'maxQ' | 'meco' | 'hotStaging' | 'boostbackStart' | 'boostbackEnd' | 'landingStart' | 'catch'
@@ -55,7 +56,16 @@ export const ENGINES = {
   centre: 13,
   /** Stay lit through hot staging, and fly the booster into the arms. */
   inner: 3,
+  /** The 20 fixed engines round the edge, which are not relit to land. */
+  outer: 20,
   source: SPACEX_VEHICLE,
+}
+
+/** The ship's six engines: "Blocks 1 through 3 have three sea-level engines", and three Raptor Vacuum. Its windward side carries hexagonal black tiles. Checked 2026-11-16. */
+export const SHIP_ENGINES = {
+  seaLevel: 3,
+  vacuum: 3,
+  source: WIKI_SHIP,
 }
 
 export const VEHICLE = {
