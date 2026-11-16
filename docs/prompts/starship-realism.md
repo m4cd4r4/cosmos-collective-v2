@@ -46,6 +46,28 @@ Each phase is its own PR and ends in a build Macdara plays before the next start
 
 Macdara on the current build (2026-11-15): "the game sucks". The ground shakes side to side at liftoff, there are no landmarks, the only choice is an engine cutoff, the ship descends while the booster ascends (`src/scene/world.ts` draws the ship for 16 s with gravity only partly offset by thrust), then a blank landscape and a fuzzy puff in the distance.
 
+## Phase 2 as built (2026-11-16)
+
+Ground and site, baked by `starship-catch/scripts/bake-site.py` (Python with rasterio; no logins). Outputs in `starship-catch/public/site/`, about 1.7 MB in all.
+
+| Layer | Size | Source | Licence |
+|---|---|---|---|
+| pad | 1.2 km, 0.6 m a pixel | USDA NAIP, flown 14 October 2024 | Public domain |
+| site | 3 km | NAIP 2024 (2022 north of 26 degrees N, matched in colour); open water from Sentinel-2 | Public domain; Copernicus |
+| area | 10 km, to the build site and the Rio Grande mouth | as site | as site |
+| region | 44 km, to South Padre Island, Port Isabel and Mexico | Sentinel-2 L2A, 21 November 2024, matched in colour to NAIP | Copernicus Sentinel data licence: "Contains modified Copernicus Sentinel data 2024" |
+| elevation | pad, site and area layers | USGS 3DEP DEM; over the site the 2023 TX Lower Rio Grande lidar | Public domain |
+
+All three credits are on the start card, the help card and the end card, and on the site's credits page.
+
+Models (`starship-catch/src/scene/pads.ts`, `tower.ts`): both towers with chopsticks on their carriages, the Pad 1 mount, the Pad 2 mount over its flame trench, the Pad 1 tank farm (horizontal tanks and pipe racks), and the two Mega Bays and the Starfactory at the build site. Positions are read off the 2024 photograph relative to the Pad 1 tower; building heights come from their shadows, scaled by the 146 m tower's 228 m shadow. Highway 4 and the beach are the photograph itself, laid on the lidar.
+
+Known departures and gaps:
+- The sim catches 15 m east of the Pad 1 tower's centre, where the mount is drawn; the photograph puts the real mount about 30 m east. Gameplay was not changed.
+- The Sun is fixed where it stood when the 2024 photograph was flown (east-south-east, about 33 degrees up), so the photograph's shadows agree with the models. Phase 3's real Sun for Flight 8 will disagree with those baked shadows and needs a plan for them.
+- The Pad 2 mount is drawn over the trench seen in the 2024 photograph; its shape is representative.
+- NAIP leans tall structures; the leaning images of both towers are painted out of the photograph.
+
 ## Do not
 
 - Keep the score labelled as a game measure, keep `TUNING.towerHeight` off screen, and use no em or en dashes. Use British English.

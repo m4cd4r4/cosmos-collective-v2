@@ -1,0 +1,68 @@
+{
+  "tower": {
+    "lat": 25.996143,
+    "lon": -97.154735
+  },
+  "towerX": -15.0,
+  "grid": "UTM zone 14N (EPSG:26914), north up",
+  "padHeight": 1.12,
+  "layers": [
+    {
+      "name": "pad",
+      "metres": 1200,
+      "image": "pad.webp",
+      "flown": {
+        "2024-10-14": 1.0
+      },
+      "satellite": {},
+      "dem": "pad.dem",
+      "demPixels": 256
+    },
+    {
+      "name": "site",
+      "metres": 3000,
+      "image": "site.webp",
+      "flown": {
+        "2022-06-10": 0.124,
+        "2024-10-14": 0.378
+      },
+      "satellite": {
+        "sentinel-2 2024-11-21": 0.498
+      },
+      "dem": "site.dem",
+      "demPixels": 256
+    },
+    {
+      "name": "area",
+      "metres": 10000,
+      "image": "area.webp",
+      "flown": {
+        "2022-06-10": 0.09,
+        "2024-10-14": 0.187
+      },
+      "satellite": {
+        "sentinel-2 2024-11-21": 0.723
+      },
+      "dem": "area.dem",
+      "demPixels": 200
+    },
+    {
+      "name": "region",
+      "metres": 44000,
+      "image": "region.webp",
+      "flown": {},
+      "satellite": {
+        "sentinel-2 2024-11-21": 1.0
+      }
+    }
+  ],
+  "sources": {
+    "imagery": "USDA NAIP via Microsoft Planetary Computer, public domain",
+    "elevation": "USGS 3DEP via the National Map, public domain",
+    "satellite": "Contains modified Copernicus Sentinel data 2024, via Microsoft Planetary Computer",
+    "lidar": [
+      "TX_LowerRioGrande_D22",
+      "TX_South_Texas_2018_D18"
+    ]
+  }
+}

@@ -204,7 +204,9 @@ Fetched and checked on 2026-11-12. Mirrored in `starship-catch/src/data/facts.ts
 | 11 | Flight 15: ship caught by the tower arms after 22.5 hours, the first ship catch; booster ended boostback early, aborted its catch and diverted offshore | 13 to 14 Nov 2026 (US time) | Flown | SpaceX (as 10) |
 | 12 | Thousands of vehicle and pad criteria before a catch | quote | Flown, Flight 5 | SpaceX, https://www.spacex.com/launches/starship-flight-5 |
 | 13 | With no go before boostback ends, the booster defaults to a splashdown path | quote | Published procedure | SpaceX before Flight 5, archived page data, https://web.archive.org/web/20241007234125/https://content.spacex.com/api/spacex-website/missions/starship-flight-5 |
-| 14 | Ground imagery | NAIP, flown June 2022 | Measured | USGS EROS, https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-national-agriculture-imagery-program-naip |
+| 14 | Ground imagery | NAIP, flown 14 October 2024 over the site, June 2022 north of 26 degrees N | Measured | USDA NAIP via Microsoft Planetary Computer, https://planetarycomputer.microsoft.com/dataset/naip |
+| 15 | Ground elevation | USGS 3DEP DEM, 2023 TX Lower Rio Grande lidar | Measured | USGS, https://www.usgs.gov/3d-elevation-program |
+| 16 | Open Gulf, Mexico, wider coast | Sentinel-2 L2A, 21 November 2024 | Measured | Copernicus Sentinel data via Microsoft Planetary Computer, https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a |
 
 Sources disagree on the count of later catches; SpaceX's Flight 15 page (10) is the one the game cites. Flight 15 added no booster catch, so the booster count stays at three (the Wikipedia list of Starship launches agrees); its ship was the first ship caught.
 

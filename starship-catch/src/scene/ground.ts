@@ -1,11 +1,15 @@
-// The ground beyond the aerial photographs: flat land to the west and the Gulf to the east,
-// with a wandering shoreline and soft patches of colour so it reads as country from altitude.
-// Colours sampled from the widest photograph. Its pattern is scenery, not a map.
+// The ground beyond the photographs (more than 22 km out): flat land to the west and the Gulf
+// to the east, with soft patches of colour so it reads as country from altitude. Its pattern is
+// scenery, not a map. The shoreline follows the coast's real trend, measured on the Sentinel-2
+// layer: north-north-west up South Padre Island, nearly due south into Mexico. Colours sampled
+// from the edges of that layer.
 
 import * as THREE from 'three'
 
-/** The shoreline runs north to south about this far east of the tower, m. */
-const SHORE_X = 400
+/** The shoreline beside the tower, m east of the catch point, and how far it moves east per metre south (z), north and south of it. */
+const SHORE_X = 420
+const SHORE_NORTH = 0.128
+const SHORE_SOUTH = 0.026
 const SIZE = 3_000_000
 
 export function createGround(): THREE.Mesh {
@@ -13,7 +17,7 @@ export function createGround(): THREE.Mesh {
     fog: true,
     uniforms: THREE.UniformsUtils.merge([
       THREE.UniformsLib.fog,
-      { land: { value: new THREE.Color(0x8f8a74) }, marsh: { value: new THREE.Color(0x6f7458) }, sea: { value: new THREE.Color(0x6f9c96) }, deep: { value: new THREE.Color(0x3f6f7a) } },
+      { land: { value: new THREE.Color(0x8d876a) }, marsh: { value: new THREE.Color(0x7f8a6d) }, sea: { value: new THREE.Color(0x6c8f7b) }, deep: { value: new THREE.Color(0x554e43) } },
     ]),
     vertexShader: `
 #include <common>
@@ -53,12 +57,13 @@ float fbm(vec2 p) {
 void main() {
 #include <logdepthbuf_fragment>
   // The shore wanders by a few kilometres along its length; it is straight only near the tower.
-  float wander = (fbm(vec2(0.0, vXZ.y / 9000.0)) - 0.5) * 6000.0 * smoothstep(1500.0, 12000.0, abs(vXZ.y));
-  float shore = ${SHORE_X.toFixed(1)} + wander;
+  float wander = (fbm(vec2(0.0, vXZ.y / 9000.0)) - 0.5) * 3000.0 * smoothstep(20000.0, 40000.0, abs(vXZ.y));
+  float trend = vXZ.y < 0.0 ? ${SHORE_NORTH} * vXZ.y : ${SHORE_SOUTH} * vXZ.y;
+  float shore = ${SHORE_X.toFixed(1)} + trend + wander;
   float east = vXZ.x - shore;
   float patches = fbm(vXZ / 2600.0);
   vec3 ground = mix(land, marsh, smoothstep(0.45, 0.7, patches));
-  vec3 water = mix(sea, deep, smoothstep(2000.0, 60000.0, east) * 0.8 + (fbm(vXZ / 5000.0) - 0.5) * 0.15);
+  vec3 water = mix(sea, deep, smoothstep(2000.0, 20000.0, east) + (fbm(vXZ / 5000.0) - 0.5) * 0.15);
   gl_FragColor = vec4(mix(ground, water, smoothstep(-60.0, 60.0, east)), 1.0);
 #include <colorspace_fragment>
 #include <fog_fragment>

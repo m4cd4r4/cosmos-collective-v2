@@ -39,8 +39,6 @@ Out of scope for that PR, captured so they are not lost.
 Out of scope for that PR, captured so they are not lost.
 
 - **Launch site tour** - the free-look mode around the tower, arms, launch mount and tank farm with short labels. Wanted (Macdara, 2026-11-12) and moved out of the slice 2 PR because that PR was already about 3,800 lines. The models are in `starship-catch/src/scene/site.ts`.
-- **Ground above about 4 km is flat fogged colour** - the baked NAIP tile covers the site only. A coarser regional layer would give the boostback and coast something to look at.
 - **Touch controls have not been driven with real pointer events** - checked by layout and by click only. Play one run on a phone.
-- **The second tower is left out** - nothing published places it.
 - **Sound.**
 - **`src/components/layout/Footer.tsx` is never rendered** - both Artemis games were linked there first. Macdara ruled (2026-11-13) to link them from the home page footer's Explore list (`LandingFooter.tsx`) instead, done in the slice 2 PR. The unused component still carries the links; render it or delete it.

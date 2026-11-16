@@ -54,7 +54,9 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
   scene.environmentIntensity = 0.55
 
-  // Late afternoon: a low warm Sun in the west, fair-weather cloud.
+  // The Sun stands where it stood when the ground photograph was flown (NAIP, 14 October 2024,
+  // mid-morning): in the east-south-east, about 33 degrees up, measured from the Pad 1 tower's
+  // 228 m shadow and its bearing. So the shadows in the photograph agree with the models.
   const skyLow = new THREE.Color(0x7fb2de)
   const skyHigh = new THREE.Color(0x04060c)
   const sky = new THREE.Color()
@@ -62,14 +64,33 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   scene.fog = fog
   const heavens = createSky()
   scene.add(heavens.group)
-  const sun = new THREE.DirectionalLight(0xffe0b8, 2.6)
-  sun.position.set(-0.75, 0.38, 0.55)
-  scene.add(sun, new THREE.HemisphereLight(0xbcd4ee, 0x8a7f6a, 0.9))
+  const sun = new THREE.DirectionalLight(0xfff1dc, 2.8)
+  const sunBearing = 119 * DEG
+  const sunElevation = 33 * DEG
+  const toSun = new THREE.Vector3(Math.sin(sunBearing) * Math.cos(sunElevation), Math.sin(sunElevation), -Math.cos(sunBearing) * Math.cos(sunElevation))
+  sun.position.copy(toSun).multiplyScalar(600)
+  scene.add(sun, sun.target, new THREE.HemisphereLight(0xbcd4ee, 0x8a7f6a, 0.9))
+  // Only the booster casts a shadow in real time; the ground photograph already holds the site's own.
+  const phone = Math.min(window.innerWidth, window.innerHeight) < 600
+  renderer.shadowMap.enabled = true
+  renderer.shadowMap.type = THREE.PCFShadowMap
+  sun.castShadow = true
+  sun.shadow.mapSize.setScalar(phone ? 1024 : 2048)
+  const shadowBox = sun.shadow.camera
+  shadowBox.left = shadowBox.bottom = -120
+  shadowBox.right = shadowBox.top = 120
+  shadowBox.near = 1
+  shadowBox.far = 1_400
+  sun.shadow.bias = -0.0005
+  sun.shadow.normalBias = 0.5
 
   scene.add(site.group)
   const booster = createBooster()
   const effects = createEffects()
   scene.add(booster.group, effects.group)
+  booster.group.traverse((o) => {
+    if ((o as THREE.Mesh).isMesh && !((o as THREE.Mesh).material as THREE.Material).transparent) o.castShadow = true
+  })
 
   const ring = (colour: number) => {
     // A fat tube: the camera is low, so the ring is seen nearly edge-on.
@@ -152,6 +173,9 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
     }
     booster.group.position.set(s.x, s.y - sink, 0)
     booster.group.rotation.z = -lean * DEG
+    // The shadow box follows the booster down: no shadow while it is high, one on the pad once it is low.
+    sun.target.position.set(s.x, 0, 0)
+    sun.position.copy(toSun).multiplyScalar(600).add(sun.target.position)
 
     const thin = 1 - Math.exp(-s.y / SCALE_HEIGHT)
     const firing = flight.thrustAccel > 0 && !flight.outcome
@@ -207,6 +231,18 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
       camera.rotateX(Math.sin(view.clock * 53) * 0.0025 * kick)
       camera.rotateY(Math.sin(view.clock * 41) * 0.0025 * kick)
       kick *= Math.exp(-view.realDt * 3)
+    }
+
+    // Development only: a fixed camera for screenshots of the site, set from the console as window.__cam.
+    if (import.meta.env.DEV) {
+      ;(window as unknown as { __renderer: THREE.WebGLRenderer }).__renderer = renderer
+      const debug = (window as unknown as { __cam?: { eye: [number, number, number]; look: [number, number, number]; fov?: number } }).__cam
+      if (debug) {
+        camera.position.set(...debug.eye)
+        camera.fov = debug.fov ?? baseFov
+        camera.updateProjectionMatrix()
+        camera.lookAt(...debug.look)
+      }
     }
 
     // The sky darkens with height; the haze stays below.
