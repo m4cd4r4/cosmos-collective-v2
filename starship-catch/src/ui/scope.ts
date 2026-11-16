@@ -82,6 +82,24 @@ export function createScope(): Scope {
       c.arc(cx + scopeScale(arrival.x) * R, cy, 6, 0, Math.PI * 2)
       c.stroke()
       c.setLineDash([])
+    } else if (arrival) {
+      // It stops and climbs before the arms: an upward chevron where it stops.
+      let ax = scopeScale(arrival.x)
+      let ay = scopeScale(arrival.y - TUNING.catchHeight)
+      const r = Math.hypot(ax, ay)
+      if (r > 1) {
+        ax /= r
+        ay /= r
+      }
+      const px = cx + ax * R
+      const py = cy - ay * R
+      c.strokeStyle = INK
+      c.lineWidth = 1.75
+      c.beginPath()
+      c.moveTo(px - 6, py + 3)
+      c.lineTo(px, py - 3)
+      c.lineTo(px + 6, py + 3)
+      c.stroke()
     }
 
     // The booster, with a tail along its velocity: where it will be in a few seconds.

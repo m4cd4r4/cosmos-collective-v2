@@ -252,7 +252,7 @@ button:disabled {
 
 .group {
   display: grid;
-  grid-template-columns: auto 132px auto;
+  grid-template-columns: auto 148px auto;
   align-items: center;
   gap: 8px;
 }
@@ -344,7 +344,7 @@ button:disabled {
   color: var(--muted);
   white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
+  text-overflow: clip;
 }
 
 .ignite {
@@ -872,6 +872,30 @@ kbd {
   color: var(--muted);
 }
 
+/* Stop distance and burn seconds under their readouts: neutral, amber when close, red when short. */
+.cell-note {
+  font: 500 10.5px var(--body);
+  color: var(--soft);
+  white-space: nowrap;
+}
+
+.cell-note .short,
+.gauge-note .short {
+  display: none;
+}
+
+.cell-note[data-stop='warn'] {
+  color: var(--amber);
+}
+
+.cell-note[data-stop='bad'] {
+  color: var(--red);
+}
+
+.cell-note[data-stop='off'] {
+  visibility: hidden;
+}
+
 /* Rides on the scene: the arms when they are in view, an edge arrow when they are not. */
 .tower-marker {
   position: fixed;
@@ -976,5 +1000,19 @@ kbd {
 
   .band-note {
     display: none;
+  }
+
+  .cell-note {
+    font-size: 9.5px;
+  }
+
+  .cell-note .long,
+  .gauge-note .long {
+    display: none;
+  }
+
+  .cell-note .short,
+  .gauge-note .short {
+    display: inline;
   }
 }

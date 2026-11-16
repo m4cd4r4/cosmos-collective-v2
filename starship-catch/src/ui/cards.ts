@@ -3,7 +3,7 @@
 
 import { TUNING, type Flight, type Outcome } from '../sim/flight'
 import type { Score } from '../sim/score'
-import { CATCH_RECORD, ENGINES, FLIGHT_15, FLIGHT_8, GROUND_CREDIT, NOT_AFFILIATED, QUOTES, VEHICLE, WIKI_F8, type Source } from '../data/facts'
+import { CATCH_RECORD, ELEVATION_CREDIT, SATELLITE_CREDIT, ENGINES, FLIGHT_15, FLIGHT_8, GROUND_CREDIT, MODELS_NOTE, NOT_AFFILIATED, QUOTES, VEHICLE, WIKI_F8, type Source } from '../data/facts'
 import { el, sourceLink } from './dom'
 
 const TUNING_NOTE =
@@ -68,11 +68,11 @@ export function createStartCard(onBegin: () => void): StartCard {
         el('li', {}, `Light the landing burn once, low enough to save propellant and high enough to stop. It lights the ${ENGINES.centre} centre engines, then drops to ${ENGINES.inner} as you slow.`),
         el('li', {}, 'Arrive centred between the arms, slow and upright. The scope and the arrow at the edge show where the tower is. Assist, on at the start, shows where you will reach the arms if you hold the controls.'),
         el('li', {}, TUNING_NOTE),
-        el('li', {}, 'The tower, arms and launch mount are representative models.'),
+        el('li', {}, 'Both pads, the tank farm and the build site stand where the 2024 aerial photographs show them. The models are representative: SpaceX publishes no drawings.'),
       ),
       el('div', { class: 'actions' }, button),
       error,
-      el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(GROUND_CREDIT.text, GROUND_CREDIT.url), '.'),
+      el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(GROUND_CREDIT.text, GROUND_CREDIT.url), '. ', sourceLink(ELEVATION_CREDIT.text, ELEVATION_CREDIT.url), '. ', sourceLink(SATELLITE_CREDIT.text, SATELLITE_CREDIT.url), '.'),
     ),
   )
 
@@ -235,7 +235,7 @@ export function createEndCard(flight: Flight, options: EndOptions): HTMLElement 
       el('p', {}, `${CATCH_RECORD.text} ${FLIGHT_15.text} `, link(FLIGHT_15.source)),
       options.score ? el('p', { class: 'fine' }, "The score is a game measure: how far inside the game's catch limits you arrived, and the propellant you kept. SpaceX publishes no such figure.") : null,
       el('p', { class: 'fine' }, `This drop: seed ${flight.scenario.seed}. ${TUNING_NOTE}`),
-      el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(groundCredit(options.groundFlown), GROUND_CREDIT.url), '.'),
+      el('p', { class: 'fine' }, NOT_AFFILIATED, ' ', sourceLink(groundCredit(options.groundFlown), GROUND_CREDIT.url), '. ', sourceLink(ELEVATION_CREDIT.text, ELEVATION_CREDIT.url), '. ', sourceLink(SATELLITE_CREDIT.text, SATELLITE_CREDIT.url), '.'),
     ),
   )
 
@@ -289,6 +289,7 @@ export function createHowTo(onClose: () => void): HTMLElement {
       ),
       el('p', { class: 'muted' }, 'Assist (H) draws a white ring in the scene and a dashed one on the scope where you will reach the arms if you hold the controls. It starts on.'),
       el('div', { class: 'actions' }, go),
+      el('p', { class: 'fine' }, sourceLink(GROUND_CREDIT.text, GROUND_CREDIT.url), '. ', sourceLink(ELEVATION_CREDIT.text, ELEVATION_CREDIT.url), '. ', sourceLink(SATELLITE_CREDIT.text, SATELLITE_CREDIT.url), '. ', MODELS_NOTE),
     ),
   )
   queueMicrotask(() => go.focus({ preventScroll: true }))

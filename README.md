@@ -72,6 +72,29 @@ Real physics throughout (test-verified against published anchors), dramatised vi
 
 ---
 
+## Return to the Tower: catch a Super Heavy booster
+
+<table>
+  <tr>
+    <td width="50%"><img src="./docs/readme/starship-catch-approach.jpg" alt="Return to the Tower: the booster at 7 km over Starbase, with its ground track running to the catch tower"/></td>
+    <td width="50%"><img src="./docs/readme/starship-catch.jpg" alt="Return to the Tower: the booster on its landing burn, 46 m above the catch arms"/></td>
+  </tr>
+</table>
+
+A game at `/starship-catch`. You start about 10 km above Starbase with a Super Heavy booster falling at close to 300 m/s, and fly it into the tower's catch arms yourself:
+
+- **Steer** with the grid fins (A D), then with the engines once lit.
+- **Light the landing burn** once (Space) and **set the throttle** (W S). Below 50 m/s the burn drops to the 3 centre engines, as on the real flights.
+- **Arrive** within 3 m of the arms' centre, sinking under 6 m/s and nearly upright.
+
+Wind, drift and a limited propellant load make a miss easy. To show where to go without telling you when to press, the HUD carries an approach scope, a ground track from the booster to the tower, the stopping distance at your current throttle, seconds of propellant left, and an optional Assist marker for where held controls take you.
+
+The ground is real: USDA NAIP aerial imagery (2024 over the pad) on USGS 3DEP lidar elevation, with Copernicus Sentinel-2 out to South Padre Island and the Gulf. Both launch towers with their chopsticks, the launch mounts, the tank farm and the Mega Bays are modelled at their positions in that imagery, from published dimensions. Engine counts follow flown landing burns (Flights 7, 8 and 14), and every fact on the cards carries its source. The catch limits and the physics tuning are game settings and are labelled that way.
+
+It is a separate Vite + Three.js app in [`starship-catch/`](starship-catch/), built into `public/starship-catch/` with `npm run build:starship`.
+
+---
+
 ## Feature highlights
 
 **Solar System** - accurate orbital mechanics with a speed control from real time to a year per second, free, top and side camera views, and a dive to the Sun. Zoom out to see the Sun's place in the Milky Way.
@@ -115,6 +138,9 @@ Every readout is real and attributed. Nothing is invented or decorative.
 | [Launch Library 2](https://thespacedevs.com/llapi) | Upcoming launches | Public |
 | [Aladin Lite / CDS](https://aladin.cds.unistra.fr/) | Multi-wavelength sky surveys | Public |
 | [CSIRO CASDA](https://casda.csiro.au/) | ASKAP radio data | Public TAP |
+| [USDA NAIP](https://naip-usdaonline.hub.arcgis.com/) via [Planetary Computer](https://planetarycomputer.microsoft.com/dataset/naip) | Starbase aerial imagery (Return to the Tower) | Public domain, baked offline |
+| [USGS 3DEP](https://www.usgs.gov/3d-elevation-program) | Starbase lidar elevation | Public domain, baked offline |
+| [Copernicus Sentinel-2](https://dataspace.copernicus.eu/) | Coast and Gulf imagery around Starbase | Copernicus licence, baked offline |
 
 ---
 
@@ -160,6 +186,8 @@ The Gravitational Lens embed is a vendored build. To refresh it after an upstrea
 | `npm test` | Vitest unit tests (watch mode); `npx vitest run` for a single pass |
 | `npm run type-check` | `tsc --noEmit` |
 | `npm run lint` | ESLint via `next lint` |
+| `npm run dev:starship` | Return to the Tower dev server (port 5184) |
+| `npm run build:starship` | Build Return to the Tower into `public/starship-catch/` |
 
 ---
 
@@ -179,6 +207,7 @@ Hosted on Vercel. Production deploys are manual (`vercel --prod`) - pushing to `
 - **CSIRO** - Australian radio telescope data
 - **CDS Strasbourg** - Aladin Lite sky viewer
 - **[550-AU](https://github.com/m4cd4r4/550-AU)** - the embedded Solar Gravitational Lens simulation (MIT)
+- **USDA NAIP, USGS 3DEP** - Starbase imagery and elevation; contains modified Copernicus Sentinel data 2024
 - The open-source community, for the tools that made this possible
 
 ## License

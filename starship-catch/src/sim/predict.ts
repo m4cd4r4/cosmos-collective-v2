@@ -6,7 +6,7 @@ import { TUNING, advance, type Flight, type Input, type Outcome } from './flight
 export interface Arrival {
   /** The booster stops and climbs before it reaches the arms. */
   hover: boolean
-  /** Where it is when it reaches the arms' height, or where the look-ahead stopped. */
+  /** Where it is when it reaches the arms' height; with `hover`, where it stops falling; otherwise where the look-ahead ended. */
   x: number
   y: number
   sink: number

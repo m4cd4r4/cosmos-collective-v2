@@ -97,8 +97,21 @@ export const QUOTES = {
 }
 
 export const GROUND_CREDIT = {
-  text: 'Ground: USDA NAIP aerial imagery via the USGS National Map, public domain',
-  url: 'https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-national-agriculture-imagery-program-naip',
+  text: 'Ground: USDA NAIP aerial imagery via Microsoft Planetary Computer, public domain',
+  url: 'https://planetarycomputer.microsoft.com/dataset/naip',
 }
+
+export const SATELLITE_CREDIT = {
+  text: 'Contains modified Copernicus Sentinel data 2024',
+  url: 'https://planetarycomputer.microsoft.com/dataset/sentinel-2-l2a',
+}
+
+export const ELEVATION_CREDIT = {
+  text: 'Elevation: USGS 3DEP lidar, public domain',
+  url: 'https://www.usgs.gov/3d-elevation-program',
+}
+
+/** The pads, tank farm and buildings are modelled for this game from the photographs and public photos, not from drawings. */
+export const MODELS_NOTE = 'Pads, towers and buildings modelled from the aerial photographs and public photos; shapes are representative.'
 
 export const NOT_AFFILIATED = 'An independent educational game. Not affiliated with NASA or SpaceX.'

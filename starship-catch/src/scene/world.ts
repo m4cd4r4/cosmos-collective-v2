@@ -54,7 +54,9 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
   scene.environmentIntensity = 0.55
 
-  // Late afternoon: a low warm Sun in the west, fair-weather cloud.
+  // The Sun stands where it stood when the ground photograph was flown (NAIP, 14 October 2024,
+  // mid-morning): in the east-south-east, about 33 degrees up, measured from the Pad 1 tower's
+  // 228 m shadow and its bearing. So the shadows in the photograph agree with the models.
   const skyLow = new THREE.Color(0x7fb2de)
   const skyHigh = new THREE.Color(0x04060c)
   const sky = new THREE.Color()
@@ -62,14 +64,33 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   scene.fog = fog
   const heavens = createSky()
   scene.add(heavens.group)
-  const sun = new THREE.DirectionalLight(0xffe0b8, 2.6)
-  sun.position.set(-0.75, 0.38, 0.55)
-  scene.add(sun, new THREE.HemisphereLight(0xbcd4ee, 0x8a7f6a, 0.9))
+  const sun = new THREE.DirectionalLight(0xfff1dc, 2.8)
+  const sunBearing = 119 * DEG
+  const sunElevation = 33 * DEG
+  const toSun = new THREE.Vector3(Math.sin(sunBearing) * Math.cos(sunElevation), Math.sin(sunElevation), -Math.cos(sunBearing) * Math.cos(sunElevation))
+  sun.position.copy(toSun).multiplyScalar(600)
+  scene.add(sun, sun.target, new THREE.HemisphereLight(0xbcd4ee, 0x8a7f6a, 0.9))
+  // Only the booster casts a shadow in real time; the ground photograph already holds the site's own.
+  const phone = Math.min(window.innerWidth, window.innerHeight) < 600
+  renderer.shadowMap.enabled = true
+  renderer.shadowMap.type = THREE.PCFShadowMap
+  sun.castShadow = true
+  sun.shadow.mapSize.setScalar(phone ? 1024 : 2048)
+  const shadowBox = sun.shadow.camera
+  shadowBox.left = shadowBox.bottom = -120
+  shadowBox.right = shadowBox.top = 120
+  shadowBox.near = 1
+  shadowBox.far = 1_400
+  sun.shadow.bias = -0.0005
+  sun.shadow.normalBias = 0.5
 
   scene.add(site.group)
   const booster = createBooster()
   const effects = createEffects()
   scene.add(booster.group, effects.group)
+  booster.group.traverse((o) => {
+    if ((o as THREE.Mesh).isMesh && !((o as THREE.Mesh).material as THREE.Material).transparent) o.castShadow = true
+  })
 
   const ring = (colour: number) => {
     // A fat tube: the camera is low, so the ring is seen nearly edge-on.
@@ -82,6 +103,39 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
   // The target: the gap between the arms. From high up it grows so it can still be seen.
   const targetRing = ring(GOLD)
   const arrivalRing = ring(INK)
+  // Assist when the held controls stop the booster short of the arms: an upright ring with an
+  // upward chevron in it, where it stops. Distinct from the flat ring at the arms' height.
+  const stopMark = new THREE.Group()
+  {
+    const mat = new THREE.MeshBasicMaterial({ color: INK, depthTest: false, transparent: true, fog: false })
+    const hoop = new THREE.Mesh(new THREE.TorusGeometry(6.4, 0.6, 8, 48), mat)
+    const arm = (sign: number) => {
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(5.2, 1.1, 0.4), mat)
+      bar.position.set(sign * 1.8, 0.2, 0)
+      bar.rotation.z = sign * -0.62
+      return bar
+    }
+    stopMark.add(hoop, arm(-1), arm(1))
+    stopMark.traverse((o) => (o.renderOrder = 10))
+    scene.add(stopMark)
+  }
+
+  // The ground track: a marker on the ground directly below the booster, a line along the ground
+  // from it to the arms, and a faint drop line from the booster to the marker. Sized in screen
+  // pixels so it reads from 10 km up, and faded out low down where it would clutter the catch.
+  const trackMat = new THREE.MeshBasicMaterial({ color: INK, transparent: true, opacity: 0.85, depthTest: false, depthWrite: false, fog: false, side: THREE.DoubleSide })
+  const nadir = new THREE.Mesh(new THREE.RingGeometry(0.62, 1, 48), trackMat)
+  nadir.rotation.x = -Math.PI / 2
+  const trackLine = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), trackMat)
+  const dropMat = new THREE.LineBasicMaterial({ color: INK, transparent: true, opacity: 0.35, depthTest: false, depthWrite: false, fog: false })
+  const dropGeometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(), new THREE.Vector3(0, 1, 0)])
+  const dropLine = new THREE.Line(dropGeometry, dropMat)
+  for (const o of [nadir, trackLine, dropLine]) {
+    o.renderOrder = 9
+    o.frustumCulled = false
+  }
+  scene.add(nadir, trackLine, dropLine)
+  const TRACK_Y = 0.5
 
   // When the camera pulls back to hold the tower too, a thin bracket keeps the small booster easy to find.
   const tag = document.createElement('div')
@@ -152,6 +206,9 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
     }
     booster.group.position.set(s.x, s.y - sink, 0)
     booster.group.rotation.z = -lean * DEG
+    // The shadow box follows the booster down: no shadow while it is high, one on the pad once it is low.
+    sun.target.position.set(s.x, 0, 0)
+    sun.position.copy(toSun).multiplyScalar(600).add(sun.target.position)
 
     const thin = 1 - Math.exp(-s.y / SCALE_HEIGHT)
     const firing = flight.thrustAccel > 0 && !flight.outcome
@@ -209,6 +266,19 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
       kick *= Math.exp(-view.realDt * 3)
     }
 
+    // Development only: a fixed camera for screenshots of the site, set from the console as window.__cam.
+    if (import.meta.env.DEV) {
+      ;(window as unknown as { __renderer: THREE.WebGLRenderer }).__renderer = renderer
+      ;(window as unknown as { __camera: THREE.PerspectiveCamera }).__camera = camera
+      const debug = (window as unknown as { __cam?: { eye: [number, number, number]; look: [number, number, number]; fov?: number } }).__cam
+      if (debug) {
+        camera.position.set(...debug.eye)
+        camera.fov = debug.fov ?? baseFov
+        camera.updateProjectionMatrix()
+        camera.lookAt(...debug.look)
+      }
+    }
+
     // The sky darkens with height; the haze stays below.
     const height = camera.position.y
     const space = smooth(4_000, 42_000, height)
@@ -227,12 +297,19 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
     grow(targetRing)
     const arrival = flight.outcome ? null : view.arrival
     arrivalRing.visible = arrival !== null && !arrival.hover
+    stopMark.visible = arrival !== null && arrival.hover
     if (arrival && !arrival.hover) {
       arrivalRing.position.set(arrival.x, Math.max(TUNING.catchHeight, arrival.y), 0)
       grow(arrivalRing)
       const good = arrival.outcome === null || arrival.outcome === 'caught'
       ;(arrivalRing.material as THREE.MeshBasicMaterial).color.setHex(good ? INK : RED)
+    } else if (arrival) {
+      stopMark.position.set(arrival.x, arrival.y, 0)
+      stopMark.scale.setScalar(Math.max(1, camera.position.distanceTo(stopMark.position) / 260))
+      // Face the camera.
+      stopMark.quaternion.copy(camera.quaternion)
     }
+    placeTrack(flight, clientHeight)
     renderer.render(scene, camera)
 
     top.set(s.x, s.y + BOOSTER_HEIGHT, 0).project(camera)
@@ -247,6 +324,34 @@ export function createWorld(canvas: HTMLCanvasElement, site: Site, reducedMotion
       tag.style.height = `${h.toFixed(0)}px`
     }
     placeMarker(flight, clientWidth, clientHeight)
+  }
+
+  /** Ground track sizes, CSS pixels. */
+  const NADIR_PX = 11
+  const LINE_PX = 3
+  function placeTrack(flight: Flight, height: number) {
+    const s = flight.state
+    const fade = flight.outcome ? 0 : smooth(150, 450, s.y - TUNING.catchHeight)
+    const show = fade > 0.01
+    nadir.visible = trackLine.visible = dropLine.visible = show
+    if (!show) return
+    trackMat.opacity = 0.85 * fade
+    dropMat.opacity = 0.35 * fade
+    // World metres per CSS pixel, per metre from the camera.
+    const perPx = (2 * Math.tan((camera.fov * DEG) / 2)) / height
+    nadir.position.set(s.x, TRACK_Y, 0)
+    nadir.scale.setScalar(camera.position.distanceTo(nadir.position) * perPx * NADIR_PX)
+    // The line runs along the ground to the point below the arms, turned about its length to face the camera.
+    const length = Math.abs(s.x)
+    trackLine.visible = length > 1
+    trackLine.position.set(s.x / 2, TRACK_Y, 0)
+    const width = camera.position.distanceTo(trackLine.position) * perPx * LINE_PX
+    trackLine.scale.set(Math.max(0.01, length), width, 1)
+    trackLine.rotation.set(Math.atan2(-(camera.position.y - TRACK_Y), camera.position.z), 0, 0)
+    const p = dropGeometry.attributes.position as THREE.BufferAttribute
+    p.setXYZ(0, s.x, s.y, 0)
+    p.setXYZ(1, s.x, TRACK_Y, 0)
+    p.needsUpdate = true
   }
 
   /** A label on the arms when they are in view; an arrow on the edge of the view pointing to them when not. */
